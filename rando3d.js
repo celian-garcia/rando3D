@@ -2,17 +2,15 @@ var RANDO = {};
 RANDO.Utils = {};
 
 
-RANDO.Utils.interpol = function(A, B, n){
+RANDO.Utils.interpol = function(n, A, B){
     var res = {
-        x: 0,
-        y: 0
-    };
+        x : 0,
+        y : 0
+    }
+    if (!n) return res;
     
-    if(n=0)
-        return res;
-        
-    res.x = (B[0]-A[0])/2;
-    
+    if (n==1) return A;
+
     return res;
     
 }
