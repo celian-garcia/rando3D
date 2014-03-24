@@ -99,5 +99,28 @@ describe('Rando3D', function() {
             
             done();
         });
+        
+        it("should return a grid available with a losange input", function(done) {
+            var A = { x :-2, y : 0 };
+            var B = { x : 0, y : 2 };
+            var C = { x : 2, y : 0 };
+            var D = { x : 0, y :-2 };
+            
+            var res = [
+                A, 
+                { x :-1, y : 1 },
+                B,
+                { x :-1, y :-1 },
+                { x : 0, y : 0 },
+                { x : 1, y : 1 },
+                D, 
+                { x : 1, y :-1 },
+                C
+            ];
+
+            assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 3, 3), res);
+            
+            done();
+        });
     });
 });

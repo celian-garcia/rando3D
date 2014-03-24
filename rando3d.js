@@ -45,7 +45,7 @@ RANDO.Utils.subdivide = function(n, A, B){
  * the order of output points : 
  *  [A, ...., B,    -> first line
  *   ..........,
- *   C, ...., D]    -> last line
+ *   D, ...., C]    -> last line
  * 
  * 
  * Example of quadrilatere :
@@ -56,7 +56,7 @@ RANDO.Utils.subdivide = function(n, A, B){
  *   |                      \
  *   |                       \
  *   |                        \
- * C *-------------------------* D
+ * D *-------------------------* C
  * 
  */
 RANDO.Utils.createGrid = function(A, B, C, D, n_verti, n_horiz){
@@ -70,14 +70,11 @@ RANDO.Utils.createGrid = function(A, B, C, D, n_verti, n_horiz){
     
     for (var j=0; j < n_verti; j++){
         // subidivide lines
-        console.log(east_side[j], west_side[j]);
         var line = RANDO.Utils.subdivide(n_horiz, east_side[j], west_side[j]);
-        console.log(line);
         for (var i=0; i< n_horiz; i++){
             grid.push(line[i]);
         }
     }
-    console.log(grid);
     return grid;
 
 }
