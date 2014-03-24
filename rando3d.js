@@ -4,7 +4,7 @@ RANDO.Utils = {};
 
 RANDO.Utils.subdivide = function(n, A, B){
     
-    if (!n) return {
+    if (n<=0) return {
         x : 0,
         y : 0
     };

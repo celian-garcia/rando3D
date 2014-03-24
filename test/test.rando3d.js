@@ -13,8 +13,8 @@ describe('Rando3D', function() {
                 x : 243,
                 y : 53434
             };
-            assert.equal(RANDO.Utils.subdivide(0, A, B).x, 0);
-            assert.equal(RANDO.Utils.subdivide(0, A, B).y, 0);
+            assert.deepEqual(RANDO.Utils.subdivide(0, A, B), { x: 0, y: 0 });
+            assert.deepEqual(RANDO.Utils.subdivide(-1, A, B), { x: 0, y: 0 });
             done();
         });
         
@@ -86,30 +86,6 @@ describe('Rando3D', function() {
 
             done();
         });
-        /*it("should return first, mid and end point.", function(done) {
-            var A = {
-                x : 0,
-                y : 0
-            };
-            var B = {
-                x : 2,
-                y : 2
-            };
-            var M = {
-                x : 1,
-                y : 1
-            };
-            assert.deepEqual(RANDO.Utils.subdivide(3, A, B), [A,M,B]);
-
-            done();
-        });*/
         
-        /*it("should have x value equal to 1.", function(done) {
-            var A = [0,0];
-            var B = [2,2];
-            var n = 1;
-            assert.equal(RANDO.Utils.subdivide(A, B, n).x, 1);
-            done();
-        });*/
     });
 });
