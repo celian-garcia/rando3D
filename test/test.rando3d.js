@@ -63,7 +63,8 @@ describe('Rando3D', function() {
             assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 0, 54), null);
             assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 45, 0), null);
             assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D,  0, 0), null);
-
+            assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, -5,45), null);
+            
             done();
         });
     });

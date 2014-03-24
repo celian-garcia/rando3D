@@ -61,8 +61,8 @@ RANDO.Utils.subdivide = function(n, A, B){
  * 
  */
 RANDO.Utils.createGrid = function(A, B, C, D, n_verti, n_horiz){
-    if(!n_verti) return null;
-    if(!n_horiz) return null;
+    if(n_verti<=0) return null;
+    if(n_horiz<=0) return null;
 
     // subdivide both sides of the quad
     var east_side = RANDO.Utils.subdivide(n_verti, A, C);
