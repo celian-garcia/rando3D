@@ -2,14 +2,14 @@ var assert = chai.assert;
 
 describe('Rando3D', function() {
     
-    describe('Trapeze grid points ', function() {
+    describe('Segment subdivision', function() {
 
         it("should return null point.", function(done) {
             var A = { x : 3543, y : 252 };
             var B = { x : 243,  y : 53434 };
             
-            assert.deepEqual(RANDO.Utils.subdivide( 0, A, B), { x: 0, y: 0 });
-            assert.deepEqual(RANDO.Utils.subdivide(-1, A, B), { x: 0, y: 0 });
+            assert.deepEqual(RANDO.Utils.subdivide( 0, A, B), null);
+            assert.deepEqual(RANDO.Utils.subdivide(-1, A, B), null);
             done();
         });
         
@@ -52,5 +52,19 @@ describe('Rando3D', function() {
             done();
         });
         
+    });
+    describe('Trapeze grid', function() {
+        it("should return null point", function(done) {
+            var A = { x : 54,  y : 545 };
+            var B = { x : 325, y : 245 };
+            var C = { x : 24,  y : 42  };
+            var D = { x : 525, y : 245 };
+                
+            assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 0, 54), null);
+            assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 45, 0), null);
+            assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D,  0, 0), null);
+
+            done();
+        });
     });
 });
