@@ -63,7 +63,7 @@ describe('Rando3D', function() {
         });
         
     });
-    /*describe('Trapeze grid', function() {
+    describe('Trapeze grid', function() {
         it("should return null point", function(done) {
             var A = { x : 54,  y : 545 };
             var B = { x : 325, y : 245 };
@@ -80,8 +80,8 @@ describe('Rando3D', function() {
         it("should return a grid available with a square input", function(done) {
             var A = { x : 0, y : 0 };
             var B = { x : 2, y : 0 };
-            var C = { x : 0, y : 2 };
-            var D = { x : 2, y : 2 };
+            var C = { x : 2, y : 2 };
+            var D = { x : 0, y : 2 };
             
             var res = [
                 A, 
@@ -90,14 +90,14 @@ describe('Rando3D', function() {
                 { x : 0, y : 1 },
                 { x : 1, y : 1 },
                 { x : 2, y : 1 },
-                C, 
-                { x : 2, y : 2 },
-                D
+                D, 
+                { x : 1, y : 2 },
+                C
             ];
 
             assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 3, 3), res);
             
             done();
         });
-    });*/
+    });
 });

@@ -59,27 +59,28 @@ RANDO.Utils.subdivide = function(n, A, B){
  * C *-------------------------* D
  * 
  */
-/*RANDO.Utils.createGrid = function(A, B, C, D, n_verti, n_horiz){
+RANDO.Utils.createGrid = function(A, B, C, D, n_verti, n_horiz){
     if(n_verti<=0) return null;
     if(n_horiz<=0) return null;
 
     // subdivide both sides of the quad
-    var east_side = RANDO.Utils.subdivide(n_verti, A, C);
-    var west_side = RANDO.Utils.subdivide(n_verti, B, D);
+    var east_side = RANDO.Utils.subdivide(n_verti, A, D);
+    var west_side = RANDO.Utils.subdivide(n_verti, B, C);
     var grid = [];
-    console.log(west_side);
-    for (var j=0; j < n_verti-1; j++){
+    
+    for (var j=0; j < n_verti; j++){
         // subidivide lines
+        console.log(east_side[j], west_side[j]);
         var line = RANDO.Utils.subdivide(n_horiz, east_side[j], west_side[j]);
-        
-        for (var i=0; i< n_horiz-1; i++){
+        console.log(line);
+        for (var i=0; i< n_horiz; i++){
             grid.push(line[i]);
         }
     }
-    
+    console.log(grid);
     return grid;
 
-}*/
+}
 
 
 
