@@ -64,6 +64,28 @@ describe('Rando3D', function() {
             done();
         });
         
+        it("should return the four points equally spaced between A and B (A, B included).", function(done) {
+            var A = {
+                x : 0,
+                y : 0
+            };
+            var M = {
+                x : 1,
+                y : 1
+            };
+            var N = {
+                x : 2,
+                y : 2
+            };
+            var B = {
+                x : 3,
+                y : 3
+            };
+            
+            assert.deepEqual(RANDO.Utils.subdivide(4, A, B), [A,M,N,B]);
+
+            done();
+        });
         /*it("should return first, mid and end point.", function(done) {
             var A = {
                 x : 0,
