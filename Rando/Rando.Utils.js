@@ -363,24 +363,24 @@ RANDO.Utils.getVertices = function(data){
     var A = RANDO.Utils.toMeters(data.extent.northwest);
     var B = RANDO.Utils.toMeters(data.extent.northeast);
     var C = RANDO.Utils.toMeters(data.extent.southeast);
-    var D = RANDO.Utils.toMeters(data.extent.northwest);
+    var D = RANDO.Utils.toMeters(data.extent.southwest);
     
     
-    /*var A = {    
-        x : data.extent.northwest.lng*200000,
-        y : data.extent.northwest.lat*400000,
+    /*var A = {
+        x : data.extent.northwest.x,
+        y : data.extent.northwest.y
     };
     var B = {
-        x : data.extent.northeast.lng*200000,
-        y : data.extent.northeast.lat*400000,
+        x : data.extent.northeast.x,
+        y : data.extent.northeast.y
     };
     var C = {
-        x : data.extent.southeast.lng*200000,
-        y : data.extent.southeast.lat*400000,
+        x : data.extent.southeast.x,
+        y : data.extent.southeast.y
     };
     var D = {
-        x : data.extent.southwest.lng*200000,
-        y : data.extent.southwest.lat*400000,
+        x : data.extent.southwest.x,
+        y : data.extent.southwest.y
     };*/
     
     var grid = RANDO.Utils.createGrid(
@@ -390,18 +390,28 @@ RANDO.Utils.getVertices = function(data){
     );
     
     // Fills array of vertices
-    for (var j=0; j<data.resolution.y-1 ;j++){
-        for (var i=0; i<data.resolution.x-1 ;i++){
+    for (var j=0; j<data.resolution.y ;j++){
+        for (var i=0; i<data.resolution.x ;i++){
             vertices.push(grid[j][i].x);
-            if(j==0)
-                vertices.push(data.altitudes[j][i+1]);
-            else 
-                vertices.push(data.altitudes[j][i]);
+            vertices.push(data.center.z);
             vertices.push(grid[j][i].y);
         }
     }
-    console.assert((data.resolution.y-1)*(data.resolution.x-1) == vertices.length/3, 
-        (data.resolution.y-1)*(data.resolution.x-1) + " != " + vertices.length/3);
+    
+    var k = 1;
+    var j = 1;
+    //var alt_tmp = //.reverse();
+    for (var i=0; i<data.resolution.x ;i++){
+        vertices[k] = data.altitudes[j][i];
+        k += 3;
+    }
+    
+    /*for (var j=1; j < data.resolution.y ;j++){
+        for (var i=0; i<data.resolution.x-1 ;i++){
+            vertices[k] = data.altitudes[j][i];
+            k += 3;
+        }
+    }*/
     
     console.log(vertices.slice(0, 100));
     return vertices ;
@@ -502,6 +512,8 @@ RANDO.Utils.toMeters = function(latlng){
         y : R * Math.log((1 + sin) / (1 - sin)) / 2
     };
 }
+
+
 /*  HELP 
 
 Rando.Utils.get_x_rotation = function (v) { .... };
