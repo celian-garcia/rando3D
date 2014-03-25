@@ -390,7 +390,6 @@ RANDO.Utils.getVertices = function(resolution, altitudes, extent){
         }
     }
     
-    console.log(vertices.slice(0, 100));
     return vertices ;
 }
 
@@ -528,65 +527,3 @@ RANDO.Utils.translateDEM = function(dem){
     dem.extent.southwest.y -= dy;
     return dem;
 }
-
-/*  HELP 
-
-Rando.Utils.get_x_rotation = function (v) { .... };
-
-
-
-
-
-Rando.Utils.get_x_rotation().
-
-
-
-
-
-
-Rando.Mesh.createPathSegment = function ... {
-    var m = BABYLON.Mesh.createCylinder...
-    
-    m.place = function (A, B) {
-    }
-    
-    return m;
-}
-
-
-
-
-
-
-Rando.Mesh = BABYLON.Mesh.extends({
-    place: function () ...
-});
-
-
-Rando.Mesh.createCylinder = function ()
-   ... new Rando.Mesh
-
-
-
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- */
