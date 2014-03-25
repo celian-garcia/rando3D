@@ -8,24 +8,25 @@
     var b_troncon = false;
     
     
+    // Get the Canvas element from our HTML 
+    var canvas = document.getElementById("canvas_renderer");
+    // Load BABYLON 3D engine
+    var engine = new BABYLON.Engine(canvas, true);
+    
+    
 /**
  *  Main function    
  * 
  * */
 $("#menu span").click(function() {
     var id = $(this).data('id');
+    engine.clear(new BABYLON.Color4(255,255,255,0),true ,true );
     
-    // Get the Canvas element from our HTML 
-    var canvas = document.getElementById("canvas_renderer");
-    // Load BABYLON 3D engine
-    var engine = new BABYLON.Engine(canvas, true);
     // Scene
     var scene = new BABYLON.Scene(engine);
     // Camera
     var camera = RANDO.Utils.initCamera(scene);
     camera.attachControl(canvas);
-    
-
     if (b_zone){
         // Getting data of DEM----------
         // make serve

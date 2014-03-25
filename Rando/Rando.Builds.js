@@ -25,11 +25,11 @@ RANDO.Builds.buildZone = function(scene, data, texture, cam_b){
 
     // Camera 
     if (cam_b){
-        //scene.activeCamera.rotation = new BABYLON.Vector3(0.4, 2, 0);
+        scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
         scene.activeCamera.position = new BABYLON.Vector3(
-            center.x, 
-            center.z, 
-            center.y
+            center.x-2000, 
+            center.z+2000, 
+            center.y-1500
         );
     }
     // Material
