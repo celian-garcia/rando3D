@@ -225,9 +225,21 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
 }
 
 
-
+/**
+ * cardinals() : build the NW, NE, SE and SW extrems points of the DEM with spheres
+ * 
+ *      - extent : contain the four corners of the DEM
+ *      - scene  : current scene  
+ * 
+ * NB : each point have its own color
+ *          NW --> White 
+ *          NE --> Red
+ *          SE --> Blue
+ *          SW --> Green
+ * 
+ */
 RANDO.Builds.cardinals = function(extent, scene){
-    //----------TEST------------------------------------------------
+
     var tmp;
     var sph_diam = 20;
     var matA = new BABYLON.StandardMaterial("SphereMaterial", scene);
@@ -265,7 +277,7 @@ RANDO.Builds.cardinals = function(extent, scene){
     D.position.z = tmp.y;
     matD.diffuseColor = new BABYLON.Color3(0,255,0);
     D.material = matD;
-    //--------------------------------------------------------------
+
 
 }
 
