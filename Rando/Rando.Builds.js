@@ -232,7 +232,7 @@ RANDO.Builds.cardinals = function(extent, scene){
     var sph_diam = 20;
     var matA = new BABYLON.StandardMaterial("SphereMaterial", scene);
     var A = BABYLON.Mesh.CreateSphere("SphereA", 5, sph_diam, scene);
-    tmp = RANDO.Utils.toMeters(extent.northwest);
+    tmp = extent.northwest;
     A.position.x = tmp.x;
     A.position.y = 1500;
     A.position.z = tmp.y;
@@ -241,7 +241,7 @@ RANDO.Builds.cardinals = function(extent, scene){
     
     var matB = new BABYLON.StandardMaterial("SphereMaterial", scene);
     var B = BABYLON.Mesh.CreateSphere("SphereB", 5, sph_diam, scene);
-    tmp = RANDO.Utils.toMeters(extent.northeast);
+    tmp = extent.northeast;
     B.position.x = tmp.x;
     B.position.y = 1500;
     B.position.z = tmp.y;
@@ -250,7 +250,7 @@ RANDO.Builds.cardinals = function(extent, scene){
     
     var matC = new BABYLON.StandardMaterial("SphereMaterial", scene);
     var C = BABYLON.Mesh.CreateSphere("SphereC", 5, sph_diam, scene);
-    tmp = RANDO.Utils.toMeters(extent.southeast);
+    tmp = extent.southeast;
     C.position.x = tmp.x;
     C.position.y = 1500;
     C.position.z = tmp.y;
@@ -259,7 +259,7 @@ RANDO.Builds.cardinals = function(extent, scene){
     
     var matD = new BABYLON.StandardMaterial("SphereMaterial", scene);
     var D = BABYLON.Mesh.CreateSphere("SphereD", 5, sph_diam, scene);
-    tmp = RANDO.Utils.toMeters(extent.southwest);
+    tmp = extent.southwest;
     D.position.x = tmp.x;
     D.position.y = 1500;
     D.position.z = tmp.y;

@@ -358,63 +358,51 @@ RANDO.Utils.refreshPanels = function(number, scene){
     return 1;
 }
 
-RANDO.Utils.getVertices = function(data){
+RANDO.Utils.getVertices = function(resolution, altitudes, extent){
     var vertices = [];
-    var A = RANDO.Utils.toMeters(data.extent.northwest);
-    var B = RANDO.Utils.toMeters(data.extent.northeast);
-    var C = RANDO.Utils.toMeters(data.extent.southeast);
-    var D = RANDO.Utils.toMeters(data.extent.southwest);
+    var A = extent.northwest;
+    var B = extent.northeast;
+    var C = extent.southeast;
+    var D = extent.southwest;
     
-    
-    /*var A = {
-        x : data.extent.northwest.x,
-        y : data.extent.northwest.y
-    };
-    var B = {
-        x : data.extent.northeast.x,
-        y : data.extent.northeast.y
-    };
-    var C = {
-        x : data.extent.southeast.x,
-        y : data.extent.southeast.y
-    };
-    var D = {
-        x : data.extent.southwest.x,
-        y : data.extent.southwest.y
-    };*/
     
     var grid = RANDO.Utils.createGrid(
         A, B, C, D, 
-        data.resolution.x,
-        data.resolution.y
+        resolution.x,
+        resolution.y
     );
     
     // Fills array of vertices
-    for (var j=0; j<data.resolution.y ;j++){
-        for (var i=0; i<data.resolution.x ;i++){
+    for (var j=0; j<resolution.y ;j++){
+        for (var i=0; i<resolution.x ;i++){
             vertices.push(grid[j][i].x);
-            vertices.push(data.center.z);
+            vertices.push(1500);
             vertices.push(grid[j][i].y);
         }
     }
     
-    var k = 1;
-    var j = 1;
-    //var alt_tmp = //.reverse();
-    for (var i=0; i<data.resolution.x ;i++){
-        vertices[k] = data.altitudes[j][i];
-        k += 3;
-    }
     
-    /*for (var j=1; j < data.resolution.y ;j++){
-        for (var i=0; i<data.resolution.x-1 ;i++){
-            vertices[k] = data.altitudes[j][i];
+    var k =1;
+    for (var j=0; j < resolution.y ;j++){
+        for (var i=0; i<resolution.x ;i++){
+            vertices[k] = altitudes[j][i];
             k += 3;
         }
-    }*/
+    }
     
     console.log(vertices.slice(0, 100));
     return vertices ;
+}
+
+RANDO.Utils.getExtent = function(extent){
+    
+    return {
+        northwest : RANDO.Utils.toMeters(extent.northwest),
+        northeast : RANDO.Utils.toMeters(extent.northeast),
+        southeast : RANDO.Utils.toMeters(extent.southeast),
+        southwest : RANDO.Utils.toMeters(extent.southwest),
+        altitudes : extent.altitudes
+    }
 }
 
 RANDO.Utils.subdivide = function(n, A, B){
@@ -513,6 +501,33 @@ RANDO.Utils.toMeters = function(latlng){
     };
 }
 
+
+RANDO.Utils.translateDEM = function(dem){
+    var dx = dem.center.x,
+        dy = dem.center.y,
+        dz = dem.extent.altitudes.min;
+    
+    for (var i=0; i< dem.vertices.length; i+=3){
+        dem.vertices[i]   -= dx;
+        dem.vertices[i+1] += dz;
+        dem.vertices[i+2] -= dy;
+    }
+    dem.center.x -= dx;
+    dem.center.y -= dy;
+    
+    dem.extent.northwest.x -= dx;
+    dem.extent.northwest.y -= dy;
+    
+    dem.extent.northeast.x -= dx;
+    dem.extent.northeast.y -= dy;
+    
+    dem.extent.southeast.x -= dx;
+    dem.extent.southeast.y -= dy;
+    
+    dem.extent.southwest.x -= dx;
+    dem.extent.southwest.y -= dy;
+    return dem;
+}
 
 /*  HELP 
 

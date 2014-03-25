@@ -13,6 +13,16 @@
         canvas {
             display:block;
         }
+        #menu {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        #menu span {
+            display: inline-block;
+            opacity: 0.8;
+            background-color: white;
+        }
 
     </style>
     <script src="lib/jquery-1.9.1.js"></script>
@@ -30,6 +40,10 @@
  <body>
     <div id="rootDiv">
         <canvas id="canvas_renderer"></canvas>
+    </div>
+    <div id="menu">
+        <span data-id="903488">Le vallon de Vaccivier</span>
+        <span data-id="903469">Le refuge de la Lavey</span>
     </div>
 
     <script src="index.js"></script>

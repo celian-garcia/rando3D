@@ -17,7 +17,10 @@
  *  Main function    
  * 
  * */
-$(function() {
+$("#menu span").click(function() {
+    var id = $(this).data('id');
+    console.log(id);
+    
     // Get the Canvas element from our HTML 
     var canvas = document.getElementById("canvas_renderer");
     // Load BABYLON 3D engine
@@ -31,8 +34,11 @@ $(function() {
 
     if (b_zone){
         // Getting data of DEM----------
+        // make serve
+        // http://localhost:8000/api/trek/903488/dem.json
+        // http://localhost:8000/api/trek/903488/profile.json
         $.ajax({
-          url:  "json/dem-pne-2007.json",
+          url:  "./json/dem-pne-" + id + ".json",
           dataType: 'json',
           async: false,
           success: function(data) {
@@ -41,24 +47,27 @@ $(function() {
                 console.log(data);
                 
                 
-                RANDO.Builds.cardinals(data.extent, scene);
                 
                 
-                var vertices = RANDO.Utils.getVertices(data);
+                var extent = RANDO.Utils.getExtent(data.extent);
+                var vertices = RANDO.Utils.getVertices(data.resolution, data.altitudes, extent);
                 var resolution = data.resolution;
                 var center = RANDO.Utils.toMeters(data.center);
                 center.z = data.center.z;
                 
-                var dem_data = {
+                var dem = {
+                    "extent"    : extent,
                     "vertices"  : vertices,
                     "resolution": resolution,
                     "center"    : center
                 };
                 
-                console.log(dem_data);
-
+                RANDO.Utils.translateDEM(dem);
+                console.log(dem);
+                RANDO.Builds.cardinals(dem.extent, scene);
+                
                 // Zone 
-                RANDO.Builds.buildZone(scene, dem_data);
+                RANDO.Builds.buildZone(scene, dem);
                 
           }
         });//------------------------------------------------------------
@@ -69,6 +78,5 @@ $(function() {
         //RANDO.Utils.refreshPanels(troncon.length, scene);
         scene.render();
     });
-    
-    
 });
+$("#menu span:first").click();
