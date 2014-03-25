@@ -6,13 +6,13 @@ RANDO.Utils = {};
 
 /**
  *  createGround()
- *   - name : Name of the new Ground
- *   - width : Width of the new Ground
- *   - height : Height of the new Ground
- *   - w_subdivisions : Number of Width's subdivisions in the new Ground 
- *   - h_subdivisions : Number of Height's subdivisions in the new Ground
- *   - scene : Scene which contain the new Ground 
- *   - updatable : 
+ *      - name : Name of the new Ground
+ *      - width : Width of the new Ground
+ *      - height : Height of the new Ground
+ *      - w_subdivisions : Number of Width's subdivisions in the new Ground 
+ *      - h_subdivisions : Number of Height's subdivisions in the new Ground
+ *      - scene : Scene which contain the new Ground 
+ *      - updatable : 
  * 
  * Create a ground which can be divided differently in width and in height
  * It uses the function BABYLON.Mesh.CreateGround() of the 1.9.0 release of BABYLON
@@ -59,9 +59,9 @@ RANDO.Utils.createGround = function(name, width, height, w_subdivisions, h_subdi
 
 /**
  *  placeCylinder()
- *   - cylinder (BABYLON.Mesh): BABYLON Cylinder object
- *   - A (BABYLON.Vector3):     First Point 
- *   - B (BABYLON.Vector3):     Second Point
+ *      - cylinder (BABYLON.Mesh): BABYLON Cylinder object
+ *      - A (BABYLON.Vector3):     First Point 
+ *      - B (BABYLON.Vector3):     Second Point
  * 
  * Place the cylinder between both points  
  ****************************************************************/
@@ -167,9 +167,9 @@ RANDO.Utils.angleFromAxis = function(A, B, axis){
 /**
  * angleFromPoints() : get an angle from 3 points for a rotation around an axis 
  *  orthogonal of the plan formed by the 3 points 
- *      A (BABYLON.Vector3) : First point
- *      B (BABYLON.Vector3) : Second point
- *      H (BABYLON.Vector3) : Orthogonal projection of B over the axis 
+ *      - A (BABYLON.Vector3) : First point
+ *      - B (BABYLON.Vector3) : Second point
+ *      - H (BABYLON.Vector3) : Orthogonal projection of B over the axis 
  * 
  * 
  * Example with a rotation around z axis 
@@ -202,8 +202,7 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
 }
 
 /**
- *  init_camera() : initialize main parameters of camera   
- *      
+ *  init_camera() : initialize main parameters of camera    
  *      - scene : the current scene
  * 
  *  return the camera
@@ -225,7 +224,6 @@ RANDO.Utils.initCamera = function(scene){
 
 /**
  *  animate_camera() : animation and controls of the camera 
- *      
  *      - troncon : array of points
  *      - scene : the current scene
  * 
@@ -341,7 +339,6 @@ RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
 /**
  * refreshPanels() : refresh pivot matrices of all panels to always have panels 
  *  directed to the camera.
- * 
  *      - number (int)          : number of panels in the scene 
  *      - scene (BABYLON.Scene) : current scene
  */
@@ -358,43 +355,45 @@ RANDO.Utils.refreshPanels = function(number, scene){
     return 1;
 }
 
+/**
+ * getVertices() : get DEM vertices in a format which can be understood by the DEM builder
+ *      - resolution : number of points along x and y 
+ *      - altitudes  : 2 dimensions array containing altitudes of the vertices
+ *      - extent     : object containing the four exrems point of the DEM
+ * 
+ */
 RANDO.Utils.getVertices = function(resolution, altitudes, extent){
     var vertices = [];
-    var A = extent.northwest;
-    var B = extent.northeast;
-    var C = extent.southeast;
-    var D = extent.southwest;
-    
-    
+
+    // Create grid 
     var grid = RANDO.Utils.createGrid(
-        A, B, C, D, 
+        extent.northwest, 
+        extent.northeast, 
+        extent.southeast, 
+        extent.southwest, 
         resolution.x,
         resolution.y
     );
-    
-    // Fills array of vertices
+
+    // Fills array of vertices 
+    var k = 1;
     for (var j=0; j<resolution.y ;j++){
         for (var i=0; i<resolution.x ;i++){
             vertices.push(grid[j][i].x);
-            vertices.push(1500);
-            vertices.push(grid[j][i].y);
-        }
-    }
-    
-    
-    var k =1;
-    for (var j=0; j < resolution.y ;j++){
-        for (var i=0; i<resolution.x ;i++){
             vertices[k] = altitudes[j][i];
+            vertices.push(grid[j][i].y);
             k += 3;
         }
     }
-    
+
     return vertices ;
 }
 
+/**
+ * getExtent() : get the four corners of the DEM (in meters) and altitudes minimum and maximum
+ *      - extent : extent of the DEM served by the json
+ */
 RANDO.Utils.getExtent = function(extent){
-    
     return {
         northwest : RANDO.Utils.toMeters(extent.northwest),
         northeast : RANDO.Utils.toMeters(extent.northeast),
@@ -404,6 +403,30 @@ RANDO.Utils.getExtent = function(extent){
     }
 }
 
+/**
+ * subdivide() :  interpolate a segment between 2 points A and B 
+ *      - n : number of points expected in result
+ *      - A : first point 
+ *      - B : second point
+ * 
+ * return an array of point 
+ * 
+ * NB : points are in the format : { x : .. , y : .. } 
+ * 
+ * 
+ * example :
+ * 
+ *         * B                   * B
+ *        /                     /
+ *       /      n = 4          * M2
+ *      /      ---->          /
+ *     /                     * M1
+ *    /                     /
+ * A *                    A* 
+ * 
+ *          result : [A, M1, M2, B]
+ * 
+ */
 RANDO.Utils.subdivide = function(n, A, B){
     
     if (n<=0) return null;
@@ -437,10 +460,10 @@ RANDO.Utils.subdivide = function(n, A, B){
 /**
  * createGrid() : create a grid of points for all type of quadrilateres, in particular
  *  these which are not square or rectangle.
- * 
  *      - A, B, C, D :  vertices of quadrilatere to subdivide
  *      - n_verti :     number of points in vertical size
  *      - n_horiz :     number of points in horizontal size
+ * 
  * 
  * NB : * n_verti and n_horiz cannot be invert
  *      * the order of input points is also important, it determines 
@@ -486,6 +509,14 @@ RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
 
 }
 
+/**
+ * toMeters() : transform a point in latitude/longitude to x/y meters coordinates
+ *      - latlng : point in lat/lng 
+ * 
+ * return a point in meters 
+ * 
+ * { lat : .. , lng : .. }  ---> { x : .. , y : .. }
+ */
 RANDO.Utils.toMeters = function(latlng){
     
     var R = 6378137;
@@ -500,30 +531,34 @@ RANDO.Utils.toMeters = function(latlng){
     };
 }
 
-
-RANDO.Utils.translateDEM = function(dem){
-    var dx = dem.center.x,
-        dy = dem.center.y,
-        dz = dem.extent.altitudes.min;
-    
+/**
+ * translateDEM() : translate the DEM with a coefficient given in parameters
+ *      - dem : dem to translate 
+ *      - dx  : x coefficient 
+ *      - dy  : y coefficient  (altitudes in BABYLON)
+ *      - dz  : z coefficient  (depth     in BABYLON)
+ * 
+ * return the DEM translated
+ */
+RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     for (var i=0; i< dem.vertices.length; i+=3){
-        dem.vertices[i]   -= dx;
-        dem.vertices[i+1] += dz;
-        dem.vertices[i+2] -= dy;
+        dem.vertices[i]   += dx;
+        dem.vertices[i+1] += dy;
+        dem.vertices[i+2] += dz;
     }
-    dem.center.x -= dx;
-    dem.center.y -= dy;
+    dem.center.x += dx;
+    dem.center.y += dz;
     
-    dem.extent.northwest.x -= dx;
-    dem.extent.northwest.y -= dy;
+    dem.extent.northwest.x += dx;
+    dem.extent.northwest.y += dz;
     
-    dem.extent.northeast.x -= dx;
-    dem.extent.northeast.y -= dy;
+    dem.extent.northeast.x += dx;
+    dem.extent.northeast.y += dz;
     
-    dem.extent.southeast.x -= dx;
-    dem.extent.southeast.y -= dy;
+    dem.extent.southeast.x += dx;
+    dem.extent.southeast.y += dz;
     
-    dem.extent.southwest.x -= dx;
-    dem.extent.southwest.y -= dy;
+    dem.extent.southwest.x += dx;
+    dem.extent.southwest.y += dz;
     return dem;
 }

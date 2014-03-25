@@ -54,7 +54,13 @@ $("#menu span").click(function() {
                 "center"    : center
             };
             
-            RANDO.Utils.translateDEM(dem);
+            
+            RANDO.Utils.translateDEM(
+                dem, 
+                -dem.center.x, 
+                dem.extent.altitudes.min, 
+                -dem.center.y
+            );
             
             console.log("MNT en sortie : prêt à être manipulé par BABYLON.js");
             console.log(dem);

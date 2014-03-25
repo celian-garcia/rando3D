@@ -224,7 +224,6 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
     }//------------------------------------------------------------------
 }
 
-
 /**
  * cardinals() : build the NW, NE, SE and SW extrems points of the DEM with spheres
  * 
