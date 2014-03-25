@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kostar111/rando3D.svg?branch=master)](https://travis-ci.org/kostar111/rando3D)
+
 INSTALL
 ======
 
