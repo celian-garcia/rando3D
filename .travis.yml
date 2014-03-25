@@ -1,0 +1,5 @@
+language: node_js
+install:
+  - npm install mocha chai mocha-phantomjs
+script:
+  - ./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html
