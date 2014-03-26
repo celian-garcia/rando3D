@@ -23,7 +23,7 @@
  *              python -m SimpleHTTPServer 
  * to launch in chromium 
  * */
-$("#menu span").click(function() {
+$("#menu .choice").click(function() {
     var id = $(this).data('id');
     
     // clear engine if it contains something
@@ -114,4 +114,4 @@ $("#menu span").click(function() {
         scene.render();
     });
 });
-$("#menu span:first").click();
+$("#menu .choice:first").click();

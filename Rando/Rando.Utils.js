@@ -144,6 +144,8 @@ RANDO.Utils.angleFromAxis = function(A, B, axis){
             );
             
             angle = Math.acos(AH/AB);
+            //if (angle > Math.PI/2)
+                //angle = -((Math.PI/2)-angle)
             if (B.x < A.x)
                 return -angle;
             return angle;
@@ -211,7 +213,7 @@ RANDO.Utils.initCamera = function(scene){
     var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
     camera.checkCollisions = true;
     camera.maxZ = 10000;
-    camera.speed = 5;
+    camera.speed = 20;
     camera.keysUp = [90]; // Touche Z
     camera.keysDown = [83]; // Touche S
     camera.keysLeft = [81]; // Touche Q
@@ -230,7 +232,7 @@ RANDO.Utils.initCamera = function(scene){
  *  return the camera
  * */
 RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
-    var fpk = 10; // Time to go from a point to another (frame per key)
+    var fpk = 20; // Time to go from a point to another (frame per key)
     var fps = 30; // Frame per Second
     var d = 5 // Distance between the current point and the point watched
     scene.activeCamera.position.y += cam_z_off;
@@ -254,17 +256,31 @@ RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
     );
 
     // Arrays with all animation keys
-    var keys_rot = [];  
+    var keys_rot = []; 
     var keys_tr = [];  
     for (var i = 0; i < vertices.length-d; i+=d){
-        var a = vertices[i];
-        var b = vertices[i+d];
+        var a = vertices[i],
+            b = vertices[i+d],
+            alpha1, 
+            alpha2 = RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y);
+            
+        if(i!=0){
+            alpha1 = keys_rot[(i/d)-1].value;
+            // Correction of a particular case
+            if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
+                alpha2 = (2*Math.PI - Math.abs(alpha2));
+            }
+        }
+        
+        console.log("Vertice "+ i);
+        console.log(vertices[i], vertices[i+d])
+        console.log(alpha2*180/Math.PI);
         keys_rot.push({
-            frame:  i*fpk,
-            value:  RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y)
+            frame : (i/d)*fpk,
+            value : alpha2
         });
         keys_tr.push({
-            frame:  i*fpk,
+            frame:  (i/d)*fpk,
             value:  new BABYLON.Vector3(
                         a.x, 
                         a.y + cam_z_off,

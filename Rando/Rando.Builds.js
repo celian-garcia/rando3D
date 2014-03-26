@@ -92,6 +92,7 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         );
         
         // Current position of the camera : the first point
+        scene.activeCamera.rotation = new BABYLON.Vector3.Zero();
         var position = scene.activeCamera.position;
         // Target of the camera : the fourth point 
         var target = new BABYLON.Vector3(

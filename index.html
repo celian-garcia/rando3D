@@ -10,23 +10,49 @@
             height: 100%;
             padding: 0;
             margin: 0;
+            font-family: arial; 
         }
         canvas {
             display:block;
+        }
+        div {
+            border-radius: 3px;
         }
         #menu {
             position: absolute;
             top: 10px;
             left: 10px;
-            height: 100px;
-            width : 500px;
+            height: auto;
+            width: 400px;;
+            background-color: rgba(255,255,255, 0.8);
+            padding: 5px;
+            text-align: center;
+            font-size: 20px;
+            
         }
-        #menu span {
-            display: inline-block;
-            opacity: 0.8;
-            background-color: white;
+        #menu .choice {
+            float: left;
+            padding: 5px;
+            margin: 5px;
+            background-color: rgba(100,100,100, 0.8);
+            font-size: 18px;
+            color: white;
         }
-
+        
+        #infos {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            height: auto;
+            width : 300px;
+            background-color: rgba(255,255,255, 0.8);
+            padding : 5px;
+            
+        }
+        #infos span{
+            float: left;
+            width: 100%;
+        }
     </style>
     <script src="lib/jquery-1.9.1.js"></script>
     <!-- BABYLON-->
@@ -44,10 +70,17 @@
         <canvas id="canvas_renderer"></canvas>
     </div>
     <div id="menu">
-        <span data-id="903488">Le vallon de Vaccivier</span>
-        <span data-id="903469">Le refuge de la Lavey</span>
+        <span> <b>Choix du Modèle Numérique Terrain</b>  </span>
+        <span  data-id="903488" class = "choice">Le vallon de Vaccivier</span>
+        <span  data-id="903469" class = "choice">Le refuge de la Lavey</span>
     </div>
-
+    
+    <div id="infos">
+        <span><b>Q, Z, S, D </b>: se déplacer </span>
+        <span><b>Espace</b>: play/pause survol de la caméra </span>
+        <span><b>Entrée</b>: retour au départ </span>
+    </div>
+    
     <script src="index.js"></script>
  </body>
  
