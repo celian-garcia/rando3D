@@ -224,12 +224,12 @@ RANDO.Utils.initCamera = function(scene){
 
 /**
  *  animate_camera() : animation and controls of the camera 
- *      - troncon : array of points
+ *      - vertices : array of vertices
  *      - scene : the current scene
  * 
  *  return the camera
  * */
-RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
+RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
     var fpk = 10; // Time to go from a point to another (frame per key)
     var fps = 30; // Frame per Second
     var d = 5 // Distance between the current point and the point watched
@@ -256,17 +256,9 @@ RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
     // Arrays with all animation keys
     var keys_rot = [];  
     var keys_tr = [];  
-    for (var i = 0; i < troncon.length-d; i++){
-        var a = new BABYLON.Vector3(
-            troncon[i][0], 
-            troncon[i][2], 
-            troncon[i][1]
-        );
-        var b = new BABYLON.Vector3(
-            troncon[i+d][0], 
-            troncon[i+d][2], 
-            troncon[i+d][1]
-        );
+    for (var i = 0; i < vertices.length-d; i+=d){
+        var a = vertices[i];
+        var b = vertices[i+d];
         keys_rot.push({
             frame:  i*fpk,
             value:  RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y)
@@ -275,7 +267,7 @@ RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
             frame:  i*fpk,
             value:  new BABYLON.Vector3(
                         a.x, 
-                        a.y + z_offset + cam_z_off,
+                        a.y + cam_z_off,
                         a.z
                     )
         });
@@ -293,7 +285,7 @@ RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
     var pause = true;
     var begin = true;
     var curr;
-    var end = (troncon.length-d-1)*fpk;
+    var end = (vertices.length-d-1)*fpk;
     $(document).keyup(function (e) {
         var keyCode = e.keyCode;
         
@@ -316,20 +308,12 @@ RANDO.Utils.animateCamera = function(troncon, z_offset, cam_z_off, scene){
             scene.stopAnimation(scene.activeCamera);
             animCameraTrans.currentFrame = 0;
             scene.activeCamera.position = new BABYLON.Vector3(
-                troncon[0][0],
-                troncon[0][2]+ z_offset + cam_z_off, 
-                troncon[0][1]
+                vertices[0].x,
+                vertices[0].y + cam_z_off, 
+                vertices[0].z
             );
-            var a = new BABYLON.Vector3(
-                troncon[0][0], 
-                troncon[0][2], 
-                troncon[0][1]
-            );
-            var b = new BABYLON.Vector3(
-                troncon[d][0], 
-                troncon[d][2], 
-                troncon[d][1]
-            );
+            var a = vertices[0];
+            var b = vertices[d];
             scene.activeCamera.rotation.y = RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y);
         }
     });
@@ -362,15 +346,15 @@ RANDO.Utils.refreshPanels = function(number, scene){
  *      - extent     : object containing the four exrems point of the DEM
  * 
  */
-RANDO.Utils.getVertices = function(resolution, altitudes, extent){
+RANDO.Utils.getVerticesFromDEM = function(resolution, altitudes, extent){
     var vertices = [];
 
     // Create grid 
     var grid = RANDO.Utils.createGrid(
-        extent.northwest, 
-        extent.northeast, 
-        extent.southeast, 
         extent.southwest, 
+        extent.southeast, 
+        extent.northeast, 
+        extent.northwest, 
         resolution.x,
         resolution.y
     );
@@ -387,6 +371,28 @@ RANDO.Utils.getVertices = function(resolution, altitudes, extent){
     }
 
     return vertices ;
+}
+
+RANDO.Utils.getVerticesFromProfile = function(profile){
+    var vertices =  [];
+    
+    for (it in profile){
+        var tmp = {
+            'lat' : profile[it][2][1],
+            'lng' : profile[it][2][0]
+        }
+        tmp = RANDO.Utils.toMeters(tmp);
+        tmp.z = tmp.y;
+        tmp.y = profile[it][1]
+        var vertex = new BABYLON.Vector3(
+            tmp.x,
+            tmp.y,
+            tmp.z
+        );
+        vertices.push(vertex);
+    }
+    
+    return vertices;
 }
 
 /**
@@ -561,4 +567,15 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     dem.extent.southwest.x += dx;
     dem.extent.southwest.y += dz;
     return dem;
+}
+
+RANDO.Utils.translateRoute = function(vertices, dx, dy, dz){
+    for (it in vertices){
+        vertices[it].x += dx;
+        vertices[it].y += dy;
+        vertices[it].z += dz;
+        //console.log(vertices[it].x);
+    }
+    
+    return vertices;
 }

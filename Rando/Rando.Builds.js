@@ -15,7 +15,7 @@ RANDO.Builds = {};
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
  */
-RANDO.Builds.buildZone = function(scene, data, texture, cam_b){
+RANDO.Builds.zone = function(scene, data, texture, cam_b){
     if(typeof(cam_b)==='undefined') texture = null;
     if(typeof(cam_b)==='undefined') cam_b = true;
     
@@ -65,16 +65,14 @@ RANDO.Builds.buildZone = function(scene, data, texture, cam_b){
 /**
  * buildRoute() : build a troncon from an array of point
  *      - scene (BABYLON.Scene) : current scene
- *      - troncon     : array of points
- *      - center      : coordinates of the center
- *      - z_offset    : the vertical offset of the troncon
+ *      - vertices     : array of vertices
  *      - cam_b (bool): settings of camera **optionnal**
  *      - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
  *      - sph_b (bool): using of sphere meshes **optionnal**
  *      - cyl_b (bool): using of cylinder meshes **optionnal**
  *      - pan_b (bool): using of panel meshes to display informations **optionnal**
  */
-RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin_b, sph_b, cyl_b, pan_b ){
+RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(cam_b)==='undefined') cam_b = true;
     if(typeof(lin_b)==='undefined') lin_b = false;
     if(typeof(sph_b)==='undefined') sph_b = true;
@@ -87,25 +85,17 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
     // Camera 
     if (cam_b){
         var cam_z_off = 30;
-        scene.activeCamera.position = new BABYLON.Vector3(
-            troncon[0][0], 
-            troncon[0][2] + z_offset, 
-            troncon[0][1]
-        );
+        scene.activeCamera.position = vertices[0];
         
         // Current position of the camera : the first point
         var position = scene.activeCamera.position;
         // Target of the camera : the fourth point 
-        var target = new BABYLON.Vector3(
-            troncon[1][0], 
-            troncon[1][2], 
-            troncon[1][1]
-        );
+        var target = vertices[1];
         // Rotation around the y axis
         var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
         scene.activeCamera.rotation.y = y;
         
-        RANDO.Utils.animateCamera(troncon, z_offset, cam_z_off, scene);
+        RANDO.Utils.animateCamera(vertices, cam_z_off, scene);
     }//------------------------------------------------------------------
     
     // With Cylinder meshes 
@@ -115,17 +105,9 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
         var cyl_material = new BABYLON.StandardMaterial("CylinderMaterial", scene);
         cyl_material.diffuseColor = new BABYLON.Color3(255,255,255);
         
-        for (var i = 0; i < troncon.length-1; i++){
-            var A = new BABYLON.Vector3(
-                troncon[i][0], 
-                troncon[i][2] + z_offset, 
-                troncon[i][1]
-            );
-            var B = new BABYLON.Vector3(
-                troncon[i+1][0], 
-                troncon[i+1][2] + z_offset, 
-                troncon[i+1][1]
-            );
+        for (var i = 0; i < vertices.length-1; i++){
+            var A = vertices[i];
+            var B = vertices[i+1];
             var cyl_height = BABYLON.Vector3.Distance(A,B);
                                 
             var cylinder = BABYLON.Mesh.CreateCylinder(
@@ -144,7 +126,7 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
     }//------------------------------------------------------------------
     
     // With "Line" meshes (kind of ribbon)
-    if (lin_b){
+    /*if (lin_b){
         // Troncon material
         var lin_material = new BABYLON.StandardMaterial("RibbonMaterial", scene);
         lin_material.backFaceCulling = false;
@@ -169,22 +151,18 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
         }
         line.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
         
-    }//------------------------------------------------------------------
+    }*///------------------------------------------------------------------
     
     // Spheres for each point
     if (sph_b){
         // Create Sphere
         var sph_diam = 1;
-        var i = 0;
         var sph_material = new BABYLON.StandardMaterial("SphereMaterial", scene);
         sph_material.diffuseColor = new BABYLON.Color3(255,255,255);
-        for(point in troncon){
-            i++;
-            var sphere = BABYLON.Mesh.CreateSphere("Sphere" + i, 5, sph_diam, scene);
+        for(it in vertices){
+            var sphere = BABYLON.Mesh.CreateSphere("Sphere" + it, 5, sph_diam, scene);
             sphere.material = material;
-            sphere.position.x = troncon[point][0];
-            sphere.position.y = troncon[point][2] + z_offset;
-            sphere.position.z = troncon[point][1];
+            sphere.position = vertices[it];
         }
     }//------------------------------------------------------------------
     
@@ -198,19 +176,12 @@ RANDO.Builds.buildRoute = function(scene, troncon, center, z_offset, cam_b,  lin
             'color'  : "red"
         }
         
-        var i = 0;
-        for(point in troncon){
-            i++;
+        for(it in vertices){
             var pan_material =  new BABYLON.StandardMaterial("Panel", scene);
             pan_material.backFaceSculling = false;
-            var x = troncon[point][0];
-            var y = troncon[point][2] + z_offset + pan_offset;
-            var z = troncon[point][1];
             var panel = BABYLON.Mesh.CreatePlane("Panel" + i, pan_size , scene);
             panel.material = pan_material;
-            panel.position.x = x;
-            panel.position.y = y;
-            panel.position.z = z;
+            panel.position = vertices[it];
             //panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
             
             var texture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);

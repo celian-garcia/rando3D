@@ -3,9 +3,9 @@
  *  VARIABLES   
  * 
  * */
-    var z_offset = 10;
+    var altitude_offset = 10;
     var b_zone =  true;
-    var b_troncon = false;
+    var b_troncon = true;
     
     
     // Get the Canvas element from our HTML 
@@ -20,13 +20,18 @@
  * */
 $("#menu span").click(function() {
     var id = $(this).data('id');
-    engine.clear(new BABYLON.Color4(255,255,255,0),true ,true );
     
+    // clear engine if it contains something
+    engine.clear(new BABYLON.Color4(255,255,255,0),true ,true );
     // Scene
     var scene = new BABYLON.Scene(engine);
     // Camera
     var camera = RANDO.Utils.initCamera(scene);
     camera.attachControl(canvas);
+    var translateXY = {
+        x : 0,
+        y : 0
+    };
     if (b_zone){
         // Getting data of DEM----------
         // make serve
@@ -42,9 +47,9 @@ $("#menu span").click(function() {
             console.log(data);
 
             var extent = RANDO.Utils.getExtent(data.extent);
-            var vertices = RANDO.Utils.getVertices(data.resolution, data.altitudes, extent);
+            var vertices = RANDO.Utils.getVerticesFromDEM(data.resolution, data.altitudes, extent);
             var resolution = data.resolution;
-            var center = RANDO.Utils.toMeters(data.center);
+            center = RANDO.Utils.toMeters(data.center);
             center.z = data.center.z;
             
             var dem = {
@@ -53,13 +58,14 @@ $("#menu span").click(function() {
                 "resolution": resolution,
                 "center"    : center
             };
-            
+            translateXY.x = -dem.center.x;
+            translateXY.y = -dem.center.y;
             
             RANDO.Utils.translateDEM(
                 dem, 
-                -dem.center.x, 
+                translateXY.x, 
                 dem.extent.altitudes.min, 
-                -dem.center.y
+                translateXY.y
             );
             
             console.log("MNT en sortie : prêt à être manipulé par BABYLON.js");
@@ -67,11 +73,36 @@ $("#menu span").click(function() {
             RANDO.Builds.cardinals(dem.extent, scene);
             
             // Zone 
-            RANDO.Builds.buildZone(scene, dem);
+            RANDO.Builds.zone(scene, dem);
                 
           }
         });//------------------------------------------------------------
     }
+    
+    if (b_troncon) {
+        // Getting data of TRONCON----------
+        //profile-pne-903488
+        var troncon;
+        var center;
+        $.ajax({
+            url: "./json/profile-pne-" + id + ".json",
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
+                
+                console.log(translateXY);
+                vertices = RANDO.Utils.translateRoute(
+                    vertices, 
+                    translateXY.x, 
+                     altitude_offset, 
+                    translateXY.y
+                );
+                //console.log(vertices);
+                RANDO.Builds.route(scene, vertices);
+            }
+        });//------------------------------------------------------------
+    }   
        
     // Once the scene is loaded, just register a render loop to render it
     engine.runRenderLoop(function () {
