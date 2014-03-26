@@ -85,12 +85,20 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
     // Camera 
     if (cam_b){
         var cam_z_off = 30;
-        scene.activeCamera.position = vertices[0];
+        scene.activeCamera.position = new BABYLON.Vector3(
+            vertices[0].x,
+            vertices[0].y,
+            vertices[0].z
+        );
         
         // Current position of the camera : the first point
         var position = scene.activeCamera.position;
         // Target of the camera : the fourth point 
-        var target = vertices[1];
+        var target = new BABYLON.Vector3(
+            vertices[1].x,
+            vertices[1].y,
+            vertices[1].z
+        );
         // Rotation around the y axis
         var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
         scene.activeCamera.rotation.y = y;
@@ -106,8 +114,16 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         cyl_material.diffuseColor = new BABYLON.Color3(255,255,255);
         
         for (var i = 0; i < vertices.length-1; i++){
-            var A = vertices[i];
-            var B = vertices[i+1];
+            var A = new BABYLON.Vector3(
+                vertices[i].x,
+                vertices[i].y,
+                vertices[i].z
+            );
+            var B = new BABYLON.Vector3(
+                vertices[i+1].x,
+                vertices[i+1].y,
+                vertices[i+1].z
+            );
             var cyl_height = BABYLON.Vector3.Distance(A,B);
                                 
             var cylinder = BABYLON.Mesh.CreateCylinder(
@@ -162,7 +178,11 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         for(it in vertices){
             var sphere = BABYLON.Mesh.CreateSphere("Sphere" + it, 5, sph_diam, scene);
             sphere.material = material;
-            sphere.position = vertices[it];
+            sphere.position = new BABYLON.Vector3(
+                vertices[it].x,
+                vertices[it].y,
+                vertices[it].z
+            );
         }
     }//------------------------------------------------------------------
     
@@ -174,14 +194,18 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         var pan_info = {
             'policy' : "bold 50px Arial",
             'color'  : "red"
-        }
-        
-        for(it in vertices){
+        };
+        var it =0;
+        var intervalID = window.setInterval(function(){
             var pan_material =  new BABYLON.StandardMaterial("Panel" + it, scene);
             pan_material.backFaceSculling = false;
             var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
             panel.material = pan_material;
-            panel.position = vertices[it];
+            panel.position = new BABYLON.Vector3(
+                vertices[it].x,
+                vertices[it].y,
+                vertices[it].z
+            );
             
             var texture = new BABYLON.DynamicTexture("dynamic texture" +it, 512, scene, true);
             panel.material.diffuseTexture = texture;
@@ -190,7 +214,13 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
                 50, 100, pan_info.policy, pan_info.color, 
                 null
             );
-        }
+            
+            if(it < vertices.length-1)
+                it++;
+            else 
+                window.clearInterval(intervalID);
+        }, 0);
+        
     }//------------------------------------------------------------------
 }
 

@@ -17,6 +17,11 @@
 /**
  *  Main function    
  * 
+ * 
+ * 
+ * TRICK : use the python module SimpleHTTPServer with the command :
+ *              python -m SimpleHTTPServer 
+ * to launch in chromium 
  * */
 $("#menu span").click(function() {
     var id = $(this).data('id');
@@ -38,7 +43,7 @@ $("#menu span").click(function() {
         // http://localhost:8000/api/trek/903488/dem.json
         // http://localhost:8000/api/trek/903488/profile.json
         $.ajax({
-          url:  "./json/dem-pne-" + id + ".json",
+          url:  "json/dem-pne-" + id + ".json",
           dataType: 'json',
           async: false,
           success: function(data) {
@@ -83,7 +88,7 @@ $("#menu span").click(function() {
         // Getting data of TRONCON----------
         //profile-pne-903488
         $.ajax({
-            url: "./json/profile-pne-" + id + ".json",
+            url: "json/profile-pne-" + id + ".json",
             dataType: 'json',
             async: false,
             success: function(data) {

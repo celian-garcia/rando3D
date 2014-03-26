@@ -211,7 +211,7 @@ RANDO.Utils.initCamera = function(scene){
     var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
     camera.checkCollisions = true;
     camera.maxZ = 10000;
-    camera.speed = 20;
+    camera.speed = 5;
     camera.keysUp = [90]; // Touche Z
     camera.keysDown = [83]; // Touche S
     camera.keysLeft = [81]; // Touche Q
@@ -384,12 +384,7 @@ RANDO.Utils.getVerticesFromProfile = function(profile){
         tmp = RANDO.Utils.toMeters(tmp);
         tmp.z = tmp.y;
         tmp.y = profile[it][1]
-        var vertex = new BABYLON.Vector3(
-            tmp.x,
-            tmp.y,
-            tmp.z
-        );
-        vertices.push(vertex);
+        vertices.push(tmp);
     }
     
     return vertices;
