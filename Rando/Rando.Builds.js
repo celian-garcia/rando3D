@@ -177,17 +177,16 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         }
         
         for(it in vertices){
-            var pan_material =  new BABYLON.StandardMaterial("Panel", scene);
+            var pan_material =  new BABYLON.StandardMaterial("Panel" + it, scene);
             pan_material.backFaceSculling = false;
-            var panel = BABYLON.Mesh.CreatePlane("Panel" + i, pan_size , scene);
+            var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
             panel.material = pan_material;
             panel.position = vertices[it];
-            //panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
             
-            var texture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
+            var texture = new BABYLON.DynamicTexture("dynamic texture" +it, 512, scene, true);
             panel.material.diffuseTexture = texture;
             texture.hasAlpha = true;
-            texture.drawText("Point "+ i+ " : "+ y +" m",
+            texture.drawText("Point "+ it+ " : "+ vertices[it].y +" m",
                 50, 100, pan_info.policy, pan_info.color, 
                 null
             );

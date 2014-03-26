@@ -78,12 +78,10 @@ $("#menu span").click(function() {
           }
         });//------------------------------------------------------------
     }
-    
+    var troncon_length;
     if (b_troncon) {
         // Getting data of TRONCON----------
         //profile-pne-903488
-        var troncon;
-        var center;
         $.ajax({
             url: "./json/profile-pne-" + id + ".json",
             dataType: 'json',
@@ -98,6 +96,7 @@ $("#menu span").click(function() {
                      altitude_offset, 
                     translateXY.y
                 );
+                troncon_length = vertices.length;
                 //console.log(vertices);
                 RANDO.Builds.route(scene, vertices);
             }
@@ -106,7 +105,7 @@ $("#menu span").click(function() {
        
     // Once the scene is loaded, just register a render loop to render it
     engine.runRenderLoop(function () {
-        //RANDO.Utils.refreshPanels(troncon.length, scene);
+        RANDO.Utils.refreshPanels(troncon_length, scene);
         scene.render();
     });
 });
