@@ -78,9 +78,9 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(cyl_b)==='undefined') cyl_b = true;
     if(typeof(pan_b)==='undefined') pan_b = false;
     
-    //var color = new BABYLON.Color3(0.8,0,0.2); // fuschia
+    var color = new BABYLON.Color3(0.8,0,0.2); // fuschia
     //var color = new BABYLON.Color3(0.1,0.6,0.2); // green
-    var color = new BABYLON.Color3(0.9,0.5,0); // orange
+    //var color = new BABYLON.Color3(0.9,0.5,0); // orange
     
     
     RANDO.Utils.animateCamera(vertices, scene);
