@@ -59,30 +59,29 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
     zone.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
     //console.log(zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).slice(18500, vertices.length-2));
     // Light
-    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 1000, 0), scene);
+    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
 }
 
 /**
- * buildRoute() : build a troncon from an array of point
- *      - scene (BABYLON.Scene) : current scene
- *      - vertices     : array of vertices
- *      - cam_b (bool): settings of camera **optionnal**
- *      - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
- *      - sph_b (bool): using of sphere meshes **optionnal**
- *      - cyl_b (bool): using of cylinder meshes **optionnal**
- *      - pan_b (bool): using of panel meshes to display informations **optionnal**
- */
-RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_b ){
+* buildRoute() : build a troncon from an array of point
+* - scene (BABYLON.Scene) : current scene
+* - vertices : array of vertices
+* - cam_b (bool): settings of camera **optionnal**
+* - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
+* - sph_b (bool): using of sphere meshes **optionnal**
+* - cyl_b (bool): using of cylinder meshes **optionnal**
+* - pan_b (bool): using of panel meshes to display informations **optionnal**
+*/
+RANDO.Builds.route = function(scene, vertices, cam_b, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(cam_b)==='undefined') cam_b = true;
     if(typeof(lin_b)==='undefined') lin_b = false;
     if(typeof(sph_b)==='undefined') sph_b = true;
     if(typeof(cyl_b)==='undefined') cyl_b = true;
     if(typeof(pan_b)==='undefined') pan_b = true;
     
-    var material =  new BABYLON.StandardMaterial("PathMaterial", scene);
-    material.diffuseColor = new BABYLON.Color3(212,97,56);
-    
-    // Camera 
+    //var color = new BABYLON.Color3(0.8,0,0.2); // fuschia
+    //var color = new BABYLON.Color3(0.1,0.6,0.2); // green
+    var color = new BABYLON.Color3(0.9,0.5,0); // orange
     if (cam_b){
         var cam_z_off = 30;
         scene.activeCamera.position = new BABYLON.Vector3(
@@ -94,7 +93,7 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         // Current position of the camera : the first point
         scene.activeCamera.rotation = new BABYLON.Vector3.Zero();
         var position = scene.activeCamera.position;
-        // Target of the camera : the fourth point 
+        // Target of the camera : the fourth point
         var target = new BABYLON.Vector3(
             vertices[1].x,
             vertices[1].y,
@@ -107,12 +106,14 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         RANDO.Utils.animateCamera(vertices, cam_z_off, scene);
     }//------------------------------------------------------------------
     
-    // With Cylinder meshes 
-    if (cyl_b){ 
+    // With Cylinder meshes
+    if (cyl_b){
         var cyl_diameter = 1;
         var cyl_tessel = 10;
         var cyl_material = new BABYLON.StandardMaterial("CylinderMaterial", scene);
-        cyl_material.diffuseColor = new BABYLON.Color3(255,255,255);
+        cyl_material.diffuseColor = color;
+        //cyl_material.ambientColor = color;
+        //cyl_material.specularColor = color;
         
         for (var i = 0; i < vertices.length-1; i++){
             var A = new BABYLON.Vector3(
@@ -128,11 +129,11 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
             var cyl_height = BABYLON.Vector3.Distance(A,B);
                                 
             var cylinder = BABYLON.Mesh.CreateCylinder(
-                "Cylinder" + (i+1), 
-                cyl_height, 
-                cyl_diameter, 
-                cyl_diameter, 
-                cyl_tessel, 
+                "Cylinder" + (i+1),
+                cyl_height,
+                cyl_diameter,
+                cyl_diameter,
+                cyl_tessel,
                 scene
             );
             cylinder.material = cyl_material;
@@ -144,41 +145,38 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
     
     // With "Line" meshes (kind of ribbon)
     /*if (lin_b){
-        // Troncon material
-        var lin_material = new BABYLON.StandardMaterial("RibbonMaterial", scene);
-        lin_material.backFaceCulling = false;
-        lin_material.diffuseColor = new BABYLON.Color3(255,255,255);
-        
-        // Create troncon
-        var line = createGround("Line", 10, 10, troncon.length-1, 1, scene);
-        line.material = lin_material;
-        
-        // Get and Set vertices
-        var vertices = [];
-        var lin_strength = 0.2;
-        for(point in troncon){
-            vertices.push(troncon[point][0]);
-            vertices.push(troncon[point][2] + z_offset);
-            vertices.push(troncon[point][1] - lin_strength/2);
-        }
-        for(point in troncon){
-            vertices.push(troncon[point][0]);
-            vertices.push(troncon[point][2] + z_offset);
-            vertices.push(troncon[point][1] + lin_strength/2);
-        }
-        line.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-        
-    }*///------------------------------------------------------------------
+// Troncon material
+var lin_material = new BABYLON.StandardMaterial("RibbonMaterial", scene);
+lin_material.backFaceCulling = false;
+lin_material.diffuseColor = new BABYLON.Color3(255,255,255);
+// Create troncon
+var line = createGround("Line", 10, 10, troncon.length-1, 1, scene);
+line.material = lin_material;
+// Get and Set vertices
+var vertices = [];
+var lin_strength = 0.2;
+for(point in troncon){
+vertices.push(troncon[point][0]);
+vertices.push(troncon[point][2] + z_offset);
+vertices.push(troncon[point][1] - lin_strength/2);
+}
+for(point in troncon){
+vertices.push(troncon[point][0]);
+vertices.push(troncon[point][2] + z_offset);
+vertices.push(troncon[point][1] + lin_strength/2);
+}
+line.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+}*///------------------------------------------------------------------
     
     // Spheres for each point
     if (sph_b){
         // Create Sphere
         var sph_diam = 1;
         var sph_material = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        sph_material.diffuseColor = new BABYLON.Color3(255,255,255);
+        sph_material.diffuseColor = color;
         for(it in vertices){
             var sphere = BABYLON.Mesh.CreateSphere("Sphere" + it, 5, sph_diam, scene);
-            sphere.material = material;
+            sphere.material = sph_material;
             sphere.position = new BABYLON.Vector3(
                 vertices[it].x,
                 vertices[it].y,
@@ -187,18 +185,18 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
         }
     }//------------------------------------------------------------------
     
-    // Panel for each point which indicates infos about point 
+    // Panel for each point which indicates infos about point
     if (pan_b){
         // Create Panel
         var pan_offset = 3;
         var pan_size = 10;
         var pan_info = {
             'policy' : "bold 50px Arial",
-            'color'  : "red"
+            'color' : "red"
         };
         var it =0;
         var intervalID = window.setInterval(function(){
-            var pan_material =  new BABYLON.StandardMaterial("Panel" + it, scene);
+            var pan_material = new BABYLON.StandardMaterial("Panel" + it, scene);
             pan_material.backFaceSculling = false;
             var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
             panel.material = pan_material;
@@ -212,18 +210,20 @@ RANDO.Builds.route = function(scene, vertices, cam_b,  lin_b, sph_b, cyl_b, pan_
             panel.material.diffuseTexture = texture;
             texture.hasAlpha = true;
             texture.drawText("Point "+ it+ " : "+ vertices[it].y +" m",
-                50, 100, pan_info.policy, pan_info.color, 
+                50, 100, pan_info.policy, pan_info.color,
                 null
             );
             
             if(it < vertices.length-1)
                 it++;
-            else 
+            else
                 window.clearInterval(intervalID);
         }, 0);
         
     }//------------------------------------------------------------------
 }
+
+
 
 /**
  * cardinals() : build the NW, NE, SE and SW extrems points of the DEM with spheres

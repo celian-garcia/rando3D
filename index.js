@@ -75,7 +75,7 @@ $("#menu .choice").click(function() {
             
             console.log("MNT en sortie : prêt à être manipulé par BABYLON.js");
             console.log(dem);
-            RANDO.Builds.cardinals(dem.extent, scene);
+            //RANDO.Builds.cardinals(dem.extent, scene);
             
             // Zone 
             RANDO.Builds.zone(scene, dem);

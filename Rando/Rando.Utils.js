@@ -218,7 +218,7 @@ RANDO.Utils.initCamera = function(scene){
     camera.keysDown = [83]; // Touche S
     camera.keysLeft = [81]; // Touche Q
     camera.keysRight = [68]; // Touche D
-    var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,0,0), scene)
+    var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
     l_cam.intensity = 0.8;
     l_cam.parent = camera;
     return camera;
