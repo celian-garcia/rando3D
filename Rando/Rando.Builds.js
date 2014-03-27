@@ -72,8 +72,7 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
 * - cyl_b (bool): using of cylinder meshes **optionnal**
 * - pan_b (bool): using of panel meshes to display informations **optionnal**
 */
-RANDO.Builds.route = function(scene, vertices, cam_b, lin_b, sph_b, cyl_b, pan_b ){
-    if(typeof(cam_b)==='undefined') cam_b = true;
+RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(lin_b)==='undefined') lin_b = false;
     if(typeof(sph_b)==='undefined') sph_b = true;
     if(typeof(cyl_b)==='undefined') cyl_b = true;
@@ -82,30 +81,9 @@ RANDO.Builds.route = function(scene, vertices, cam_b, lin_b, sph_b, cyl_b, pan_b
     //var color = new BABYLON.Color3(0.8,0,0.2); // fuschia
     //var color = new BABYLON.Color3(0.1,0.6,0.2); // green
     var color = new BABYLON.Color3(0.9,0.5,0); // orange
-    if (cam_b){
-        var cam_z_off = 30;
-        scene.activeCamera.position = new BABYLON.Vector3(
-            vertices[0].x,
-            vertices[0].y,
-            vertices[0].z
-        );
-        
-        // Current position of the camera : the first point
-        scene.activeCamera.rotation = new BABYLON.Vector3.Zero();
-        var position = scene.activeCamera.position;
-        // Target of the camera : the fourth point
-        var target = new BABYLON.Vector3(
-            vertices[1].x,
-            vertices[1].y,
-            vertices[1].z
-        );
-        // Rotation around the y axis
-        var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
-        scene.activeCamera.rotation.y = y;
-        
-        RANDO.Utils.animateCamera(vertices, cam_z_off, scene);
-    }//------------------------------------------------------------------
     
+    
+    RANDO.Utils.animateCamera(vertices, scene);
     // With Cylinder meshes
     if (cyl_b){
         var cyl_diameter = 1;
@@ -222,8 +200,6 @@ line.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
         
     }//------------------------------------------------------------------
 }
-
-
 
 /**
  * cardinals() : build the NW, NE, SE and SW extrems points of the DEM with spheres

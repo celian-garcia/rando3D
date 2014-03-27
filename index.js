@@ -13,7 +13,7 @@
     // Load BABYLON 3D engine
     var engine = new BABYLON.Engine(canvas, true);
     
-    
+    var _CAM_OFFSET = 30;
 /**
  *  Main function    
  * 

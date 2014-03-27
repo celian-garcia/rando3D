@@ -224,6 +224,21 @@ RANDO.Utils.initCamera = function(scene){
     return camera;
 }
 
+RANDO.Utils.placeCamera = function(position, target, scene){
+    
+    // Set camera position 
+    scene.activeCamera.position = new BABYLON.Vector3(
+        position.x,
+        position.y + _CAM_OFFSET,
+        position.z
+    );
+    
+    // Set camera rotation
+    var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
+    scene.activeCamera.rotation = new BABYLON.Vector3( 0, y, 0);
+
+}
+
 /**
  *  animate_camera() : animation and controls of the camera 
  *      - vertices : array of vertices
@@ -231,11 +246,11 @@ RANDO.Utils.initCamera = function(scene){
  * 
  *  return the camera
  * */
-RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
+RANDO.Utils.animateCamera = function(vertices, scene){
     var fpk = 20; // Time to go from a point to another (frame per key)
     var fps = 30; // Frame per Second
     var d = 5 // Distance between the current point and the point watched
-    scene.activeCamera.position.y += cam_z_off;
+    scene.activeCamera.position.y += _CAM_OFFSET;
     
     // Init rotation animation
     var animCameraRot = new BABYLON.Animation(
@@ -258,6 +273,7 @@ RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
     // Arrays with all animation keys
     var keys_rot = []; 
     var keys_tr = [];  
+    
     for (var i = 0; i < vertices.length-d; i+=d){
         var a = vertices[i],
             b = vertices[i+d],
@@ -272,9 +288,6 @@ RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
             }
         }
         
-        console.log("Vertice "+ i);
-        console.log(vertices[i], vertices[i+d])
-        console.log(alpha2*180/Math.PI);
         keys_rot.push({
             frame : (i/d)*fpk,
             value : alpha2
@@ -283,7 +296,7 @@ RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
             frame:  (i/d)*fpk,
             value:  new BABYLON.Vector3(
                         a.x, 
-                        a.y + cam_z_off,
+                        a.y + _CAM_OFFSET,
                         a.z
                     )
         });
@@ -297,42 +310,48 @@ RANDO.Utils.animateCamera = function(vertices, cam_z_off, scene){
     scene.activeCamera.animations.push(animCameraRot);
     scene.activeCamera.animations.push(animCameraTrans);
     
-    
-    var pause = true;
-    var begin = true;
-    var curr;
-    var end = (vertices.length-d-1)*fpk;
-    $(document).keyup(function (e) {
-        var keyCode = e.keyCode;
+    var pause = true, 
+        begin = true,
+        currentFrame, 
+        endingFrame = (vertices.length-d-1)*fpk,
+        firstVertex = vertices[0],
+        secondVertex = vertices[d];
         
+    $(document).keyup(function(e){
+        var keyCode = e.keyCode;
+
         if (keyCode == 32){   
             if (begin){
-                curr = 0;
+                currentFrame = 0;
+                RANDO.Utils.placeCamera(firstVertex, secondVertex, scene);
                 begin = false;
             }else
-                curr = animCameraTrans.currentFrame;
-            if (curr != end){
+                currentFrame = animCameraTrans.currentFrame;
+            if (currentFrame != endingFrame){
                 pause = !pause;
                 if (pause) 
                     scene.stopAnimation(scene.activeCamera);
                 else 
-                    scene.beginAnimation(scene.activeCamera, curr, end, false);
+                    scene.beginAnimation(scene.activeCamera, currentFrame, endingFrame, false);
             }
         }
             
         if (keyCode == 13){
+            if(!pause)
+                pause = !pause;
             scene.stopAnimation(scene.activeCamera);
             animCameraTrans.currentFrame = 0;
-            scene.activeCamera.position = new BABYLON.Vector3(
-                vertices[0].x,
-                vertices[0].y + cam_z_off, 
-                vertices[0].z
-            );
-            var a = vertices[0];
-            var b = vertices[d];
-            scene.activeCamera.rotation.y = RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y);
+
+            RANDO.Utils.placeCamera(firstVertex, secondVertex, scene);
         }
+    
     });
+    
+}
+
+RANDO.Utils.controlAnim = function(e, first, second, length, scene){
+        
+        
     
 }
 
