@@ -93,6 +93,115 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
     return cylinder;
 }
 
+
+
+/****    MATH     ************************/
+/**
+ * subdivide() :  interpolate a segment between 2 points A and B 
+ *      - n : number of points expected in result
+ *      - A : first point 
+ *      - B : second point
+ * 
+ * return an array of point 
+ * 
+ * NB : points are in the format : { x : .. , y : .. } 
+ * 
+ * 
+ * example :
+ * 
+ *         * B                   * B
+ *        /                     /
+ *       /      n = 4          * M2
+ *      /      ---->          /
+ *     /                     * M1
+ *    /                     /
+ * A *                    A* 
+ * 
+ *          result : [A, M1, M2, B]
+ * 
+ */
+RANDO.Utils.subdivide = function(n, A, B){
+    
+    if (n<=0) return null;
+    
+    if (n==1) return A;
+
+    if (n==2) return [A,B];
+    
+    if (n>=3) {
+        var dx = (B.x-A.x)/(n-1);
+        var dy = (B.y-A.y)/(n-1);
+        
+        var x = A.x;
+        var y = A.y;
+        
+        var res = [];
+        res.push(A);
+        for (var i=0; i<n-2; i++){
+            x += dx;
+            y += dy;
+            res.push({
+                x : x,
+                y : y 
+            });
+        }
+        res.push(B);
+        return res;
+    } 
+}
+
+/**
+ * createGrid() : create a grid of points for all type of quadrilateres, in particular
+ *  these which are not square or rectangle.
+ *      - A, B, C, D :  vertices of quadrilatere to subdivide
+ *      - n_verti :     number of points in vertical size
+ *      - n_horiz :     number of points in horizontal size
+ * 
+ * 
+ * NB : * n_verti and n_horiz cannot be invert
+ *      * the order of input points is also important, it determines 
+ * the order of output points : 
+ *  [A, ...., B,    -> first line
+ *   ..........,
+ *   D, ...., C]    -> last line
+ * 
+ * 
+ * Example of quadrilatere :
+ * A *------------------* B
+ *   |                   \
+ *   |                    \
+ *   |                     \
+ *   |                      \
+ *   |                       \
+ *   |                        \
+ * D *-------------------------* C
+ * 
+ */
+RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
+    if(n_verti<=0) return null;
+    if(n_horiz<=0) return null;
+
+    // subdivide both sides of the quad
+    var west_side = RANDO.Utils.subdivide(n_verti, A, D);
+    var east_side = RANDO.Utils.subdivide(n_verti, B, C);
+    var grid = [];
+    console.assert(west_side.length == east_side.length, 
+        "createGrid : west_side.length != east_side.length \n" +
+        west_side.length + 
+        " != " + 
+        east_side.length 
+    );
+    
+    
+    for (var j=0; j < n_verti; j++){
+        // subidivide lines
+        var line = RANDO.Utils.subdivide(n_horiz, west_side[j], east_side[j]);
+        grid.push(line);
+    }
+    return grid;
+
+}
+
 /**
  * angleFromAxis(): get an angle for a rotation 
  *      - A     (BABYLON.Vector3) : First point 
@@ -203,6 +312,8 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
     return angle;
 }
 
+
+/****    CAMERA     ************************/
 /**
  *  init_camera() : initialize main parameters of camera    
  *      - scene : the current scene
@@ -256,102 +367,18 @@ RANDO.Utils.placeCamera = function(camera, position, target, no_offset){
  *  return the camera
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
-    var fpk = 20; // Time to go from a point to another (frame per key)
-    var fps = 30; // Frame per Second
+    
     var d = 5 // Distance between the current point and the point watched
-    scene.activeCamera.position.y += _CAM_OFFSET;
-    
-    // Init rotation animation
-    var animCameraRot = new BABYLON.Animation(
-        "anim_cam_ry",
-        "rotation.y",
-        fps,
-        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CONST
-    );
-    
-    // Init translation animation
-    var animCameraTrans = new BABYLON.Animation(
-        "anim_cam_tr",
-        "position",
-        fps,
-        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CONST
-    );
-
-    // Arrays with all animation keys
-    var keys_rot = []; 
-    var keys_tr = [];  
-    
-    for (var i = 0; i < vertices.length-d; i+=d){
-        var a = vertices[i],
-            b = vertices[i+d],
-            alpha1, 
-            alpha2 = RANDO.Utils.angleFromAxis(a, b, BABYLON.Axis.Y);
-            
-        if(i!=0){
-            alpha1 = keys_rot[(i/d)-1].value;
-            // Correction of a particular case
-            if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
-                alpha2 = (2*Math.PI - Math.abs(alpha2));
-            }
-        }
-        
-        keys_rot.push({
-            frame : (i/d)*fpk,
-            value : alpha2
-        });
-        keys_tr.push({
-            frame:  (i/d)*fpk,
-            value:  new BABYLON.Vector3(
-                        a.x, 
-                        a.y + _CAM_OFFSET,
-                        a.z
-                    )
-        });
-    }
-       
-    // Setting keys of both animations
-    animCameraRot.setKeys(keys_rot);
-    animCameraTrans.setKeys(keys_tr);
-    
-    // Push animations in the animation's array of camera
-    scene.activeCamera.animations.push(animCameraRot);
-    scene.activeCamera.animations.push(animCameraTrans);
-    
-    var pause = true, 
-        begin = true,
-        currentFrame, 
-        endingFrame = (vertices.length-d-1)*fpk,
-        firstVertex = vertices[0],
-        secondVertex = vertices[d];
         
     $(document).keyup(function(e){
         var keyCode = e.keyCode;
 
         if (keyCode == 32){   
-            if (begin){
-                currentFrame = 0;
-                RANDO.Utils.placeCamera(scene.activeCamera, firstVertex, secondVertex);
-                begin = false;
-            }else
-                currentFrame = animCameraTrans.currentFrame;
-            if (currentFrame != endingFrame){
-                pause = !pause;
-                if (pause) 
-                    scene.stopAnimation(scene.activeCamera);
-                else 
-                    scene.beginAnimation(scene.activeCamera, currentFrame, endingFrame, false);
-            }
+        
         }
             
         if (keyCode == 13){
-            if(!pause)
-                pause = !pause;
-            scene.stopAnimation(scene.activeCamera);
-            animCameraTrans.currentFrame = 0;
-
-            RANDO.Utils.placeCamera(scene.activeCamera, firstVertex, secondVertex);
+          
         }
     
     });
@@ -377,6 +404,9 @@ RANDO.Utils.refreshPanels = function(number, scene){
     return 1;
 }
 
+
+
+/****    GETTERS     ************************/
 /**
  * getVertices() : get DEM vertices in a format which can be understood by the DEM builder
  *      - resolution : number of points along x and y 
@@ -449,112 +479,6 @@ RANDO.Utils.getExtent = function(extent){
 }
 
 /**
- * subdivide() :  interpolate a segment between 2 points A and B 
- *      - n : number of points expected in result
- *      - A : first point 
- *      - B : second point
- * 
- * return an array of point 
- * 
- * NB : points are in the format : { x : .. , y : .. } 
- * 
- * 
- * example :
- * 
- *         * B                   * B
- *        /                     /
- *       /      n = 4          * M2
- *      /      ---->          /
- *     /                     * M1
- *    /                     /
- * A *                    A* 
- * 
- *          result : [A, M1, M2, B]
- * 
- */
-RANDO.Utils.subdivide = function(n, A, B){
-    
-    if (n<=0) return null;
-    
-    if (n==1) return A;
-
-    if (n==2) return [A,B];
-    
-    if (n>=3) {
-        var dx = (B.x-A.x)/(n-1);
-        var dy = (B.y-A.y)/(n-1);
-        
-        var x = A.x;
-        var y = A.y;
-        
-        var res = [];
-        res.push(A);
-        for (var i=0; i<n-2; i++){
-            x += dx;
-            y += dy;
-            res.push({
-                x : x,
-                y : y 
-            });
-        }
-        res.push(B);
-        return res;
-    } 
-}
-
-/**
- * createGrid() : create a grid of points for all type of quadrilateres, in particular
- *  these which are not square or rectangle.
- *      - A, B, C, D :  vertices of quadrilatere to subdivide
- *      - n_verti :     number of points in vertical size
- *      - n_horiz :     number of points in horizontal size
- * 
- * 
- * NB : * n_verti and n_horiz cannot be invert
- *      * the order of input points is also important, it determines 
- * the order of output points : 
- *  [A, ...., B,    -> first line
- *   ..........,
- *   D, ...., C]    -> last line
- * 
- * 
- * Example of quadrilatere :
- * A *------------------* B
- *   |                   \
- *   |                    \
- *   |                     \
- *   |                      \
- *   |                       \
- *   |                        \
- * D *-------------------------* C
- * 
- */
-RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
-    if(n_verti<=0) return null;
-    if(n_horiz<=0) return null;
-
-    // subdivide both sides of the quad
-    var west_side = RANDO.Utils.subdivide(n_verti, A, D);
-    var east_side = RANDO.Utils.subdivide(n_verti, B, C);
-    var grid = [];
-    console.assert(west_side.length == east_side.length, 
-        "createGrid : west_side.length != east_side.length \n" +
-        west_side.length + 
-        " != " + 
-        east_side.length 
-    );
-    
-    
-    for (var j=0; j < n_verti; j++){
-        // subidivide lines
-        var line = RANDO.Utils.subdivide(n_horiz, west_side[j], east_side[j]);
-        grid.push(line);
-    }
-    return grid;
-
-}
-
-/**
  * toMeters() : transform a point in latitude/longitude to x/y meters coordinates
  *      - latlng : point in lat/lng 
  * 
@@ -576,6 +500,8 @@ RANDO.Utils.toMeters = function(latlng){
     };
 }
 
+
+/****    TRANSLATIONS     ************************/
 /**
  * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
