@@ -54,9 +54,14 @@ $("#menu .choice").click(function() {
             var extent = RANDO.Utils.getExtent(data.extent);
             var vertices = RANDO.Utils.getVerticesFromDEM(data.resolution, data.altitudes, extent);
             var resolution = data.resolution;
-            center = RANDO.Utils.toMeters(data.center);
-            center.z = data.center.z;
+            var ll_center = RANDO.Utils.toMeters(data.center);
+            var center = {
+                x: ll_center.x,
+                y: data.center.z,
+                z: ll_center.y
+            };
             
+            console.log(center);
             var dem = {
                 "extent"    : extent,
                 "vertices"  : vertices,
@@ -64,7 +69,7 @@ $("#menu .choice").click(function() {
                 "center"    : center
             };
             translateXY.x = -dem.center.x;
-            translateXY.y = -dem.center.y;
+            translateXY.y = -dem.center.z;
             
             RANDO.Utils.translateDEM(
                 dem, 

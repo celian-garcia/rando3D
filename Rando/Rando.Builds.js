@@ -28,8 +28,8 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
         scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
         scene.activeCamera.position = new BABYLON.Vector3(
             center.x-2000, 
-            center.z+2000, 
-            center.y-1500
+            center.y+500, 
+            center.z-1500
         );
     }
     // Material

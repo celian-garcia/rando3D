@@ -592,7 +592,8 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
         dem.vertices[i+2] += dz;
     }
     dem.center.x += dx;
-    dem.center.y += dz;
+    dem.center.y += dy;
+    dem.center.z += dz;
     
     dem.extent.northwest.x += dx;
     dem.extent.northwest.y += dz;

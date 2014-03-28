@@ -208,36 +208,37 @@ describe('Rando3D', function() {
     
     describe('Translations', function() {
         describe('DEM', function() {
-            var extent = {
-                northwest : {x:  5, y: -5},
-                northeast : {x:  5, y:  5},
-                southeast : {x: -5, y:  5},
-                southwest : {x: -5, y: -5},
-                altitudes : {max: 10, min: 0 }
-            };
-            var vertices = [
-                -5, Math.random()*10, -5,
-                 0, Math.random()*10, -5,
-                 5, Math.random()*10, -5,
-                -5, Math.random()*10,  0,
-                 0, Math.random()*10,  0,
-                 5, Math.random()*10,  0,
-                -5, Math.random()*10,  5,
-                 0, Math.random()*10,  5,
-                 5, Math.random()*10,  5
-            ];
-            var center = {
-                x: 0,
-                y: 0,
-                z: 0
-            };
-            var dem = {
-                "extent"    : extent,
-                "vertices"  : vertices,
-                "center"    : center,
-                "toto"      : "toto"
-            };
+            
             it("should translate the DEM extent  ", function(done) {
+                var extent = {
+                    northwest : {x:  5, y: -5},
+                    northeast : {x:  5, y:  5},
+                    southeast : {x: -5, y:  5},
+                    southwest : {x: -5, y: -5},
+                    altitudes : {max: 10, min: 0 }
+                };
+                var vertices = [
+                    -5, Math.random()*10, -5,
+                     0, Math.random()*10, -5,
+                     5, Math.random()*10, -5,
+                    -5, Math.random()*10,  0,
+                     0, Math.random()*10,  0,
+                     5, Math.random()*10,  0,
+                    -5, Math.random()*10,  5,
+                     0, Math.random()*10,  5,
+                     5, Math.random()*10,  5
+                ];
+                var center = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+                var dem = {
+                    "extent"    : extent,
+                    "vertices"  : vertices,
+                    "center"    : center,
+                    "toto"      : "toto"
+                };
                 var tr_extent = {
                     northwest : {x: 15, y:  5},
                     northeast : {x: 15, y: 15},
@@ -246,6 +247,45 @@ describe('Rando3D', function() {
                     altitudes : {max: 20, min: 10 }
                 };
                 assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).extent, tr_extent);
+                done();
+            });
+            
+            it("should translate the DEM center  ", function(done) {
+                var extent = {
+                    northwest : {x:  5, y: -5},
+                    northeast : {x:  5, y:  5},
+                    southeast : {x: -5, y:  5},
+                    southwest : {x: -5, y: -5},
+                    altitudes : {max: 10, min: 0 }
+                };
+                var vertices = [
+                    -5, Math.random()*10, -5,
+                     0, Math.random()*10, -5,
+                     5, Math.random()*10, -5,
+                    -5, Math.random()*10,  0,
+                     0, Math.random()*10,  0,
+                     5, Math.random()*10,  0,
+                    -5, Math.random()*10,  5,
+                     0, Math.random()*10,  5,
+                     5, Math.random()*10,  5
+                ];
+                var center = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+                var dem = {
+                    "extent"    : extent,
+                    "vertices"  : vertices,
+                    "center"    : center,
+                    "toto"      : "toto"
+                };
+                var tr_center = {
+                    x: 10,
+                    y: 10,
+                    z: 10
+                };
+                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).center, tr_center);
                 done();
             });
         });
