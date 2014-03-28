@@ -344,19 +344,24 @@ RANDO.Utils.initCamera = function(scene){
  *      - no_offset : boolean which determines if we give an y-offset to the camera or not
  * 
  */
-RANDO.Utils.placeCamera = function(camera, position, target, no_offset){
+RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
     var y_offset = 0;
     if (typeof(no_offset)==="undefined") y_offset = _CAM_OFFSET;
-    // Set camera position 
-    camera.position = new BABYLON.Vector3(
-        position.x,
-        position.y + y_offset,
-        position.z
-    );
-    
-    // Set camera rotation
-    var y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
-    camera.rotation = new BABYLON.Vector3(0, y, 0);
+   
+    var start_pos = position;
+    var start_rot_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
+    TweenLite.to(camera.position, 2, { 
+        x: start_pos.x, 
+        y: start_pos.y + y_offset,
+        z: start_pos.z,
+        ease: 'ease-in'
+    });
+    TweenLite.to(camera.rotation, 2, { 
+        x: 0,
+        y: start_rot_y, 
+        z: 0,
+        ease: 'ease-in' 
+    });
 }
 
 /**
@@ -369,16 +374,27 @@ RANDO.Utils.placeCamera = function(camera, position, target, no_offset){
 RANDO.Utils.animateCamera = function(vertices, scene){
     
     var d = 5 // Distance between the current point and the point watched
-        
+    var b_start = false;
     $(document).keyup(function(e){
         var keyCode = e.keyCode;
 
         if (keyCode == 32){   
-        
+            /*if(b_start){
+                for (it in vertices.slice(1, vertices.length)){
+                    var next_pos = vertices[it];
+                    TweenLite.to(scene.activeCamera.position, 2, { 
+                        x: next_pos.x, 
+                        y: next_pos.y + _CAM_OFFSET,
+                        z: next_pos.z,
+                        ease: 'ease-in' 
+                    });
+                }
+            }*/
         }
             
         if (keyCode == 13){
-          
+            RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[1]);
+            b_start = true;
         }
     
     });
