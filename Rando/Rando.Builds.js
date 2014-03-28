@@ -76,7 +76,7 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(lin_b)==='undefined') lin_b = false;
     if(typeof(sph_b)==='undefined') sph_b = true;
     if(typeof(cyl_b)==='undefined') cyl_b = true;
-    if(typeof(pan_b)==='undefined') pan_b = false;
+    if(typeof(pan_b)==='undefined') pan_b = true;
     
     var color = new BABYLON.Color3(0.8,0,0.2); // fuschia
     //var color = new BABYLON.Color3(0.1,0.6,0.2); // green
@@ -120,7 +120,6 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
             cylinder = RANDO.Utils.placeCylinder(cylinder, A, B);
         }
     }//------------------------------------------------------------------
-
     
     // Spheres for each point
     if (sph_b){
@@ -146,9 +145,10 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
         var pan_size = 10;
         var pan_info = {
             'policy' : "bold 50px Arial",
-            'color' : "red"
+            'color'  : "red"
         };
         var it =0;
+        
         var intervalID = window.setInterval(function(){
             var pan_material = new BABYLON.StandardMaterial("Panel" + it, scene);
             pan_material.backFaceSculling = false;
@@ -172,7 +172,7 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
                 it++;
             else
                 window.clearInterval(intervalID);
-        }, 0);
+        }, 1);
         
     }//------------------------------------------------------------------
 }

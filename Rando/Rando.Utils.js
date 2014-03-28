@@ -612,12 +612,19 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     return dem;
 }
 
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 RANDO.Utils.translateRoute = function(vertices, dx, dy, dz){
     for (it in vertices){
         vertices[it].x += dx;
         vertices[it].y += dy;
         vertices[it].z += dz;
-        //console.log(vertices[it].x);
     }
     
     return vertices;
