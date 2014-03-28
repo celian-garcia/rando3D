@@ -105,6 +105,8 @@ $("#menu .choice").click(function() {
             altitude_offset, 
             translateXY.y
         );
+        
+        // Route building
         RANDO.Builds.route(scene, vertices);
     }   
        
