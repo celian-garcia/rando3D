@@ -577,7 +577,7 @@ RANDO.Utils.toMeters = function(latlng){
 }
 
 /**
- * translateDEM() : translate the DEM with a coefficient given in parameters
+ * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
  *      - dx  : x coefficient 
  *      - dy  : y coefficient  (altitudes in BABYLON)
@@ -613,12 +613,13 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
 }
 
 /**
+ * translateRoute() : translate a route with coefficients given in parameters
+ *      - vertices : vertices of the route 
+ *      - dx  : x coefficient 
+ *      - dy  : y coefficient  (altitudes in BABYLON)
+ *      - dz  : z coefficient  (depth     in BABYLON)
  * 
- * 
- * 
- * 
- * 
- * 
+ * return the DEM translated
  */
 RANDO.Utils.translateRoute = function(vertices, dx, dy, dz){
     for (it in vertices){
