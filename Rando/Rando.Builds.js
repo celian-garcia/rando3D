@@ -53,11 +53,9 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
         zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).length == vertices.length,
         zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).length + " != " + vertices.length
     );
-    
-            
+
     zone.material = material;
     zone.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-    //console.log(zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).slice(18500, vertices.length-2));
     // Light
     var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
 }

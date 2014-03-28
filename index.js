@@ -61,7 +61,6 @@ $("#menu .choice").click(function() {
                 z: ll_center.y
             };
             
-            console.log(center);
             var dem = {
                 "extent"    : extent,
                 "vertices"  : vertices,
@@ -99,7 +98,6 @@ $("#menu .choice").click(function() {
             success: function(data) {
                 var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
                 
-                console.log(translateXY);
                 vertices = RANDO.Utils.translateRoute(
                     vertices, 
                     translateXY.x, 
@@ -107,7 +105,6 @@ $("#menu .choice").click(function() {
                     translateXY.y
                 );
                 troncon_length = vertices.length;
-                //console.log(vertices);
                 RANDO.Builds.route(scene, vertices);
             }
         });//------------------------------------------------------------
