@@ -208,7 +208,6 @@ describe('Rando3D', function() {
     
     describe('Translations', function() {
         describe('DEM', function() {
-            
             it("should translate the DEM extent  ", function(done) {
                 var extent = {
                     northwest : {x:  5, y: -5},
@@ -286,6 +285,43 @@ describe('Rando3D', function() {
                     z: 10
                 };
                 assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).center, tr_center);
+                done();
+            });
+            it("should translate the DEM vertices  ", function(done) {
+                var extent = {
+                    northwest : {x:  5, y: -5},
+                    northeast : {x:  5, y:  5},
+                    southeast : {x: -5, y:  5},
+                    southwest : {x: -5, y: -5},
+                    altitudes : {max: 10, min: 0 }
+                };
+                var vertices = [
+                    -5, Math.random()*10, -5,
+                     0, Math.random()*10, -5,
+                     5, Math.random()*10, -5,
+                    -5, Math.random()*10,  0,
+                     0, Math.random()*10,  0,
+                     5, Math.random()*10,  0,
+                    -5, Math.random()*10,  5,
+                     0, Math.random()*10,  5,
+                     5, Math.random()*10,  5
+                ];
+                var center = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+                var dem = {
+                    "extent"    : extent,
+                    "vertices"  : vertices,
+                    "center"    : center,
+                    "toto"      : "toto"
+                };
+                var tr_vertices = [];
+                for (it in vertices){
+                    tr_vertices.push(vertices[it]+10);
+                }
+                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).vertices, tr_vertices);
                 done();
             });
         });
