@@ -327,7 +327,7 @@ describe('Rando3D', function() {
         });
         
         describe('Route', function() {
-            it("should translate the DEM vertices  ", function(done) {
+            it("should translate the Route vertices  ", function(done) {
                 var vertices = [{
                     x: 0,
                     y: 0, 
