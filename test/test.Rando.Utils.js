@@ -327,7 +327,40 @@ describe('Rando3D', function() {
         });
         
         describe('Route', function() {
-            
+            it("should translate the DEM vertices  ", function(done) {
+                var vertices = [{
+                    x: 0,
+                    y: 0, 
+                    z: 0
+                },
+                {
+                    x: 5,
+                    y: 5, 
+                    z: 5
+                },
+                {
+                    x: 10,
+                    y: 10, 
+                    z: 10
+                }];
+                var tr_vertices = [{
+                    x: 5,
+                    y: 10, 
+                    z: 15
+                },
+                {
+                    x: 10,
+                    y: 15, 
+                    z: 20
+                },
+                {
+                    x: 15,
+                    y: 20, 
+                    z: 25
+                }];
+                assert.deepEqual(RANDO.Utils.translateRoute(vertices, 5, 10, 15), tr_vertices);
+                done();
+            });
         });
     });
     
