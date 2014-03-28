@@ -224,7 +224,7 @@ RANDO.Utils.initCamera = function(scene){
     return camera;
 }
 
-/*
+/**
  * placeCamera() : place a camera at the position given, and make it look at the 
  *  target given. 
  *      - camera    : camera 
@@ -244,7 +244,7 @@ RANDO.Utils.placeCamera = function(camera, position, target, no_offset){
     );
     
     // Set camera rotation
-    var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
+    var y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
     camera.rotation = new BABYLON.Vector3(0, y, 0);
 }
 
@@ -358,12 +358,6 @@ RANDO.Utils.animateCamera = function(vertices, scene){
     
 }
 
-RANDO.Utils.controlAnim = function(e, first, second, length, scene){
-        
-        
-    
-}
-
 /**
  * refreshPanels() : refresh pivot matrices of all panels to always have panels 
  *  directed to the camera.
@@ -417,6 +411,12 @@ RANDO.Utils.getVerticesFromDEM = function(resolution, altitudes, extent){
     return vertices ;
 }
 
+/**
+ * getVerticesFromProfile() : 
+ *      - profile : troncon profile in json 
+ * 
+ * return an array of vertices 
+ */
 RANDO.Utils.getVerticesFromProfile = function(profile){
     var vertices =  [];
     
@@ -567,7 +567,7 @@ RANDO.Utils.toMeters = function(latlng){
     var R = 6378137;
 
     var d = Math.PI / 180;
-    var max = 1 - 1E-15;
+    var max = 1 - 1*Math.pow(10, -15);
     var sin = Math.max(Math.min(Math.sin(latlng.lat * d), max), -max);
 
     return {
@@ -605,6 +605,9 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     
     dem.extent.southwest.x += dx;
     dem.extent.southwest.y += dz;
+    
+    dem.extent.altitudes.min += dy;
+    dem.extent.altitudes.max += dy;
     return dem;
 }
 

@@ -204,4 +204,80 @@ describe('Rando3D', function() {
             });
         });
     });
+    
+    
+    describe('Translations', function() {
+        describe('DEM', function() {
+            var extent = {
+                northwest : {x:  5, y: -5},
+                northeast : {x:  5, y:  5},
+                southeast : {x: -5, y:  5},
+                southwest : {x: -5, y: -5},
+                altitudes : {max: 10, min: 0 }
+            };
+            var vertices = [
+                -5, Math.random()*10, -5,
+                 0, Math.random()*10, -5,
+                 5, Math.random()*10, -5,
+                -5, Math.random()*10,  0,
+                 0, Math.random()*10,  0,
+                 5, Math.random()*10,  0,
+                -5, Math.random()*10,  5,
+                 0, Math.random()*10,  5,
+                 5, Math.random()*10,  5
+            ];
+            var center = {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+            var dem = {
+                "extent"    : extent,
+                "vertices"  : vertices,
+                "center"    : center,
+                "toto"      : "toto"
+            };
+            it("should translate the DEM extent  ", function(done) {
+                var tr_extent = {
+                    northwest : {x: 15, y:  5},
+                    northeast : {x: 15, y: 15},
+                    southeast : {x:  5, y: 15},
+                    southwest : {x:  5, y:  5},
+                    altitudes : {max: 20, min: 10 }
+                };
+                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).extent, tr_extent);
+                done();
+            });
+        });
+        
+        describe('Route', function() {
+            
+        });
+    });
+    
+    
+    describe('Conversion', function() {
+        describe('latitude/longitude to meters x/y', function() {
+            it("should return {x: 0 ,y: 0} .", function(done) {
+                var latlng = {
+                    'lat': 0,
+                    'lng': 0,
+                    'toto': "toto"
+                };
+                assert.deepEqual(RANDO.Utils.toMeters(latlng), {x: 0, y: 0});
+                done();
+            });
+            
+            it("should return good x value for null latitude", function(done) {
+                var latlng = {
+                    'lat': 0,
+                    'lng': 90,
+                    'toto': "toto"
+                };
+                assert.closeTo(RANDO.Utils.toMeters(latlng).x, 90* 111319.458, 100);
+                done();
+            });
+            
+        });
+    });
 });
