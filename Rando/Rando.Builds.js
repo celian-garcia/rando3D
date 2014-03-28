@@ -120,31 +120,7 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
             cylinder = RANDO.Utils.placeCylinder(cylinder, A, B);
         }
     }//------------------------------------------------------------------
-    
-    // With "Line" meshes (kind of ribbon)
-    /*if (lin_b){
-// Troncon material
-var lin_material = new BABYLON.StandardMaterial("RibbonMaterial", scene);
-lin_material.backFaceCulling = false;
-lin_material.diffuseColor = new BABYLON.Color3(255,255,255);
-// Create troncon
-var line = createGround("Line", 10, 10, troncon.length-1, 1, scene);
-line.material = lin_material;
-// Get and Set vertices
-var vertices = [];
-var lin_strength = 0.2;
-for(point in troncon){
-vertices.push(troncon[point][0]);
-vertices.push(troncon[point][2] + z_offset);
-vertices.push(troncon[point][1] - lin_strength/2);
-}
-for(point in troncon){
-vertices.push(troncon[point][0]);
-vertices.push(troncon[point][2] + z_offset);
-vertices.push(troncon[point][1] + lin_strength/2);
-}
-line.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-}*///------------------------------------------------------------------
+
     
     // Spheres for each point
     if (sph_b){

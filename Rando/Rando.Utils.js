@@ -224,19 +224,28 @@ RANDO.Utils.initCamera = function(scene){
     return camera;
 }
 
-RANDO.Utils.placeCamera = function(position, target, scene){
-    
+/*
+ * placeCamera() : place a camera at the position given, and make it look at the 
+ *  target given. 
+ *      - camera    : camera 
+ *      - position  : future position 
+ *      - target    : future target
+ *      - no_offset : boolean which determines if we give an y-offset to the camera or not
+ * 
+ */
+RANDO.Utils.placeCamera = function(camera, position, target, no_offset){
+    var y_offset = 0;
+    if (typeof(no_offset)==="undefined") y_offset = _CAM_OFFSET;
     // Set camera position 
-    scene.activeCamera.position = new BABYLON.Vector3(
+    camera.position = new BABYLON.Vector3(
         position.x,
-        position.y + _CAM_OFFSET,
+        position.y + y_offset,
         position.z
     );
     
     // Set camera rotation
     var y = RANDO.Utils.angleFromAxis(position,target, BABYLON.Axis.Y);
-    scene.activeCamera.rotation = new BABYLON.Vector3( 0, y, 0);
-
+    camera.rotation = new BABYLON.Vector3(0, y, 0);
 }
 
 /**
@@ -323,7 +332,7 @@ RANDO.Utils.animateCamera = function(vertices, scene){
         if (keyCode == 32){   
             if (begin){
                 currentFrame = 0;
-                RANDO.Utils.placeCamera(firstVertex, secondVertex, scene);
+                RANDO.Utils.placeCamera(scene.activeCamera, firstVertex, secondVertex);
                 begin = false;
             }else
                 currentFrame = animCameraTrans.currentFrame;
@@ -342,7 +351,7 @@ RANDO.Utils.animateCamera = function(vertices, scene){
             scene.stopAnimation(scene.activeCamera);
             animCameraTrans.currentFrame = 0;
 
-            RANDO.Utils.placeCamera(firstVertex, secondVertex, scene);
+            RANDO.Utils.placeCamera(scene.activeCamera, firstVertex, secondVertex);
         }
     
     });
