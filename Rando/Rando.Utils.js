@@ -437,6 +437,13 @@ RANDO.Utils.animateCamera = function(vertices, scene){
             angles
         );
     }
+    RANDO.Utils.addKeyToCamera(
+        tl_foll, 
+        scene.activeCamera,
+        vertices[0],
+        vertices[d],
+        angles
+    );
         
     // Animation paused by default
     tl_foll.pause(0);
