@@ -363,7 +363,44 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
         ease: 'ease-in' 
     });
 }
-//RANDO.Utils.addKeyToCamera(timeline
+
+
+/**
+ * addKeyToCamera() : add a new position key and rotation key to the camera timeline
+ *      - timeline: timeline of the camera (TimelineLite)
+ *      - camera: camera 
+ *      - position: position wanted for the camera
+ *      - target: target wanted (necessary to determine the rotation to apply)
+ *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
+ */
+RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
+    var speed = 0.2, // Time between each point 
+        alpha1,
+        alpha2 = RANDO.Utils.angleFromAxis(position, target,BABYLON.Axis.Y);
+    
+    if(angles){
+        alpha1 = angles[angles.length-2];
+        if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
+            alpha2 = (2*Math.PI - Math.abs(alpha2));
+        }
+    }
+    timeline.appendMultiple( 
+        [new TweenLite(camera.position, speed, {
+            x: position.x, 
+            y: position.y + _CAM_OFFSET, 
+            z: position.z,
+            ease: "Linear.easeNone"  
+            }),
+        new TweenLite(camera.rotation, speed, {
+            y: alpha2,
+            ease: "Power1.easeInOut"  
+        })],
+        0,
+        "start"
+    );
+    angles.push(alpha2);
+}
+
 /**
  *  animate_camera() : animation and controls of the camera 
  *      - vertices : array of vertices
@@ -373,62 +410,30 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
     
-    var d = 5 // Distance between the current point and the point watched
-        speed = 0.5; // Time between each point
-        b_fly = false;
-        b_pause = true;
-        fly = new TimelineLite();
+    var d = 5, // Distance between the current point and the point watched
+        b_fly = false,
+        b_pause = true,
+        fly = new TimelineLite(),
         angles = [];
         
     //Filling of the timeline "flying" animation
     for (var i=d; i< vertices.length-d; i+=d){
-        var curr_pos = vertices[i],
-            next_pos = vertices[i+d],
-            alpha1, alpha2 = RANDO.Utils.angleFromAxis(curr_pos, next_pos,BABYLON.Axis.Y);
-        
-        if(i!=d){
-            alpha1 = angles[(i/d)-2];
-            if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
-                alpha2 = (2*Math.PI - Math.abs(alpha2));
-            }
-        }
-        fly.appendMultiple( 
-            [new TweenLite(scene.activeCamera.position, speed, {
-                x: curr_pos.x, 
-                y: curr_pos.y + _CAM_OFFSET, 
-                z: curr_pos.z,
-                ease: "Linear.easeNone"  
-                }),
-            new TweenLite(scene.activeCamera.rotation, speed, {
-                y: alpha2,
-                ease: "Power1.easeInOut"  
-            })],
-            0,
-            "start"
+        RANDO.Utils.addKeyToCamera(
+            fly, 
+            scene.activeCamera,
+            vertices[i],
+            vertices[i+d],
+            angles
         );
-        angles.push(alpha2);
-
     }//-------------------
-    
-    var alpha1, alpha2 = RANDO.Utils.angleFromAxis(vertices[0], vertices[1], BABYLON.Axis.Y);
-    
-    alpha1 = angles[angles.length-1];
-    if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
-        alpha2 = (2*Math.PI - Math.abs(alpha2));
-    }
-    fly.appendMultiple( 
-        [new TweenLite(scene.activeCamera.position, speed, {
-            x: curr_pos.x, 
-            y: curr_pos.y + _CAM_OFFSET, 
-            z: curr_pos.z,
-            ease: "Linear.easeNone"  
-            }),
-        new TweenLite(scene.activeCamera.rotation, speed, {
-            y: alpha2,
-            ease: "Power1.easeInOut"  
-        })],
-        0,
-        "start"
+   
+    // End of timeline is the come back to start point
+    RANDO.Utils.addKeyToCamera(
+        fly, 
+        scene.activeCamera,
+        vertices[0],
+        vertices[d],
+        angles
     );
         
     // Animation paused by default
