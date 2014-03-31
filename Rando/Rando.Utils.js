@@ -341,29 +341,35 @@ RANDO.Utils.initCamera = function(scene){
  *      - camera    : camera 
  *      - position  : future position 
  *      - target    : future target
- *      - no_offset : boolean which determines if we give an y-offset to the camera or not
+ *      - b_foll : boolean which determines if the following mode can be launch or not 
  * 
+ * NB: b_foll is an object containing a boolean in b_fly.value
  */
-RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
-    var y_offset = 0;
-    if (typeof(no_offset)==="undefined") y_offset = _CAM_OFFSET;
-   
-    var start_pos = position;
-    var start_rot_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
+RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
+    var y_offset = _CAM_OFFSET,
+        rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
+    
+    // Translation
     TweenLite.to(camera.position, 2, { 
-        x: start_pos.x, 
-        y: start_pos.y + y_offset,
-        z: start_pos.z,
-        ease: 'ease-in'
+        x: position.x, 
+        y: position.y + y_offset,
+        z: position.z,
+        ease: 'ease-in',
+        onComplete: function(){
+            b_foll.value = true;
+        }
     });
+    // Rotation
     TweenLite.to(camera.rotation, 2, { 
         x: 0,
-        y: start_rot_y, 
+        y: rotation_y, 
         z: 0,
-        ease: 'ease-in' 
+        ease: 'ease-in',
+        onComplete: function(){
+            b_foll.value = true;
+        }
     });
 }
-
 
 /**
  * addKeyToCamera() : add a new position key and rotation key to the camera timeline
@@ -374,7 +380,7 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
  *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
  */
 RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
-    var speed = 0.2, // Time between each point 
+    var speed = 0.6, // Time between each point 
         alpha1,
         alpha2 = RANDO.Utils.angleFromAxis(position, target,BABYLON.Axis.Y);
     
@@ -410,55 +416,50 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
     
-    var d = 5, // Distance between the current point and the point watched
-        b_fly = false,
+    var d = 7, // Distance between the current point and the point watched
+        b_foll = {"value": false},
         b_pause = true,
-        fly = new TimelineLite(),
+        tl_foll = new TimelineLite({
+            onComplete:function(){
+                tl_foll.pause(0);
+                b_pause = !b_pause;
+            }
+        }),
         angles = [];
         
-    //Filling of the timeline "flying" animation
+    //Filling of the timeline "tl_folling" animation
     for (var i=d; i< vertices.length-d; i+=d){
         RANDO.Utils.addKeyToCamera(
-            fly, 
+            tl_foll, 
             scene.activeCamera,
             vertices[i],
             vertices[i+d],
             angles
         );
-    }//-------------------
-   
-    // End of timeline is the come back to start point
-    RANDO.Utils.addKeyToCamera(
-        fly, 
-        scene.activeCamera,
-        vertices[0],
-        vertices[d],
-        angles
-    );
+    }
         
     // Animation paused by default
-    fly.pause(0);
+    tl_foll.pause(0);
     
     // Controls
     $(document).keyup(function(e){
         var keyCode = e.keyCode;
 
         // Space
-        if (keyCode == 32 && b_fly){   
+        if (keyCode == 32 && b_foll.value){   
             b_pause = !b_pause;
             if(b_pause)
-                fly.pause();
+                tl_foll.pause();
             else
-                fly.play();
+                tl_foll.play();
         }
 
         // Enter
         if (keyCode == 13){
-            if(!b_fly){
-                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[1]);
-                b_fly = true;
+            if(!b_foll.value){
+                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[d], b_foll);
             }else {
-                fly.pause(0);
+                tl_foll.pause(0);
             }
         }
     });
