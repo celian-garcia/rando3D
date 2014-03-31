@@ -363,7 +363,7 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
         ease: 'ease-in' 
     });
 }
-
+//RANDO.Utils.addKeyToCamera(timeline
 /**
  *  animate_camera() : animation and controls of the camera 
  *      - vertices : array of vertices
@@ -374,29 +374,88 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, no_offset){
 RANDO.Utils.animateCamera = function(vertices, scene){
     
     var d = 5 // Distance between the current point and the point watched
-    var b_start = false;
+        speed = 0.5; // Time between each point
+        b_fly = false;
+        b_pause = true;
+        fly = new TimelineLite();
+        angles = [];
+        
+    //Filling of the timeline "flying" animation
+    for (var i=d; i< vertices.length-d; i+=d){
+        var curr_pos = vertices[i],
+            next_pos = vertices[i+d],
+            alpha1, alpha2 = RANDO.Utils.angleFromAxis(curr_pos, next_pos,BABYLON.Axis.Y);
+        
+        if(i!=d){
+            alpha1 = angles[(i/d)-2];
+            if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
+                alpha2 = (2*Math.PI - Math.abs(alpha2));
+            }
+        }
+        fly.appendMultiple( 
+            [new TweenLite(scene.activeCamera.position, speed, {
+                x: curr_pos.x, 
+                y: curr_pos.y + _CAM_OFFSET, 
+                z: curr_pos.z,
+                ease: "Linear.easeNone"  
+                }),
+            new TweenLite(scene.activeCamera.rotation, speed, {
+                y: alpha2,
+                ease: "Power1.easeInOut"  
+            })],
+            0,
+            "start"
+        );
+        angles.push(alpha2);
+
+    }//-------------------
+    
+    var alpha1, alpha2 = RANDO.Utils.angleFromAxis(vertices[0], vertices[1], BABYLON.Axis.Y);
+    
+    alpha1 = angles[angles.length-1];
+    if(alpha1*alpha2<0 && Math.abs(alpha1) > Math.PI/2 && Math.abs(alpha2) > Math.PI/2){
+        alpha2 = (2*Math.PI - Math.abs(alpha2));
+    }
+    fly.appendMultiple( 
+        [new TweenLite(scene.activeCamera.position, speed, {
+            x: curr_pos.x, 
+            y: curr_pos.y + _CAM_OFFSET, 
+            z: curr_pos.z,
+            ease: "Linear.easeNone"  
+            }),
+        new TweenLite(scene.activeCamera.rotation, speed, {
+            y: alpha2,
+            ease: "Power1.easeInOut"  
+        })],
+        0,
+        "start"
+    );
+        
+    // Animation paused by default
+    fly.pause(0);
+    
+    // Controls
     $(document).keyup(function(e){
         var keyCode = e.keyCode;
 
-        if (keyCode == 32){   
-            /*if(b_start){
-                for (it in vertices.slice(1, vertices.length)){
-                    var next_pos = vertices[it];
-                    TweenLite.to(scene.activeCamera.position, 2, { 
-                        x: next_pos.x, 
-                        y: next_pos.y + _CAM_OFFSET,
-                        z: next_pos.z,
-                        ease: 'ease-in' 
-                    });
-                }
-            }*/
+        // Space
+        if (keyCode == 32 && b_fly){   
+            b_pause = !b_pause;
+            if(b_pause)
+                fly.pause();
+            else
+                fly.play();
         }
-            
+
+        // Enter
         if (keyCode == 13){
-            RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[1]);
-            b_start = true;
+            if(!b_fly){
+                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[1]);
+                b_fly = true;
+            }else {
+                fly.pause(0);
+            }
         }
-    
     });
     
 }
