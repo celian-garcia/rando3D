@@ -3,7 +3,7 @@
  *  VARIABLES   
  * 
  * */
-    var altitude_offset = 10;
+    
     var b_zone =  true;
     var b_troncon = true;
     
@@ -13,7 +13,8 @@
     // Load BABYLON 3D engine
     var engine = new BABYLON.Engine(canvas, true);
     
-    var _CAM_OFFSET = 30;
+    var _CAM_OFFSET = 100;
+    var _ALT_OFFSET = 2;
 /**
  *  Main function    
  * 
@@ -33,7 +34,8 @@ $("#menu .choice").click(function() {
     // Camera
     var camera = RANDO.Utils.initCamera(scene);
     camera.attachControl(canvas);
-    var translateXY = {
+    
+    var grid2D, translateXY = {
         x : 0,
         y : 0
     };
@@ -53,7 +55,7 @@ $("#menu .choice").click(function() {
                 var ll_center = RANDO.Utils.toMeters(data.center);
                 
                 // Create grid 
-                var grid = RANDO.Utils.createGrid(
+                grid2D = RANDO.Utils.createGrid(
                     extent.southwest, 
                     extent.southeast, 
                     extent.northeast, 
@@ -66,7 +68,7 @@ $("#menu .choice").click(function() {
                     "extent"    :   extent,
                     "vertices"  :   RANDO.Utils.getVerticesFromDEM(
                                         data.altitudes, 
-                                        grid
+                                        grid2D
                                     ),
                     "resolution":   data.resolution,
                     "center"    :   {
@@ -81,7 +83,7 @@ $("#menu .choice").click(function() {
         });//------------------------------------------------------------
         
         
-        dem = RANDO.Utils.translateDEM(
+        RANDO.Utils.translateDEM(
             dem, 
             translateXY.x, 
             dem.extent.altitudes.min, 
@@ -92,9 +94,12 @@ $("#menu .choice").click(function() {
         console.log(dem);
         //RANDO.Builds.cardinals(dem.extent, scene);
         
-        var texture = new BABYLON.Texture("img/image_mirror.jpg", scene);
         // Zone building
-        RANDO.Builds.zone(scene, dem);
+        RANDO.Builds.zone(
+            scene, 
+            dem, 
+            new BABYLON.Texture("img/tex-pne-" + id + ".jpg", scene)
+        );
     }
 
     var vertices;
@@ -109,11 +114,23 @@ $("#menu .choice").click(function() {
             }
         });//------------------------------------------------------------
         if(vertices){
-            vertices = RANDO.Utils.translateRoute(
+            // Translation of the route to make it visible 
+            RANDO.Utils.translateRoute(
                 vertices, 
                 translateXY.x, 
-                altitude_offset, 
+                0, 
                 translateXY.y
+            );
+            
+            // Drape the route over the DEM
+            RANDO.Utils.drape(vertices, scene);
+            
+            // Route just a bit higher to the DEM 
+            RANDO.Utils.translateRoute(
+                vertices, 
+                0, 
+                _ALT_OFFSET, 
+                0
             );
             
             // Route building

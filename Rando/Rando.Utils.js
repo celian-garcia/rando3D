@@ -416,7 +416,7 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
     
-    var d = 7, // Distance between the current point and the point watched
+    var d = 10, // Distance between the current point and the point watched
         b_foll = {"value": false},
         b_pause = true,
         tl_foll = new TimelineLite({
@@ -579,6 +579,26 @@ RANDO.Utils.toMeters = function(latlng){
 
 
 /****    TRANSLATIONS     ************************/
+
+/**
+ * drape() : drape the route over the ground 
+ *      - vertices: route's vertices
+ *      - scene: current scene
+ */
+RANDO.Utils.drape = function(vertices, scene){
+    for (it in vertices){
+        var ray =  new BABYLON.Ray(vertices[it], BABYLON.Axis.Y);
+        var pick = scene.pickWithRay(ray, function (item) {
+            if (item.name == "Zone")
+                return true;
+            else
+                return false;
+        });
+        if (pick.pickedPoint)
+            vertices[it].y = pick.pickedPoint.y;
+    }
+}
+
 /**
  * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
@@ -612,7 +632,6 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     
     dem.extent.altitudes.min += dy;
     dem.extent.altitudes.max += dy;
-    return dem;
 }
 
 /**
@@ -631,5 +650,4 @@ RANDO.Utils.translateRoute = function(vertices, dx, dy, dz){
         vertices[it].z += dz;
     }
     
-    return vertices;
 }
