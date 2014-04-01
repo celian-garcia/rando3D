@@ -83,7 +83,7 @@ $("#menu .choice").click(function() {
         console.log(dem);
         //RANDO.Builds.cardinals(dem.extent, scene);
         
-        var texture = new BABYLON.Texture("img/image.jpg", scene);
+        var texture = new BABYLON.Texture("img/image_mirror.jpg", scene);
         // Zone building
         RANDO.Builds.zone(scene, dem, texture);
     }
