@@ -21,7 +21,7 @@
  * 
  * TRICK : use the python module SimpleHTTPServer with the command :
  *              python -m SimpleHTTPServer 
- * to launch in chromium 
+ *          to launch in chromium 
  * */
 $("#menu .choice").click(function() {
     var id = $(this).data('id');
@@ -83,8 +83,9 @@ $("#menu .choice").click(function() {
         console.log(dem);
         //RANDO.Builds.cardinals(dem.extent, scene);
         
+        var texture = new BABYLON.Texture("img/image.jpg", scene);
         // Zone building
-        RANDO.Builds.zone(scene, dem);
+        RANDO.Builds.zone(scene, dem, texture);
     }
 
     var vertices;
@@ -98,21 +99,22 @@ $("#menu .choice").click(function() {
                 vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
             }
         });//------------------------------------------------------------
-        
-        vertices = RANDO.Utils.translateRoute(
-            vertices, 
-            translateXY.x, 
-            altitude_offset, 
-            translateXY.y
-        );
-        
-        // Route building
-        RANDO.Builds.route(scene, vertices);
+        if(vertices){
+            vertices = RANDO.Utils.translateRoute(
+                vertices, 
+                translateXY.x, 
+                altitude_offset, 
+                translateXY.y
+            );
+            
+            // Route building
+            RANDO.Builds.route(scene, vertices);
+        }
     }   
        
     // Once the scene is loaded, just register a render loop to render it
     engine.runRenderLoop(function () {
-        RANDO.Utils.refreshPanels(vertices.length, scene);
+        //RANDO.Utils.refreshPanels(vertices.length, scene);
         scene.render();
     });
 });

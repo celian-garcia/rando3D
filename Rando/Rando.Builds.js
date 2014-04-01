@@ -16,7 +16,7 @@ RANDO.Builds = {};
  * 
  */
 RANDO.Builds.zone = function(scene, data, texture, cam_b){
-    if(typeof(cam_b)==='undefined') texture = null;
+    if(typeof(texture)==='undefined') texture = null;
     if(typeof(cam_b)==='undefined') cam_b = true;
     
     var center = data.center;
@@ -35,8 +35,11 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
-    if(texture) 
+    if(texture){
+        //material.bumpTexture = texture;
         material.ambientTexture = texture;
+        //material.diffuseTexture = texture;
+    }
     else 
         material.wireframe = true;
 
