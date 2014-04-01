@@ -85,7 +85,7 @@ $("#menu .choice").click(function() {
         
         var texture = new BABYLON.Texture("img/image_mirror.jpg", scene);
         // Zone building
-        RANDO.Builds.zone(scene, dem, texture);
+        RANDO.Builds.zone(scene, dem);
     }
 
     var vertices;
