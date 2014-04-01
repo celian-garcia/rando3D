@@ -51,13 +51,22 @@ $("#menu .choice").click(function() {
 
                 var extent = RANDO.Utils.getExtent(data.extent);
                 var ll_center = RANDO.Utils.toMeters(data.center);
-
+                
+                // Create grid 
+                var grid = RANDO.Utils.createGrid(
+                    extent.southwest, 
+                    extent.southeast, 
+                    extent.northeast, 
+                    extent.northwest, 
+                    data.resolution.x,
+                    data.resolution.y
+                );
+                
                 dem = {
                     "extent"    :   extent,
                     "vertices"  :   RANDO.Utils.getVerticesFromDEM(
-                                        data.resolution, 
                                         data.altitudes, 
-                                        extent
+                                        grid
                                     ),
                     "resolution":   data.resolution,
                     "center"    :   {

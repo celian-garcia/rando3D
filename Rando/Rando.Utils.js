@@ -496,29 +496,18 @@ RANDO.Utils.refreshPanels = function(number, scene){
 
 /****    GETTERS     ************************/
 /**
- * getVertices() : get DEM vertices in a format which can be understood by the DEM builder
- *      - resolution : number of points along x and y 
- *      - altitudes  : 2 dimensions array containing altitudes of the vertices
- *      - extent     : object containing the four exrems point of the DEM
+ * getVerticesFromDEM() : get DEM vertices in a format which can be understood by the DEM builder
+ *      - altitudes  : array containing altitudes of the vertices
+ *      - grid       : 2D grid containing the x and y values of each points
  * 
  */
-RANDO.Utils.getVerticesFromDEM = function(resolution, altitudes, extent){
+RANDO.Utils.getVerticesFromDEM = function(altitudes, grid){
     var vertices = [];
-
-    // Create grid 
-    var grid = RANDO.Utils.createGrid(
-        extent.southwest, 
-        extent.southeast, 
-        extent.northeast, 
-        extent.northwest, 
-        resolution.x,
-        resolution.y
-    );
 
     // Fills array of vertices 
     var k = 1;
-    for (var j=0; j<resolution.y ;j++){
-        for (var i=0; i<resolution.x ;i++){
+    for (var j=0; j < grid.length; j++){
+        for (var i=0; i < grid[j].length; i++){
             vertices.push(grid[j][i].x);
             vertices[k] = altitudes[j][i];
             vertices.push(grid[j][i].y);
