@@ -42,10 +42,10 @@ $("#menu .button").click(function() {
             scene.render();
         });
         
-        scene.executeWhenReady(function () {
-            $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
-            $("#loader").switchClass("unloading", "endloading", 200);
-        });
+        //~ scene.executeWhenReady(function () {
+            //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
+            //~ $("#loader").switchClass("unloading", "endloading", 200);
+        //~ });
     }
 
 });
@@ -125,8 +125,8 @@ function createScene(engine){
         // Zone building
         RANDO.Builds.zone(
             scene, 
-            dem//, 
-            //new BABYLON.Texture("img/tex-pne-" + _ID_SCENE + ".jpg", scene)
+            dem, 
+            new BABYLON.Texture("img/tex-pne-" + _ID_SCENE + ".jpg", scene)
         );
     }
 
