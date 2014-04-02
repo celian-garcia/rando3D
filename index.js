@@ -10,47 +10,55 @@
     var _ALT_OFFSET = 2;
     var _ID_SCENE;
     var scene = null;
-
-
-
-var onload = function(){
-/**
- *  Main function    
- * 
- * TRICK : use the python module SimpleHTTPServer with the command :
- *              python -m SimpleHTTPServer 
- *          to launch in chromium 
- * */
-$("#menu .button").click(function() {
+    var engine = null;
+    
+    window.addEventListener("resize", function(){
+        engine.resize();
+    });
     // Get the Canvas element from our HTML 
     var canvas = document.getElementById("canvas_renderer");
-    _ID_SCENE = $(this).data('id');
-    
-    // Check support
-    if (!BABYLON.Engine.isSupported()) {
-        window.alert('Browser not supported');
-    } else {
-        // Load BABYLON 3D engine
-        var engine = new BABYLON.Engine(canvas, true);
-        
-        scene = createScene(engine);
-        scene.activeCamera.attachControl(canvas);
-        
-        // Once the scene is loaded, just register a render loop to render it
-        engine.runRenderLoop(function () {
-            //RANDO.Utils.refreshPanels(vertices.length, scene);
-            scene.render();
-        });
-        
-        //~ scene.executeWhenReady(function () {
-            //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
-            //~ $("#loader").switchClass("unloading", "endloading", 200);
-        //~ });
-    }
 
-});
-$("#menu .button:first").click();
-
+// Called once the html body is loaded
+var onload = function(){
+    $("#menu .button").click(function() {
+        window.removeEventListener("resize");
+        
+        _ID_SCENE = $(this).data('id');
+        
+        if (engine){
+            engine.dispose();
+            engine.clear(new BABYLON.Color4(0,0,0,0), true, true);
+            engine = null;
+        }
+        if(scene){
+            scene.dispose();
+            scene = null;
+        }
+        // Check support
+        if (!BABYLON.Engine.isSupported()) {
+            window.alert('Browser not supported');
+        } else {
+            // Load BABYLON 3D engine
+            
+            engine = new BABYLON.Engine(canvas, true);
+            scene = createScene(engine);
+            
+            scene.activeCamera.attachControl(canvas);
+            
+            // Once the scene is loaded, just register a render loop to render it
+            engine.runRenderLoop(function () {
+                //RANDO.Utils.refreshPanels(vertices.length, scene);
+                scene.render();
+            });
+            
+            //~ scene.executeWhenReady(function () {
+                //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
+                //~ $("#loader").switchClass("unloading", "endloading", 200);
+            //~ });
+        }
+    });
+    $("#menu .button:first").click();
+};
 
 /**
  * createScene() : 
@@ -169,5 +177,5 @@ function createScene(engine){
     return scene;
 }
 
-};
+
 
