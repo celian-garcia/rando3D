@@ -3,37 +3,66 @@
  *  VARIABLES   
  * 
  * */
-    
     var b_zone =  true;
     var b_troncon = true;
     
-    
-    // Get the Canvas element from our HTML 
-    var canvas = document.getElementById("canvas_renderer");
-    // Load BABYLON 3D engine
-    var engine = new BABYLON.Engine(canvas, true);
-    
     var _CAM_OFFSET = 100;
     var _ALT_OFFSET = 2;
+    var _ID_SCENE;
+    var scene = null;
+
+
+
+var onload = function(){
 /**
  *  Main function    
- * 
- * 
  * 
  * TRICK : use the python module SimpleHTTPServer with the command :
  *              python -m SimpleHTTPServer 
  *          to launch in chromium 
  * */
-$("#menu .choice").click(function() {
-    var id = $(this).data('id');
+$("#menu .button").click(function() {
+    // Get the Canvas element from our HTML 
+    var canvas = document.getElementById("canvas_renderer");
+    _ID_SCENE = $(this).data('id');
     
-    // clear engine if it contains something
-    engine.clear(new BABYLON.Color4(255,255,255,0),true ,true );
-    // Scene
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Load BABYLON 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        
+        scene = createScene(engine);
+        scene.activeCamera.attachControl(canvas);
+        
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            //RANDO.Utils.refreshPanels(vertices.length, scene);
+            scene.render();
+        });
+        
+        scene.executeWhenReady(function () {
+            $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
+            $("#loader").switchClass("unloading", "endloading", 200);
+        });
+    }
+
+});
+$("#menu .button:first").click();
+
+
+/**
+ * createScene() : 
+ * 
+ * 
+ */
+function createScene(engine){
+     //Creation of the scene 
     var scene = new BABYLON.Scene(engine);
+    
     // Camera
     var camera = RANDO.Utils.initCamera(scene);
-    camera.attachControl(canvas);
     
     var grid2D, translateXY = {
         x : 0,
@@ -44,13 +73,13 @@ $("#menu .choice").click(function() {
         var dem;
         // Getting data of DEM----------
         $.ajax({
-            url:  "json/dem-pne-" + id + ".json",
+            url:  "json/dem-pne-" + _ID_SCENE + ".json",
             dataType: 'json',
             async: false,
             success: function(data) {
                 console.log("MNT en entrée : ");
                 console.log(data);
-
+                
                 var extent = RANDO.Utils.getExtent(data.extent);
                 var ll_center = RANDO.Utils.toMeters(data.center);
                 
@@ -82,7 +111,6 @@ $("#menu .choice").click(function() {
             }
         });//------------------------------------------------------------
         
-        
         RANDO.Utils.translateDEM(
             dem, 
             translateXY.x, 
@@ -97,8 +125,8 @@ $("#menu .choice").click(function() {
         // Zone building
         RANDO.Builds.zone(
             scene, 
-            dem, 
-            new BABYLON.Texture("img/tex-pne-" + id + ".jpg", scene)
+            dem//, 
+            //new BABYLON.Texture("img/tex-pne-" + _ID_SCENE + ".jpg", scene)
         );
     }
 
@@ -106,7 +134,7 @@ $("#menu .choice").click(function() {
     if (b_troncon) {
         // Getting data of TRONCON----------
         $.ajax({
-            url: "json/profile-pne-" + id + ".json",
+            url: "json/profile-pne-" + _ID_SCENE + ".json",
             dataType: 'json',
             async: false,
             success: function(data) {
@@ -137,11 +165,9 @@ $("#menu .choice").click(function() {
             RANDO.Builds.route(scene, vertices);
         }
     }   
-       
-    // Once the scene is loaded, just register a render loop to render it
-    engine.runRenderLoop(function () {
-        //RANDO.Utils.refreshPanels(vertices.length, scene);
-        scene.render();
-    });
-});
-$("#menu .choice:first").click();
+    
+    return scene;
+}
+
+};
+

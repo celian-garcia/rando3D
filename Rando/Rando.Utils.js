@@ -94,7 +94,6 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
 }
 
 
-
 /****    MATH     ************************/
 /**
  * subdivide() :  interpolate a segment between 2 points A and B 
