@@ -21,8 +21,6 @@
 // Called once the html body is loaded
 var onload = function(){
     $("#menu .button").click(function() {
-        window.removeEventListener("resize");
-        
         _ID_SCENE = $(this).data('id');
         
         if (engine){
@@ -38,8 +36,8 @@ var onload = function(){
         if (!BABYLON.Engine.isSupported()) {
             window.alert('Browser not supported');
         } else {
-            // Load BABYLON 3D engine
             
+            // Load BABYLON 3D engine
             engine = new BABYLON.Engine(canvas, true);
             scene = createScene(engine);
             
@@ -70,7 +68,7 @@ function createScene(engine){
     var scene = new BABYLON.Scene(engine);
     
     // Camera
-    var camera = RANDO.Utils.initCamera(scene);
+    var camera = RANDO.Builds.camera(scene);
     
     var grid2D, translateXY = {
         x : 0,

@@ -234,5 +234,24 @@ RANDO.Builds.cardinals = function(extent, scene){
 
 }
 
-
+/**
+ *  camera() : initialize main parameters of camera    
+ *      - scene : the current scene
+ * 
+ *  return the camera
+ * */
+RANDO.Builds.camera = function(scene){
+    var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+    camera.checkCollisions = true;
+    camera.maxZ = 10000;
+    camera.speed = 20;
+    camera.keysUp = [90, 38]; // Touche Z
+    camera.keysDown = [83, 40]; // Touche S
+    camera.keysLeft = [81, 37]; // Touche Q
+    camera.keysRight = [68, 39]; // Touche D
+    var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
+    l_cam.intensity = 0.8;
+    l_cam.parent = camera;
+    return camera;
+}
 

@@ -3,7 +3,6 @@ var assert = chai.assert;
 describe('Rando3D', function() {
     
     describe('Segment subdivision', function() {
-
         it("should return null point.", function(done) {
             var A = { x : 3543, y : 252 };
             var B = { x : 243,  y : 53434 };
@@ -12,7 +11,6 @@ describe('Rando3D', function() {
             assert.deepEqual(RANDO.Utils.subdivide(-1, A, B), null);
             done();
         });
-        
         
         it("should return first point.", function(done) {
             var A = { x : 3543, y : 252 };
@@ -61,8 +59,8 @@ describe('Rando3D', function() {
 
             done();
         });
-        
     });
+    
     describe('Trapeze grid', function() {
         it("should return null point", function(done) {
             var A = { x : 54,  y : 545 };
@@ -77,6 +75,7 @@ describe('Rando3D', function() {
             
             done();
         });
+        
         it("should return a grid available with a square input", function(done) {
             var A = { x : 0, y : 0 };
             var B = { x : 2, y : 0 };
@@ -112,10 +111,7 @@ describe('Rando3D', function() {
         });
     });
     
-    
     describe('Rotations and angles', function() {
-
-        
         describe('Around X axis', function() {
             it("should return 0.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
@@ -137,6 +133,7 @@ describe('Rando3D', function() {
                 assert.closeTo(RANDO.Utils.angleFromAxis(A, B, axis), 3*Math.PI/4, 0.0001);
                 done();
             });
+            
             it("should return -3*PI/4.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
                 var B = new BABYLON.Vector3(0,-10,-10);
@@ -145,6 +142,7 @@ describe('Rando3D', function() {
                 done();
             });
         });
+        
         describe('Around Y axis', function() {
             it("should return 0.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
@@ -166,6 +164,7 @@ describe('Rando3D', function() {
                 assert.closeTo(RANDO.Utils.angleFromAxis(A, B, axis), 3*Math.PI/4, 0.0001);
                 done();
             });
+            
             it("should return -3*PI/4.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
                 var B = new BABYLON.Vector3(-10,0,-10);
@@ -174,6 +173,7 @@ describe('Rando3D', function() {
                 done();
             });
         });
+        
         describe('Around Z axis', function() {
             it("should return 0.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
@@ -195,6 +195,7 @@ describe('Rando3D', function() {
                 assert.closeTo(RANDO.Utils.angleFromAxis(A, B, axis), 3*Math.PI/4, 0.0001);
                 done();
             });
+            
             it("should return -3*PI/4.", function(done) {
                 var A = new BABYLON.Vector3(0,0,0);
                 var B = new BABYLON.Vector3(-10,-10,0);
@@ -205,123 +206,78 @@ describe('Rando3D', function() {
         });
     });
     
-    
     describe('Translations', function() {
         describe('DEM', function() {
+            // Initialization of the DEM
+            var extent = {
+                northwest : {x:  5, y: -5},
+                northeast : {x:  5, y:  5},
+                southeast : {x: -5, y:  5},
+                southwest : {x: -5, y: -5},
+                altitudes : {max: 10, min: 0 }
+            };
+            var vertices = [
+                -5, 4, -5,
+                 0, 4, -5,
+                 5, 6, -5,
+                -5, 8,  0,
+                 0, 2,  0,
+                 5, 5,  0,
+                -5, 4,  5,
+                 0, 8,  5,
+                 5, 9,  5
+            ];
+            var center = {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+            var dem = {
+                "extent"    : extent,
+                "vertices"  : vertices,
+                "center"    : center,
+                "toto"      : "toto"
+            };///-----------------------
+            
+            // Translation of 10 
+            RANDO.Utils.translateDEM(dem, 10, 10, 10);
+            
             it("should translate the DEM extent  ", function(done) {
-                var extent = {
-                    northwest : {x:  5, y: -5},
-                    northeast : {x:  5, y:  5},
-                    southeast : {x: -5, y:  5},
-                    southwest : {x: -5, y: -5},
-                    altitudes : {max: 10, min: 0 }
-                };
-                var vertices = [
-                    -5, Math.random()*10, -5,
-                     0, Math.random()*10, -5,
-                     5, Math.random()*10, -5,
-                    -5, Math.random()*10,  0,
-                     0, Math.random()*10,  0,
-                     5, Math.random()*10,  0,
-                    -5, Math.random()*10,  5,
-                     0, Math.random()*10,  5,
-                     5, Math.random()*10,  5
-                ];
-                var center = {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                };
-                var dem = {
-                    "extent"    : extent,
-                    "vertices"  : vertices,
-                    "center"    : center,
-                    "toto"      : "toto"
-                };
-                var tr_extent = {
+                var translated_extent = {
                     northwest : {x: 15, y:  5},
                     northeast : {x: 15, y: 15},
                     southeast : {x:  5, y: 15},
                     southwest : {x:  5, y:  5},
                     altitudes : {max: 20, min: 10 }
                 };
-                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).extent, tr_extent);
+                
+                assert.deepEqual(dem.extent, translated_extent);
                 done();
             });
             
             it("should translate the DEM center  ", function(done) {
-                var extent = {
-                    northwest : {x:  5, y: -5},
-                    northeast : {x:  5, y:  5},
-                    southeast : {x: -5, y:  5},
-                    southwest : {x: -5, y: -5},
-                    altitudes : {max: 10, min: 0 }
-                };
-                var vertices = [
-                    -5, Math.random()*10, -5,
-                     0, Math.random()*10, -5,
-                     5, Math.random()*10, -5,
-                    -5, Math.random()*10,  0,
-                     0, Math.random()*10,  0,
-                     5, Math.random()*10,  0,
-                    -5, Math.random()*10,  5,
-                     0, Math.random()*10,  5,
-                     5, Math.random()*10,  5
-                ];
-                var center = {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                };
-                var dem = {
-                    "extent"    : extent,
-                    "vertices"  : vertices,
-                    "center"    : center,
-                    "toto"      : "toto"
-                };
-                var tr_center = {
+                var translated_center = {
                     x: 10,
                     y: 10,
                     z: 10
                 };
-                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).center, tr_center);
+                assert.deepEqual(dem.center, translated_center);
                 done();
             });
+            
             it("should translate the DEM vertices  ", function(done) {
-                var extent = {
-                    northwest : {x:  5, y: -5},
-                    northeast : {x:  5, y:  5},
-                    southeast : {x: -5, y:  5},
-                    southwest : {x: -5, y: -5},
-                    altitudes : {max: 10, min: 0 }
-                };
-                var vertices = [
-                    -5, Math.random()*10, -5,
-                     0, Math.random()*10, -5,
-                     5, Math.random()*10, -5,
-                    -5, Math.random()*10,  0,
-                     0, Math.random()*10,  0,
-                     5, Math.random()*10,  0,
-                    -5, Math.random()*10,  5,
-                     0, Math.random()*10,  5,
-                     5, Math.random()*10,  5
+                var translated_vertices = [
+                     5, 14,  5,
+                    10, 14,  5,
+                    15, 16,  5,
+                     5, 18, 10,
+                    10, 12, 10,
+                    15, 15, 10,
+                     5, 14, 15,
+                    10, 18, 15,
+                    15, 19, 15
                 ];
-                var center = {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                };
-                var dem = {
-                    "extent"    : extent,
-                    "vertices"  : vertices,
-                    "center"    : center,
-                    "toto"      : "toto"
-                };
-                var tr_vertices = [];
-                for (it in vertices){
-                    tr_vertices.push(vertices[it]+10);
-                }
-                assert.deepEqual(RANDO.Utils.translateDEM(dem, 10, 10, 10).vertices, tr_vertices);
+                assert.deepEqual(dem.vertices, translated_vertices);
                 done();
             });
         });
@@ -358,12 +314,12 @@ describe('Rando3D', function() {
                     y: 20, 
                     z: 25
                 }];
-                assert.deepEqual(RANDO.Utils.translateRoute(vertices, 5, 10, 15), tr_vertices);
+                RANDO.Utils.translateRoute(vertices, 5, 10, 15);
+                assert.deepEqual(vertices, tr_vertices);
                 done();
             });
         });
     });
-    
     
     describe('Conversion', function() {
         describe('latitude/longitude to meters x/y', function() {
@@ -386,7 +342,6 @@ describe('Rando3D', function() {
                 assert.closeTo(RANDO.Utils.toMeters(latlng).x, 90* 111319.458, 100);
                 done();
             });
-            
         });
     });
 });
