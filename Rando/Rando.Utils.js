@@ -357,7 +357,8 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
  *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
  */
 RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
-    var alpha1,
+    var speed = 2- (RANDO._CAM_SPEED)+0.1,
+        alpha1,
         alpha2 = RANDO.Utils.angleFromAxis(position, target,BABYLON.Axis.Y);
     
     if(angles){
@@ -368,13 +369,13 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
     }
     
     timeline.appendMultiple( 
-        [new TweenLite(camera.position, RANDO._CAM_SPEED, {
+        [new TweenLite(camera.position, speed, {
             x: position.x, 
             y: position.y + RANDO._CAM_OFFSET, 
             z: position.z,
             ease: "Linear.easeNone"  
             }),
-         new TweenLite(camera.rotation, RANDO._CAM_SPEED, {
+         new TweenLite(camera.rotation, speed, {
             y: alpha2,
             ease: "Power1.easeInOut"  
         })],

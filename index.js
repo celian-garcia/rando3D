@@ -84,7 +84,7 @@ function createScene(engine){
             dataType: 'json',
             async: false,
             success: function(data) {
-                console.log("MNT en entrée : ");
+                console.log("Input DEM : ");
                 console.log(data);
                 
                 var extent = RANDO.Utils.getExtent(data.extent);
@@ -125,7 +125,7 @@ function createScene(engine){
             translateXY.y
         );
         
-        console.log("MNT en sortie : prêt à être manipulé par BABYLON.js");
+        console.log("Output DEM : Ready to go in Babylon.js");
         console.log(dem);
         //RANDO.Builds.cardinals(dem.extent, scene);
         
@@ -164,7 +164,7 @@ function createScene(engine){
             RANDO.Utils.translateRoute(
                 vertices, 
                 0, 
-                RANDO._TREK_OFFSET_Y, 
+                RANDO._TREK_OFFSET, 
                 0
             );
             
