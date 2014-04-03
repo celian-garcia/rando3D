@@ -79,7 +79,7 @@ function createScene(engine){
         var dem;
         // Getting data of DEM----------
         $.ajax({
-            url:  "json/dem-pne-" + RANDO.SETTINGS.ID_SCENE + ".json",
+            url:  "json/trek/" + RANDO.SETTINGS.ID_SCENE + "/dem.json",
             dataType: 'json',
             async: false,
             success: function(data) {
@@ -140,7 +140,7 @@ function createScene(engine){
     if (b_troncon) {
         // Getting data of TRONCON----------
         $.ajax({
-            url: "json/profile-pne-" + RANDO.SETTINGS.ID_SCENE + ".json",
+            url: "json/trek/" + RANDO.SETTINGS.ID_SCENE + "/profile.json",
             dataType: 'json',
             async: false,
             success: function(data) {

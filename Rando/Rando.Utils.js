@@ -319,11 +319,9 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
  *      - camera    : camera 
  *      - position  : future position 
  *      - target    : future target
- *      - b_foll : boolean which determines if the following mode can be launch or not 
  * 
- * NB: b_foll is an object containing a boolean in b_fly.value
  */
-RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
+RANDO.Utils.moveCameraTo = function(camera, position, target, callback){
     var rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
     
     // Translation
@@ -332,9 +330,8 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
         y: position.y + RANDO.SETTINGS.CAM_OFFSET,
         z: position.z,
         ease: 'ease-in',
-        onComplete: function(){
-            if(typeof(b_foll)==='undefined'){}
-            else b_foll.value = true;
+        onComplete : function (){
+            if (typeof(callback) == "function") callback();
         }
     });
     // Rotation
@@ -343,9 +340,8 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
         y: rotation_y, 
         z: 0,
         ease: 'ease-in',
-        onComplete: function(){
-            if(typeof(b_foll)==='undefined'){}
-            else b_foll.value = true;
+        onComplete : function (){
+            if (typeof(callback) == "function") callback();
         }
     });
 }
@@ -358,8 +354,8 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
  *      - target: target wanted (necessary to determine the rotation to apply)
  *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
  */
-RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles, speed){
-    if (typeof(speed)==='undefined') speed = 2- (RANDO.SETTINGS.CAM_SPEED)+0.1;
+RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
+    var speed = 2- (RANDO.SETTINGS.CAM_SPEED_T)+0.1;
     
     var alpha1,
         alpha2 = RANDO.Utils.angleFromAxis(position, target,BABYLON.Axis.Y);
@@ -395,46 +391,52 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
  *  return the camera
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
-    var d = 20, // Number of points between the current point and the point watched
+    var d = 10, // Number of points between the current point and the point watched
         b_foll = {"value": false},
         b_pause = true,
         timeline = new TimelineLite(),
         angles = [];
-        
+
     // Filling of the timeline "tl_foll"
-    for (var i=0; i< vertices.length-d; i+=d){
+    for (var i=d; i< vertices.length-d; i+=d){
         RANDO.Utils.addKeyToCamera(timeline, scene.activeCamera, vertices[i], vertices[i+d], angles);
     }
     
-    RANDO.Utils.addKeyToCamera(timeline, scene.activeCamera, vertices[0], vertices[d], angles, 1.5);
+    RANDO.Utils.addKeyToCamera(timeline, scene.activeCamera, vertices[i], vertices[vertices.length-1], angles);
     
     // Animation paused by default
     timeline.pause(0);
     
     // Controls
+    var state = "flying";
     $(document).keyup(function(e){
         var keyCode = e.keyCode;
 
         // Space
-        if (keyCode == 32 && b_foll.value){   
-            b_pause = !b_pause;
-            if(b_pause)
-                timeline.pause();
-            else
+        if (keyCode == 32){
+            if (state == "start" || state == "pause") {
+                state = "moving";
                 timeline.play();
+            }
+            else if (state == "moving") {
+                state = "pause";
+                timeline.pause();
+            }
         }
 
         // Enter
         if (keyCode == 13){
-            if(!b_pause) b_pause = !b_pause;
-            if(!b_foll.value){
-                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[d], b_foll);
-            }else {
+            if (state == "flying"){
+                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[d], function(){
+                    state = "start";
+                });
+            }
+            else if ( state == "pause" || state == "moving" || state == "end" ){
                 timeline.pause(0);
+                state = "start";
             }
         }
     });
-    
 }
 
 /**
