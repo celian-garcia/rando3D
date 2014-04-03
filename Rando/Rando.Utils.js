@@ -324,13 +324,12 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
  * NB: b_foll is an object containing a boolean in b_fly.value
  */
 RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
-    var y_offset = _CAM_OFFSET,
-        rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
+    var rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
     
     // Translation
     TweenLite.to(camera.position, 2, { 
         x: position.x, 
-        y: position.y + y_offset,
+        y: position.y + RANDO._CAM_OFFSET,
         z: position.z,
         ease: 'ease-in',
         onComplete: function(){
@@ -358,8 +357,7 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, b_foll){
  *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
  */
 RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
-    var speed = 0.6, // Time between each point 
-        alpha1,
+    var alpha1,
         alpha2 = RANDO.Utils.angleFromAxis(position, target,BABYLON.Axis.Y);
     
     if(angles){
@@ -368,14 +366,15 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
             alpha2 = (2*Math.PI - Math.abs(alpha2));
         }
     }
+    
     timeline.appendMultiple( 
-        [new TweenLite(camera.position, speed, {
+        [new TweenLite(camera.position, RANDO._CAM_SPEED, {
             x: position.x, 
-            y: position.y + _CAM_OFFSET, 
+            y: position.y + RANDO._CAM_OFFSET, 
             z: position.z,
             ease: "Linear.easeNone"  
             }),
-        new TweenLite(camera.rotation, speed, {
+         new TweenLite(camera.rotation, RANDO._CAM_SPEED, {
             y: alpha2,
             ease: "Power1.easeInOut"  
         })],
