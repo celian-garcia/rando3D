@@ -70,6 +70,9 @@ function createScene(engine){
     // Camera
     var camera = RANDO.Builds.camera(scene);
     
+    // Lights
+    var lights = RANDO.Builds.lights(scene);
+    
     var grid2D, translateXY = {
         x : 0,
         y : 0

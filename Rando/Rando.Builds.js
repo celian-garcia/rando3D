@@ -5,7 +5,7 @@ var RANDO = RANDO || {};
 RANDO.Builds = {};
     
 /**
- * buildZone() : build a heightMap from a DEM corresponding of zone around a troncon 
+ * zone() : build a heightMap from a DEM corresponding of zone around a troncon 
  *      - scene (BABYLON.Scene) : current scene
  *      - data (Dictionnary)    : dictionnary containing :
  *              * center of DEM
@@ -59,19 +59,17 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
 
     zone.material = material;
     zone.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-    // Light
-    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
 }
 
 /**
-* buildRoute() : build a troncon from an array of point
-* - scene (BABYLON.Scene) : current scene
-* - vertices : array of vertices
-* - cam_b (bool): settings of camera **optionnal**
-* - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
-* - sph_b (bool): using of sphere meshes **optionnal**
-* - cyl_b (bool): using of cylinder meshes **optionnal**
-* - pan_b (bool): using of panel meshes to display informations **optionnal**
+* route() : build a troncon from an array of point
+*       - scene (BABYLON.Scene) : current scene
+*       - vertices : array of vertices
+*       - cam_b (bool): settings of camera **optionnal**
+*       - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
+*       - sph_b (bool): using of sphere meshes **optionnal**
+*       - cyl_b (bool): using of cylinder meshes **optionnal**
+*       - pan_b (bool): using of panel meshes to display informations **optionnal**
 */
 RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(lin_b)==='undefined') lin_b = false;
@@ -255,3 +253,18 @@ RANDO.Builds.camera = function(scene){
     return camera;
 }
 
+/**
+ *  lights() : initialize main parameters of lights    
+ *      - scene : the current scene
+ * 
+ *  return an array containing all lights
+ * */
+RANDO.Builds.lights = function(scene){
+    var lights = [];
+    
+    // Sun
+    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
+    
+    lights.push(sun);
+    return lights;
+}
