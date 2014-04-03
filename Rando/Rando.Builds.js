@@ -80,12 +80,12 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     RANDO.Utils.animateCamera(vertices, scene);
     // With Cylinder meshes
     if (cyl_b){
-        var cyl_diameter = RANDO._TREK_WIDTH;
+        var cyl_diameter = RANDO.SETTINGS.TREK_WIDTH;
         var cyl_tessel = 10;
         var cyl_material = new BABYLON.StandardMaterial("CylinderMaterial", scene);
-        cyl_material.diffuseColor = RANDO._TREK_COLOR;
-        //cyl_material.ambientColor = RANDO._TREK_COLOR;
-        //cyl_material.specularColor = RANDO._TREK_COLOR;
+        cyl_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
+        //cyl_material.ambientColor = RANDO.SETTINGS.TREK_COLOR;
+        //cyl_material.specularColor = RANDO.SETTINGS.TREK_COLOR;
         
         for (var i = 0; i < vertices.length-1; i++){
             var A = new BABYLON.Vector3(
@@ -118,9 +118,9 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     // Spheres for each point
     if (sph_b){
         // Create Sphere
-        var sph_diam = RANDO._TREK_WIDTH;
+        var sph_diam = RANDO.SETTINGS.TREK_WIDTH;
         var sph_material = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        sph_material.diffuseColor = RANDO._TREK_COLOR;
+        sph_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
         for(it in vertices){
             var sphere = BABYLON.Mesh.CreateSphere("Sphere" + it, 5, sph_diam, scene);
             sphere.material = sph_material;

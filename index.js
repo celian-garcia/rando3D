@@ -19,11 +19,10 @@
 // Called once the html body is loaded
 var onload = function(){
     $("#menu .button").click(function() {
-        RANDO._ID_SCENE = $(this).data('id');
+        RANDO.SETTINGS.ID_SCENE = $(this).data('id');
         
         if (engine){
             engine.dispose();
-            engine.clear(new BABYLON.Color4(0,0,0,0), true, true);
             engine = null;
         }
         if(scene){
@@ -80,7 +79,7 @@ function createScene(engine){
         var dem;
         // Getting data of DEM----------
         $.ajax({
-            url:  "json/dem-pne-" + RANDO._ID_SCENE + ".json",
+            url:  "json/dem-pne-" + RANDO.SETTINGS.ID_SCENE + ".json",
             dataType: 'json',
             async: false,
             success: function(data) {
@@ -132,8 +131,8 @@ function createScene(engine){
         // Zone building
         RANDO.Builds.zone(
             scene, 
-            dem, 
-            new BABYLON.Texture("img/tex-pne-" + RANDO._ID_SCENE + ".jpg", scene)
+            dem//, 
+            //new BABYLON.Texture("img/tex-pne-" + RANDO.SETTINGS.ID_SCENE + ".jpg", scene)
         );
     }
 
@@ -141,7 +140,7 @@ function createScene(engine){
     if (b_troncon) {
         // Getting data of TRONCON----------
         $.ajax({
-            url: "json/profile-pne-" + RANDO._ID_SCENE + ".json",
+            url: "json/profile-pne-" + RANDO.SETTINGS.ID_SCENE + ".json",
             dataType: 'json',
             async: false,
             success: function(data) {
@@ -164,7 +163,7 @@ function createScene(engine){
             RANDO.Utils.translateRoute(
                 vertices, 
                 0, 
-                RANDO._TREK_OFFSET, 
+                RANDO.SETTINGS.TREK_OFFSET, 
                 0
             );
             
