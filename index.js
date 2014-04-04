@@ -17,7 +17,7 @@
     var canvas = document.getElementById("canvas_renderer");
 
 // Called once the html body is loaded
-var onload = function(){
+//document.addEventListener("DOMContentLoaded", function () {
     $("#menu .button").click(function() {
         RANDO.SETTINGS.ID_SCENE = $(this).data('id');
         
@@ -53,7 +53,7 @@ var onload = function(){
         }
     });
     $("#menu .button:first").click();
-};
+//});
 
 /**
  * createScene() : 
