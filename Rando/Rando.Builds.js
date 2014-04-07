@@ -36,9 +36,7 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
     if(texture){
-        //material.bumpTexture = texture;
-        material.ambientTexture = texture;
-        //material.diffuseTexture = texture;
+        material.diffuseTexture = texture;
     }
     else 
         material.wireframe = true;
