@@ -1,9 +1,9 @@
 // Rando.Settings.js 
 // General settings  
 
+var START_TIME;
 var RANDO = RANDO || {};
 RANDO.SETTINGS = {};
-
 
 RANDO.SETTINGS.ID_SCENE ; // Id of the scene
 RANDO.SETTINGS.DEM_URL; // Url of the DEM json

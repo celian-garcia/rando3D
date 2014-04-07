@@ -18,11 +18,11 @@ RANDO.Builds = {};
 RANDO.Builds.zone = function(scene, data, cam_b){
     if(typeof(texture)==='undefined') texture = null;
     if(typeof(cam_b)==='undefined') cam_b = true;
-    
+    console.log("DEM building... " + (Date.now() - START_TIME) );
     var center = data.center;
     var resolution = data.resolution;
     var vertices = data.vertices;
-
+    
     // Camera 
     if (cam_b){
         scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
@@ -53,6 +53,8 @@ RANDO.Builds.zone = function(scene, data, cam_b){
 
     zone.material = material;
     zone.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+    
+    console.log("DEM built ! " + (Date.now() - START_TIME) );
 }
 
 /**
@@ -72,6 +74,9 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
     if(typeof(pan_b)==='undefined') pan_b = false;
     
     RANDO.Utils.animateCamera(vertices, scene);
+    
+    console.log("Trek building... " + (Date.now() - START_TIME) );
+    
     // With Cylinder meshes
     if (cyl_b){
         var cyl_diameter = RANDO.SETTINGS.TREK_WIDTH;
@@ -163,6 +168,8 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
         }, 1);
         
     }//------------------------------------------------------------------
+    
+    console.log("Trek built ! " + (Date.now() - START_TIME) );
 }
 
 /**

@@ -5,6 +5,7 @@
  * */
     var scene = null;
     var engine = null;
+    START_TIME = Date.now();
     
     window.addEventListener("resize", function(){
         engine.resize();
@@ -47,14 +48,16 @@ $("#menu .button").click(function() {
         });
         
         scene.executeWhenReady(function () {
+            console.log("Scene is ready ! " + (Date.now() - START_TIME) );
             // texture
-            var material = scene.getMeshByName("Zone").material;
-            material.diffuseTexture =  new BABYLON.Texture(
-                RANDO.SETTINGS.TEXTURE_URL, 
-                scene
-            );
-            material.wireframe = false;
-            
+            if(scene.getMeshByName("Zone")){
+                var material = scene.getMeshByName("Zone").material;
+                material.diffuseTexture =  new BABYLON.Texture(
+                    RANDO.SETTINGS.TEXTURE_URL, 
+                    scene
+                );
+                material.wireframe = false;
+            }
             
             //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
             //~ $("#loader").switchClass("unloading", "endloading", 200);
@@ -85,7 +88,7 @@ function createScene(engine){
      .done(function (data) {
         var extent = RANDO.Utils.getExtent(data.extent);
         var ll_center = RANDO.Utils.toMeters(data.center);
-
+        console.log(data);
         // Create grid
         grid2D = RANDO.Utils.createGrid(
             extent.southwest,
@@ -148,10 +151,11 @@ function createScene(engine){
             RANDO.SETTINGS.TREK_OFFSET,
             0
         );
-
+        
         // Route building
         RANDO.Builds.route(scene, vertices);
-    });
+    }
+    );
 
     return scene;
 }

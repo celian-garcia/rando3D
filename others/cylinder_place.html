@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Cylinder placement</title>
+    <style>
+       html, body, div, canvas {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display:block;
+        }
+
+    </style>
+    <script src="../lib/jquery-1.9.1.js"></script>
+    <script src="../lib/babylon.1.9.0.js"></script>
+    <script src="../lib/babylon.arcRotateCamera.js"></script>
+    <script src="../lib/neo.js"></script>
+    <script src="../Rando/Rando.Utils.js"></script>
+        
+    
+
+</head>
+
+ <body>
+    <div id="rootDiv">
+        <canvas id="canvas_renderer"></canvas>
+    </div>
+
+    <script>
+    $(function() {
+        // Get the Canvas element from our HTML below
+        var canvas = document.getElementById("canvas_renderer");
+        // Load BABYLON 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        // Scene
+        var scene = new BABYLON.Scene(engine);
+        // Camera
+        var camera = init_camera(scene);
+        
+        //camera.rotation.y = Math.PI/2;
+        camera.attachControl(canvas);
+        // Light
+        var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+        
+        // Spheres
+        var sph_A = BABYLON.Mesh.CreateSphere("Point A", 5, 2, scene);
+        var sph_B = BABYLON.Mesh.CreateSphere("Point B", 5, 2, scene);
+        var hard = true;
+        if (hard){
+            camera.position = new BABYLON.Vector3(0, 0, -20);
+            sph_A.position =  new BABYLON.Vector3(5,0,0);
+            sph_B.position =  new BABYLON.Vector3(10,10,10);
+        }
+        else{
+            camera.position = new BABYLON.Vector3(1279, 222, 2600);
+            sph_A.position =  new BABYLON.Vector3(1276,214,2633);
+            sph_B.position =  new BABYLON.Vector3(1282,232,2633);
+        }
+        var A = sph_A.position;
+        var B = sph_B.position;
+        
+        // Container
+        var container = new BABYLON.Mesh("Container", scene);
+        container.isVisible = false;
+        // Cylinder
+        var height = BABYLON.Vector3.Distance(A,B)
+        var diameter = 2;
+        var tessellation = 5;
+        var cylinder = BABYLON.Mesh.CreateCylinder(
+            "Cylinder", 
+            height, 
+            diameter, 
+            diameter, 
+            tessellation, 
+            scene,
+            true
+        );
+        
+        NEO.JackIntoBabylon(); 
+        container.position = new BABYLON.Vector3(
+            (A.x+B.x)/2,
+            (A.y+B.y)/2,
+            (A.z+B.z)/2
+        );
+        cylinder.place(A, B);
+        cylinder.DrawAllAxis(scene);
+        container.DrawAllAxis(scene);
+        
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+    });
+    </script>
+ </body>
+ 
+ <script>
+    function init_camera(scene){
+        var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+        camera.checkCollisions = true;
+        camera.maxZ = 10000;
+        camera.speed = 5;
+        camera.keysUp = [90]; // Touche Z
+        camera.keysDown = [83]; // Touche S
+        camera.keysLeft = [81]; // Touche Q
+        camera.keysRight = [68]; // Touche D
+        return camera;
+    }
+    
+    function get_x_rotation(a, b){
+        var x = Math.acos(
+            (b[1]-a[1])/Math.sqrt(
+                Math.pow(b[1]-a[1],2)+
+                Math.pow(b[2]-a[2],2)
+            )
+        );
+        // Case 1
+        if (b[2] <= a[2])
+            return -x;
+        // Case 2
+        if (b[2] >= a[2])
+            return  x;
+        
+        return null;
+    }
+
+    
+    
+    function angle (A, B, axe){
+        var H;
+        switch (axe){
+            case BABYLON.Axis.X : 
+                H = new BABYLON.Vector3(B.x,B.y,A.z);   break;
+            case BABYLON.Axis.Y :
+                H = null;                               break;
+            case BABYLON.Axis.Z :
+                H = new BABYLON.Vector3(A.x,B.y,B.z);
+        }
+        
+        // Compute angle
+        var AH = BABYLON.Vector3.Distance(A, H);
+        var AB = BABYLON.Vector3.Distance(A, B);
+        var angle = Math.acos(AH/AB);
+        
+        switch (axe){
+            case BABYLON.Axis.X : 
+                if (H.z > B.z)
+                    return -angle;  break;
+            case BABYLON.Axis.Y :
+                return null;        break
+            case BABYLON.Axis.Z :
+                if (H.x < B.x)
+                    return -angle;  
+        }
+        
+        return angle;
+    }
+    
+    BABYLON.Mesh.prototype.place = function(A, B){
+        // Initial position at the center of the AB vector
+        this.position = new BABYLON.Vector3(
+            (A.x+B.x)/2,
+            (A.y+B.y)/2,
+            (A.z+B.z)/2
+        );
+        
+        // First angle of rotation
+        //var angle1 = get_x_rotation(A.asArray(),B.asArray());
+        var angle1 = angle(A,B,BABYLON.Axis.X);
+        // Second angle of rotation 
+        var angle2 = angle(A,B,BABYLON.Axis.Z);
+        
+        //First rotation
+        this.rotate(
+            BABYLON.Axis.X, 
+            angle1,
+            BABYLON.Space.LOCAL
+        );
+        console.log(angle1);
+        console.log(Math.PI/4);
+
+        // Second rotation
+        this.rotate(
+            BABYLON.Axis.Z, 
+            angle2, 
+            BABYLON.Space.LOCAL
+        );
+
+    }
+ </script>
+
+
+ 
+ 
+ 
+</html>
