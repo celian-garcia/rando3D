@@ -46,10 +46,19 @@ $("#menu .button").click(function() {
             scene.render();
         });
         
-        //~ scene.executeWhenReady(function () {
+        scene.executeWhenReady(function () {
+            // texture
+            var material = scene.getMeshByName("Zone").material;
+            material.diffuseTexture =  new BABYLON.Texture(
+                RANDO.SETTINGS.TEXTURE_URL, 
+                scene
+            );
+            material.wireframe = false;
+            
+            
             //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
             //~ $("#loader").switchClass("unloading", "endloading", 200);
-        //~ });
+        });
     }
 });
 $("#menu .button:first").click();
@@ -113,8 +122,7 @@ function createScene(engine){
         // Zone building
         RANDO.Builds.zone(
             scene,
-            dem,
-            new BABYLON.Texture(RANDO.SETTINGS.TEXTURE_URL, scene)  // texture
+            dem
         );
      })
     .then(function () {

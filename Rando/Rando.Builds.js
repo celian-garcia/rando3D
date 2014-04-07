@@ -15,7 +15,7 @@ RANDO.Builds = {};
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
  */
-RANDO.Builds.zone = function(scene, data, texture, cam_b){
+RANDO.Builds.zone = function(scene, data, cam_b){
     if(typeof(texture)==='undefined') texture = null;
     if(typeof(cam_b)==='undefined') cam_b = true;
     
@@ -35,11 +35,7 @@ RANDO.Builds.zone = function(scene, data, texture, cam_b){
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
-    if(texture){
-        material.diffuseTexture = texture;
-    }
-    else 
-        material.wireframe = true;
+    material.wireframe = true;
 
     // Create Zone
     var zone = RANDO.Utils.createGround(

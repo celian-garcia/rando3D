@@ -26,4 +26,3 @@ RANDO.SETTINGS.TREK_COLOR = new BABYLON.Color3(0.1,0.6,0.2); // Trek color (gree
                  
 RANDO.SETTINGS.TREK_WIDTH = 3; // Trek width (in meters)
 
-
