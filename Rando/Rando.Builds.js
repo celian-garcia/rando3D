@@ -34,6 +34,19 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
             center.z-1500
         );
     }
+    ///////////////////////////////////////////////////////////////////
+    var material0 = new BABYLON.StandardMaterial("mat0", scene);
+    material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
+    material0.backFaceCulling = false;
+    
+    var material1 = new BABYLON.StandardMaterial("mat1", scene);
+    material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
+    material1.backFaceCulling = false;
+    
+    var multimat = new BABYLON.MultiMaterial("multi", scene);
+    multimat.subMaterials.push(material0);
+    multimat.subMaterials.push(material1);
+    ///////////////////////////////////////////////////////////////////
     
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
@@ -51,7 +64,9 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
         resolution.y-1, 
         scene
     );
-    dem.material = material;
+    dem.material = multimat;
+    
+    
     
     // Put elevations in the DEM
     var vertices = dem.getVerticesData(BABYLON.VertexBuffer.PositionKind);
@@ -64,6 +79,19 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     }
     dem.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
     
+    
+    var verticesCount = dem.getTotalVertices();
+    dem.subMeshes = [];
+    console.log(resolution.x*3);
+    console.log(resolution.y*3);
+    dem.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 12084, dem));
+    dem.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 12084, 97308, dem));
+    //console.log(dem.subMeshes[0]);
+    //console.log(dem.getIndices());
+    //~ var plane = BABYLON.Mesh.CreatePlane("clone",100,  scene)
+    //~ var submesh0 = dem.subMeshes[0].clone(plane);
+    //~ console.log(submesh0);
+    //~ console.log(dem.getIndices().length);
     // DEM built ! 
     console.log("DEM built ! " + (Date.now() - START_TIME) );
 }

@@ -51,15 +51,15 @@ $("#menu .button").click(function() {
             console.log("Scene is ready ! " + (Date.now() - START_TIME) );
             
             // texture
-            var mesh = scene.getMeshByName("Digital Elevation Model");
-            if (mesh){
-                var material = mesh.material;
-                material.diffuseTexture =  new BABYLON.Texture(
-                    RANDO.SETTINGS.TEXTURE_URL, 
-                    scene
-                );
-                material.wireframe = false;
-            }
+            //~ var mesh = scene.getMeshByName("Digital Elevation Model");
+            //~ if (mesh){
+                //~ var material = mesh.material;
+                //~ material.diffuseTexture =  new BABYLON.Texture(
+                    //~ RANDO.SETTINGS.TEXTURE_URL, 
+                    //~ scene
+                //~ );
+                //~ material.wireframe = false;
+            //~ }
             
             //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
             //~ $("#loader").switchClass("unloading", "endloading", 200);
