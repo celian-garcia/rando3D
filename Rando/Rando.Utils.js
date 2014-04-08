@@ -25,7 +25,7 @@ RANDO.Utils.createGround = function(name, width, height, w_subdivisions, h_subdi
     var normals = [];
     var uvs = [];
     var row, col;
-
+    
     for (row = 0; row <= h_subdivisions; row++) {
         for (col = 0; col <= w_subdivisions; col++) {
             var position = new BABYLON.Vector3((col * width) / w_subdivisions - (width / 2.0), 0, ((h_subdivisions - row) * height) / h_subdivisions - (height / 2.0));
