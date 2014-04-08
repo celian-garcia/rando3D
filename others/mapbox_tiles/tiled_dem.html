@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Test tile texture</title>
+    <style>
+        html, body, div, canvas {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            display:block;
+        }
+    </style>
+    <script src="../../lib/jquery-1.9.1.js"></script>
+    
+    <!-- BABYLON-->
+    
+    <script src="../../lib/babylon.1.10.0.js"></script>
+    
+    <!-- TweenLite -->
+<!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
+-->
+    <!-- Rando-->
+<!--
+    <script src="Rando/Rando.Utils.js"></script>
+    <script src="Rando/Rando.Builds.js"></script>
+    <script src="Rando/Rando.Settings.js"></script>
+-->
+    
+    
+</head>
+
+<body>
+    <canvas id = "canvas_renderer"></canvas>
+    
+</body>
+
+<script>
+    $(function() {
+        // Get the Canvas element from our HTML below
+        var canvas = document.getElementById("canvas_renderer");
+        // Load BABYLON 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        // Scene
+        var scene = new BABYLON.Scene(engine);
+        // Camera
+        var camera = init_camera(scene);
+        
+        camera.attachControl(canvas);
+        
+        // Light
+        var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+        
+        // Container
+        var container = new BABYLON.Mesh("Container", scene);
+        container.isVisible = false;
+        
+        // Planes
+        var planes = [], plane_size = 256;
+        var n_width = 5, n_height = 4;
+        
+        
+        for (var xx = 0; xx < n_width; xx++){
+            var line = [];
+            for (var yy = 0; yy < n_height; yy++){
+                line.push(new BABYLON.Mesh.CreatePlane("plane " + xx + "-" + yy, plane_size, scene));
+            }
+            planes.push(line);
+        } 
+
+        // Materials 
+        var material = new BABYLON.StandardMaterial("material", scene);
+        
+        // Planes settings
+        for (var xx = 0; xx < n_width; xx++){
+            for (var yy = 0; yy < n_height; yy++){
+                planes[xx][yy].position.x = xx*plane_size;
+                planes[xx][yy].position.z = yy*plane_size;
+                planes[xx][yy].rotation.x = Math.PI/2;
+                planes[xx][yy].material = material;
+            }
+        }
+        
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+    });
+
+
+    function init_camera(scene){
+        var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+        camera.checkCollisions = true;
+        camera.maxZ = 10000;
+        camera.speed = 5;
+        camera.keysUp = [90]; // Touche Z
+        camera.keysDown = [83]; // Touche S
+        camera.keysLeft = [81]; // Touche Q
+        camera.keysRight = [68]; // Touche D
+        return camera;
+    }
+    
+    function deg2num(lat_deg, lon_deg, zoom){
+        var lat_rad = lat_deg*Math.PI/180;
+        var n = Math.pow(2.0, zoom);
+        var xtile = Math.floor((lon_deg + 180.0) / 360.0 * n);
+        var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+        
+        return {
+            "xtile": xtile, 
+            "ytile": ytile
+        };
+    }
+    
+
+</script>
+
+
+
+
+</html>
