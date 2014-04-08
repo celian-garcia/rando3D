@@ -17,7 +17,7 @@ RANDO.Utils = {};
  * Create a ground which can be divided differently in width and in height
  * It uses the function BABYLON.Mesh.CreateGround() of the 1.9.0 release of BABYLON
  ****************************************************************/
-RANDO.Utils.createGround = function(name, width, height, w_subdivisions, h_subdivisions, scene, updatable) {
+RANDO.Utils.createGround = function(name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -26,12 +26,13 @@ RANDO.Utils.createGround = function(name, width, height, w_subdivisions, h_subdi
     var uvs = [];
     var row, col;
     
+    var grid = RANDO.Utils.createGrid(A, B, C, D, w_subdivisions+ 1, h_subdivisions+ 1);
     for (row = 0; row <= h_subdivisions; row++) {
         for (col = 0; col <= w_subdivisions; col++) {
-            var position = new BABYLON.Vector3((col * width) / w_subdivisions - (width / 2.0), 0, ((h_subdivisions - row) * height) / h_subdivisions - (height / 2.0));
+            var position = grid[row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
-
-            positions.push(position.x, position.y, position.z);
+            
+            positions.push(position.x, 0, position.y);
             normals.push(normal.x, normal.y, normal.z);
             uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
         }
@@ -48,7 +49,7 @@ RANDO.Utils.createGround = function(name, width, height, w_subdivisions, h_subdi
             indices.push(col + row * (w_subdivisions + 1));
         }
     }
-
+    
     ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
     ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
     ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
@@ -462,29 +463,6 @@ RANDO.Utils.refreshPanels = function(number, scene){
 
 /****    GETTERS     ************************/
 /**
- * getVerticesFromDEM() : get DEM vertices in a format which can be understood by the DEM builder
- *      - altitudes  : array containing altitudes of the vertices
- *      - grid       : 2D grid containing the x and y values of each points
- * 
- */
-RANDO.Utils.getVerticesFromDEM = function(altitudes, grid){
-    var vertices = [];
-
-    // Fills array of vertices 
-    var k = 1;
-    for (var j=0; j < grid.length; j++){
-        for (var i=0; i < grid[j].length; i++){
-            vertices.push(grid[j][i].x);
-            vertices[k] = altitudes[j][i];
-            vertices.push(grid[j][i].y);
-            k += 3;
-        }
-    }
-
-    return vertices ;
-}
-
-/**
  * getVerticesFromProfile() : 
  *      - profile : troncon profile in json 
  * 
@@ -511,7 +489,7 @@ RANDO.Utils.getVerticesFromProfile = function(profile){
  * getExtent() : get the four corners of the DEM (in meters) and altitudes minimum and maximum
  *      - extent : extent of the DEM served by the json
  */
-RANDO.Utils.getExtent = function(extent){
+RANDO.Utils.getExtentinMeters = function(extent){
     return {
         northwest : RANDO.Utils.toMeters(extent.northwest),
         northeast : RANDO.Utils.toMeters(extent.northeast),
@@ -545,7 +523,6 @@ RANDO.Utils.toMeters = function(latlng){
 
 
 /****    TRANSLATIONS     ************************/
-
 /**
  * drape() : drape the route over the ground 
  *      - vertices: route's vertices
@@ -555,7 +532,7 @@ RANDO.Utils.drape = function(vertices, scene){
     for (it in vertices){
         var ray =  new BABYLON.Ray(vertices[it], BABYLON.Axis.Y);
         var pick = scene.pickWithRay(ray, function (item) {
-            if (item.name == "Zone")
+            if (item.name == "Digital Elevation Model")
                 return true;
             else
                 return false;
@@ -575,11 +552,12 @@ RANDO.Utils.drape = function(vertices, scene){
  * return the DEM translated
  */
 RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
-    for (var i=0; i< dem.vertices.length; i+=3){
-        dem.vertices[i]   += dx;
-        dem.vertices[i+1] += dy;
-        dem.vertices[i+2] += dz;
+    for (row in dem.altitudes){
+        for (col in dem.altitudes[row]){
+            dem.altitudes[row][col] += dy;
+        }
     }
+    
     dem.center.x += dx;
     dem.center.y += dy;
     dem.center.z += dz;

@@ -15,13 +15,15 @@ RANDO.Builds = {};
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
  */
-RANDO.Builds.zone = function(scene, data, cam_b){
-    if(typeof(texture)==='undefined') texture = null;
+RANDO.Builds.DEM = function(data, scene, cam_b){
     if(typeof(cam_b)==='undefined') cam_b = true;
+    
+    // DEM building...
     console.log("DEM building... " + (Date.now() - START_TIME) );
+    
     var center = data.center;
     var resolution = data.resolution;
-    var vertices = data.vertices;
+    var altitudes = data.altitudes;
     
     // Camera 
     if (cam_b){
@@ -32,28 +34,37 @@ RANDO.Builds.zone = function(scene, data, cam_b){
             center.z-1500
         );
     }
+    
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
     material.wireframe = true;
 
-    // Create Zone
-    var zone = RANDO.Utils.createGround(
-        "Zone",
-        10,
-        10, 
+    // Create DEM
+    var dem = RANDO.Utils.createGround(
+        "Digital Elevation Model",
+        data.extent.southwest,
+        data.extent.southeast,
+        data.extent.northeast,
+        data.extent.northwest,
         resolution.x-1,
         resolution.y-1, 
         scene
     );
-    console.assert(
-        zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).length == vertices.length,
-        zone.getVerticesData(BABYLON.VertexBuffer.PositionKind).length + " != " + vertices.length
-    );
-
-    zone.material = material;
-    zone.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+    dem.material = material;
     
+    // Put elevations in the DEM
+    var vertices = dem.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    var i = 1;
+    for (row in altitudes){
+        for (col in altitudes[row]){
+            vertices[i] = altitudes[row][col];
+            i+=3;
+        }
+    }
+    dem.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+    
+    // DEM built ! 
     console.log("DEM built ! " + (Date.now() - START_TIME) );
 }
 
@@ -67,24 +78,25 @@ RANDO.Builds.zone = function(scene, data, cam_b){
 *       - cyl_b (bool): using of cylinder meshes **optionnal**
 *       - pan_b (bool): using of panel meshes to display informations **optionnal**
 */
-RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
-    if(typeof(lin_b)==='undefined') lin_b = false;
+RANDO.Builds.Trek = function(scene, vertices, sph_b, cyl_b, pan_b ){
     if(typeof(sph_b)==='undefined') sph_b = true;
     if(typeof(cyl_b)==='undefined') cyl_b = true;
     if(typeof(pan_b)==='undefined') pan_b = false;
     
     RANDO.Utils.animateCamera(vertices, scene);
     
+    // Trek building ...
     console.log("Trek building... " + (Date.now() - START_TIME) );
+    var trek = new BABYLON.Mesh("Trek", scene);
+    
+    // Trek material
+    var trek_material = new BABYLON.StandardMaterial("Trek Material", scene);
+    trek_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
     
     // With Cylinder meshes
     if (cyl_b){
         var cyl_diameter = RANDO.SETTINGS.TREK_WIDTH;
         var cyl_tessel = 10;
-        var cyl_material = new BABYLON.StandardMaterial("CylinderMaterial", scene);
-        cyl_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
-        //cyl_material.ambientColor = RANDO.SETTINGS.TREK_COLOR;
-        //cyl_material.specularColor = RANDO.SETTINGS.TREK_COLOR;
         
         for (var i = 0; i < vertices.length-1; i++){
             var A = new BABYLON.Vector3(
@@ -98,36 +110,44 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
                 vertices[i+1].z
             );
             var cyl_height = BABYLON.Vector3.Distance(A,B);
-                                
+            
+            // Create Cylinder
             var cylinder = BABYLON.Mesh.CreateCylinder(
-                "Cylinder" + (i+1),
+                "Cylinder " + (i+1),
                 cyl_height,
                 cyl_diameter,
                 cyl_diameter,
                 cyl_tessel,
                 scene
             );
-            cylinder.material = cyl_material;
             
             // Place the cylinder between the current point A and the next point B
             cylinder = RANDO.Utils.placeCylinder(cylinder, A, B);
+            
+            // Apply material
+            cylinder.material = trek_material;
+            
+            cylinder.parent = trek;
         }
     }//------------------------------------------------------------------
     
     // Spheres for each point
     if (sph_b){
-        // Create Sphere
         var sph_diam = RANDO.SETTINGS.TREK_WIDTH;
-        var sph_material = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        sph_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
+
         for(it in vertices){
-            var sphere = BABYLON.Mesh.CreateSphere("Sphere" + it, 5, sph_diam, scene);
-            sphere.material = sph_material;
+            // Create Sphere
+            var sphere = BABYLON.Mesh.CreateSphere("Sphere " + it, 5, sph_diam, scene);
             sphere.position = new BABYLON.Vector3(
                 vertices[it].x,
                 vertices[it].y,
                 vertices[it].z
             );
+            
+            // Apply material
+            sphere.material = trek_material;
+            
+            sphere.parent = trek;
         }
     }//------------------------------------------------------------------
     
@@ -169,6 +189,7 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
         
     }//------------------------------------------------------------------
     
+    // Trek built !
     console.log("Trek built ! " + (Date.now() - START_TIME) );
 }
 
@@ -185,7 +206,7 @@ RANDO.Builds.route = function(scene, vertices, lin_b, sph_b, cyl_b, pan_b ){
  *          SW --> Green
  * 
  */
-RANDO.Builds.cardinals = function(extent, scene){
+RANDO.Builds.Cardinals = function(extent, scene){
 
     var tmp;
     var sph_diam = 20;
@@ -234,7 +255,7 @@ RANDO.Builds.cardinals = function(extent, scene){
  * 
  *  return the camera
  * */
-RANDO.Builds.camera = function(scene){
+RANDO.Builds.Camera = function(scene){
     var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
     camera.checkCollisions = true;
     camera.maxZ = 10000;
@@ -255,7 +276,7 @@ RANDO.Builds.camera = function(scene){
  * 
  *  return an array containing all lights
  * */
-RANDO.Builds.lights = function(scene){
+RANDO.Builds.Lights = function(scene){
     var lights = [];
     
     // Sun

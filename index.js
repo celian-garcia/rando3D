@@ -49,9 +49,11 @@ $("#menu .button").click(function() {
         
         scene.executeWhenReady(function () {
             console.log("Scene is ready ! " + (Date.now() - START_TIME) );
+            
             // texture
-            if(scene.getMeshByName("Zone")){
-                var material = scene.getMeshByName("Zone").material;
+            var mesh = scene.getMeshByName("Digital Elevation Model");
+            if (mesh){
+                var material = mesh.material;
                 material.diffuseTexture =  new BABYLON.Texture(
                     RANDO.SETTINGS.TEXTURE_URL, 
                     scene
@@ -73,48 +75,37 @@ function createScene(engine){
     var scene = new BABYLON.Scene(engine);
     
     // Camera
-    var camera = RANDO.Builds.camera(scene);
+    var camera = RANDO.Builds.Camera(scene);
     
     // Lights
-    var lights = RANDO.Builds.lights(scene);
+    var lights = RANDO.Builds.Lights(scene);
     
-    var grid2D, translateXY = {
+    // Translation on the XY plane (XZ in babylon)
+    var translateXY = {
         x : 0,
         y : 0
     };
     
-    var dem;
     $.getJSON(RANDO.SETTINGS.DEM_URL)
      .done(function (data) {
-        var extent = RANDO.Utils.getExtent(data.extent);
-        var ll_center = RANDO.Utils.toMeters(data.center);
-        console.log(data);
-        // Create grid
-        grid2D = RANDO.Utils.createGrid(
-            extent.southwest,
-            extent.southeast,
-            extent.northeast,
-            extent.northwest,
-            data.resolution.x,
-            data.resolution.y
-        );
+        var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
+        var m_center = RANDO.Utils.toMeters(data.center);
 
-        dem = {
-            "extent"    :   extent,
-            "vertices"  :   RANDO.Utils.getVerticesFromDEM(
-                                data.altitudes,
-                                grid2D
-                            ),
-            "resolution":   data.resolution,
+        // DEM
+        var dem = {
+            "extent"    :   m_extent,
+            "altitudes"  :  data.altitudes, // altitudes already in meters
+            "resolution":   data.resolution,// reso already in meters
             "center"    :   {
-                                x: ll_center.x,
-                                y: data.center.z,
-                                z: ll_center.y
+                                x: m_center.x,
+                                y: data.center.z,// alt of center already in meters
+                                z: m_center.y
                             }
         };
         translateXY.x = -dem.center.x;
         translateXY.y = -dem.center.z;
 
+        // Translation of the DEM
         RANDO.Utils.translateDEM(
             dem,
             translateXY.x,
@@ -122,10 +113,10 @@ function createScene(engine){
             translateXY.y
         );
 
-        // Zone building
-        RANDO.Builds.zone(
-            scene,
-            dem
+        // DEM mesh building
+        RANDO.Builds.DEM(
+            dem,
+            scene
         );
      })
     .then(function () {
@@ -133,6 +124,7 @@ function createScene(engine){
     })
     .done(function (data) {
         var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
+        
         // Translation of the route to make it visible
         RANDO.Utils.translateRoute(
             vertices,
@@ -153,7 +145,7 @@ function createScene(engine){
         );
         
         // Route building
-        RANDO.Builds.route(scene, vertices);
+        RANDO.Builds.Trek(scene, vertices);
     }
     );
 
