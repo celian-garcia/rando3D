@@ -544,16 +544,40 @@ RANDO.Utils.toMeters = function(latlng){
 }
 
 
+/**
+ * Common utility to process lar arrays
+ *
+ * - array : Array
+ * - callback : function that will be called with (array, index)
+ */
+RANDO.Utils.processLargeArray = function (array, callback) {
+    // set this to whatever number of items you can process at once
+    var chunk = 10;
+    var index = 0;
+    function doChunk() {
+        var cnt = chunk;
+        while (cnt-- && index < array.length-1) {
+            callback(array, index);
+            ++index;
+        }
+        if (index < array.length-1) {
+            setTimeout(doChunk, 5);
+        }
+    }
+    doChunk();
+}
+
 /****    TRANSLATIONS     ************************/
 
 /**
- * drape() : drape the route over the ground 
+ * drape() : drape the route over the ground
  *      - vertices: route's vertices
  *      - scene: current scene
  */
-RANDO.Utils.drape = function(vertices, scene){
-    for (it in vertices){
-        var ray =  new BABYLON.Ray(vertices[it], BABYLON.Axis.Y);
+RANDO.Utils.drape = function(vertices, scene) {
+
+    function drapePoint(array, index) {
+        var ray =  new BABYLON.Ray(array[index], BABYLON.Axis.Y);
         var pick = scene.pickWithRay(ray, function (item) {
             if (item.name == "Zone")
                 return true;
@@ -561,9 +585,12 @@ RANDO.Utils.drape = function(vertices, scene){
                 return false;
         });
         if (pick.pickedPoint)
-            vertices[it].y = pick.pickedPoint.y;
+            array[index].y = pick.pickedPoint.y;
     }
+
+    RANDO.Utils.processLargeArray(vertices, drapePoint);
 }
+
 
 /**
  * translateDEM() : translate the DEM with coefficients given in parameters
