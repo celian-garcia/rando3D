@@ -17,7 +17,7 @@ RANDO.Utils = {};
  * Create a ground which can be divided differently in width and in height
  * It uses the function BABYLON.Mesh.CreateGround() of the 1.9.0 release of BABYLON
  ****************************************************************/
-RANDO.Utils.createGround = function(name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
+RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -32,7 +32,7 @@ RANDO.Utils.createGround = function(name, A, B, C, D, w_subdivisions, h_subdivis
             var position = grid[row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
             
-            positions.push(position.x, 0, position.y);
+            positions.push(position.x, position.z, position.y);
             normals.push(normal.x, normal.y, normal.z);
             uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
         }
@@ -57,6 +57,91 @@ RANDO.Utils.createGround = function(name, A, B, C, D, w_subdivisions, h_subdivis
 
     return ground;
 };
+
+RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
+    var ground = new BABYLON.Mesh(name, scene);
+
+    var indices = [];
+    var positions = [];
+    var normals = [];
+    var uvs = [];
+    var row, col;
+    
+    var h_subdivisions = grid.length-1;
+    var w_subdivisions = grid[0].length-1;
+    
+    for (row = 0; row <= h_subdivisions; row++) {
+        for (col = 0; col <= w_subdivisions; col++) {
+            var position = grid[row][col];
+            var normal = new BABYLON.Vector3(0, 1.0, 0);
+            
+            positions.push(position.x, position.z, position.y);
+            normals.push(normal.x, normal.y, normal.z);
+            uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
+        }
+    }
+
+    for (row = 0; row < h_subdivisions; row++) {
+        for (col = 0; col < w_subdivisions; col++) {
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + row * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
+
+            indices.push(col + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
+        }
+    }
+    
+    ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
+    ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
+    ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    ground.setIndices(indices);
+
+    return ground;
+};
+
+RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
+    var ground = new BABYLON.Mesh(name, scene);
+
+    var indices = [];
+    var positions = [];
+    var normals = [];
+    var uvs = [];
+    var row, col;
+    
+    var i = 0;
+    for (row = 0; row <= h_subdivisions; row++) {
+        for (col = 0; col <= w_subdivisions; col++) {
+            var normal = new BABYLON.Vector3(0, 1.0, 0);
+            
+            positions.push(vertices[i], vertices[i+1], vertices[i+2]);
+            normals.push(normal.x, normal.y, normal.z);
+            uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
+            i+=3;
+        }
+    }
+
+    for (row = 0; row < h_subdivisions; row++) {
+        for (col = 0; col < w_subdivisions; col++) {
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + row * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
+
+            indices.push(col + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
+        }
+    }
+    
+    ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
+    ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
+    ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    ground.setIndices(indices);
+
+    return ground;
+};
+
 
 /**
  *  placeCylinder()
@@ -318,10 +403,70 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
  * 
  * 
  */
-RANDO.Utils.subdivideData = function (v_all, zoom){
-    var v_sub;
-    return v_sub;
+RANDO.Utils.subdivideGrid = function (grid, zoom){
+    
+    var sub_grid = {};
+    
+    var cnt = 0;
+    var prev_index = null;
+    for (row in grid) {
+        for (col in grid[row]) {
+            var tmp_ll = RANDO.Utils.toLatlng(grid[row][col]);
+
+            var num_tile = rad2num(tmp_ll.lat, tmp_ll.lng, zoom);
+            var index = "" + zoom + "/" + num_tile.xtile + "/" + num_tile.ytile + "";
+            if (!sub_grid[index]){
+                sub_grid[index] = {};
+                sub_grid[index].vertices = [];
+            }
+            if (prev_index != null && prev_index != index) {
+                sub_grid[prev_index].resolution = {};
+                sub_grid[prev_index].resolution.x = cnt;
+                cnt = 0;
+            } 
+            sub_grid[index].vertices.push(grid[row][col].x);
+            sub_grid[index].vertices.push(grid[row][col].z);
+            sub_grid[index].vertices.push(grid[row][col].y);
+            
+            prev_index = index;
+            cnt++;
+        }
+        sub_grid[prev_index].resolution = {};
+        sub_grid[prev_index].resolution.x = cnt;
+        cnt = 0;
+    }
+
+    for (it in sub_grid) {
+        sub_grid[it].resolution.y = (sub_grid[it].vertices.length/3)/sub_grid[it].resolution.x;
+    }
+    console.log(sub_grid);
+    return sub_grid;
 }
+
+function deg2num(lat_deg, lng_deg, zoom){
+    var lat_rad = lat_deg*Math.PI/180;
+    var n = Math.pow(2.0, zoom);
+    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
+    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+    return {
+        "xtile": xtile, 
+        "ytile": ytile
+    };
+}
+
+function rad2num(lat_rad, lng_rad, zoom){
+    var lat_deg = lat_rad*180/Math.PI;
+    var lng_deg = lng_rad*180/Math.PI;
+    var n = Math.pow(2.0, zoom);
+    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
+    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+    return {
+        "xtile": xtile, 
+        "ytile": ytile
+    };
+}
+
+
 /****    CAMERA     ************************/
 /**
  * placeCamera() : place a camera at the position given, and make it look at the 
@@ -516,7 +661,7 @@ RANDO.Utils.getExtentinMeters = function(extent){
  * 
  * { lat : .. , lng : .. }  ---> { x : .. , y : .. }
  */
-RANDO.Utils.toMeters = function(latlng){
+RANDO.Utils.toMeters = function(latlng) {
     
     var R = 6378137;
 
@@ -530,6 +675,21 @@ RANDO.Utils.toMeters = function(latlng){
     };
 }
 
+/**
+ * 
+ * 
+ */
+RANDO.Utils.toLatlng = function(point) {
+    
+    var R = 6378137;
+    
+    var d = 180 / Math.PI;
+
+    return {
+        lat: (2 * Math.atan(Math.exp(point.y / R)) - (Math.PI / 2)) * d,
+        lng: point.x * d / R
+    };
+}
 
 /****    TRANSLATIONS     ************************/
 /**

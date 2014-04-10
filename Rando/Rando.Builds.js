@@ -3,7 +3,143 @@
 
 var RANDO = RANDO || {};
 RANDO.Builds = {};
-    
+  
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+RANDO.Builds.launch = function(canvas){
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+        return null;
+        
+    } else {
+        window.addEventListener("resize", function(){
+            engine.resize();
+        });
+        // Load BABYLON 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        
+        // Creation of the scene 
+        var scene = new BABYLON.Scene(engine);
+        
+        // Camera
+        var camera = RANDO.Builds.Camera(scene);
+        
+        // Lights
+        var lights = RANDO.Builds.Lights(scene);
+        
+        var grid2D, translateXY = {
+            x : 0,
+            y : 0
+        };
+        
+        $.getJSON(RANDO.SETTINGS.DEM_URL)
+         .done(function (data) {
+            var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
+            var m_center = RANDO.Utils.toMeters(data.center);
+
+            // DEM
+            var dem = {
+                "extent"    :   m_extent,
+                "altitudes"  :  data.altitudes, // altitudes already in meters
+                "resolution":   data.resolution,// reso already in meters
+                "center"    :   {
+                                    x: m_center.x,
+                                    y: data.center.z,// alt of center already in meters
+                                    z: m_center.y
+                                }
+            };
+            
+            // Control if altitudes data coincide with resolution data
+            console.assert(dem.altitudes.length == dem.resolution.y);
+            console.assert(dem.altitudes[0].length == dem.resolution.x);
+
+            console.log(dem);
+            
+            // Translation of the DEM
+            translateXY.x = -dem.center.x;
+            translateXY.y = -dem.center.z;
+            RANDO.Utils.translateDEM(
+                dem,
+                translateXY.x,
+                dem.extent.altitudes.min,
+                translateXY.y
+            );
+
+            // DEM mesh building
+            RANDO.Builds.DEM(
+                dem,
+                scene
+            );
+            
+            
+            // Tiled DEM mesh building
+            RANDO.Builds.TiledDEM(
+                dem,
+                scene
+            );
+         })
+        .then(function () {
+            return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
+        })
+        .done(function (data) {
+            var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
+            
+            // Translation of the route to make it visible
+            RANDO.Utils.translateRoute(
+                vertices,
+                translateXY.x,
+                0,
+                translateXY.y
+            );
+
+            // Drape the route over the DEM
+            RANDO.Utils.drape(vertices, scene);
+
+            // Route just a bit higher to the DEM
+            RANDO.Utils.translateRoute(
+                vertices,
+                0,
+                RANDO.SETTINGS.TREK_OFFSET,
+                0
+            );
+            
+            // Route building
+            RANDO.Builds.Trek(scene, vertices);
+        });
+
+        scene.activeCamera.attachControl(canvas);
+            
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            //RANDO.Utils.refreshPanels(vertices.length, scene);
+            scene.render();
+        });
+        
+        scene.executeWhenReady(function () {
+            console.log("Scene is ready ! " + (Date.now() - START_TIME) );
+            // texture
+            if(scene.getMeshByName("Digital Elevation Model") && RANDO.SETTINGS.TEXTURE_URL){
+                var material = scene.getMeshByName("Digital Elevation Model").material;
+                material.diffuseTexture =  new BABYLON.Texture(
+                    RANDO.SETTINGS.TEXTURE_URL, 
+                    scene
+                );
+                material.wireframe = false;
+            }
+            
+            //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
+            //~ $("#loader").switchClass("unloading", "endloading", 200);
+        });
+        return scene;
+    }
+}
+
 /**
  * zone() : build a heightMap from a DEM corresponding of zone around a troncon 
  *      - scene (BABYLON.Scene) : current scene
@@ -34,27 +170,16 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
             center.z-1500
         );
     }
-    //~ ///////////////////////////////////////////////////////////////////
-    //~ var material0 = new BABYLON.StandardMaterial("mat0", scene);
-    //~ material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
-    //~ material0.backFaceCulling = false;
-    //~ 
-    //~ var material1 = new BABYLON.StandardMaterial("mat1", scene);
-    //~ material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
-    //~ material1.backFaceCulling = false;
-    //~ 
-    //~ var multimat = new BABYLON.MultiMaterial("multi", scene);
-    //~ multimat.subMaterials.push(material0);
-    //~ multimat.subMaterials.push(material1);
-    //~ ///////////////////////////////////////////////////////////////////
     
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
     material.wireframe = true;
-
+    
+    
+    console.log(data.extent);
     // Create DEM
-    var dem = RANDO.Utils.createGround(
+    var dem = RANDO.Utils.createGroundFromExtent(
         "Digital Elevation Model",
         data.extent.southwest,
         data.extent.southeast,
@@ -79,21 +204,73 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     }
     dem.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
     
-    
-    var verticesCount = dem.getTotalVertices();
-    dem.subMeshes = [];
-    console.log(resolution.x*3);
-    console.log(resolution.y*3);
-    dem.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 12084, dem));
-    dem.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 12084, 97308, dem));
-    //console.log(dem.subMeshes[0]);
-    //console.log(dem.getIndices());
-    //~ var plane = BABYLON.Mesh.CreatePlane("clone",100,  scene)
-    //~ var submesh0 = dem.subMeshes[0].clone(plane);
-    //~ console.log(submesh0);
-    //~ console.log(dem.getIndices().length);
     // DEM built ! 
     console.log("DEM built ! " + (Date.now() - START_TIME) );
+}
+
+RANDO.Builds.TiledDEM = function(data, scene, cam_b){
+    if(typeof(cam_b)==='undefined') cam_b = true;
+    
+    // Tiled DEM building...
+    console.log("Tiled DEM building... " + (Date.now() - START_TIME) );
+    
+    var center = data.center;
+    var resolution = data.resolution;
+    var altitudes = data.altitudes;
+    var extent = data.extent;
+    
+    // Camera 
+    if (cam_b){
+        scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
+        scene.activeCamera.position = new BABYLON.Vector3(
+            center.x-2000, 
+            center.y+500, 
+            center.z-1500
+        );
+    }
+    
+    /////////////////////////////////////////////////////
+    //// To loop ////////////////////////////////////////
+    // Generate grid from extent datas
+    var grid = RANDO.Utils.createGrid(
+        data.extent.southwest,
+        data.extent.southeast,
+        data.extent.northeast,
+        data.extent.northwest,
+        resolution.x,
+        resolution.y
+    );
+    
+    // Give altitudes to the grid 
+    for (row in altitudes){
+        for (col in altitudes[row]){
+            grid[row][col].z = altitudes[row][col];
+        }
+    }
+    
+    var sub_grid = RANDO.Utils.subdivideGrid(grid, 1);
+    
+    // Material
+    var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
+    material.backFaceCulling = false;
+    material.wireframe = true;
+    for (it in sub_grid) {
+        // Create DEM
+        var dem = RANDO.Utils.createGroundFromVertices(
+            "Tiled Digital Elevation Model",
+            sub_grid[it].vertices,
+            sub_grid[it].resolution.x -1,
+            sub_grid[it].resolution.y -1,
+            scene
+        );
+        dem.material = material;
+    }
+    
+    //// End of loop ////////////////////////////////////////
+    /////////////////////////////////////////////////////
+    
+    // DEM built ! 
+    console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
 }
 
 /**

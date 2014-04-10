@@ -216,16 +216,11 @@ describe('Rando3D', function() {
                 southwest : {x: -5, y: -5},
                 altitudes : {max: 10, min: 0 }
             };
-            var vertices = [
-                -5, 4, -5,
-                 0, 4, -5,
-                 5, 6, -5,
-                -5, 8,  0,
-                 0, 2,  0,
-                 5, 5,  0,
-                -5, 4,  5,
-                 0, 8,  5,
-                 5, 9,  5
+            var altitudes = [
+                [0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0],
+                [0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0],
+                [0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0],
+                [0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0]
             ];
             var center = {
                 x: 0,
@@ -234,7 +229,7 @@ describe('Rando3D', function() {
             };
             var dem = {
                 "extent"    : extent,
-                "vertices"  : vertices,
+                "altitudes" : altitudes,
                 "center"    : center,
                 "toto"      : "toto"
             };///-----------------------
@@ -265,19 +260,14 @@ describe('Rando3D', function() {
                 done();
             });
             
-            it("should translate the DEM vertices  ", function(done) {
-                var translated_vertices = [
-                     5, 14,  5,
-                    10, 14,  5,
-                    15, 16,  5,
-                     5, 18, 10,
-                    10, 12, 10,
-                    15, 15, 10,
-                     5, 14, 15,
-                    10, 18, 15,
-                    15, 19, 15
+            it("should translate the DEM altitudes  ", function(done) {
+                var translated_altitudes = [
+                    [10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10],
+                    [10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10],
+                    [10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10],
+                    [10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10]
                 ];
-                assert.deepEqual(dem.vertices, translated_vertices);
+                assert.deepEqual(dem.altitudes, translated_altitudes);
                 done();
             });
         });
@@ -346,20 +336,46 @@ describe('Rando3D', function() {
     });
     
     describe('SubdivideData', function() {
-        var vertices = [
-            0,0,0,
-            1,0,0,
-            2,0,0,
-            0,0,1,
-            1,0,1,
-            2,0,1,
-            0,0,2,
-            1,0,2,
-            2,0,2
-        ];
-        it("should return an associative array containing the array given in parameter", function(done) {
-            var all_v = [];
-            assert.deepEqual(RANDO.Utils.subdivideData(all_v
+        var extent = {
+            A: { x: 0,    y: 5000},
+            B: { x: 5000, y: 5000},
+            C: { x: 5000, y: 0   },
+            D: { x: 0,    y: 0   }
+        }
+        var grid = RANDO.Utils.createGrid(extent.A, extent.B, extent.C, extent.D, 5, 5); 
+        
+        for (row in grid){
+            for (col in grid[row]){
+                grid[row][col].z = 1000;
+            }
+        }
+        it("should return all vertices in an element of index '0/0/0' ", function(done) {
+            var sub_grid = {
+                "0/0/0": {
+                    "vertices": [],
+                    "resolution": {
+                        x: 5,
+                        y: 5
+                    }
+                }
+            };
+            for (row in grid) {
+                for (col in grid[row]) {
+                    sub_grid["0/0/0"].vertices.push(grid[row][col].x);
+                    sub_grid["0/0/0"].vertices.push(grid[row][col].z);
+                    sub_grid["0/0/0"].vertices.push(grid[row][col].y);
+                }
+            }
+            assert.deepEqual(RANDO.Utils.subdivideGrid(grid, 0), sub_grid);
+            done();
         });
+        
+        //~ it("should return all vertices in an element of index '0/0/0' ", function(done) {
+            //~ var sub_vert = {
+                //~ "0/0/0": vertices
+            //~ };
+            //~ console.log(sub_vert);
+            //~ assert.deepEqual(RANDO.Utils.subdivideData(vertices, 0), sub_vert);
+        //~ });
     });
 });
