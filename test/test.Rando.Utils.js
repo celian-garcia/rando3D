@@ -344,4 +344,22 @@ describe('Rando3D', function() {
             });
         });
     });
+    
+    describe('SubdivideData', function() {
+        var vertices = [
+            0,0,0,
+            1,0,0,
+            2,0,0,
+            0,0,1,
+            1,0,1,
+            2,0,1,
+            0,0,2,
+            1,0,2,
+            2,0,2
+        ];
+        it("should return an associative array containing the array given in parameter", function(done) {
+            var all_v = [];
+            assert.deepEqual(RANDO.Utils.subdivideData(all_v
+        });
+    });
 });

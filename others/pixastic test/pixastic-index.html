@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Test cropping</title>
+    <style>
+        html, body, div {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        
+        
+    </style>
+    <script src="../../lib/jquery-1.9.1.js"></script>
+    
+    <!-- BABYLON-->
+    
+    <script src="../../lib/babylon.1.10.0.js"></script>
+    
+    <!-- TweenLite -->
+<!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
+-->
+    <!-- Rando-->
+    <script src="../../Rando/Rando.Utils.js"></script>
+    <script src="../../Rando/Rando.Builds.js"></script>
+    <script src="../../Rando/Rando.Settings.js"></script>
+    
+    <!-- Pixastic -->
+    <script src="../../lib/pixastic.min.js"></script>
+    
+    
+</head>
+
+    <body onload = onload()>
+        <h1>Test Cropping</h1>
+        <img id ="no_cropped"  src="photo_test.jpg"> </img>
+        <img id ="cropped"  src="photo_test.jpg"> </img>
+    </body>
+    
+    <script>
+    
+    var onload = function() {
+        Pixastic.process(document.getElementById("cropped"), "crop", {
+            rect : {
+                left : 300, top : 50, width : 100, height : 200
+            }
+        });
+    }
+    
+    
+    
+    
+    </script>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+<!--
+    <script>
+        $(function() {
+            // Get the Canvas element from our HTML below
+            var canvas = document.getElementById("canvas_renderer");
+            // Load BABYLON 3D engine
+            var engine = new BABYLON.Engine(canvas, true);
+            // Scene
+            var scene = new BABYLON.Scene(engine);
+            // Camera
+            var camera = init_camera(scene);
+            
+            camera.attachControl(canvas);
+            
+            // Light
+            var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+            
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            var material0 = new BABYLON.StandardMaterial("mat0", scene);
+            material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            material0.backFaceCulling = false;
+            
+            var material1 = new BABYLON.StandardMaterial("mat1", scene);
+            material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
+            material1.backFaceCulling = false;
+            
+            var material2 = new BABYLON.StandardMaterial("mat2", scene);
+            material2.emissiveColor = new BABYLON.Color3(0.4, 0, 0.4);
+            material2.backFaceCulling = false;
+            
+            var multimat = new BABYLON.MultiMaterial("multi", scene);
+            multimat.subMaterials.push(material0);
+            multimat.subMaterials.push(material1);
+            multimat.subMaterials.push(material2);
+            
+            var ground = RANDO.Utils.createGround(
+                "ground",
+                {
+                    x: -5,
+                    y: -5
+                },
+                {
+                    x: 5,
+                    y: -5
+                },
+                {
+                    x: 5,
+                    y: 5
+                },
+                {
+                    x: -5,
+                    y: 5
+                },
+                5,
+                5,
+                scene
+            );
+            var plane = BABYLON.Mesh.CreatePlane("Plane0", 20, scene);
+            var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 16, 3, scene);
+            sphere.material = multimat;
+            plane.material  = multimat;
+            ground.material = multimat;
+            
+            sphere.subMeshes = [];
+            plane.subMeshes  = [];
+            ground.subMeshes  = [];
+            var verticesCount = sphere.getTotalVertices();
+            var indicesCount  = plane.getIndices().length;
+            var verticesCountGround = ground.getTotalVertices();
+            
+            console.log(sphere.getIndices().length);
+            console.log(plane.getTotalVertices());
+            sphere.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 1503, sphere));
+            sphere.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 1503, 327, sphere));
+            sphere.subMeshes.push(new BABYLON.SubMesh(2, 0, verticesCount, 1830, 2058, sphere));
+            
+            plane.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 3, plane));
+            plane.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 3, 6, plane));
+            
+            
+            console.log(ground.getIndices());
+            console.log(ground.getIndices().length);
+            ground.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCountGround, 0, 63, ground));
+            ground.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCountGround, 63, 27, ground));
+            ground.subMeshes.push(new BABYLON.SubMesh(2, 0, verticesCountGround, 90, 60, ground));
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            
+            // Once the scene is loaded, just register a render loop to render it
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+        });
+    
+        function init_camera(scene){
+            var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, -5), scene);
+            camera.checkCollisions = true;
+            camera.maxZ = 10000;
+            camera.speed = 5;
+            camera.keysUp = [90]; // Touche Z
+            camera.keysDown = [83]; // Touche S
+            camera.keysLeft = [81]; // Touche Q
+            camera.keysRight = [68]; // Touche D
+            return camera;
+        }
+        
+        function deg2num(lat_deg, lon_deg, zoom){
+            var lat_rad = lat_deg*Math.PI/180;
+            var n = Math.pow(2.0, zoom);
+            var xtile = Math.floor((lon_deg + 180.0) / 360.0 * n);
+            var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+            
+            return {
+                "xtile": xtile, 
+                "ytile": ytile
+            };
+        }
+        
+    
+    </script>
+-->
+
+
+
+
+</html>

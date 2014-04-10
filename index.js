@@ -50,7 +50,8 @@ $("#menu .button").click(function() {
         scene.executeWhenReady(function () {
             console.log("Scene is ready ! " + (Date.now() - START_TIME) );
             
-            // texture
+            //~ /////////////////////////////////////////////////////////////
+            //~ // texture
             //~ var mesh = scene.getMeshByName("Digital Elevation Model");
             //~ if (mesh){
                 //~ var material = mesh.material;
@@ -60,6 +61,8 @@ $("#menu .button").click(function() {
                 //~ );
                 //~ material.wireframe = false;
             //~ }
+            //~ /////////////////////////////////////////////////////////////
+            
             
             //~ $("#loader").switchClass("loading", "unloading", 200, "easeOutQuad" );
             //~ $("#loader").switchClass("unloading", "endloading", 200);

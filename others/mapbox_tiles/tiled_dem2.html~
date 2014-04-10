@@ -54,7 +54,7 @@
             camera.attachControl(canvas);
             
             // Light
-            var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+            var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1000, 0), scene);
             
             /////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////
@@ -63,12 +63,36 @@
             var blue = new BABYLON.Color3(0, 0, 1);
             var green = new BABYLON.Color3(0, 1, 0);
             
+            var latitude = 44.91770596239283,
+                longitude = 6.208786590737755,
+                zoom = 15,
+                coordinates = deg2num(latitude, longitude, zoom);
+
             var multiMaterials = [];
             for (var i = 0; i< 4; i++){
                 var multiMaterial = new BABYLON.MultiMaterial("multi"+i, scene);
                 
                 for( var j = 0; j < 4; j++){
                     var material = new BABYLON.StandardMaterial("mat"+ i + j, scene);
+                    
+                    if(j==0){
+                        material.diffuseTexture = new BABYLON.Texture(
+                            "http://tile.openstreetmap.org/" + zoom + "/" + (coordinates.xtile) + "/" + (coordinates.ytile+i) + ".png",
+                            scene
+                        );
+                    }
+                    if(i==0 && j==1){
+                        material.diffuseTexture = new BABYLON.Texture(
+                            "http://tile.openstreetmap.org/" + zoom + "/" + (coordinates.xtile) + "/" + (coordinates.ytile) + ".png",
+                            scene
+                        );
+                    }
+                    if(j==1){
+                        material.diffuseTexture = new BABYLON.Texture(
+                            "http://tile.openstreetmap.org/" + zoom + "/" + (coordinates.xtile) + "/" + (coordinates.ytile+i) + ".png",
+                            scene
+                        );
+                    }
                     console.log((j+i)%2);
                     if ((j+i)%2 == 0){
                         material.diffuseColor = blue;
@@ -116,6 +140,7 @@
                 ground.material = multiMaterials[i];
                 console.log(multiMaterials[i]);
                 ground.material.wireframe = true;
+                ground.parent = totalGround;
                 
                 ground.subMeshes = [];
                 var verticesCount = ground.getTotalVertices();
@@ -172,7 +197,7 @@
             camera.rotation.x = Math.PI/6;
             camera.checkCollisions = true;
             camera.maxZ = 10000;
-            camera.speed = 5;
+            camera.speed = 1;
             camera.keysUp = [90]; // Touche Z
             camera.keysDown = [83]; // Touche S
             camera.keysLeft = [81]; // Touche Q

@@ -34,19 +34,19 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
             center.z-1500
         );
     }
-    ///////////////////////////////////////////////////////////////////
-    var material0 = new BABYLON.StandardMaterial("mat0", scene);
-    material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
-    material0.backFaceCulling = false;
-    
-    var material1 = new BABYLON.StandardMaterial("mat1", scene);
-    material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
-    material1.backFaceCulling = false;
-    
-    var multimat = new BABYLON.MultiMaterial("multi", scene);
-    multimat.subMaterials.push(material0);
-    multimat.subMaterials.push(material1);
-    ///////////////////////////////////////////////////////////////////
+    //~ ///////////////////////////////////////////////////////////////////
+    //~ var material0 = new BABYLON.StandardMaterial("mat0", scene);
+    //~ material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
+    //~ material0.backFaceCulling = false;
+    //~ 
+    //~ var material1 = new BABYLON.StandardMaterial("mat1", scene);
+    //~ material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
+    //~ material1.backFaceCulling = false;
+    //~ 
+    //~ var multimat = new BABYLON.MultiMaterial("multi", scene);
+    //~ multimat.subMaterials.push(material0);
+    //~ multimat.subMaterials.push(material1);
+    //~ ///////////////////////////////////////////////////////////////////
     
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
@@ -64,7 +64,7 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
         resolution.y-1, 
         scene
     );
-    dem.material = multimat;
+    dem.material = material;
     
     
     
@@ -309,7 +309,7 @@ RANDO.Builds.Lights = function(scene){
     
     // Sun
     var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
-    
+    sun.specular = new BABYLON.Color4(0, 0, 0, 0);
     lights.push(sun);
     return lights;
 }

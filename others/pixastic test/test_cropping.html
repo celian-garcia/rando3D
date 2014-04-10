@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Test cropping</title>
+    <style>
+        html, body, div, canvas{
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        
+        
+    </style>
+    <script src="../../lib/jquery-1.9.1.js"></script>
+    
+    <!-- BABYLON-->
+    
+    <script src="../../lib/babylon.1.10.0.js"></script>
+    
+    <!-- TweenLite -->
+<!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
+-->
+    <!-- Rando-->
+    <script src="../../Rando/Rando.Utils.js"></script>
+    <script src="../../Rando/Rando.Builds.js"></script>
+    <script src="../../Rando/Rando.Settings.js"></script>
+    
+    <!-- Pixastic -->
+    <script src="../../lib/pixastic.min.js"></script>
+    
+    
+</head>
+
+    <body >
+<!--
+        <h1>Test Cropping</h1>
+        <img id ="no_cropped"  src="photo_test.jpg"> </img>
+        <img id ="cropped"  src="photo_test.jpg"> </img>
+-->
+        <canvas id = "canvas_renderer"></canvas>
+    </body>
+    
+    <script>
+    
+    
+    
+    
+    
+    $(function() {
+        // Get the Canvas element from our HTML below
+        var canvas = document.getElementById("canvas_renderer");
+        // Load BABYLON 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        // Scene
+        var scene = new BABYLON.Scene(engine);
+        // Camera
+        var camera = init_camera(scene);
+        
+        camera.attachControl(canvas);
+        
+        // Light
+        var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+        
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        var plane = new BABYLON.Mesh.CreatePlane("plane", 5, scene);
+        plane.material =  new BABYLON.StandardMaterial("mat", scene);
+        
+        var img = new Image();
+        
+        img.src = "photo_test.jpg";
+        var texture = new BABYLON.Texture("photo_test.jpg", scene, BABYLON.Texture.PROJECTION_MODE);
+        texture.vOffset+=100;
+        console.log(texture.vOffset);
+        plane.material.diffuseTexture = texture;
+        plane.material.backFaceCulling = false;
+        
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////
+        
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+    });
+    
+    //~ var getExponantOfTwo = function (value, max) {
+        //~ var count = 1;
+//~ 
+        //~ do {
+            //~ count *= 2;
+        //~ } while (count < value);
+//~ 
+        //~ if (count > max)
+            //~ count = max;
+//~ 
+        //~ return count;
+    //~ };
+    //~ var prepareWebGLTexture = function (texture, scene, width, height, invertY, noMipmap, processFunction) {
+        //~ var engine = scene.getEngine();
+        //~ var potWidth = getExponantOfTwo(width, engine._caps.maxTextureSize);
+        //~ var potHeight = getExponantOfTwo(height, engine._caps.maxTextureSize);
+//~ 
+        //~ engine._gl.bindTexture(engine._gl.TEXTURE_2D, texture);
+        //~ engine._gl.pixelStorei(engine._gl.UNPACK_FLIP_Y_WEBGL, invertY === undefined ? true : invertY);
+//~ 
+        //~ processFunction(potWidth, potHeight);
+//~ 
+        //~ engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MAG_FILTER, engine._gl.LINEAR);
+//~ 
+        //~ if (noMipmap) {
+            //~ engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR);
+        //~ } else {
+            //~ engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR_MIPMAP_LINEAR);
+            //~ engine._gl.generateMipmap(engine._gl.TEXTURE_2D);
+        //~ }
+        //~ engine._gl.bindTexture(engine._gl.TEXTURE_2D, null);
+//~ 
+        //~ engine._activeTexturesCache = [];
+        //~ texture._baseWidth = width;
+        //~ texture._baseHeight = height;
+        //~ texture._width = potWidth;
+        //~ texture._height = potHeight;
+        //~ texture.isReady = true;
+        //~ scene._removePendingData(texture);
+    //~ };
+    //~ BABYLON.Engine.prototype.createTexture = function (imageOrUrl, noMipmap, invertY, scene) {
+        //~ if (typeof(imageOrUrl) === "string"){
+            //~ var url = imageOrUrl;
+            //~ 
+            //~ var texture = this._gl.createTexture();
+            //~ var that = this;
+            //~ var isDDS = this.getCaps().s3tc && (url.substr(url.length - 4, 4).toLowerCase() === ".dds");
+//~ 
+            //~ scene._addPendingData(texture);
+            //~ texture.url = url;
+            //~ texture.noMipmap = noMipmap;
+            //~ texture.references = 1;
+            //~ this._loadedTexturesCache.push(texture);
+//~ 
+            //~ if (isDDS) {
+                //~ BABYLON.Tools.LoadFile(url, function (data) {
+                    //~ var info = BABYLON.Tools.GetDDSInfo(data);
+//~ 
+                    //~ var loadMipmap = info.mipmapCount > 1 && !noMipmap;
+//~ 
+                    //~ prepareWebGLTexture(texture, scene, info.width, info.height, invertY, !loadMipmap, function (potWidth, potHeight) {
+                        //~ BABYLON.Tools.UploadDDSLevels(that._gl, that.getCaps().s3tc, data, loadMipmap);
+                    //~ });
+                //~ }, null, scene.database, true);
+            //~ } else {
+                //~ var onload = function(img) {
+                    //~ prepareWebGLTexture(texture, scene, img.width, img.height, invertY, noMipmap, function (potWidth, potHeight) {
+                        //~ var isPot = (img.width == potWidth && img.height == potHeight);
+                        //~ if (!isPot) {
+                            //~ that._workingCanvas.width = potWidth;
+                            //~ that._workingCanvas.height = potHeight;
+//~ 
+                            //~ that._workingContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, potWidth, potHeight);
+                        //~ }
+//~ 
+                        //~ that._gl.texImage2D(that._gl.TEXTURE_2D, 0, that._gl.RGBA, that._gl.RGBA, that._gl.UNSIGNED_BYTE, isPot ? img : that._workingCanvas);
+//~ 
+                    //~ });
+                //~ };
+//~ 
+                //~ var onerror = function() {
+                    //~ scene._removePendingData(texture);
+                //~ };
+//~ 
+                //~ BABYLON.Tools.LoadImage(url, onload, onerror, scene.database);
+            //~ }
+        //~ }else {
+            //~ var image = imageOrUrl;
+            //~ var texture = this._gl.createTexture();
+            //~ var that = this;
+            //~ 
+            //~ scene._addPendingData(texture);
+            //~ texture.url = "";
+            //~ texture.noMipmap = noMipmap;
+            //~ texture.references = 1;
+            //~ this._loadedTexturesCache.push(texture);
+            //~ 
+            //~ var onload = function(img) {
+                //~ prepareWebGLTexture(texture, scene, img.width, img.height, invertY, noMipmap, function (potWidth, potHeight) {
+                    //~ var isPot = (img.width == potWidth && img.height == potHeight);
+                    //~ if (!isPot) {
+                        //~ that._workingCanvas.width = potWidth;
+                        //~ that._workingCanvas.height = potHeight;
+//~ 
+                        //~ that._workingContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, potWidth, potHeight);
+                    //~ }
+//~ 
+                    //~ that._gl.texImage2D(that._gl.TEXTURE_2D, 0, that._gl.RGBA, that._gl.RGBA, that._gl.UNSIGNED_BYTE, isPot ? img : that._workingCanvas);
+//~ 
+                //~ });
+            //~ };
+//~ 
+            //~ var onerror = function() {
+                //~ scene._removePendingData(texture);
+            //~ };
+//~ 
+            //~ RANDO.Utils.LoadImage(image, onload, onerror);
+        //~ }
+        //~ return texture;
+        //~ 
+    //~ }
+//~ 
+//~ 
+    //~ RANDO.Utils.LoadImage = function(image, onload, onerror){
+        //~ var img = image;
+        //~ img.crossOrigin = 'anonymous';
+//~ 
+        //~ img.onload = function () {
+            //~ onload(img);
+        //~ };
+//~ 
+        //~ img.onerror = function (err) {
+            //~ onerror(img, err);
+        //~ };
+//~ 
+        //~ return img;
+    //~ };
+        
+
+    
+    function init_camera(scene){
+        var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, -5), scene);
+        camera.checkCollisions = true;
+        camera.maxZ = 10000;
+        camera.speed = 5;
+        camera.keysUp = [90]; // Touche Z
+        camera.keysDown = [83]; // Touche S
+        camera.keysLeft = [81]; // Touche Q
+        camera.keysRight = [68]; // Touche D
+        return camera;
+    }
+    
+    function deg2num(lat_deg, lon_deg, zoom){
+        var lat_rad = lat_deg*Math.PI/180;
+        var n = Math.pow(2.0, zoom);
+        var xtile = Math.floor((lon_deg + 180.0) / 360.0 * n);
+        var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+        
+        return {
+            "xtile": xtile, 
+            "ytile": ytile
+        };
+    }
+    </script>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+<!--
+    <script>
+        $(function() {
+            // Get the Canvas element from our HTML below
+            var canvas = document.getElementById("canvas_renderer");
+            // Load BABYLON 3D engine
+            var engine = new BABYLON.Engine(canvas, true);
+            // Scene
+            var scene = new BABYLON.Scene(engine);
+            // Camera
+            var camera = init_camera(scene);
+            
+            camera.attachControl(canvas);
+            
+            // Light
+            var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+            
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            var material0 = new BABYLON.StandardMaterial("mat0", scene);
+            material0.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            material0.backFaceCulling = false;
+            
+            var material1 = new BABYLON.StandardMaterial("mat1", scene);
+            material1.diffuseColor = new BABYLON.Color3(0, 0, 1);
+            material1.backFaceCulling = false;
+            
+            var material2 = new BABYLON.StandardMaterial("mat2", scene);
+            material2.emissiveColor = new BABYLON.Color3(0.4, 0, 0.4);
+            material2.backFaceCulling = false;
+            
+            var multimat = new BABYLON.MultiMaterial("multi", scene);
+            multimat.subMaterials.push(material0);
+            multimat.subMaterials.push(material1);
+            multimat.subMaterials.push(material2);
+            
+            var ground = RANDO.Utils.createGround(
+                "ground",
+                {
+                    x: -5,
+                    y: -5
+                },
+                {
+                    x: 5,
+                    y: -5
+                },
+                {
+                    x: 5,
+                    y: 5
+                },
+                {
+                    x: -5,
+                    y: 5
+                },
+                5,
+                5,
+                scene
+            );
+            var plane = BABYLON.Mesh.CreatePlane("Plane0", 20, scene);
+            var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 16, 3, scene);
+            sphere.material = multimat;
+            plane.material  = multimat;
+            ground.material = multimat;
+            
+            sphere.subMeshes = [];
+            plane.subMeshes  = [];
+            ground.subMeshes  = [];
+            var verticesCount = sphere.getTotalVertices();
+            var indicesCount  = plane.getIndices().length;
+            var verticesCountGround = ground.getTotalVertices();
+            
+            console.log(sphere.getIndices().length);
+            console.log(plane.getTotalVertices());
+            sphere.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 1503, sphere));
+            sphere.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 1503, 327, sphere));
+            sphere.subMeshes.push(new BABYLON.SubMesh(2, 0, verticesCount, 1830, 2058, sphere));
+            
+            plane.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, 3, plane));
+            plane.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, 3, 6, plane));
+            
+            
+            console.log(ground.getIndices());
+            console.log(ground.getIndices().length);
+            ground.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCountGround, 0, 63, ground));
+            ground.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCountGround, 63, 27, ground));
+            ground.subMeshes.push(new BABYLON.SubMesh(2, 0, verticesCountGround, 90, 60, ground));
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////
+            
+            // Once the scene is loaded, just register a render loop to render it
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+        });
+    
+        function init_camera(scene){
+            var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, -5), scene);
+            camera.checkCollisions = true;
+            camera.maxZ = 10000;
+            camera.speed = 5;
+            camera.keysUp = [90]; // Touche Z
+            camera.keysDown = [83]; // Touche S
+            camera.keysLeft = [81]; // Touche Q
+            camera.keysRight = [68]; // Touche D
+            return camera;
+        }
+        
+        function deg2num(lat_deg, lon_deg, zoom){
+            var lat_rad = lat_deg*Math.PI/180;
+            var n = Math.pow(2.0, zoom);
+            var xtile = Math.floor((lon_deg + 180.0) / 360.0 * n);
+            var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+            
+            return {
+                "xtile": xtile, 
+                "ytile": ytile
+            };
+        }
+        
+    
+    </script>
+-->
+
+
+
+
+</html>

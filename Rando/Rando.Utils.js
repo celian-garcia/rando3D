@@ -312,7 +312,16 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
     return angle;
 }
 
-
+/**
+ * 
+ * 
+ * 
+ * 
+ */
+RANDO.Utils.subdivideData = function (v_all, zoom){
+    var v_sub;
+    return v_sub;
+}
 /****    CAMERA     ************************/
 /**
  * placeCamera() : place a camera at the position given, and make it look at the 
