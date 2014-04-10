@@ -5,10 +5,9 @@ var START_TIME;
 var RANDO = RANDO || {};
 RANDO.SETTINGS = {};
 
-RANDO.SETTINGS.ID_SCENE ; // Id of the scene
 RANDO.SETTINGS.DEM_URL; // Url of the DEM json
 RANDO.SETTINGS.PROFILE_URL; // Url of the trek's profile json
-RANDO.SETTINGS.TEXTURE_URL; // Url of the static texture
+RANDO.SETTINGS.TEXTURE_URL; // Url of the static texture (null for wireframe)
 
 
 // Camera 
