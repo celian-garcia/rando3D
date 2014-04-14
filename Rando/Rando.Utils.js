@@ -569,7 +569,7 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
 }
 
 /**
- *  animate_camera() : animation and controls of the camera 
+ *  animateCamera() : animation and controls of the camera 
  *      - vertices : array of vertices
  *      - scene : the current scene
  * 

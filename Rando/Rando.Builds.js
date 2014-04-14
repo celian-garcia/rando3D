@@ -137,14 +137,10 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
 * route() : build a troncon from an array of point
 *       - scene (BABYLON.Scene) : current scene
 *       - vertices : array of vertices
-*       - cam_b (bool): settings of camera **optionnal**
-*       - lin_b (bool): using of "line" meshes (kind of ribbon) **optionnal**
-*       - sph_b (bool): using of sphere meshes **optionnal**
-*       - cyl_b (bool): using of cylinder meshes **optionnal**
 *       - pan_b (bool): using of panel meshes to display informations **optionnal**
 */
 RANDO.Builds.Trek = function(scene, vertices, pan_b ){
-    if(typeof(pan_b)==='undefined') pan_b = false;
+    if(typeof(pan_b)==='undefined') pan_b = true;
     
     RANDO.Utils.animateCamera(vertices, scene);
     
@@ -208,45 +204,7 @@ RANDO.Builds.Trek = function(scene, vertices, pan_b ){
             createCylinder(prev, curr);
         }
     } 
-    
-    // Panel for each point which indicates infos about point
-    //~ if (pan_b){
-        //~ // Create Panel
-        //~ var pan_offset = 3;
-        //~ var pan_size = 10;
-        //~ var pan_info = {
-            //~ 'policy' : "bold 50px Arial",
-            //~ 'color'  : "red"
-        //~ };
-        //~ var it =0;
-        //~ 
-        //~ var intervalID = window.setInterval(function(){
-            //~ var pan_material = new BABYLON.StandardMaterial("Panel" + it, scene);
-            //~ pan_material.backFaceSculling = false;
-            //~ var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
-            //~ panel.material = pan_material;
-            //~ panel.position = new BABYLON.Vector3(
-                //~ vertices[it].x,
-                //~ vertices[it].y,
-                //~ vertices[it].z
-            //~ );
-            //~ 
-            //~ var texture = new BABYLON.DynamicTexture("dynamic texture" +it, 512, scene, true);
-            //~ panel.material.diffuseTexture = texture;
-            //~ texture.hasAlpha = true;
-            //~ texture.drawText("Point "+ it+ " : "+ vertices[it].y +" m",
-                //~ 50, 100, pan_info.policy, pan_info.color,
-                //~ null
-            //~ );
-            //~ 
-            //~ if(it < vertices.length-1)
-                //~ it++;
-            //~ else
-                //~ window.clearInterval(intervalID);
-        //~ }, 1);
-        //~ 
-    //~ }//------------------------------------------------------------------
-    
+
     // Trek built !
     console.log("Trek built ! " + (Date.now() - START_TIME) );
 }

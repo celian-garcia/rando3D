@@ -5,11 +5,9 @@ RANDO.Scene = {};
 var scene;
 
 /**
+ * launch():  launch the building of the DEM and trek from 2 json files
  * 
- * 
- * 
- * 
- * 
+ *      - canvas: canvas in which we build the scene
  */
 RANDO.Scene.launch = function(canvas){
     // Check support
@@ -126,11 +124,11 @@ function executeWhenReady () {
     
     console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
     
-    // Drape vertices (spheres) over the DEM
     var index = 0;
     var chunk = 100; // By chunks of 100 points
     drape();
 
+    // Drape vertices (spheres) over the DEM
     function drape(){
         var cnt = chunk;
         while (cnt-- && index < trek_length) {
@@ -145,6 +143,7 @@ function executeWhenReady () {
         }
     }
 
+    // Place all cylinders between each pairs of spheres 
     function place() {
         for (var i = 0; i < trek_length-1; i++) {
             RANDO.Utils.placeCylinder(
@@ -157,6 +156,7 @@ function executeWhenReady () {
         setTimeout(texture, 1);
     }
 
+    // Apply a static texture over the DEM
     function texture(){
         console.log("Texture loading ..." + (Date.now() - START_TIME) );
         // Static texture
