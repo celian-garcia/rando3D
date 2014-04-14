@@ -100,66 +100,68 @@ RANDO.Scene.launch = function(canvas){
         
         // Route building
         RANDO.Builds.Trek(scene, vertices);
+        
+        scene.executeWhenReady( function () {
+            // Render one time before the final render to show something to users
+            //scene.render();
+            
+            // Attach camera controls
+            scene.activeCamera.attachControl(canvas);
+            
+            console.log("Scene is ready ! " + (Date.now() - START_TIME) );
+            var dem = scene.getMeshByName("Digital Elevation Model");
+            console.log(scene.getMeshByName("Spheres"));
+            
+            console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
+            
+            // Drape vertices (spheres) over the DEM
+            var index = 0;
+            var chunk = 100; // By chunks of 100 points
+            drape();
+
+            function drape(){
+                var cnt = chunk;
+                while (cnt-- && index < trek_length) {
+                    RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, dem);
+                    ++index;
+                }
+                if (index < trek_length){
+                    setTimeout(drape, 1);
+                }else {
+                    // At the end of draping we place cylinders
+                    setTimeout(place, 1); 
+                }
+            }
+
+            function place() {
+                for (var i = 0; i < trek_length-1; i++) {
+                    RANDO.Utils.placeCylinder(
+                        scene.getMeshByName("Cylinder " + (i+1)), 
+                        scene.getMeshByName("Sphere "   + (i+1)).position, 
+                        scene.getMeshByName("Sphere "   + (i+2)).position
+                    );
+                }
+                console.log("Trek adjusted ! " + (Date.now() - START_TIME) );
+                setTimeout(texture, 1);
+            }
+
+            function texture(){
+                console.log("Texture loading ..." + (Date.now() - START_TIME) );
+                // Static texture
+                if (dem && RANDO.SETTINGS.TEXTURE_URL) {
+                    dem.material.diffuseTexture =  new BABYLON.Texture(
+                        RANDO.SETTINGS.TEXTURE_URL, 
+                        scene
+                    );
+                    dem.material.wireframe = false;
+                }
+                console.log("Texture loaded !" + (Date.now() - START_TIME) );
+                renderLoop();
+            }
+        });
      });
 
-    scene.executeWhenReady( function () {
-        // Render one time before the final render to show something to users
-        //scene.render();
-        
-        // Attach camera controls
-        scene.activeCamera.attachControl(canvas);
-        
-        console.log("Scene is ready ! " + (Date.now() - START_TIME) );
-        var dem = scene.getMeshByName("Digital Elevation Model");
-        console.log(scene.getMeshByName("Spheres"));
-        
-        console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
-        
-        // Drape vertices (spheres) over the DEM
-        var index = 0;
-        var chunk = 100; // By chunks of 100 points
-        drape();
-
-        function drape(){
-            var cnt = chunk;
-            while (cnt-- && index < trek_length) {
-                RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, dem);
-                ++index;
-            }
-            if (index < trek_length){
-                setTimeout(drape, 1);
-            }else {
-                // At the end of draping we place cylinders
-                setTimeout(place, 1); 
-            }
-        }
-
-        function place() {
-            for (var i = 0; i < trek_length-1; i++) {
-                RANDO.Utils.placeCylinder(
-                    scene.getMeshByName("Cylinder " + (i+1)), 
-                    scene.getMeshByName("Sphere "   + (i+1)).position, 
-                    scene.getMeshByName("Sphere "   + (i+2)).position
-                );
-            }
-            console.log("Trek adjusted ! " + (Date.now() - START_TIME) );
-            setTimeout(texture, 1);
-        }
-
-        function texture(){
-            console.log("Texture loading ..." + (Date.now() - START_TIME) );
-            // Static texture
-            if (dem && RANDO.SETTINGS.TEXTURE_URL) {
-                dem.material.diffuseTexture =  new BABYLON.Texture(
-                    RANDO.SETTINGS.TEXTURE_URL, 
-                    scene
-                );
-                dem.material.wireframe = false;
-            }
-            console.log("Texture loaded !" + (Date.now() - START_TIME) );
-            renderLoop();
-        }
-    });
+    
     
     return scene;
 };
