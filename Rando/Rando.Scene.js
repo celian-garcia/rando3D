@@ -42,7 +42,7 @@ RANDO.Scene.launch = function(canvas){
         var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
         var m_center = RANDO.Utils.toMeters(data.center);
 
-        // DEM
+        // Records DEM data
         var dem = {
             "extent"    :   m_extent,
             "altitudes"  :  data.altitudes, // altitudes already in meters
@@ -75,7 +75,6 @@ RANDO.Scene.launch = function(canvas){
             dem,
             scene
         );
-        
         
         //~ // Tiled DEM mesh building
         //~ RANDO.Builds.TiledDEM(
