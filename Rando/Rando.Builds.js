@@ -210,42 +210,42 @@ RANDO.Builds.Trek = function(scene, vertices, pan_b ){
     } 
     
     // Panel for each point which indicates infos about point
-    if (pan_b){
-        // Create Panel
-        var pan_offset = 3;
-        var pan_size = 10;
-        var pan_info = {
-            'policy' : "bold 50px Arial",
-            'color'  : "red"
-        };
-        var it =0;
-        
-        var intervalID = window.setInterval(function(){
-            var pan_material = new BABYLON.StandardMaterial("Panel" + it, scene);
-            pan_material.backFaceSculling = false;
-            var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
-            panel.material = pan_material;
-            panel.position = new BABYLON.Vector3(
-                vertices[it].x,
-                vertices[it].y,
-                vertices[it].z
-            );
-            
-            var texture = new BABYLON.DynamicTexture("dynamic texture" +it, 512, scene, true);
-            panel.material.diffuseTexture = texture;
-            texture.hasAlpha = true;
-            texture.drawText("Point "+ it+ " : "+ vertices[it].y +" m",
-                50, 100, pan_info.policy, pan_info.color,
-                null
-            );
-            
-            if(it < vertices.length-1)
-                it++;
-            else
-                window.clearInterval(intervalID);
-        }, 1);
-        
-    }//------------------------------------------------------------------
+    //~ if (pan_b){
+        //~ // Create Panel
+        //~ var pan_offset = 3;
+        //~ var pan_size = 10;
+        //~ var pan_info = {
+            //~ 'policy' : "bold 50px Arial",
+            //~ 'color'  : "red"
+        //~ };
+        //~ var it =0;
+        //~ 
+        //~ var intervalID = window.setInterval(function(){
+            //~ var pan_material = new BABYLON.StandardMaterial("Panel" + it, scene);
+            //~ pan_material.backFaceSculling = false;
+            //~ var panel = BABYLON.Mesh.CreatePlane("Panel" + it, pan_size , scene);
+            //~ panel.material = pan_material;
+            //~ panel.position = new BABYLON.Vector3(
+                //~ vertices[it].x,
+                //~ vertices[it].y,
+                //~ vertices[it].z
+            //~ );
+            //~ 
+            //~ var texture = new BABYLON.DynamicTexture("dynamic texture" +it, 512, scene, true);
+            //~ panel.material.diffuseTexture = texture;
+            //~ texture.hasAlpha = true;
+            //~ texture.drawText("Point "+ it+ " : "+ vertices[it].y +" m",
+                //~ 50, 100, pan_info.policy, pan_info.color,
+                //~ null
+            //~ );
+            //~ 
+            //~ if(it < vertices.length-1)
+                //~ it++;
+            //~ else
+                //~ window.clearInterval(intervalID);
+        //~ }, 1);
+        //~ 
+    //~ }//------------------------------------------------------------------
     
     // Trek built !
     console.log("Trek built ! " + (Date.now() - START_TIME) );

@@ -109,7 +109,7 @@ RANDO.Scene.launch = function(canvas){
         
         console.log("Scene is ready ! " + (Date.now() - START_TIME) );
         var dem = scene.getMeshByName("Digital Elevation Model");
-        var trek_length = scene.getMeshByName("Spheres").getChildren().length;
+        
         
         console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
         
@@ -119,6 +119,7 @@ RANDO.Scene.launch = function(canvas){
         drape();
 
         function drape(){
+            var trek_length = scene.getMeshByName("Spheres").getChildren().length;
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
                 RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, dem);
