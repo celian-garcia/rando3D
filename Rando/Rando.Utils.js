@@ -4,6 +4,8 @@
 var RANDO = RANDO || {};
 RANDO.Utils = {};
 
+
+/****    BABYLON extents     ************************/
 /**
  *  createGround()
  *      - name : Name of the new Ground
@@ -142,6 +144,28 @@ RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h
     return ground;
 };
 
+/**
+* processLargeArray(): Common utility to process large arrays
+*
+*       - array : large array
+*       - callback : function that will be called with (array, index)
+*/
+RANDO.Utils.processLargeArray = function (array, callback) {
+    // set this to whatever number of items you can process at once
+    var chunk = 10;
+    var index = 0;
+    function doChunk() {
+        var cnt = chunk;
+        while (cnt-- && index < array.length-1) {
+            callback(array, index);
+            ++index;
+        }
+        if (index < array.length-1) {
+            setTimeout(doChunk, 5);
+        }
+    }
+    doChunk();
+}
 
 /**
  *  placeCylinder()
@@ -158,6 +182,11 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
         (A.y+B.y)/2,
         (A.z+B.z)/2
     );
+
+    // Adjust scale of cylinder
+    var new_height = BABYLON.Vector3.Distance(A, B);
+    var scale_y  = (cylinder.scaling.y * new_height) / cylinder.height;
+    cylinder.scaling.y = scale_y;
     
     // First rotation
     var angle1 = RANDO.Utils.angleFromAxis(A, B, BABYLON.Axis.X);
@@ -178,6 +207,7 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
     
     return cylinder;
 }
+
 
 
 /****    MATH     ************************/
@@ -691,6 +721,7 @@ RANDO.Utils.toLatlng = function(point) {
     };
 }
 
+
 /****    TRANSLATIONS     ************************/
 /**
  * drape() : drape the route over the ground 
@@ -698,6 +729,8 @@ RANDO.Utils.toLatlng = function(point) {
  *      - scene: current scene
  */
 RANDO.Utils.drape = function(vertices, scene){
+    
+    // Without large array processing
     for (it in vertices){
         var ray =  new BABYLON.Ray(vertices[it], BABYLON.Axis.Y);
         var pick = scene.pickWithRay(ray, function (item) {
@@ -709,6 +742,29 @@ RANDO.Utils.drape = function(vertices, scene){
         if (pick.pickedPoint)
             vertices[it].y = pick.pickedPoint.y;
     }
+    
+    // With large array processing
+    //~ function drapePoint(array, index) {
+        //~ console.log("test");
+        //~ var ray = new BABYLON.Ray(array[index], BABYLON.Axis.Y);
+        //~ var pick = scene.pickWithRay(ray, function (item) {
+            //~ if (item.name == "Digital Elevation Model")
+                //~ return true;
+            //~ else
+                //~ return false;
+        //~ });
+        //~ if (pick.pickedPoint)
+            //~ array[index].y = pick.pickedPoint.y;
+    //~ }
+//~ 
+    //~ RANDO.Utils.processLargeArray(vertices, drapePoint);
+}
+
+RANDO.Utils.drapePoint = function(vertex, dem) {
+    var ray =  new BABYLON.Ray(vertex, BABYLON.Axis.Y);
+    var pick = dem.intersects(ray, true);
+    if (pick.hit)
+        vertex.y = pick.pickedPoint.y + RANDO.SETTINGS.TREK_OFFSET;
 }
 
 /**
@@ -756,7 +812,7 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
  * 
  * return the DEM translated
  */
-RANDO.Utils.translateRoute = function(vertices, dx, dy, dz){
+RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
     for (it in vertices){
         vertices[it].x += dx;
         vertices[it].y += dy;

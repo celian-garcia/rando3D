@@ -11,7 +11,7 @@ window.onload = function onload(){
         RANDO.SETTINGS.PROFILE_URL  = "json/trek/" + $(this).data('id')+ "/profile.json";
         RANDO.SETTINGS.TEXTURE_URL  = "img/texture/" + $(this).data('id') + "/texture.jpg";
         
-        var scene = RANDO.Builds.launch(canvas);
+        var scene = RANDO.Scene.launch(canvas);
     });
     $("#menu .button:first").click();
 };

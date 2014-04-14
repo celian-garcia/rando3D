@@ -1,0 +1,29 @@
+#menu {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: auto;
+    width: 400px;;
+    background-color: rgba(255,255,255, 0.8);
+    padding: 5px;
+    text-align: center;
+    font-size: 20px;
+}
+#menu .button {
+    float: left;
+    padding: 5px;
+    margin: 5px;
+    background-color: rgba(100,100,100, 0.8);
+    border: none;
+    font-size: 18px;
+    color: white;
+}
+
+#menu .button:hover {
+    background-color: rgba(80,80,80, 0.8);
+    cursor: pointer;
+}
+
+#menu .button:active {
+    background-color: rgba(80,80,80, 0.8);
+}
