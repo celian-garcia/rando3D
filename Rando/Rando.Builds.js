@@ -3,8 +3,6 @@
 
 var RANDO = RANDO || {};
 RANDO.Builds = {};
-<<<<<<< HEAD
-=======
  
 /**
  * 
@@ -139,7 +137,6 @@ RANDO.Builds.launch = function(canvas){
         return scene;
     }
 }
->>>>>>> 23e05ef71be1b09ee9e2170d4eebdcf2984188c6
 
 /**
  * DEM() : build a heightMap corresponding of zone around a trek 
@@ -200,7 +197,6 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     // DEM built ! 
     console.log("DEM built ! " + (Date.now() - START_TIME) );
 }
-
 
 /**
  * TiledDEM() : build a DEM subdivided in multiple DEM corresponding of textured tiles

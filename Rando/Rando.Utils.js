@@ -227,7 +227,6 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
 }
 
 
-
 /****    MATH     ************************/
 /**
  * subdivide() :  interpolate a segment between 2 points A and B 
@@ -660,7 +659,6 @@ RANDO.Utils.refreshPanels = function(number, scene){
     }
     return 1;
 }
-
 
 
 /****    GETTERS     ************************/
