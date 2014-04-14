@@ -32,7 +32,7 @@ RANDO.Scene.launch = function(canvas){
     // Lights
     var lights = RANDO.Builds.Lights(scene);
     
-    var translateXY = {
+    var trek_length, translateXY = {
         x : 0,
         y : 0
     };
@@ -88,6 +88,8 @@ RANDO.Scene.launch = function(canvas){
      })
      .done(function (data) {
         var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
+        trek_length = vertices.length;
+        
         // Translation of the route to make it visible
         RANDO.Utils.translateTrek(
             vertices,
@@ -119,7 +121,6 @@ RANDO.Scene.launch = function(canvas){
         drape();
 
         function drape(){
-            var trek_length = scene.getMeshByName("Spheres").getChildren().length;
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
                 RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, dem);
