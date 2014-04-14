@@ -7,17 +7,17 @@ RANDO.Utils = {};
 
 /****    BABYLON extents     ************************/
 /**
- *  createGround()
+ *  createGroundFromExtent(): Create a ground from an extent of 4 points 
  *      - name : Name of the new Ground
- *      - width : Width of the new Ground
- *      - height : Height of the new Ground
+ *      - A : northwest vertex
+ *      - B : northeast vertex
+ *      - C : southeast vertex
+ *      - D : southwest vertex
  *      - w_subdivisions : Number of Width's subdivisions in the new Ground 
  *      - h_subdivisions : Number of Height's subdivisions in the new Ground
- *      - scene : Scene which contain the new Ground 
+ *      - scene : Scene which contains the new Ground 
  *      - updatable : 
  * 
- * Create a ground which can be divided differently in width and in height
- * It uses the function BABYLON.Mesh.CreateGround() of the 1.9.0 release of BABYLON
  ****************************************************************/
 RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
@@ -60,6 +60,14 @@ RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, 
     return ground;
 };
 
+/**
+ *  createGroundFromGrid(): Create a ground from a grid of 2D points
+ *      - name : Name of the new Ground
+ *      - grid : grid of 2d points (each point contains a x and a y)
+ *      - scene : Scene which contains the new Ground 
+ *      - updatable : 
+ * 
+ ****************************************************************/
 RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
@@ -103,6 +111,16 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
     return ground;
 };
 
+/**
+ *  createGroundFromVertices(): Create a ground from an array of vertices
+ *      - name : Name of the new Ground
+ *      - vertices : Array of vertices in BABYLON.VertexBuffer.PositionKind format 
+ *      - w_subdivisions : Number of Width's subdivisions in the new Ground 
+ *      - h_subdivisions : Number of Height's subdivisions in the new Ground
+ *      - scene : Scene which contains the new Ground 
+ *      - updatable : 
+ * 
+ ****************************************************************/
 RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
@@ -428,7 +446,7 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
 }
 
 /**
- * 
+ * Work in progress
  * 
  * 
  * 
@@ -499,11 +517,12 @@ function rad2num(lat_rad, lng_rad, zoom){
 
 /****    CAMERA     ************************/
 /**
- * placeCamera() : place a camera at the position given, and make it look at the 
+ * moveCameraTo() : move a camera at the position given, and make it look at the 
  *  target given. 
  *      - camera    : camera 
  *      - position  : future position 
  *      - target    : future target
+ *      - callback  : callback to call at the end of move
  * 
  */
 RANDO.Utils.moveCameraTo = function(camera, position, target, callback){
@@ -573,7 +592,6 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
  *      - vertices : array of vertices
  *      - scene : the current scene
  * 
- *  return the camera
  * */
 RANDO.Utils.animateCamera = function(vertices, scene){
     var d = 10, // Number of points between the current point and the point watched
@@ -684,7 +702,7 @@ RANDO.Utils.getExtentinMeters = function(extent){
 }
 
 /**
- * toMeters() : transform a point in latitude/longitude to x/y meters coordinates
+ * toMeters() : convert a point in latitude/longitude to x/y meters coordinates
  *      - latlng : point in lat/lng 
  * 
  * return a point in meters 
@@ -706,8 +724,12 @@ RANDO.Utils.toMeters = function(latlng) {
 }
 
 /**
+ * toLatlng() : convert a point in x/y meters coordinates to latitude/longitude 
+ *      - point : point in x/y meters coordinates
  * 
+ * return a point in lat/long 
  * 
+ * { x : .. , y : .. }  --->  { lat : .. , lng : .. }  
  */
 RANDO.Utils.toLatlng = function(point) {
     
@@ -723,50 +745,6 @@ RANDO.Utils.toLatlng = function(point) {
 
 
 /****    TRANSLATIONS     ************************/
-/**
- * drape() : drape the route over the ground 
- *      - vertices: route's vertices
- *      - scene: current scene
- */
-RANDO.Utils.drape = function(vertices, scene){
-    
-    // Without large array processing
-    for (it in vertices){
-        var ray =  new BABYLON.Ray(vertices[it], BABYLON.Axis.Y);
-        var pick = scene.pickWithRay(ray, function (item) {
-            if (item.name == "Digital Elevation Model")
-                return true;
-            else
-                return false;
-        });
-        if (pick.pickedPoint)
-            vertices[it].y = pick.pickedPoint.y;
-    }
-    
-    // With large array processing
-    //~ function drapePoint(array, index) {
-        //~ console.log("test");
-        //~ var ray = new BABYLON.Ray(array[index], BABYLON.Axis.Y);
-        //~ var pick = scene.pickWithRay(ray, function (item) {
-            //~ if (item.name == "Digital Elevation Model")
-                //~ return true;
-            //~ else
-                //~ return false;
-        //~ });
-        //~ if (pick.pickedPoint)
-            //~ array[index].y = pick.pickedPoint.y;
-    //~ }
-//~ 
-    //~ RANDO.Utils.processLargeArray(vertices, drapePoint);
-}
-
-RANDO.Utils.drapePoint = function(vertex, dem) {
-    var ray =  new BABYLON.Ray(vertex, BABYLON.Axis.Y);
-    var pick = dem.intersects(ray, true);
-    if (pick.hit)
-        vertex.y = pick.pickedPoint.y + RANDO.SETTINGS.TREK_OFFSET;
-}
-
 /**
  * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
@@ -804,13 +782,13 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
 }
 
 /**
- * translateRoute() : translate a route with coefficients given in parameters
+ * translateTrek() : translate a trek with coefficients given in parameters
  *      - vertices : vertices of the route 
  *      - dx  : x coefficient 
  *      - dy  : y coefficient  (altitudes in BABYLON)
  *      - dz  : z coefficient  (depth     in BABYLON)
  * 
- * return the DEM translated
+ * return the Trek translated
  */
 RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
     for (it in vertices){
@@ -820,6 +798,19 @@ RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

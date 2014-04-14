@@ -5,13 +5,9 @@ var RANDO = RANDO || {};
 RANDO.Builds = {};
 
 /**
- * zone() : build a heightMap from a DEM corresponding of zone around a troncon 
+ * DEM() : build a heightMap corresponding of zone around a trek 
+ *      - data : Object containing all informations to build DEM
  *      - scene (BABYLON.Scene) : current scene
- *      - data (Dictionnary)    : dictionnary containing :
- *              * center of DEM
- *              * resolution of DEM
- *              * vertices  
- *      - texture (BABYLON.Texture) : texture which will be applied  **optionnal**
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
  */
@@ -68,6 +64,14 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     console.log("DEM built ! " + (Date.now() - START_TIME) );
 }
 
+
+/**
+ * TiledDEM() : build a DEM subdivided in multiple DEM corresponding of textured tiles
+ *      - data : Object containing all informations to build DEM
+ *      - scene (BABYLON.Scene) : current scene
+ *      - cam_b (Boolean)       : settings of camera **optionnal**
+ * 
+ */
 RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     if(typeof(cam_b)==='undefined') cam_b = true;
     
@@ -134,7 +138,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
 }
 
 /**
-* route() : build a troncon from an array of point
+* Trek() : build a trek from an array of point
 *       - scene (BABYLON.Scene) : current scene
 *       - vertices : array of vertices
 *       - pan_b (bool): using of panel meshes to display informations **optionnal**
@@ -266,7 +270,7 @@ RANDO.Builds.Cardinals = function(extent, scene){
 }
 
 /**
- *  camera() : initialize main parameters of camera    
+ *  Camera() : initialize main parameters of camera    
  *      - scene : the current scene
  * 
  *  return the camera
@@ -287,7 +291,7 @@ RANDO.Builds.Camera = function(scene){
 }
 
 /**
- *  lights() : initialize main parameters of lights    
+ *  Lights() : initialize main parameters of lights    
  *      - scene : the current scene
  * 
  *  return an array containing all lights
