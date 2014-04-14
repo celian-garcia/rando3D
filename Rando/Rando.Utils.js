@@ -746,6 +746,18 @@ RANDO.Utils.toLatlng = function(point) {
 
 /****    TRANSLATIONS     ************************/
 /**
+ * drapePoint() : drape a point over the ground 
+ *      - point: point to drape
+ *      - dem: ground 
+ */
+RANDO.Utils.drapePoint = function(point, dem){
+    var ray =  new BABYLON.Ray(point, BABYLON.Axis.Y);
+    var pick = dem.intersects(ray, true);
+    if (pick.pickedPoint)
+        point.y = pick.pickedPoint.y;
+}
+
+/**
  * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
  *      - dx  : x coefficient 
