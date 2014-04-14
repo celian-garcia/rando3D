@@ -153,22 +153,8 @@ function executeWhenReady () {
             );
         }
         console.log("Trek adjusted ! " + (Date.now() - START_TIME) );
-        setTimeout(texture, 1);
-    }
-
-    // Apply a static texture over the DEM
-    function texture(){
-        console.log("Texture loading ..." + (Date.now() - START_TIME) );
-        // Static texture
-        if (dem && RANDO.SETTINGS.TEXTURE_URL) {
-            dem.material.diffuseTexture =  new BABYLON.Texture(
-                RANDO.SETTINGS.TEXTURE_URL, 
-                scene
-            );
-            dem.material.wireframe = false;
-        }
-        console.log("Texture loaded !" + (Date.now() - START_TIME) );
-        console.log("All is loaded, launch of render loop !" + (Date.now() - START_TIME) );
+        
+        // At the end, run the render loop 
         renderLoop();
     }
 };
