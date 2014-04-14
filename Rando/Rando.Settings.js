@@ -8,6 +8,10 @@ RANDO.SETTINGS = {};
 RANDO.SETTINGS.DEM_URL; // Url of the DEM json
 RANDO.SETTINGS.PROFILE_URL; // Url of the trek's profile json
 RANDO.SETTINGS.TEXTURE_URL; // Url of the static texture (null for wireframe)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 23e05ef71be1b09ee9e2170d4eebdcf2984188c6
 
 // Camera 
 RANDO.SETTINGS.CAM_OFFSET = 200; // Camera's altitude offset (in meters)
