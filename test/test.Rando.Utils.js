@@ -272,8 +272,8 @@ describe('Rando3D', function() {
             });
         });
         
-        describe('Route', function() {
-            it("should translate the Route vertices  ", function(done) {
+        describe('Trek', function() {
+            it("should translate the Trek vertices  ", function(done) {
                 var vertices = [{
                     x: 0,
                     y: 0, 
@@ -304,7 +304,7 @@ describe('Rando3D', function() {
                     y: 20, 
                     z: 25
                 }];
-                RANDO.Utils.translateRoute(vertices, 5, 10, 15);
+                RANDO.Utils.translateTrek(vertices, 5, 10, 15);
                 assert.deepEqual(vertices, tr_vertices);
                 done();
             });
