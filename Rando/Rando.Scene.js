@@ -104,14 +104,14 @@ RANDO.Scene.launch = function(canvas){
 
     scene.executeWhenReady( function () {
         // Render one time before the final render to show something to users
-        scene.render();
+        //scene.render();
         
         // Attach camera controls
         scene.activeCamera.attachControl(canvas);
         
         console.log("Scene is ready ! " + (Date.now() - START_TIME) );
         var dem = scene.getMeshByName("Digital Elevation Model");
-        
+        console.log(scene.getMeshByName("Spheres"));
         
         console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
         
