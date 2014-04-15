@@ -1,8 +1,4 @@
 
-START_TIME = Date.now();
-
-// Get the Canvas element from our HTML 
-var canvas = document.getElementById("canvas_renderer");
 
 window.onload = function onload(){
     $("#menu .button").click(function() {
@@ -10,6 +6,8 @@ window.onload = function onload(){
         RANDO.SETTINGS.PROFILE_URL  = "json/trek/" + $(this).data('id')+ "/profile.json";
         RANDO.SETTINGS.TEXTURE_URL  = "img/texture/" + $(this).data('id') + "/texture.jpg";
         
+        // Get the Canvas element from our HTML 
+        var canvas = document.getElementById("canvas_renderer");
         var scene = RANDO.Scene.launch(canvas);
 
     });

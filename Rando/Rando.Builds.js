@@ -15,7 +15,7 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     if(typeof(cam_b)==='undefined') cam_b = true;
 
     // DEM building...
-    console.log("DEM building... " + (Date.now() - START_TIME) );
+    console.log("DEM building... " + (Date.now() - RANDO.START_TIME) );
 
     var center = data.center;
     var resolution = data.resolution;
@@ -61,7 +61,7 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     dem.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
 
     // DEM built !
-    console.log("DEM built ! " + (Date.now() - START_TIME) );
+    console.log("DEM built ! " + (Date.now() - RANDO.START_TIME) );
 }
 
 /**
@@ -75,7 +75,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     if(typeof(cam_b)==='undefined') cam_b = true;
 
     // Tiled DEM building...
-    console.log("Tiled DEM building... " + (Date.now() - START_TIME) );
+    console.log("Tiled DEM building... " + (Date.now() - RANDO.START_TIME) );
 
     var center = data.center;
     var resolution = data.resolution;
@@ -133,7 +133,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     /////////////////////////////////////////////////////
 
     // DEM built !
-    console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
+    console.log("Tiled DEM built ! " + (Date.now() - RANDO.START_TIME) );
 }
 
 /**
@@ -148,7 +148,7 @@ RANDO.Builds.Trek = function(scene, vertices, pan_b ){
     RANDO.Utils.animateCamera(vertices, scene);
 
     // Trek building ...
-    console.log("Trek building... " + (Date.now() - START_TIME) );
+    console.log("Trek building... " + (Date.now() - RANDO.START_TIME) );
 
     // Trek material
     var trek_material = new BABYLON.StandardMaterial("Trek Material", scene);
@@ -209,7 +209,7 @@ RANDO.Builds.Trek = function(scene, vertices, pan_b ){
     }
 
     // Trek built !
-    console.log("Trek built ! " + (Date.now() - START_TIME) );
+    console.log("Trek built ! " + (Date.now() - RANDO.START_TIME) );
 }
 
 /**
