@@ -34,7 +34,7 @@ RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, 
             var position = grid[row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
             
-            positions.push(position.x, position.z, position.y);
+            positions.push(position.x, 0, position.y);
             normals.push(normal.x, normal.y, normal.z);
             uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
         }

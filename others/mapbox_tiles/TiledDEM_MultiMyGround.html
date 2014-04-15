@@ -15,7 +15,7 @@
             display:block;
         }
     </style>
-    <script src="../../lib/jquery-1.9.1.js"></script>
+    <script src="../../lib/jquery-1.10.2.js"></script>
     
     <!-- BABYLON-->
     
@@ -91,7 +91,7 @@
                 y: 12
             };
             
-            var totalGround = RANDO.Utils.createGround(
+            var totalGround = RANDO.Utils.createGroundFromExtent(
                 "Total Ground",
                 totalExtent.nw,
                 totalExtent.ne,
@@ -101,6 +101,7 @@
                 resolution.y-1,
                 scene
             );
+            console.log(totalGround);
             totalGround.material = new BABYLON.StandardMaterial("mat total", scene);
             totalGround.material.wireframe = true;
             totalGround.isVisible = true;
@@ -114,10 +115,15 @@
                 resolution.x,
                 resolution.y
             );
-            
             for (var i = 0; i < resolution.x -1; i++){
                 for (var j = 0; j < resolution.y -1; j++){
-                    var ground = RANDO.Utils.createGround(
+                    grid[j][i].z = Math.random();
+                }
+            }
+            console.log(grid);
+            for (var i = 0; i < resolution.x -1; i++){
+                for (var j = 0; j < resolution.y -1; j++){
+                    var ground = RANDO.Utils.createGroundFromExtent(
                         "ground",
                         grid[j][i],
                         grid[j][i+1],
@@ -128,7 +134,7 @@
                         scene
                     );
                     ground.material = new BABYLON.StandardMaterial("mat", scene);
-                    //ground.material.wireframe = true;
+                    //~ ground.material.wireframe = true;
                     ground.material.backFaceCulling = false;
                     ground.material.diffuseTexture = new BABYLON.Texture(
                         "http://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/" + zoom + "/" + (coordinates.xtile+i) + "/" + (coordinates.ytile+j) + ".png",
@@ -138,13 +144,13 @@
                     ground.parent = totalGround;
                 }
             }
-
+            console.log(totalGround.getChildren());
             /////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////
-            
+            console.log(scene);
             // Once the scene is loaded, just register a render loop to render it
             engine.runRenderLoop(function () {
                 scene.render();
