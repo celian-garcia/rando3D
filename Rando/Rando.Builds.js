@@ -221,7 +221,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
         scene.activeCamera.position = new BABYLON.Vector3(
             center.x-2000, 
-            center.y+500, 
+            center.y+2500, 
             center.z-1500
         );
     }
@@ -230,10 +230,10 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     //// To loop ////////////////////////////////////////
     // Generate grid from extent datas
     var grid = RANDO.Utils.createGrid(
-        data.extent.southwest,
-        data.extent.southeast,
-        data.extent.northeast,
-        data.extent.northwest,
+        data.orig_extent.southwest,
+        data.orig_extent.southeast,
+        data.orig_extent.northeast,
+        data.orig_extent.northwest,
         resolution.x,
         resolution.y
     );
@@ -245,29 +245,74 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         }
     }
     
-    var sub_grid = RANDO.Utils.subdivideGrid(grid, 1);
-    
+    var sub_grid = RANDO.Utils.subdivideGrid(grid, 8);
+    console.log(sub_grid);
     // Material
     var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
     material.backFaceCulling = false;
     material.wireframe = true;
-    for (it in sub_grid) {
-        // Create DEM
-        var dem = RANDO.Utils.createGroundFromVertices(
-            "Tiled Digital Elevation Model",
-            sub_grid[it].vertices,
-            sub_grid[it].resolution.x -1,
-            sub_grid[it].resolution.y -1,
-            scene
-        );
-        dem.material = material;
-    }
+    
+    var cnt = 0;
+    //~ $(sub_grid).each( function(index) {
+        //~ console.log(index);
+    //~ });
+    //~ for (it in sub_grid) {
+        //~ 
+        //~ if (cnt<2){
+            //~ console.log(it);
+            //~ // Translate
+            //~ for (var i=0; i < sub_grid["8/380/84"].vertices.length; i+=3) {
+                //~ sub_grid["8/380/84"].vertices[i]   -= data.orig_extent.southwest.x;
+                //~ sub_grid["8/380/84"].vertices[i+2] -= data.orig_extent.southwest.y;
+            //~ }
+            //~ 
+            //~ var dem = RANDO.Utils.createGroundFromVertices(
+                //~ "Tiled Digital Elevation Model"+it,
+                //~ sub_grid[it].vertices,
+                //~ sub_grid[it].resolution.x -1,
+                //~ sub_grid[it].resolution.y -1,
+                //~ scene
+            //~ );
+        //~ }
+        //~ cnt++;
+    //~ }
+    
+    
+    
+    //~ var dem = new BABYLON.Mesh("dem", scene);
+    //~ 
+    //~ 
+    //~ for (var i=0; i < sub_grid["8/381/84"].vertices.length; i+=3) {
+        //~ sub_grid["8/381/84"].vertices[i]   -= data.orig_extent.southwest.x;
+        //~ sub_grid["8/381/84"].vertices[i+2] -= data.orig_extent.southwest.y;
+    //~ }
+    //~ 
+    //~ var dem1 = RANDO.Utils.createGroundFromVertices(
+        //~ "Tiled Digital Elevation Model - "+"8/380/84",
+        //~ sub_grid["8/380/84"].vertices,
+        //~ sub_grid["8/380/84"].resolution.x -1,
+        //~ sub_grid["8/380/84"].resolution.y -1,
+        //~ scene
+    //~ );
+    //~ dem1.material = material;
+    //~ dem1.parent = dem;
+    //~ var dem2 = RANDO.Utils.createGroundFromVertices(
+        //~ "Tiled Digital Elevation Model - "+"8/381/84",
+        //~ sub_grid["8/381/84"].vertices,
+        //~ sub_grid["8/381/84"].resolution.x -1,
+        //~ sub_grid["8/381/84"].resolution.y -1,
+        //~ scene
+    //~ );
+    //~ dem2.material = material;
+    //~ dem2.parent = dem;
+    //~ 
+    
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
-    
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
+    return dem;
 }
 
 /**
