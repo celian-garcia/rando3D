@@ -761,8 +761,6 @@ RANDO.Utils.drapePoint = function(point, dem){
  *      - dx  : x coefficient 
  *      - dy  : y coefficient  (altitudes in BABYLON)
  *      - dz  : z coefficient  (depth     in BABYLON)
- * 
- * return the DEM translated
  */
 RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     for (row in dem.altitudes){
@@ -797,8 +795,6 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
  *      - dx  : x coefficient 
  *      - dy  : y coefficient  (altitudes in BABYLON)
  *      - dz  : z coefficient  (depth     in BABYLON)
- * 
- * return the Trek translated
  */
 RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
     for (it in vertices){
@@ -806,7 +802,6 @@ RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
         vertices[it].y += dy;
         vertices[it].z += dz;
     }
-    
 }
 
 
