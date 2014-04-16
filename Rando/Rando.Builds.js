@@ -245,73 +245,54 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         }
     }
     
-    var sub_grid = RANDO.Utils.subdivideGrid(grid, 8);
+    var sub_grid = RANDO.Utils.subdivideGrid(grid, 17);
     console.log(sub_grid);
+    
     // Material
-    var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
-    material.backFaceCulling = false;
-    material.wireframe = true;
+    //~ var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
+    //~ material.backFaceCulling = false;
+    //~ material.wireframe = true;
     
     var cnt = 0;
-    //~ $(sub_grid).each( function(index) {
-        //~ console.log(index);
-    //~ });
-    //~ for (it in sub_grid) {
-        //~ 
-        //~ if (cnt<2){
-            //~ console.log(it);
-            //~ // Translate
-            //~ for (var i=0; i < sub_grid["8/380/84"].vertices.length; i+=3) {
-                //~ sub_grid["8/380/84"].vertices[i]   -= data.orig_extent.southwest.x;
-                //~ sub_grid["8/380/84"].vertices[i+2] -= data.orig_extent.southwest.y;
-            //~ }
-            //~ 
-            //~ var dem = RANDO.Utils.createGroundFromVertices(
-                //~ "Tiled Digital Elevation Model"+it,
-                //~ sub_grid[it].vertices,
-                //~ sub_grid[it].resolution.x -1,
-                //~ sub_grid[it].resolution.y -1,
-                //~ scene
-            //~ );
-        //~ }
-        //~ cnt++;
-    //~ }
+    
+    var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
     
     
+    for (it in sub_grid) {
+        var current = sub_grid[it].values;
+        for (row in current) {
+            for (col in current[row]) {
+                current[row][col].x -= data.o_center.x,
+                current[row][col].y -= data.o_center.z
+            }
+        }
     
-    //~ var dem = new BABYLON.Mesh("dem", scene);
-    //~ 
-    //~ 
-    //~ for (var i=0; i < sub_grid["8/381/84"].vertices.length; i+=3) {
-        //~ sub_grid["8/381/84"].vertices[i]   -= data.orig_extent.southwest.x;
-        //~ sub_grid["8/381/84"].vertices[i+2] -= data.orig_extent.southwest.y;
-    //~ }
-    //~ 
-    //~ var dem1 = RANDO.Utils.createGroundFromVertices(
-        //~ "Tiled Digital Elevation Model - "+"8/380/84",
-        //~ sub_grid["8/380/84"].vertices,
-        //~ sub_grid["8/380/84"].resolution.x -1,
-        //~ sub_grid["8/380/84"].resolution.y -1,
-        //~ scene
-    //~ );
-    //~ dem1.material = material;
-    //~ dem1.parent = dem;
-    //~ var dem2 = RANDO.Utils.createGroundFromVertices(
-        //~ "Tiled Digital Elevation Model - "+"8/381/84",
-        //~ sub_grid["8/381/84"].vertices,
-        //~ sub_grid["8/381/84"].resolution.x -1,
-        //~ sub_grid["8/381/84"].resolution.y -1,
-        //~ scene
-    //~ );
-    //~ dem2.material = material;
-    //~ dem2.parent = dem;
-    //~ 
+        var tmp = RANDO.Utils.createGroundFromGrid(
+            "Tiled Digital Elevation Model - " + it,
+            current,
+            scene
+        );
+        
+        var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
+        var texture = new BABYLON.Texture(
+            "http://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/" + it + ".png",
+            scene,
+            false,
+            false
+        );
+        material.diffuseTexture = texture;
+        material.backFaceCulling = false;
+        //~ material.wireframe = true;
+        tmp.material = material;
+        tmp.parent = dem;
+    }
     
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
+    //dem.rotation.y = Math.PI;
     return dem;
 }
 
@@ -464,6 +445,7 @@ RANDO.Builds.Camera = function(scene){
     camera.keysRight = [68, 39]; // Touche D
     var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
     l_cam.intensity = 0.8;
+    l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
     l_cam.parent = camera;
     return camera;
 }

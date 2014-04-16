@@ -122,6 +122,10 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
  * 
  ****************************************************************/
 RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
+    console.assert(vertices.length%3 == 0);
+    console.assert((vertices.length/3) == w_subdivisions*h_subdivisions,
+    (vertices.length/3) + "!=" + w_subdivisions + "*" + h_subdivisions);
+    
     var ground = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -452,43 +456,36 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
  */
 RANDO.Utils.subdivideGrid = function (grid, zoom){
     
-    var sub_grid = {};
-    
-    var cnt = 0;
+    var tiles = {};
     var prev_index = null;
+    var line = [];
     for (row in grid) {
         for (col in grid[row]) {
-            var tmp_ll = RANDO.Utils.toLatlng(grid[row][col]);
-
-            var num_tile = rad2num(tmp_ll.lat, tmp_ll.lng, zoom);
+            // Get tile number corresponding to the point
+            var num_tile = meters2num( grid[row][col], zoom );
             var index = "" + zoom + "/" + num_tile.xtile + "/" + num_tile.ytile + "";
-            if (!sub_grid[index]){
-                sub_grid[index] = {};
-                sub_grid[index].vertices = [];
+            
+            // tiles["z/x/y"] exists or not
+            tiles[index] = tiles[index] || {};
+            
+            // if the previous index exist and is different from the current index
+            if (prev_index != index && prev_index != null) {
+                tiles[prev_index].values = tiles[prev_index].values || [];
+                tiles[prev_index].values.push(line);
+                line = [];
             }
-            if (prev_index != null && prev_index != index) {
-                sub_grid[prev_index].resolution = {};
-                sub_grid[prev_index].resolution.x = cnt;
-                cnt = 0;
-            } 
-            sub_grid[index].vertices.push(grid[row][col].x);
-            sub_grid[index].vertices.push(grid[row][col].z);
-            sub_grid[index].vertices.push(grid[row][col].y);
+            
+            line.push(grid[row][col]);
             
             prev_index = index;
-            cnt++;
         }
-        sub_grid[prev_index].resolution = {};
-        sub_grid[prev_index].resolution.x = cnt;
-        cnt = 0;
     }
-
-    for (it in sub_grid) {
-        sub_grid[it].resolution.y = (sub_grid[it].vertices.length/3)/sub_grid[it].resolution.x;
-    }
-    console.log(sub_grid);
-    return sub_grid;
+    return tiles;
 }
+function meters2num(point, zoom) {
+    var tmp_ll = RANDO.Utils.toLatlng(point);
+    return deg2num(tmp_ll.lat, tmp_ll.lng, zoom);
+};
 
 function deg2num(lat_deg, lng_deg, zoom){
     var lat_rad = lat_deg*Math.PI/180;
