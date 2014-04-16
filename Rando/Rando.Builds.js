@@ -248,10 +248,6 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     var sub_grid = RANDO.Utils.subdivideGrid(grid, 17);
     console.log(sub_grid);
     
-    // Material
-    //~ var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
-    //~ material.backFaceCulling = false;
-    //~ material.wireframe = true;
     
     var cnt = 0;
     
@@ -292,7 +288,6 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     /////////////////////////////////////////////////////
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
-    //dem.rotation.y = Math.PI;
     return dem;
 }
 

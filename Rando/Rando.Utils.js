@@ -473,6 +473,7 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
                 tiles[prev_index].values = tiles[prev_index].values || [];
                 tiles[prev_index].values.push(line);
                 line = [];
+                
             }
             
             line.push(grid[row][col]);
