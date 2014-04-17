@@ -533,8 +533,8 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
                 if(new_line == false) {
                     line.push($.extend({}, mid));
                 }
-                
             }
+            
             line.push($.extend({}, point));
 
             prev_index = index;
@@ -544,6 +544,9 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
         }
         new_line = true;
     }
+    
+    // Push the last line of the last tile 
+    tiles[index].values.push(line);
     
     // Delete gaps between tiles 
     for (it in tiles) {

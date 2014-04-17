@@ -111,15 +111,14 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         }
     }
     
-    var sub_grid = RANDO.Utils.subdivideGrid(grid, 17);
+    var tiles = RANDO.Utils.subdivideGrid(grid, 14);
     
     var cnt = 0;
     
     var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
     
-    
-    for (it in sub_grid) {
-        var current = sub_grid[it].values;
+    for (it in tiles) {
+        var current = tiles[it].values;
 
         for (row in current) {
             for (col in current[row]) {
@@ -128,14 +127,13 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             }
         }
         
-    
         var tmp = RANDO.Utils.createGroundFromGrid(
             "Tiled Digital Elevation Model - " + it,
             current,
             scene
         );
         
-        var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
+        var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
             "http://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/" + it + ".png",
             scene,
@@ -149,6 +147,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         tmp.parent = dem;
     }
 
+    east_side(tiles, data.extent);
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
@@ -157,6 +156,70 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     return dem;
 }
 
+
+function east_side(tiles, extent) {
+    var xmax = -Infinity;
+    for (it in tiles) {
+        if ( tiles[it].coordinates.x > xmax ) {
+            xmax = tiles[it].coordinates.x;
+        }
+    }
+    
+    var line = [];
+    for (it in tiles) {
+        var tile =  tiles[it];
+        if ( tile.coordinates.x == xmax ) {
+            var last_col = tile.values[0].length -1;
+            for (row in tile.values) {
+                line.push(tile.values[row][last_col]);
+            }
+        }
+    }
+    
+    var prev = null;
+    //~ for (it in altitudes) {
+        //~ if(prev && prev == altitudes[it]){
+            //~ altitudes.splice(it, 1);
+        //~ }
+        //~ prev = altitudes[it];
+    //~ }
+    //~ altitudes.push(tiles[it].values[row][tile.values[0].length -1].z);
+    
+    var side = RANDO.Utils.createGroundFromExtent(
+        "east_side",
+        extent.southeast,
+        extent.northeast,
+        extent.northeast,
+        extent.southeast,
+        line.length-1,
+        1,
+        scene
+    );
+    //~ side.rotation.y = -Math.PI/2;
+    side.material = new BABYLON.StandardMaterial("East Side Material", scene); 
+    side.material.backFaceCulling = false;
+    side.material.diffuseTexture = new BABYLON.Texture("../img/leather/seamless/fzm-leather.texture-08-[800x800].jpg", scene);
+    
+    var vertices = side.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    
+    var i = 0;
+    for (it in line) {
+        vertices[i++] = line[it].x;
+        vertices[i++] = line[it].z;
+        vertices[i++] = line[it].y; 
+    }
+    
+    for (it in line) {
+        vertices[i++] = line[it].x;
+        vertices[i++] += 1000;
+        vertices[i++] = line[it].y; 
+    }
+    
+
+    console.log(vertices);
+    side.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+    
+};
 /**
 * Trek() : build a trek from an array of point
 *       - scene (BABYLON.Scene) : current scene
