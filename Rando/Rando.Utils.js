@@ -231,7 +231,22 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
 }
 
 
-/****    MATH     ************************/
+/****    GEOMETRY     ************************/
+/**
+ * middle(): 
+ *      A: first point
+ *      B: second point
+ * 
+ * return the middle of the segment form by A and B
+ */
+RANDO.Utils.middle = function(A, B) {
+    return {
+        x: (A.x+B.x)/2,
+        y: (A.y+B.y)/2,
+        z: (A.z+B.z)/2
+    };
+};
+
 /**
  * subdivide() :  interpolate a segment between 2 points A and B 
  *      - n : number of points expected in result
@@ -449,26 +464,52 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
 }
 
 /**
- * Work in progress
+ * Subdivide a grid of points in several tiles 
+ *      - grid: grid to subdivide
+ *      - zoom: level of zoom 
  * 
+ * return an associative array of tiles in this format :
  * 
+ * {
+ *      "{z}/{x}/{y}": {
+ *              values: [
+ *                  [{
+ *                      x: ,
+ *                      y: ,
+ *                      z: 
+ *                  }],
+ *                  [{ ... }],
+ *                  ...
+ *                  ...
+ *              ],
+ *              coordinates: {
+ *                  z: ,
+ *                  x: ,
+ *                  y:
+ *              }
+ *      },
  * 
+ *      "{z}/{x}/{y}": { ... },
+ *      ...
+ *      ...
+ * }
  */
 RANDO.Utils.subdivideGrid = function (grid, zoom){
-    
-    var tiles = {};
-    var prev_index = null;
-    var prev_point = null;
-    var line = [];
-    var prev_num_tile = null;
-    var new_line = true;
+    var tiles = {},
+        prev_index = null,
+        prev_point = null,
+        prev_tile_n = null,
+        line = [],
+        new_line = true;
+        
+    // Subdivide grid in tiles 
     for (row in grid) {
         for (col in grid[row]) {
             var point = grid[row][col];
             
             // Get tile number corresponding to the point
-            var num_tile = meters2num( point, zoom );
-            var index = "" + zoom + "/" + num_tile.xtile + "/" + num_tile.ytile + "";
+            var tile_n = RANDO.Utils.meters2num( point.x, point.y, zoom );
+            var index = "" + zoom + "/" + tile_n.xtile + "/" + tile_n.ytile + "";
             
             // tiles["z/x/y"] exists or not
             tiles[index] = tiles[index] || {};
@@ -476,7 +517,7 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
             
             // if the previous index exist and is different from the current index
             if (prev_index != index && prev_index != null) {
-                var mid = middle(point, prev_point);
+                var mid = RANDO.Utils.middle(point, prev_point);
                 if(new_line == false) {
                     line.push($.extend({}, mid));
                 }
@@ -485,8 +526,8 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
                 tiles[prev_index].values.push(line); // push the line into previous tile
                 tiles[prev_index].coordinates = {
                     z: zoom,
-                    x: prev_num_tile.xtile,
-                    y: prev_num_tile.ytile 
+                    x: prev_tile_n.xtile,
+                    y: prev_tile_n.ytile 
                 }
                 line = []; // reset the line
                 if(new_line == false) {
@@ -499,11 +540,12 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
             prev_index = index;
             prev_point = point;
             new_line = false;
-            prev_num_tile = num_tile;
+            prev_tile_n = tile_n;
         }
         new_line = true;
     }
     
+    // Delete gaps between tiles 
     for (it in tiles) {
         var current_tile = $.extend({}, tiles[it]);
         var next_coord = {
@@ -515,76 +557,33 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
 
         if (tiles[next_index]) {
             var next_tile = tiles[next_index];
-            // Last line of current tile
+            
+            // First line of current tile
             var prev_line = $.extend({}, current_tile.values[0]);
             
-            // First line of next tile
+            // Last line of next tile
             var next_line = $.extend({}, next_tile.values[next_tile.values.length-1]);
             
-            var mid_line = [];
+            // we create a new line placed on the middle of the both previous
+            // We need two variables to store this line 
+            var mid_line1 = [];
             var mid_line2 = [];
-            var test = [];
+            
             for (i in prev_line) {
-                var mid = middle(prev_line[i], next_line[i]);
-                mid_line.push($.extend({}, mid));
+                var mid = RANDO.Utils.middle(prev_line[i], next_line[i]);
+                mid_line1.push($.extend({}, mid));
                 mid_line2.push($.extend({}, mid));
-                
-                var tmp = {
-                    x: prev_line[i].x,
-                    y: prev_line[i].y,
-                    z: prev_line[i].z +50
-                };
-                test.push(tmp);
             }
             
-            
-            current_tile.values.splice(0, 0, mid_line2);
-            //~ 
-            console.log(current_tile.values[0]);
-            next_tile.values.push($.extend({}, mid_line));
-
+            // The "middle line" go to the bottom of current tile
+            current_tile.values.splice(0, 0, mid_line1);
+            // ... and to the top of next tile
+            next_tile.values.push(mid_line2);
         } 
     }
-
-    //~ console.log(tiles);
     return tiles;
 }
 
-function meters2num(point, zoom) {
-    var tmp_ll = RANDO.Utils.toLatlng(point);
-    return deg2num(tmp_ll.lat, tmp_ll.lng, zoom);
-};
-
-function deg2num(lat_deg, lng_deg, zoom){
-    var lat_rad = lat_deg*Math.PI/180;
-    var n = Math.pow(2.0, zoom);
-    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
-    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
-    return {
-        "xtile": xtile, 
-        "ytile": ytile
-    };
-}
-
-function rad2num(lat_rad, lng_rad, zoom){
-    var lat_deg = lat_rad*180/Math.PI;
-    var lng_deg = lng_rad*180/Math.PI;
-    var n = Math.pow(2.0, zoom);
-    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
-    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
-    return {
-        "xtile": xtile, 
-        "ytile": ytile
-    };
-}
-
-function middle(A, B) {
-    return {
-        x: (A.x+B.x)/2,
-        y: (A.y+B.y)/2,
-        z: (A.z+B.z)/2
-    }
-}
 
 /****    CAMERA     ************************/
 /**
@@ -771,6 +770,8 @@ RANDO.Utils.getExtentinMeters = function(extent){
     }
 }
 
+
+/****    CONVERSIONS     ************************/
 /**
  * toMeters() : convert a point in latitude/longitude to x/y meters coordinates
  *      - latlng : point in lat/lng 
@@ -812,6 +813,58 @@ RANDO.Utils.toLatlng = function(point) {
         lng: point.x * d / R
     };
 }
+
+/**
+ * meters2num(): get the tile number of the tile containing a point 
+ *  in a certain level of zoom
+ *      - x: x coordinate of point (in meters)
+ *      - y: y coordinate of point (in meters)
+ *      - zoom: zoom level
+ */
+RANDO.Utils.meters2num = function(x, y, zoom) {
+    var tmp_ll = RANDO.Utils.toLatlng({
+        x: x,
+        y: y
+    });
+    return RANDO.Utils.deg2num(tmp_ll.lat, tmp_ll.lng, zoom);
+};
+
+/**
+ * deg2num(): get the tile number of the tile containing a point 
+ *  in a certain level of zoom
+ *      - lat_deg: latitude  coordinate of point (in degrees)
+ *      - lng_deg: longitude coordinate of point (in degrees)
+ *      - zoom: zoom level
+ */
+RANDO.Utils.deg2num = function(lat_deg, lng_deg, zoom) {
+    var lat_rad = lat_deg*Math.PI/180;
+    var n = Math.pow(2.0, zoom);
+    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
+    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+    return {
+        "xtile": xtile, 
+        "ytile": ytile
+    };
+};
+
+/**
+ * rad2num(): get the tile number of the tile containing a point 
+ *  in a certain level of zoom
+ *      - lat_rad: latitude  coordinate of point (in radians)
+ *      - lng_rad: longitude coordinate of point (in radians)
+ *      - zoom: zoom level
+ */
+RANDO.Utils.rad2num = function(lat_rad, lng_rad, zoom) {
+    var lat_deg = lat_rad*180/Math.PI;
+    var lng_deg = lng_rad*180/Math.PI;
+    var n = Math.pow(2.0, zoom);
+    var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
+    var ytile = Math.floor((1.0 - Math.log(Math.tan(lat_rad) + (1 / Math.cos(lat_rad))) / Math.PI) / 2.0 * n);
+    return {
+        "xtile": xtile, 
+        "ytile": ytile
+    };
+};
 
 
 /****    TRANSLATIONS     ************************/
@@ -875,19 +928,3 @@ RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
         vertices[it].z += dz;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

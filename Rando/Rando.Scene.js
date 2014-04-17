@@ -75,11 +75,10 @@ RANDO.Scene.launch = function(canvas){
         trek_data = RANDO.Utils.getVerticesFromProfile(data.profile);
      }).then(function () {
          
-         console.log(trek_data);
         /***************************************************
          *    DEM
          ****************************************************/
-        setTimeout(build_dem, 16);
+        setTimeout(build_dem, 1);
         function build_dem() {
             // Translation of the DEM
             RANDO.Utils.translateDEM(
@@ -89,25 +88,16 @@ RANDO.Scene.launch = function(canvas){
                 offsets.z
             );
             
-            console.log(dem_data);
-
-            //~ // DEM mesh building
-            //~ var dem = RANDO.Builds.DEM(
-                //~ dem_data,
-                //~ scene
-            //~ );
-            
             // Tiled DEM mesh building
             var tiled_dem = RANDO.Builds.TiledDEM(
                 dem_data,
                 scene
             );
-            //~ 
-            //~ // Render the DEM
-            //~ scene.render();
-            //~ 
             
-            setTimeout(build_trek, 16);
+            // Render the DEM
+            scene.render();
+            
+            setTimeout(build_trek, 1);
         };
         
         /****************************************************/

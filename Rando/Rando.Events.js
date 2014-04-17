@@ -31,8 +31,5 @@ else if (document.attachEvent) {
 
 
 
-/*
- * Bind and Unbind events 
- * 
- ***************************/
+
 

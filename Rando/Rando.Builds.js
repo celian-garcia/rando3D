@@ -112,8 +112,6 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     }
     
     var sub_grid = RANDO.Utils.subdivideGrid(grid, 17);
-    console.log(sub_grid);
-    
     
     var cnt = 0;
     
@@ -122,8 +120,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     
     for (it in sub_grid) {
         var current = sub_grid[it].values;
-        
-        console.log(current);
+
         for (row in current) {
             for (col in current[row]) {
                 current[row][col].x -= data.o_center.x,
@@ -151,7 +148,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         tmp.material = material;
         tmp.parent = dem;
     }
-    //~ console.log(sub_grid);
+
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
