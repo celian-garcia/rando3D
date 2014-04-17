@@ -458,31 +458,98 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
     
     var tiles = {};
     var prev_index = null;
+    var prev_point = null;
     var line = [];
+    var prev_num_tile = null;
+    var new_line = true;
     for (row in grid) {
         for (col in grid[row]) {
+            var point = grid[row][col];
+            
             // Get tile number corresponding to the point
-            var num_tile = meters2num( grid[row][col], zoom );
+            var num_tile = meters2num( point, zoom );
             var index = "" + zoom + "/" + num_tile.xtile + "/" + num_tile.ytile + "";
             
             // tiles["z/x/y"] exists or not
             tiles[index] = tiles[index] || {};
             
+            
             // if the previous index exist and is different from the current index
             if (prev_index != index && prev_index != null) {
+                var mid = middle(point, prev_point);
+                if(new_line == false) {
+                    line.push($.extend({}, mid));
+                }
+                // previous tile exists or not
                 tiles[prev_index].values = tiles[prev_index].values || [];
-                tiles[prev_index].values.push(line);
-                line = [];
+                tiles[prev_index].values.push(line); // push the line into previous tile
+                tiles[prev_index].coordinates = {
+                    z: zoom,
+                    x: prev_num_tile.xtile,
+                    y: prev_num_tile.ytile 
+                }
+                line = []; // reset the line
+                if(new_line == false) {
+                    line.push($.extend({}, mid));
+                }
                 
             }
-            
-            line.push(grid[row][col]);
-            
+            line.push($.extend({}, point));
+
             prev_index = index;
+            prev_point = point;
+            new_line = false;
+            prev_num_tile = num_tile;
         }
+        new_line = true;
     }
+    
+    for (it in tiles) {
+        var current_tile = $.extend({}, tiles[it]);
+        var next_coord = {
+            z: current_tile.coordinates.z,
+            x: current_tile.coordinates.x,
+            y: current_tile.coordinates.y + 1
+        };
+        var next_index = ""  + next_coord.z + "/" + next_coord.x + "/" + next_coord.y + "";
+
+        if (tiles[next_index]) {
+            var next_tile = tiles[next_index];
+            // Last line of current tile
+            var prev_line = $.extend({}, current_tile.values[0]);
+            
+            // First line of next tile
+            var next_line = $.extend({}, next_tile.values[next_tile.values.length-1]);
+            
+            var mid_line = [];
+            var mid_line2 = [];
+            var test = [];
+            for (i in prev_line) {
+                var mid = middle(prev_line[i], next_line[i]);
+                mid_line.push($.extend({}, mid));
+                mid_line2.push($.extend({}, mid));
+                
+                var tmp = {
+                    x: prev_line[i].x,
+                    y: prev_line[i].y,
+                    z: prev_line[i].z +50
+                };
+                test.push(tmp);
+            }
+            
+            
+            current_tile.values.splice(0, 0, mid_line2);
+            //~ 
+            console.log(current_tile.values[0]);
+            next_tile.values.push($.extend({}, mid_line));
+
+        } 
+    }
+
+    //~ console.log(tiles);
     return tiles;
 }
+
 function meters2num(point, zoom) {
     var tmp_ll = RANDO.Utils.toLatlng(point);
     return deg2num(tmp_ll.lat, tmp_ll.lng, zoom);
@@ -511,6 +578,13 @@ function rad2num(lat_rad, lng_rad, zoom){
     };
 }
 
+function middle(A, B) {
+    return {
+        x: (A.x+B.x)/2,
+        y: (A.y+B.y)/2,
+        z: (A.z+B.z)/2
+    }
+}
 
 /****    CAMERA     ************************/
 /**
