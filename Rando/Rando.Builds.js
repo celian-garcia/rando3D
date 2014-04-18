@@ -283,7 +283,7 @@ RANDO.Builds.Sides = function (tiles, extent) {
         
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
-        side.material.diffuseTexture = new BABYLON.Texture("../img/leather/seamless/fzm-leather.texture-08-[800x800].jpg", scene);
+        side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
     };
 
 }
