@@ -87,7 +87,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
         scene.activeCamera.position = new BABYLON.Vector3(
             center.x-2000, 
-            center.y+2500, 
+            center.y+500, 
             center.z-1500
         );
     }
@@ -96,10 +96,10 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     //// To loop ////////////////////////////////////////
     // Generate grid from extent datas
     var grid = RANDO.Utils.createGrid(
-        data.orig_extent.southwest,
-        data.orig_extent.southeast,
-        data.orig_extent.northeast,
-        data.orig_extent.northwest,
+        data.extent.southwest,
+        data.extent.southeast,
+        data.extent.northeast,
+        data.extent.northwest,
         resolution.x,
         resolution.y
     );
@@ -111,181 +111,29 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         }
     }
     
-    // Subdivide current grid in tiles 
-    var tiles = RANDO.Utils.subdivideGrid(grid, 17);
+    var sub_grid = RANDO.Utils.subdivideGrid(grid, 1);
     
-    
-    console.log("Number of grounds" + Object.keys(tiles).length);
-    var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
-    
-    // Create all grounds 
-    for (it in tiles) {
-        var current = tiles[it].values;
-
-        for (row in current) {
-            for (col in current[row]) {
-                current[row][col].x -= data.o_center.x,
-                current[row][col].y -= data.o_center.z
-            }
-        }
-        
-        var tmp = RANDO.Utils.createGroundFromGrid(
-            "Tiled Digital Elevation Model - " + it,
-            current,
+    // Material
+    var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
+    material.backFaceCulling = false;
+    material.wireframe = true;
+    for (it in sub_grid) {
+        // Create DEM
+        var dem = RANDO.Utils.createGroundFromVertices(
+            "Tiled Digital Elevation Model",
+            sub_grid[it].vertices,
+            sub_grid[it].resolution.x -1,
+            sub_grid[it].resolution.y -1,
             scene
         );
-        
-        var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
-        var texture = new BABYLON.Texture(
-            RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
-            scene,
-            false,
-            false
-        );
-        material.diffuseTexture = texture;
-        material.backFaceCulling = false;
-        //~ material.wireframe = true;
-        tmp.material = material;
-        tmp.parent = dem;
+        dem.material = material;
     }
-
-    // Builds sides of DEM
-    RANDO.Builds.Sides(tiles, data.extent);
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
+    
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - START_TIME) );
-    return dem;
-}
-
-
-RANDO.Builds.Sides = function (tiles, extent) {
-    var xmax = -Infinity;
-    var xmin =  Infinity;
-    var ymax = -Infinity;
-    var ymin =  Infinity;
-    
-    // Get min and max coordinates of tiles
-    for (it in tiles) {
-        if ( tiles[it].coordinates.x > xmax ) {
-            xmax = tiles[it].coordinates.x;
-        }
-        if ( tiles[it].coordinates.x < xmin ) {
-            xmin = tiles[it].coordinates.x;
-        }
-        if ( tiles[it].coordinates.y > ymax ) {
-            ymax = tiles[it].coordinates.y;
-        }
-        if ( tiles[it].coordinates.y < ymax ) {
-            ymin = tiles[it].coordinates.y;
-        }
-    }
-    
-    var east_line = [];
-    var west_line = [];
-    var north_line = [];
-    var south_line = [];
-    for (it in tiles) {
-        var tile =  tiles[it];
-        
-        if ( tile.coordinates.x == xmax ) {
-            var last_col = tile.values[0].length -1;
-            for (row in tile.values) {
-                east_line.push(tile.values[row][last_col]);
-            }
-        }
-        if ( tile.coordinates.x == xmin ) {
-            var first_col = 0;
-            for (row in tile.values) {
-                west_line.push(tile.values[row][first_col]);
-            }
-        }
-        
-        if ( tile.coordinates.y == ymax ) {
-            console.log(tile);
-            var first_row = 0;
-            for (col in tile.values[first_row]){
-                north_line.push(tile.values[first_row][col]);
-            }
-        }
-        if ( tile.coordinates.y == ymin ) {
-            var last_row = tile.values.length-1;
-            for (col in tile.values[last_row]){
-                south_line.push(tile.values[last_row][col]);
-            }
-        }
-    }
-    
-    var east_extent = {
-        "A": extent.southeast,
-        "B": extent.northeast,
-        "C": extent.northeast,
-        "D": extent.southeast
-    };
-    
-    var west_extent = {
-        "A": extent.southwest,
-        "B": extent.northwest,
-        "C": extent.northwest,
-        "D": extent.southwest
-    };
-    
-    var north_extent = {
-        "A": extent.northwest,
-        "B": extent.northwest,
-        "C": extent.northeast,
-        "D": extent.northeast
-    };
-    
-    var south_extent = {
-        "A": extent.southwest,
-        "B": extent.southwest,
-        "C": extent.southeast,
-        "D": extent.southeast
-    };
-    
-    side("East Side", east_line, east_extent, false);
-    side("West Side", west_line, west_extent, true);
-    side("North Side", north_line, north_extent, false);
-    side("South Side", south_line, south_extent, true);
-    
-    function side(name, line, extent, reverse) {
-        var side = RANDO.Utils.createGroundFromExtent(
-            name,
-            extent.A,
-            extent.B,
-            extent.C,
-            extent.D,
-            line.length-1,
-            1,
-            scene
-        );
-        
-        if (reverse) {
-            line.reverse();
-        }
-        
-        var vertices = side.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        var i = 0;
-        for (it in line) {
-            vertices[i++] = line[it].x;
-            vertices[i++] = line[it].z;
-            vertices[i++] = line[it].y; 
-        }
-        
-        for (it in line) {
-            vertices[i++] = line[it].x;
-            vertices[i++] += 1000;
-            vertices[i++] = line[it].y; 
-        }
-        side.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-        
-        // Side material
-        side.material = new BABYLON.StandardMaterial(name + "Material", scene);
-        side.material.diffuseTexture = new BABYLON.Texture("../img/leather/seamless/fzm-leather.texture-08-[800x800].jpg", scene);
-    };
-
 }
 
 /**
@@ -437,7 +285,6 @@ RANDO.Builds.Camera = function(scene){
     camera.keysRight = [68, 39]; // Touche D
     var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
     l_cam.intensity = 0.8;
-    l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
     l_cam.parent = camera;
     return camera;
 }

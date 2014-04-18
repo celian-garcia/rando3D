@@ -30,103 +30,79 @@ RANDO.Scene.launch = function(canvas){
     // Lights
     var lights = RANDO.Builds.Lights(scene);
     
-    
-    // Data used by DEM build
-    var dem_data = {};
-    
-    // Data used by trek build
-    var trek_data = [];
-    
-    // Data used by both of them
-    var offsets = {};
+    var offsets = {
+        x : 0,
+        z : 0
+    };
     
     $.getJSON(RANDO.SETTINGS.DEM_URL)
      .done(function (data) {
-        var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
-        // Record DEM data
-        dem_data.orig_extent = jQuery.extend(true, {}, m_extent);
-        dem_data.extent = m_extent;
-        dem_data.altitudes = data.altitudes; // altitudes already in meters
-        dem_data.resolution = data.resolution; // do not need conversion
-        dem_data.center = {
-            x: m_center.x,
-            y: data.center.z,// altitude of center already in meters
-            z: m_center.y
+        var m_center = RANDO.Utils.toMeters(data.center);
+
+        // Records DEM data
+        var dem = {
+            "extent"    :   m_extent,
+            "altitudes"  :  data.altitudes, // altitudes already in meters
+            "resolution":   data.resolution,// reso already in meters
+            "center"    :   {
+                x: m_center.x,
+                y: data.center.z,// alt of center already in meters
+                z: m_center.y
+            }
         };
-        dem_data.o_center = {
-            x: m_center.x,
-            y: data.center.z,// altitude of center already in meters
-            z: m_center.y
-        }
         
         // Control if altitudes data coincide with resolution data
-        console.assert(dem_data.altitudes.length == dem_data.resolution.y);
-        console.assert(dem_data.altitudes[0].length == dem_data.resolution.x);
+        console.assert(dem.altitudes.length == dem.resolution.y);
+        console.assert(dem.altitudes[0].length == dem.resolution.x);
         
         // Records offsets
-        offsets.x = -dem_data.center.x;
-        offsets.z = -dem_data.center.z;
+        offsets.x = -dem.center.x;
+        offsets.z = -dem.center.z;
+        
+        // Translation of the DEM
+        RANDO.Utils.translateDEM(
+            dem,
+            offsets.x,
+            dem.extent.altitudes.min,
+            offsets.z
+        );
+
+        // DEM mesh building
+        RANDO.Builds.DEM(
+            dem,
+            scene
+        );
+        
+        //~ // Tiled DEM mesh building
+        //~ RANDO.Builds.TiledDEM(
+            //~ dem,
+            //~ scene
+        //~ );
      })
      .then(function () {
+        // Render the DEM
+        scene.render();
         return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
      })
      .done(function (data) {
-        trek_data = RANDO.Utils.getVerticesFromProfile(data.profile);
-     }).then(function () {
-         
-        /***************************************************
-         *    DEM
-         ****************************************************/
-        setTimeout(build_dem, 1);
-        function build_dem() {
-            // Translation of the DEM
-            RANDO.Utils.translateDEM(
-                dem_data,
-                offsets.x,
-                dem_data.extent.altitudes.min,
-                offsets.z
-            );
-            
-            // Tiled DEM mesh building
-            var tiled_dem = RANDO.Builds.TiledDEM(
-                dem_data,
-                scene
-            );
-            
-            // Render the DEM
-            scene.render();
-            
-            setTimeout(build_trek, 1);
-        };
-        
-        /****************************************************/
-        
-        /***************************************************
-         *    TREK
-         ****************************************************/
-        
-        function build_trek() {
-            // Translation of the route to make it visible
-            RANDO.Utils.translateTrek(
-                trek_data,
-                offsets.x,
-                0,
-                offsets.z
-            );
-            
-            // Route building
-            RANDO.Builds.Trek(scene, trek_data);
-            
-            // Attach camera controls
-            scene.activeCamera.attachControl(canvas);
-            scene.executeWhenReady(executeWhenReady);
-        }
-        /****************************************************/
-         
+        var vertices = RANDO.Utils.getVerticesFromProfile(data.profile);
+
+        // Translation of the route to make it visible
+        RANDO.Utils.translateTrek(
+            vertices,
+            offsets.x,
+            0,
+            offsets.z
+        );
+
+        // Route building
+        RANDO.Builds.Trek(scene, vertices);
+     })
+     .then(function () {
+        scene.executeWhenReady(executeWhenReady);
      });
 
-    
     return scene;
 };
 
@@ -139,6 +115,8 @@ function renderLoop () {
 
 
 function executeWhenReady () {
+    // Attach camera controls
+    scene.activeCamera.attachControl(canvas);
     
     console.log("Scene is ready ! " + (Date.now() - START_TIME) );
     var dem = scene.getMeshByName("Digital Elevation Model");
@@ -180,21 +158,3 @@ function executeWhenReady () {
         renderLoop();
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
