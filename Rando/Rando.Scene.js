@@ -140,11 +140,11 @@ function renderLoop () {
 
 function executeWhenReady () {
     
-    console.log("Scene is ready ! " + (Date.now() - START_TIME) );
+    console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
     var dem = scene.getMeshByName("Digital Elevation Model");
     var trek_length = scene.getMeshByName("Spheres").getChildren().length;
     
-    console.log("Trek adjustments ..." + (Date.now() - START_TIME) );
+    console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
     
     var index = 0;
     var chunk = 100; // By chunks of 100 points
@@ -174,7 +174,7 @@ function executeWhenReady () {
                 scene.getMeshByName("Sphere "   + (i+2)).position
             );
         }
-        console.log("Trek adjusted ! " + (Date.now() - START_TIME) );
+        console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         
         // At the end, run the render loop 
         renderLoop();
