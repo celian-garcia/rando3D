@@ -127,11 +127,20 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             }
         }
         
-        var tmp = RANDO.Utils.createGroundFromGrid(
+        var meshTile = RANDO.Utils.createGroundFromGrid(
             "Tiled Digital Elevation Model - " + it,
             current,
             scene
         );
+        
+        //~ var normals = meshTile.getVerticesData(BABYLON.VertexBuffer.NormalKind);
+        //~ BABYLON.Mesh.ComputeNormal(
+            //~ meshTile.getVerticesData(BABYLON.VertexBuffer.PositionKind),
+            //~ normals,
+            //~ meshTile.getIndices()
+        //~ );
+        //~ meshTile.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind);
+        meshTile.checkCollisions = true;
         
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
@@ -143,8 +152,8 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         //~ material.diffuseTexture = texture;
         material.backFaceCulling = false;
         material.wireframe = true;
-        tmp.material = material;
-        tmp.parent = dem;
+        meshTile.material = material;
+        meshTile.parent = dem;
     }
 
     // Builds sides of DEM
@@ -435,6 +444,7 @@ RANDO.Builds.Camera = function(scene){
     camera.keysDown = [83, 40]; // Touche S
     camera.keysLeft = [81, 37]; // Touche Q
     camera.keysRight = [68, 39]; // Touche D
+    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
     var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
     l_cam.intensity = 0.8;
     l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);

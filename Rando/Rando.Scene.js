@@ -23,7 +23,9 @@ RANDO.Scene.launch = function(canvas){
     
     // Creation of the scene 
     scene = new BABYLON.Scene(engine);
-    
+    // Enable Collisions
+    scene.collisionsEnabled = true;
+
     // Camera
     var camera = RANDO.Builds.Camera(scene);
     
