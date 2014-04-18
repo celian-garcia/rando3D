@@ -92,8 +92,6 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         );
     }
     
-    /////////////////////////////////////////////////////
-    //// To loop ////////////////////////////////////////
     // Generate grid from extent datas
     var grid = RANDO.Utils.createGrid(
         data.orig_extent.southwest,
@@ -112,7 +110,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     }
     
     // Subdivide current grid in tiles 
-    var tiles = RANDO.Utils.subdivideGrid(grid, 17);
+    var tiles = RANDO.Utils.subdivideGrid(grid, 16);
     
     
     console.log("Number of grounds" + Object.keys(tiles).length);
@@ -139,7 +137,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         var texture = new BABYLON.Texture(
             RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
             scene,
-            false,
+            true,
             false
         );
         //~ material.diffuseTexture = texture;
@@ -152,8 +150,6 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     // Builds sides of DEM
     RANDO.Builds.Sides(tiles, data.extent);
     
-    //// End of loop ////////////////////////////////////////
-    /////////////////////////////////////////////////////
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - RANDO.START_TIME) );
     return dem;
