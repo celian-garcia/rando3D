@@ -142,9 +142,9 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             false,
             false
         );
-        material.diffuseTexture = texture;
+        //~ material.diffuseTexture = texture;
         material.backFaceCulling = false;
-        //~ material.wireframe = true;
+        material.wireframe = true;
         tmp.material = material;
         tmp.parent = dem;
     }
@@ -159,7 +159,11 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     return dem;
 }
 
-
+/**
+ * Sides(): build 4 sides of a DEM 
+ *      - tiles: differents tiles of the DEM
+ *      - extent of the DEM
+ */
 RANDO.Builds.Sides = function (tiles, extent) {
     var xmax = -Infinity;
     var xmin =  Infinity;

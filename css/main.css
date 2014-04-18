@@ -11,4 +11,13 @@ canvas {
 }
 div {
     border-radius: 3px;
+    background-color: rgba(255,255,255, 0.8);
+}
+
+#mapbox {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    height: auto;
+    width: auto;
 }
