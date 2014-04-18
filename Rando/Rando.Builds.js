@@ -111,12 +111,14 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         }
     }
     
-    var tiles = RANDO.Utils.subdivideGrid(grid, 14);
+    // Subdivide current grid in tiles 
+    var tiles = RANDO.Utils.subdivideGrid(grid, 17);
     
-    var cnt = 0;
     
+    console.log("Number of grounds" + Object.keys(tiles).length);
     var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
     
+    // Create all grounds 
     for (it in tiles) {
         var current = tiles[it].values;
 
@@ -135,7 +137,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
-            "http://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/" + it + ".png",
+            RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
             scene,
             false,
             false
@@ -147,7 +149,8 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         tmp.parent = dem;
     }
 
-    east_side(tiles, data.extent);
+    // Builds sides of DEM
+    RANDO.Builds.Sides(tiles, data.extent);
     
     //// End of loop ////////////////////////////////////////
     /////////////////////////////////////////////////////
@@ -157,69 +160,134 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
 }
 
 
-function east_side(tiles, extent) {
+RANDO.Builds.Sides = function (tiles, extent) {
     var xmax = -Infinity;
+    var xmin =  Infinity;
+    var ymax = -Infinity;
+    var ymin =  Infinity;
+    
+    // Get min and max coordinates of tiles
     for (it in tiles) {
         if ( tiles[it].coordinates.x > xmax ) {
             xmax = tiles[it].coordinates.x;
         }
+        if ( tiles[it].coordinates.x < xmin ) {
+            xmin = tiles[it].coordinates.x;
+        }
+        if ( tiles[it].coordinates.y > ymax ) {
+            ymax = tiles[it].coordinates.y;
+        }
+        if ( tiles[it].coordinates.y < ymax ) {
+            ymin = tiles[it].coordinates.y;
+        }
     }
     
-    var line = [];
+    var east_line = [];
+    var west_line = [];
+    var north_line = [];
+    var south_line = [];
     for (it in tiles) {
         var tile =  tiles[it];
+        
         if ( tile.coordinates.x == xmax ) {
             var last_col = tile.values[0].length -1;
             for (row in tile.values) {
-                line.push(tile.values[row][last_col]);
+                east_line.push(tile.values[row][last_col]);
+            }
+        }
+        if ( tile.coordinates.x == xmin ) {
+            var first_col = 0;
+            for (row in tile.values) {
+                west_line.push(tile.values[row][first_col]);
+            }
+        }
+        
+        if ( tile.coordinates.y == ymax ) {
+            console.log(tile);
+            var first_row = 0;
+            for (col in tile.values[first_row]){
+                north_line.push(tile.values[first_row][col]);
+            }
+        }
+        if ( tile.coordinates.y == ymin ) {
+            var last_row = tile.values.length-1;
+            for (col in tile.values[last_row]){
+                south_line.push(tile.values[last_row][col]);
             }
         }
     }
     
-    var prev = null;
-    //~ for (it in altitudes) {
-        //~ if(prev && prev == altitudes[it]){
-            //~ altitudes.splice(it, 1);
-        //~ }
-        //~ prev = altitudes[it];
-    //~ }
-    //~ altitudes.push(tiles[it].values[row][tile.values[0].length -1].z);
+    var east_extent = {
+        "A": extent.southeast,
+        "B": extent.northeast,
+        "C": extent.northeast,
+        "D": extent.southeast
+    };
     
-    var side = RANDO.Utils.createGroundFromExtent(
-        "east_side",
-        extent.southeast,
-        extent.northeast,
-        extent.northeast,
-        extent.southeast,
-        line.length-1,
-        1,
-        scene
-    );
-    //~ side.rotation.y = -Math.PI/2;
-    side.material = new BABYLON.StandardMaterial("East Side Material", scene); 
-    side.material.backFaceCulling = false;
-    side.material.diffuseTexture = new BABYLON.Texture("../img/leather/seamless/fzm-leather.texture-08-[800x800].jpg", scene);
+    var west_extent = {
+        "A": extent.southwest,
+        "B": extent.northwest,
+        "C": extent.northwest,
+        "D": extent.southwest
+    };
     
-    var vertices = side.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    var north_extent = {
+        "A": extent.northwest,
+        "B": extent.northwest,
+        "C": extent.northeast,
+        "D": extent.northeast
+    };
     
-    var i = 0;
-    for (it in line) {
-        vertices[i++] = line[it].x;
-        vertices[i++] = line[it].z;
-        vertices[i++] = line[it].y; 
-    }
+    var south_extent = {
+        "A": extent.southwest,
+        "B": extent.southwest,
+        "C": extent.southeast,
+        "D": extent.southeast
+    };
     
-    for (it in line) {
-        vertices[i++] = line[it].x;
-        vertices[i++] += 1000;
-        vertices[i++] = line[it].y; 
-    }
+    side("East Side", east_line, east_extent, false);
+    side("West Side", west_line, west_extent, true);
+    side("North Side", north_line, north_extent, false);
+    side("South Side", south_line, south_extent, true);
     
+    function side(name, line, extent, reverse) {
+        var side = RANDO.Utils.createGroundFromExtent(
+            name,
+            extent.A,
+            extent.B,
+            extent.C,
+            extent.D,
+            line.length-1,
+            1,
+            scene
+        );
+        
+        if (reverse) {
+            line.reverse();
+        }
+        
+        var vertices = side.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+        var i = 0;
+        for (it in line) {
+            vertices[i++] = line[it].x;
+            vertices[i++] = line[it].z;
+            vertices[i++] = line[it].y; 
+        }
+        
+        for (it in line) {
+            vertices[i++] = line[it].x;
+            vertices[i++] += 1000;
+            vertices[i++] = line[it].y; 
+        }
+        side.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
+        
+        // Side material
+        side.material = new BABYLON.StandardMaterial(name + "Material", scene);
+        side.material.diffuseTexture = new BABYLON.Texture("../img/leather/seamless/fzm-leather.texture-08-[800x800].jpg", scene);
+    };
 
-    console.log(vertices);
-    side.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-    
-};
+}
+
 /**
 * Trek() : build a trek from an array of point
 *       - scene (BABYLON.Scene) : current scene
