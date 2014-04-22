@@ -242,7 +242,7 @@ RANDO.Utils.ComputeMeshNormals = function (mesh) {
 
 
 /****    GEOMETRY     ************************/
-/**
+/**tested
  * middle(): 
  *      A: first point
  *      B: second point
@@ -363,7 +363,7 @@ RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
 
 }
 
-/**
+/**tested
  * angleFromAxis(): get an angle for a rotation 
  *      - A     (BABYLON.Vector3) : First point 
  *      - B     (BABYLON.Vector3) : Second point

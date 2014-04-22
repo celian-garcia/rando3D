@@ -160,6 +160,28 @@ describe('Rando3D', function() {
             });
         });
     
+        describe('Middle between two points - "middle()"', function () {
+            var A = {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+            var B = {
+                x: 10,
+                y: 10,
+                z: 10
+            };
+            var mid = {
+                x: 5,
+                y: 5,
+                z: 5
+            };
+            it("should return {x: 5, y: 5, z: 5}", function(done) {
+                assert.deepEqual(RANDO.Utils.middle(A, B), mid);
+                done();
+            });
+        });
+        
         describe('Trapeze grid - "createGrid()"', function() {
             it("should return null point", function(done) {
                 var A = { x : 54,  y : 545 };
@@ -357,9 +379,4 @@ describe('Rando3D', function() {
         
     });
 
-  
-    
-    
-    
-    
 });
