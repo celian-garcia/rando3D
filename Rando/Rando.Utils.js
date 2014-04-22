@@ -257,7 +257,7 @@ RANDO.Utils.middle = function(A, B) {
     };
 };
 
-/**
+/**tested
  * subdivide() :  interpolate a segment between 2 points A and B 
  *      - n : number of points expected in result
  *      - A : first point 
@@ -311,7 +311,7 @@ RANDO.Utils.subdivide = function(n, A, B){
     } 
 }
 
-/**
+/**tested
  * createGrid() : create a grid of points for all type of quadrilateres, in particular
  *  these which are not square or rectangle.
  *      - A, B, C, D :  vertices of quadrilatere to subdivide
@@ -897,7 +897,7 @@ RANDO.Utils.drapePoint = function(point, dem){
     }
 }
 
-/**
+/**tested
  * translateDEM() : translate the DEM with coefficients given in parameters
  *      - dem : dem to translate 
  *      - dx  : x coefficient 
@@ -931,7 +931,7 @@ RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
     dem.extent.altitudes.max += dy;
 }
 
-/**
+/**tested
  * translateTrek() : translate a trek with coefficients given in parameters
  *      - vertices : vertices of the route 
  *      - dx  : x coefficient 
