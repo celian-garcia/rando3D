@@ -148,9 +148,10 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
             scene,
             true,
-            false
+            true
         );
-        texture.wAng = Math.PI;
+        //~ texture.wAng = Math.PI;
+        console.log(texture);
         material.diffuseTexture = texture;
         material.backFaceCulling = false;
         //~ material.wireframe = true;
@@ -296,6 +297,9 @@ RANDO.Builds.Sides = function (tiles, extent) {
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
         side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
+        
+        // Enables collisions
+        meshTile.checkCollisions = true;
     };
 
 }
