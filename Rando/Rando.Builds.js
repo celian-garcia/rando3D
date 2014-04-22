@@ -110,7 +110,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     }
     
     // Subdivides current grid in tiles 
-    var tiles = RANDO.Utils.subdivideGrid(grid, 16);
+    var tiles = RANDO.Utils.subdivideGrid(grid, RANDO.SETTINGS.TILE_ZOOM);
     
     console.log("Number of tiles: " + Object.keys(tiles).length);
     var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
@@ -143,7 +143,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         // Material
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
-            RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
+            RANDO.SETTINGS.TILE_TEX_URL + "" + it + ".png",
             scene,
             true,
             true
