@@ -92,7 +92,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         );
     }
     
-    // Generate grid from extent datas
+    // Generates grid from extent datas
     var grid = RANDO.Utils.createGrid(
         data.orig_extent.southwest,
         data.orig_extent.southeast,
@@ -102,24 +102,24 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         resolution.y
     );
     
-    // Give altitudes to the grid 
+    // Gives altitudes to the grid 
     for (row in altitudes){
         for (col in altitudes[row]){
             grid[row][col].z = altitudes[row][col];
         }
     }
     
-    // Subdivide current grid in tiles 
+    // Subdivides current grid in tiles 
     var tiles = RANDO.Utils.subdivideGrid(grid, 16);
     
-    
-    console.log("Number of grounds" + Object.keys(tiles).length);
+    console.log("Number of tiles: " + Object.keys(tiles).length);
     var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
     
-    // Create all grounds 
+    // Creates all grounds 
     for (it in tiles) {
         var current = tiles[it].values;
 
+        // Translates data over X and Y axis
         for (row in current) {
             for (col in current[row]) {
                 current[row][col].x -= data.o_center.x,
@@ -127,21 +127,22 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             }
         }
         
+        // Creates Tile
         var meshTile = RANDO.Utils.createGroundFromGrid(
             "Tiled Digital Elevation Model - " + it,
             current,
             scene
         );
+            
+        // Recomputes normals for lights and shadows
+        var vertices = BABYLON.VertexData.ExtractFromMesh (meshTile);
+        BABYLON.VertexData.ComputeNormals(vertices.positions, vertices.indices, vertices.normals);
+        vertices.applyToMesh(meshTile);
         
-        //~ var normals = meshTile.getVerticesData(BABYLON.VertexBuffer.NormalKind);
-        //~ BABYLON.Mesh.ComputeNormal(
-            //~ meshTile.getVerticesData(BABYLON.VertexBuffer.PositionKind),
-            //~ normals,
-            //~ meshTile.getIndices()
-        //~ );
-        //~ meshTile.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind);
+        // Enables collisions
         meshTile.checkCollisions = true;
         
+        // Material
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
             RANDO.SETTINGS.TEX_TILED_URL + "" + it + ".png",
@@ -149,10 +150,12 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             true,
             false
         );
-        //~ material.diffuseTexture = texture;
+        texture.wAng = Math.PI;
+        material.diffuseTexture = texture;
         material.backFaceCulling = false;
-        material.wireframe = true;
+        //~ material.wireframe = true;
         meshTile.material = material;
+
         meshTile.parent = dem;
     }
 

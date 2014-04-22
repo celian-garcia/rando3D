@@ -82,7 +82,7 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
     
     for (row = 0; row <= h_subdivisions; row++) {
         for (col = 0; col <= w_subdivisions; col++) {
-            var position = grid[row][col];
+            var position = grid[h_subdivisions - row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
             
             positions.push(position.x, position.z, position.y);
