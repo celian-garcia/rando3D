@@ -66,7 +66,7 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
 
 /**
  * TiledDEM() : build a DEM subdivided in multiple DEM corresponding of textured tiles
- *      - data : Object containing all informations to build DEM
+ *      - data: Object containing all informations to build DEM
  *      - scene (BABYLON.Scene) : current scene
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
@@ -91,7 +91,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
             center.z-1500
         );
     }
-    
+
     // Generates grid from extent datas
     var grid = RANDO.Utils.createGrid(
         data.orig_extent.southwest,
@@ -101,64 +101,37 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         resolution.x,
         resolution.y
     );
-    
+
     // Gives altitudes to the grid 
     for (row in altitudes){
         for (col in altitudes[row]){
-            //~ grid[row][col].z = grid[row][col].y;
-            grid[row][col].z = altitudes[row][col];
+            grid[row][col].z = grid[row][col].y;
+            grid[row][col].y = altitudes[row][col];
         }
     }
-    console.log(grid);
-    
+
     // Subdivides current grid in tiles 
     var tiles = RANDO.Utils.subdivideGrid(grid, RANDO.SETTINGS.TILE_ZOOM);
-    
     console.log("Number of tiles: " + Object.keys(tiles).length);
+
+    // Create the tiles container
     var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
     
-    // Creates all grounds 
+    // Creates all tiles 
     for (it in tiles) {
-        var current = tiles[it].values;
+        var tile = tiles[it];
 
         // Translates data over X and Y axis
-        for (row in current) {
-            for (col in current[row]) {
-                current[row][col].x -= data.o_center.x,
-                current[row][col].y -= data.o_center.z
+        var tile_grid = tile.values;
+        for (row in tile_grid) {
+            for (col in tile_grid[row]) {
+                tile_grid[row][col].x -= data.o_center.x;
+                tile_grid[row][col].z -= data.o_center.z;
             }
         }
-        
-        // Creates Tile
-        var meshTile = RANDO.Utils.createGroundFromGrid(
-            "Tiled Digital Elevation Model - " + it,
-            current,
-            scene
-        );
-            
-        // Recomputes normals for lights and shadows
-        RANDO.Utils.ComputeMeshNormals(meshTile)
-        
-        // Enables collisions
-        meshTile.checkCollisions = true;
-        
-        var url = RANDO.SETTINGS.TILE_TEX_URL;
-        url = url.replace("{z}", tiles[it].coordinates.z);
-        url = url.replace("{x}", tiles[it].coordinates.x);
-        url = url.replace("{y}", tiles[it].coordinates.y);
-        
-        // Material & Texture
-        var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
-        var texture = new BABYLON.Texture(
-            url,
-            scene,
-            true,
-            true
-        );
-        material.diffuseTexture = texture;
-        material.backFaceCulling = false;
-        //~ material.wireframe = true;
-        meshTile.material = material;
+
+        // Build a tile
+        var meshTile = RANDO.Builds.Tile(tile);
 
         meshTile.parent = dem;
     }
@@ -172,38 +145,78 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
 }
 
 /**
+ * Tile() : build a tile of the DEM
+ *      - data: Object containing all informations to build a Tile
+ * 
+ */
+RANDO.Builds.Tile = function (data) {
+    // Creates Tile
+    var tile = RANDO.Utils.createGroundFromGrid(
+        "Tiled Digital Elevation Model - " + it,
+        data.values,
+        scene
+    );
+        
+    // Recomputes normals for lights and shadows
+    RANDO.Utils.ComputeMeshNormals(tile)
+    
+    // Enables collisions
+    tile.checkCollisions = true;
+    
+    // Get url of the texture
+    var url = RANDO.Utils.getUrlFromCoordinates(
+        data.coordinates.z, 
+        data.coordinates.x, 
+        data.coordinates.y
+    );
+    
+    // Material & Texture
+    var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
+    var texture = new BABYLON.Texture(
+        url,
+        scene,
+        true,
+        true
+    );
+    material.diffuseTexture = texture;
+    material.backFaceCulling = false;
+    //~ material.wireframe = true;
+    tile.material = material;
+
+    return tile;
+};
+
+/**
  * Sides(): build 4 sides of a DEM 
  *      - tiles: differents tiles of the DEM
  *      - extent of the DEM
  */
 RANDO.Builds.Sides = function (tiles, extent) {
-    var xmax = -Infinity;
-    var xmin =  Infinity;
-    var ymax = -Infinity;
-    var ymin =  Infinity;
     
-    // Get min and max coordinates of tiles
-    for (it in tiles) {
-        if ( tiles[it].coordinates.x > xmax ) {
-            xmax = tiles[it].coordinates.x;
-        }
-        if ( tiles[it].coordinates.x < xmin ) {
-            xmin = tiles[it].coordinates.x;
-        }
-        if ( tiles[it].coordinates.y > ymax ) {
-            ymax = tiles[it].coordinates.y;
-        }
-        if ( tiles[it].coordinates.y < ymax ) {
-            ymin = tiles[it].coordinates.y;
-        }
-    }
+    var xmax = _.max(tiles, function (tile) { 
+        return tile.coordinates.x; 
+    }).coordinates.x;
     
+    var xmin = _.min(tiles, function (tile) { 
+        return tile.coordinates.x; 
+    }).coordinates.x;
+    
+    var ymax = _.max(tiles, function (tile) { 
+        return tile.coordinates.y; 
+    }).coordinates.y;
+    
+    var ymin = _.min(tiles, function (tile) { 
+        return tile.coordinates.y; 
+    }).coordinates.y;
+
     var east_line = [];
     var west_line = [];
     var north_line = [];
     var south_line = [];
+    
+    // to do : getBordersFromTiles()
     for (it in tiles) {
-        var tile =  tiles[it];
+        var tile = tiles[it];
         
         if ( tile.coordinates.x == xmax ) {
             var last_col = tile.values[0].length -1;
@@ -232,83 +245,41 @@ RANDO.Builds.Sides = function (tiles, extent) {
         }
     }
     
-    var east_extent = {
-        "A": extent.southeast,
-        "B": extent.northeast,
-        "C": extent.northeast,
-        "D": extent.southeast
-    };
     
-    var west_extent = {
-        "A": extent.southwest,
-        "B": extent.northwest,
-        "C": extent.northwest,
-        "D": extent.southwest
-    };
+    RANDO.Builds.Side("East Side",  east_line,  false);
+    RANDO.Builds.Side("West Side",  west_line,  true);
+    RANDO.Builds.Side("North Side", north_line, false);
+    RANDO.Builds.Side("South Side", south_line, true);
     
-    var north_extent = {
-        "A": extent.northwest,
-        "B": extent.northwest,
-        "C": extent.northeast,
-        "D": extent.northeast
-    };
-    
-    var south_extent = {
-        "A": extent.southwest,
-        "B": extent.southwest,
-        "C": extent.southeast,
-        "D": extent.southeast
-    };
-    
-    side("East Side", east_line, east_extent, false);
-    side("West Side", west_line, west_extent, true);
-    side("North Side", north_line, north_extent, false);
-    side("South Side", south_line, south_extent, true);
-    
-    function side(name, line, extent, reverse) {
-        var side = RANDO.Utils.createGroundFromExtent(
-            name,
-            extent.A,
-            extent.B,
-            extent.C,
-            extent.D,
-            line.length-1,
-            1,
-            scene
-        );
-        
-        if (reverse) {
-            line.reverse();
-        }
-        
-        var vertices = side.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        var i = 0;
-        for (it in line) {
-            vertices[i++] = line[it].x;
-            vertices[i++] = line[it].z;
-            vertices[i++] = line[it].y; 
-        }
-        
-        for (it in line) {
-            vertices[i++] = line[it].x;
-            vertices[i++] += 1000;
-            vertices[i++] = line[it].y; 
-        }
-        side.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-        
-        // Side material
-        side.material = new BABYLON.StandardMaterial(name + "Material", scene);
-        side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
-        
-        
-        // Recomputes normals for lights and shadows
-        RANDO.Utils.ComputeMeshNormals(side)
-        
-        // Enables collisions
-        side.checkCollisions = true;
-    };
-
 }
+
+/**
+ * Side(): build a side of the DEM
+ *      - name: name of the side
+ *      - line: array of point corresponding to a border of the DEM 
+ *      - reverse: boolean which determines the direction of the side's texture
+ *              false if negative 
+ *              true if positive
+ *              
+ */
+RANDO.Builds.Side = function (name, line, reverse) {
+    if (reverse) {
+        line.reverse();
+    }
+    
+    // Creates side
+    var side = RANDO.Utils.createSideFromLine(name, line, 100, scene);
+
+    // Side material
+    side.material = new BABYLON.StandardMaterial(name + "Material", scene);
+    side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
+
+    // Recomputes normals for lights and shadows
+    RANDO.Utils.ComputeMeshNormals(side)
+    
+    // Enables collisions
+    side.checkCollisions = true;
+};
 
 /**
 * Trek() : build a trek from an array of point

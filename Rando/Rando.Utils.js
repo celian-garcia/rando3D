@@ -85,7 +85,7 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
             var position = grid[h_subdivisions - row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
             
-            positions.push(position.x, position.z, position.y);
+            positions.push(position.x, position.y, position.z);
             normals.push(normal.x, normal.y, normal.z);
             uvs.push(col / w_subdivisions, 1.0 - row / h_subdivisions);
         }
@@ -121,7 +121,7 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
  *      - updatable : 
  * 
  ****************************************************************/
-RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
+RANDO.Utils.createGroundFromVertices = function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
     console.assert(vertices.length%3 == 0);
     console.assert((vertices.length/3) == w_subdivisions*h_subdivisions,
     (vertices.length/3) + "!=" + w_subdivisions + "*" + h_subdivisions);
@@ -165,6 +165,61 @@ RANDO.Utils.createGroundFromVertices= function(name, vertices, w_subdivisions, h
 
     return ground;
 };
+
+RANDO.Utils.createSideFromLine = function (name, line, high_min, scene, updatable) {
+    var side = new BABYLON.Mesh(name, scene);
+
+    var indices = [];
+    var positions = [];
+    var normals = [];
+    var uvs = [];
+    var row, col;
+    
+    var length = line.length-1;
+    
+    console.log(line.length*2);
+    // Positions, normals, and uvs
+    row = 0;
+    for (col = 0; col <= length; col++) {
+        var position = line[col];
+        var normal = new BABYLON.Vector3(0, 1.0, 0);
+        
+        //~ console.log(position.length);
+        positions.push(position.x, position.y, position.z);
+        normals.push(normal.x, normal.y, normal.z);
+        uvs.push(col / length, 1.0 - row/1);
+    }
+    row = 1;
+    for (col = 0; col <= length; col++) {
+        var position = line[col];
+        var normal = new BABYLON.Vector3(0, 1.0, 0);
+        
+        positions.push(position.x, 1000, position.z);
+        normals.push(normal.x, normal.y, normal.z);
+        uvs.push(col / length, 1.0 - row/1);
+    }
+    console.log(positions.length/3);
+
+    // Indices
+    row = 0
+    for (col = 0; col < length; col++) {
+        indices.push(col + 1 + (row + 1) * (length + 1));
+        indices.push(col + 1 + row * (length + 1));
+        indices.push(col + row * (length + 1));
+
+        indices.push(col + (row + 1) * (length + 1));
+        indices.push(col + 1 + (row + 1) * (length + 1));
+        indices.push(col + row * (length + 1));
+    }
+    
+    
+    side.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
+    side.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
+    side.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    side.setIndices(indices);
+
+    return side;
+}
 
 /**
 * processLargeArray(): Common utility to process large arrays
@@ -518,7 +573,7 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
             var point = grid[row][col];
             
             // Get tile number corresponding to the point
-            var tile_n = RANDO.Utils.meters2num( point.x, point.y, zoom );
+            var tile_n = RANDO.Utils.meters2num( point.x, point.z, zoom );
             var index = "" + zoom + "/" + tile_n.xtile + "/" + tile_n.ytile + "";
             
             // tiles["z/x/y"] exists or not
@@ -781,6 +836,22 @@ RANDO.Utils.getExtentinMeters = function(extent){
         southwest : RANDO.Utils.toMeters(extent.southwest),
         altitudes : extent.altitudes
     }
+}
+
+/**
+ * getUrlFromCoordinates(): get the url of a tile texture 
+ *      z : level of zoom
+ *      x : x coordinates of tile
+ *      y : y coordinates of tile
+ * 
+ */
+RANDO.Utils.getUrlFromCoordinates = function (z, x, y) {
+    var url = RANDO.SETTINGS.TILE_TEX_URL;
+    url = url.replace("{z}", z);
+    url = url.replace("{x}", x);
+    url = url.replace("{y}", y);
+
+    return url;
 }
 
 
