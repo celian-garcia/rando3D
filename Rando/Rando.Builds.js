@@ -299,7 +299,7 @@ RANDO.Builds.Sides = function (tiles, extent) {
         side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
         
         // Enables collisions
-        meshTile.checkCollisions = true;
+        side.checkCollisions = true;
     };
 
 }
