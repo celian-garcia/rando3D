@@ -197,7 +197,7 @@ RANDO.Utils.processLargeArray = function (array, callback) {
  * 
  * Place the cylinder between both points  
  ****************************************************************/
-RANDO.Utils.placeCylinder = function(cylinder, A, B) {
+RANDO.Utils.placeCylinder = function (cylinder, A, B) {
     // Initial position at the center of the AB vector
     cylinder.position = new BABYLON.Vector3(
         (A.x+B.x)/2,
@@ -229,6 +229,16 @@ RANDO.Utils.placeCylinder = function(cylinder, A, B) {
     
     return cylinder;
 }
+
+/**
+ * ComputeMeshNormals() : recompute normals of a mesh (for the shadows after)
+ *      - mesh: mesh to recompute
+ */
+RANDO.Utils.ComputeMeshNormals = function (mesh) {
+    var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
+    BABYLON.VertexData.ComputeNormals(vertices.positions, vertices.indices, vertices.normals);
+    vertices.applyToMesh(mesh);
+};
 
 
 /****    GEOMETRY     ************************/

@@ -135,9 +135,7 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         );
             
         // Recomputes normals for lights and shadows
-        var vertices = BABYLON.VertexData.ExtractFromMesh (meshTile);
-        BABYLON.VertexData.ComputeNormals(vertices.positions, vertices.indices, vertices.normals);
-        vertices.applyToMesh(meshTile);
+        RANDO.Utils.ComputeMeshNormals(meshTile)
         
         // Enables collisions
         meshTile.checkCollisions = true;
@@ -297,6 +295,10 @@ RANDO.Builds.Sides = function (tiles, extent) {
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
         side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
+        
+        
+        // Recomputes normals for lights and shadows
+        RANDO.Utils.ComputeMeshNormals(side)
         
         // Enables collisions
         side.checkCollisions = true;
