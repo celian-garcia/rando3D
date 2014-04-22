@@ -1,5 +1,5 @@
 // Rando.Builds.js 
-// Builders of zone and route
+// Builders of DEM and Trek
 
 var RANDO = RANDO || {};
 RANDO.Builds = {};
@@ -105,9 +105,11 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     // Gives altitudes to the grid 
     for (row in altitudes){
         for (col in altitudes[row]){
+            //~ grid[row][col].z = grid[row][col].y;
             grid[row][col].z = altitudes[row][col];
         }
     }
+    console.log(grid);
     
     // Subdivides current grid in tiles 
     var tiles = RANDO.Utils.subdivideGrid(grid, RANDO.SETTINGS.TILE_ZOOM);
@@ -140,16 +142,19 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
         // Enables collisions
         meshTile.checkCollisions = true;
         
-        // Material
+        var url = RANDO.SETTINGS.TILE_TEX_URL;
+        url = url.replace("{z}", tiles[it].coordinates.z);
+        url = url.replace("{x}", tiles[it].coordinates.x);
+        url = url.replace("{y}", tiles[it].coordinates.y);
+        
+        // Material & Texture
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var texture = new BABYLON.Texture(
-            RANDO.SETTINGS.TILE_TEX_URL + "" + it + ".png",
+            url,
             scene,
             true,
             true
         );
-        //~ texture.wAng = Math.PI;
-        console.log(texture);
         material.diffuseTexture = texture;
         material.backFaceCulling = false;
         //~ material.wireframe = true;
@@ -214,7 +219,6 @@ RANDO.Builds.Sides = function (tiles, extent) {
         }
         
         if ( tile.coordinates.y == ymax ) {
-            console.log(tile);
             var first_row = 0;
             for (col in tile.values[first_row]){
                 north_line.push(tile.values[first_row][col]);

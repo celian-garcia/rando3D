@@ -27,7 +27,7 @@ RANDO.SETTINGS.TREK_WIDTH = 3; // Trek width (in meters)
 
 // Tiles
 RANDO.SETTINGS.TILE_ZOOM = 16;
-RANDO.SETTINGS.TILE_TEX_URL = "https://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/";
+RANDO.SETTINGS.TILE_TEX_URL = "https://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/{z}/{x}/{y}.png";
 
 // Sides
-RANDO.SETTINGS.SIDE_TEXTURE  = "img/side.jpg"
+RANDO.SETTINGS.SIDE_TEXTURE  = "img/side.jpg";
