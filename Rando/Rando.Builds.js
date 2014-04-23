@@ -5,139 +5,48 @@ var RANDO = RANDO || {};
 RANDO.Builds = {};
 
 /**
- * DEM() : build a heightMap corresponding of zone around a trek 
- *      - data : Object containing all informations to build DEM
- *      - scene (BABYLON.Scene) : current scene
- *      - cam_b (Boolean)       : settings of camera **optionnal**
- * 
- */
-RANDO.Builds.DEM = function(data, scene, cam_b){
-    if(typeof(cam_b)==='undefined') cam_b = true;
-    
-    // DEM building...
-    console.log("DEM building... " + (Date.now() - RANDO.START_TIME) );
-    
-    var center = data.center;
-    var resolution = data.resolution;
-    var altitudes = data.altitudes;
-    
-    // Camera 
-    if (cam_b){
-        scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
-        scene.activeCamera.position = new BABYLON.Vector3(
-            center.x-2000, 
-            center.y+500, 
-            center.z-1500
-        );
-    }
-    
-    // Material
-    var material =  new BABYLON.StandardMaterial("GroundMaterial", scene);
-    material.backFaceCulling = false;
-    material.wireframe = true;
-    
-    // Create DEM
-    var dem = RANDO.Utils.createGroundFromExtent(
-        "Digital Elevation Model",
-        data.extent.southwest,
-        data.extent.southeast,
-        data.extent.northeast,
-        data.extent.northwest,
-        resolution.x-1,
-        resolution.y-1, 
-        scene
-    );
-    dem.material = material;
-    
-    // Put elevations in the DEM
-    var vertices = dem.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-    var i = 1;
-    for (row in altitudes){
-        for (col in altitudes[row]){
-            vertices[i] = altitudes[row][col];
-            i+=3;
-        }
-    }
-    dem.setVerticesData(vertices, BABYLON.VertexBuffer.PositionKind);
-    
-    // DEM built ! 
-    console.log("DEM built ! " + (Date.now() - RANDO.START_TIME) );
-}
-
-/**to refac
  * TiledDEM() : build a DEM subdivided in multiple DEM corresponding of textured tiles
  *      - data: Object containing all informations to build DEM
  *      - scene (BABYLON.Scene) : current scene
  *      - cam_b (Boolean)       : settings of camera **optionnal**
  * 
  */
-RANDO.Builds.TiledDEM = function(data, scene, cam_b){
-    if(typeof(cam_b)==='undefined') cam_b = true;
-    
+RANDO.Builds.TiledDEM = function(data, offsets, scene){
     // Tiled DEM building...
     console.log("Tiled DEM building... " + (Date.now() - RANDO.START_TIME) );
-    
+
+    // Creates the container of tiles
+    var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
+
+    // Store data
     var center = data.center;
     var resolution = data.resolution;
     var altitudes = data.altitudes;
     var extent = data.extent;
-    
+
     // Camera 
-    if (cam_b){
-        scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
-        scene.activeCamera.position = new BABYLON.Vector3(
-            center.x-2000, 
-            center.y+2500, 
-            center.z-1500
-        );
-    }
+    RANDO.Utils.placeCameraByDefault(scene.activeCamera, new BABYLON.Vector3(
+        center.x + offsets.x, 
+        center.y + offsets.y, 
+        center.z + offsets.z
+    ));
 
-    // Generates grid from extent datas
-    var grid = RANDO.Utils.createGrid(
-        data.orig_extent.southwest,
-        data.orig_extent.southeast,
-        data.orig_extent.northeast,
-        data.orig_extent.northwest,
-        resolution.x,
-        resolution.y
-    );
-
-    // Gives altitudes to the grid 
-    for (row in altitudes){
-        for (col in altitudes[row]){
-            grid[row][col].z = grid[row][col].y;
-            grid[row][col].y = altitudes[row][col];
-        }
-    }
+    // Generates grid of points from the original extent and altitudes
+    var grid = RANDO.Utils.generateGrid( extent, altitudes );
 
     // Subdivides current grid in tiles 
     var tiles = RANDO.Utils.subdivideGrid(grid, RANDO.SETTINGS.TILE_ZOOM);
     console.log("Number of tiles: " + Object.keys(tiles).length);
 
-    // Create the tiles container
-    var dem = new BABYLON.Mesh("Digital Elevation Model", scene);
-    
     // Creates all tiles 
     for (it in tiles) {
-        var tile = tiles[it];
-
-        // Translates data over X and Y axis
-        var tile_grid = tile.values;
-        for (row in tile_grid) {
-            for (col in tile_grid[row]) {
-                tile_grid[row][col].x -= data.o_center.x;
-                tile_grid[row][col].z -= data.o_center.z;
-            }
-        }
-
-        // Build a tile
-        var meshTile = RANDO.Builds.Tile(tile);
-
+        // Builds a tile
+        var meshTile = RANDO.Builds.Tile(tiles[it], offsets);
         meshTile.parent = dem;
     }
 
     // Builds sides of DEM
-    RANDO.Builds.Sides(tiles, data.extent, data.orig_extent.altitudes.min);
+    RANDO.Builds.Sides(tiles, extent);
 
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - RANDO.START_TIME) );
@@ -149,11 +58,21 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
  *      - data: Object containing all informations to build a Tile
  * 
  */
-RANDO.Builds.Tile = function (data) {
+RANDO.Builds.Tile = function (data, offsets) {
+    // Translates data over X and Y axis
+    var grid = data.grid;
+    for (row in grid) {
+        for (col in grid[row]) {
+            grid[row][col].x += offsets.x;
+            grid[row][col].y += offsets.y;
+            grid[row][col].z += offsets.z;
+        }
+    }
+    
     // Creates Tile
     var tile = RANDO.Utils.createGroundFromGrid(
         "Tiled Digital Elevation Model - " + it,
-        data.values,
+        data.grid,
         scene
     );
         
@@ -191,13 +110,13 @@ RANDO.Builds.Tile = function (data) {
  *      - tiles: differents tiles of the DEM
  *      - extent of the DEM
  */
-RANDO.Builds.Sides = function (tiles, extent, z_min) {
+RANDO.Builds.Sides = function (tiles, extent) {
     var frame = RANDO.Utils.getFrameFromTiles(tiles);
     
     // Create the sides container
     var sides = new BABYLON.Mesh("Sides", scene);
 
-    var z_min = z_min - RANDO.SETTINGS.MIN_THICKNESS;
+    var z_min = extent.altitudes.min - RANDO.SETTINGS.MIN_THICKNESS;
     
     // Creates differents sides
     var e_side = RANDO.Builds.Side("East Side",  frame.east,  z_min, false);

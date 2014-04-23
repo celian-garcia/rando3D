@@ -47,27 +47,28 @@ RANDO.Scene.launch = function(canvas){
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
         // Record DEM data
-        dem_data.orig_extent = jQuery.extend(true, {}, m_extent);
+        dem_data.o_extent = $.extend(true, {}, m_extent);
         dem_data.extent = m_extent;
         dem_data.altitudes = data.altitudes; // altitudes already in meters
         dem_data.resolution = data.resolution; // do not need conversion
-        dem_data.center = {
-            x: m_center.x,
-            y: data.center.z,// altitude of center already in meters
-            z: m_center.y
-        };
         dem_data.o_center = {
             x: m_center.x,
             y: data.center.z,// altitude of center already in meters
             z: m_center.y
         }
-        
+        dem_data.center = {
+            x: m_center.x,
+            y: data.center.z,// altitude of center already in meters
+            z: m_center.y
+        };
+
         // Control if altitudes data coincide with resolution data
         console.assert(dem_data.altitudes.length == dem_data.resolution.y);
         console.assert(dem_data.altitudes[0].length == dem_data.resolution.x);
         
         // Records offsets
         offsets.x = -dem_data.center.x;
+        offsets.y = dem_data.extent.altitudes.min;
         offsets.z = -dem_data.center.z;
      })
      .then(function () {
@@ -82,17 +83,11 @@ RANDO.Scene.launch = function(canvas){
          ****************************************************/
         setTimeout(build_dem, 1);
         function build_dem() {
-            // Translation of the DEM
-            RANDO.Utils.translateDEM(
-                dem_data,
-                offsets.x,
-                dem_data.extent.altitudes.min,
-                offsets.z
-            );
             
             // Tiled DEM mesh building
             var tiled_dem = RANDO.Builds.TiledDEM(
                 dem_data,
+                offsets,
                 scene
             );
             
@@ -101,15 +96,14 @@ RANDO.Scene.launch = function(canvas){
             
             setTimeout(build_trek, 1);
         };
-        
         /****************************************************/
+        
         
         /***************************************************
          *    TREK
          ****************************************************/
-        
         function build_trek() {
-            // Translation of the route to make it visible
+            //~ // Translation of the route to make it visible
             RANDO.Utils.translateTrek(
                 trek_data,
                 offsets.x,
@@ -128,7 +122,6 @@ RANDO.Scene.launch = function(canvas){
          
      });
 
-    
     return scene;
 };
 

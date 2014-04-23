@@ -361,8 +361,8 @@ RANDO.Utils.subdivide = function(n, A, B){
             x += dx;
             y += dy;
             res.push({
-                x : x,
-                y : y 
+                'x' : x,
+                'y' : y 
             });
         }
         res.push(B);
@@ -397,7 +397,7 @@ RANDO.Utils.subdivide = function(n, A, B){
  * D *-------------------------* C
  * 
  */
-RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
+RANDO.Utils.createGrid = function (A, B, C, D, n_horiz, n_verti){
     if(n_verti<=0) return null;
     if(n_horiz<=0) return null;
 
@@ -419,7 +419,6 @@ RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
         grid.push(line);
     }
     return grid;
-
 }
 
 /**tested
@@ -447,7 +446,7 @@ RANDO.Utils.createGrid = function(A, B, C, D, n_horiz, n_verti){
  *  (1, 0, 0), (0, 1, 0), or (0, 0, 1)
  *
  */
-RANDO.Utils.angleFromAxis = function(A, B, axis){
+RANDO.Utils.angleFromAxis = function (A, B, axis) {
     var angle, AH, AB;
     switch (axis){
         case BABYLON.Axis.X :
@@ -521,7 +520,7 @@ RANDO.Utils.angleFromAxis = function(A, B, axis){
  * after a first rotation.
  * 
  */
-RANDO.Utils.angleFromPoints = function (A, B, H){
+RANDO.Utils.angleFromPoints = function (A, B, H) {
     var AH = BABYLON.Vector3.Distance(A, H);
     var AB = BABYLON.Vector3.Distance(A, B);
     var angle = Math.acos(AH/AB);
@@ -563,7 +562,7 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
  *      ...
  * }
  */
-RANDO.Utils.subdivideGrid = function (grid, zoom){
+RANDO.Utils.subdivideGrid = function (grid, zoom) {
     var tiles = {},
         prev_index = null,
         prev_point = null,
@@ -591,8 +590,8 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
                     line.push($.extend({}, mid));
                 }
                 // previous tile exists or not
-                tiles[prev_index].values = tiles[prev_index].values || [];
-                tiles[prev_index].values.push(line); // push the line into previous tile
+                tiles[prev_index].grid = tiles[prev_index].grid || [];
+                tiles[prev_index].grid.push(line); // push the line into previous tile
                 tiles[prev_index].coordinates = {
                     z: zoom,
                     x: prev_tile_n.xtile,
@@ -615,7 +614,7 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
     }
     
     // Push the last line of the last tile 
-    tiles[index].values.push(line);
+    tiles[index].grid.push(line);
     
     // Delete gaps between tiles 
     for (it in tiles) {
@@ -631,10 +630,10 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
             var next_tile = tiles[next_index];
             
             // First line of current tile
-            var prev_line = $.extend({}, current_tile.values[0]);
+            var prev_line = $.extend({}, current_tile.grid[0]);
             
             // Last line of next tile
-            var next_line = $.extend({}, next_tile.values[next_tile.values.length-1]);
+            var next_line = $.extend({}, next_tile.grid[next_tile.grid.length-1]);
             
             // we create a new line placed on the middle of the both previous
             // We need two variables to store this line 
@@ -648,13 +647,34 @@ RANDO.Utils.subdivideGrid = function (grid, zoom){
             }
             
             // The "middle line" go to the bottom of current tile
-            current_tile.values.splice(0, 0, mid_line1);
+            current_tile.grid.splice(0, 0, mid_line1);
             // ... and to the top of next tile
-            next_tile.values.push(mid_line2);
+            next_tile.grid.push(mid_line2);
         } 
     }
     return tiles;
 }
+
+RANDO.Utils.generateGrid = function (extent, altitudes) {
+    // Generates grid from extent datas
+    var grid = RANDO.Utils.createGrid(
+        extent.southwest, 
+        extent.southeast,
+        extent.northeast,
+        extent.northwest,
+        altitudes[0].length,
+        altitudes.length
+    );
+
+    // Gives altitudes to the grid 
+    for (row in altitudes){
+        for (col in altitudes[row]){
+            grid[row][col].z = grid[row][col].y;
+            grid[row][col].y = altitudes[row][col];
+        }
+    }
+    return grid;
+};
 
 
 /****    CAMERA     ************************/
@@ -691,6 +711,15 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, callback){
         }
     });
 }
+
+RANDO.Utils.placeCameraByDefault = function (camera, center) {
+    camera.rotation = new BABYLON.Vector3(0.6, 1, 0);
+    camera.position = new BABYLON.Vector3(
+        center.x - 2000, 
+        center.y + 2500, 
+        center.z - 1500
+    );
+};
 
 /**
  * addKeyToCamera() : add a new position key and rotation key to the camera timeline
@@ -874,27 +903,27 @@ RANDO.Utils.getFrameFromTiles = function (tiles) {
     for (it in tiles) {
         var tile = tiles[it];
         if ( tile.coordinates.x == extent.x.max ) {
-            var last_col = tile.values[0].length -1;
-            for (row in tile.values) {
-                frame.east.push(tile.values[row][last_col]);
+            var last_col = tile.grid[0].length -1;
+            for (row in tile.grid) {
+                frame.east.push(tile.grid[row][last_col]);
             }
         }
         if ( tile.coordinates.x == extent.x.min ) {
             var first_col = 0;
-            for (row in tile.values) {
-                frame.west.push(tile.values[row][first_col]);
+            for (row in tile.grid) {
+                frame.west.push(tile.grid[row][first_col]);
             }
         }
         if ( tile.coordinates.y == extent.y.max ) {
             var first_row = 0;
-            for (col in tile.values[first_row]){
-                frame.north.push(tile.values[first_row][col]);
+            for (col in tile.grid[first_row]){
+                frame.north.push(tile.grid[first_row][col]);
             }
         }
         if ( tile.coordinates.y == extent.y.min ) {
-            var last_row = tile.values.length-1;
-            for (col in tile.values[last_row]){
-                frame.south.push(tile.values[last_row][col]);
+            var last_row = tile.grid.length-1;
+            for (col in tile.grid[last_row]){
+                frame.south.push(tile.grid[last_row][col]);
             }
         }
     }
