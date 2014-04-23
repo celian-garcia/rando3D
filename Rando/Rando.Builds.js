@@ -64,7 +64,7 @@ RANDO.Builds.DEM = function(data, scene, cam_b){
     console.log("DEM built ! " + (Date.now() - RANDO.START_TIME) );
 }
 
-/**
+/**to refac
  * TiledDEM() : build a DEM subdivided in multiple DEM corresponding of textured tiles
  *      - data: Object containing all informations to build DEM
  *      - scene (BABYLON.Scene) : current scene
@@ -192,64 +192,24 @@ RANDO.Builds.Tile = function (data) {
  *      - extent of the DEM
  */
 RANDO.Builds.Sides = function (tiles, extent, z_min) {
+    var frame = RANDO.Utils.getFrameFromTiles(tiles);
     
-    var xmax = _.max(tiles, function (tile) { 
-        return tile.coordinates.x; 
-    }).coordinates.x;
-    
-    var xmin = _.min(tiles, function (tile) { 
-        return tile.coordinates.x; 
-    }).coordinates.x;
-    
-    var ymax = _.max(tiles, function (tile) { 
-        return tile.coordinates.y; 
-    }).coordinates.y;
-    
-    var ymin = _.min(tiles, function (tile) { 
-        return tile.coordinates.y; 
-    }).coordinates.y;
-
-    var east_line = [];
-    var west_line = [];
-    var north_line = [];
-    var south_line = [];
-    
-    // to do : getBordersFromTiles()
-    for (it in tiles) {
-        var tile = tiles[it];
-        
-        if ( tile.coordinates.x == xmax ) {
-            var last_col = tile.values[0].length -1;
-            for (row in tile.values) {
-                east_line.push(tile.values[row][last_col]);
-            }
-        }
-        if ( tile.coordinates.x == xmin ) {
-            var first_col = 0;
-            for (row in tile.values) {
-                west_line.push(tile.values[row][first_col]);
-            }
-        }
-        
-        if ( tile.coordinates.y == ymax ) {
-            var first_row = 0;
-            for (col in tile.values[first_row]){
-                north_line.push(tile.values[first_row][col]);
-            }
-        }
-        if ( tile.coordinates.y == ymin ) {
-            var last_row = tile.values.length-1;
-            for (col in tile.values[last_row]){
-                south_line.push(tile.values[last_row][col]);
-            }
-        }
-    }
+    // Create the sides container
+    var sides = new BABYLON.Mesh("Sides", scene);
 
     var z_min = z_min - RANDO.SETTINGS.MIN_THICKNESS;
-    RANDO.Builds.Side("East Side",  east_line,  z_min, false);
-    RANDO.Builds.Side("West Side",  west_line,  z_min, true);
-    RANDO.Builds.Side("North Side", north_line, z_min, false);
-    RANDO.Builds.Side("South Side", south_line, z_min, true);
+    
+    // Creates differents sides
+    var e_side = RANDO.Builds.Side("East Side",  frame.east,  z_min, false);
+    var w_side = RANDO.Builds.Side("West Side",  frame.west,  z_min, true);
+    var n_side = RANDO.Builds.Side("North Side", frame.north, z_min, false);
+    var s_side = RANDO.Builds.Side("South Side", frame.south, z_min, true);
+    
+    // Set sides container as parent of sides
+    e_side.parent = sides;
+    w_side.parent = sides;
+    n_side.parent = sides;
+    s_side.parent = sides;
     
 }
 
@@ -275,10 +235,12 @@ RANDO.Builds.Side = function (name, line, base, reverse) {
     side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
 
     // Recomputes normals for lights and shadows
-    RANDO.Utils.ComputeMeshNormals(side)
+    RANDO.Utils.ComputeMeshNormals(side);
     
     // Enables collisions
     side.checkCollisions = true;
+    
+    return side;
 };
 
 /**

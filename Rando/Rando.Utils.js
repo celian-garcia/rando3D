@@ -858,6 +858,81 @@ RANDO.Utils.getUrlFromCoordinates = function (z, x, y) {
     return url;
 }
 
+/**
+ * getFrameFromTiles() : get borders of the DEM from the list of DEM tiles 
+ *      - tiles: tiles of the DEM
+ */
+RANDO.Utils.getFrameFromTiles = function (tiles) {
+    var frame = {};
+    frame.east  = [];
+    frame.west  = [];
+    frame.north = [];
+    frame.south = [];
+
+    var extent = RANDO.Utils.getTileExtent(tiles);
+
+    for (it in tiles) {
+        var tile = tiles[it];
+        if ( tile.coordinates.x == extent.x.max ) {
+            var last_col = tile.values[0].length -1;
+            for (row in tile.values) {
+                frame.east.push(tile.values[row][last_col]);
+            }
+        }
+        if ( tile.coordinates.x == extent.x.min ) {
+            var first_col = 0;
+            for (row in tile.values) {
+                frame.west.push(tile.values[row][first_col]);
+            }
+        }
+        if ( tile.coordinates.y == extent.y.max ) {
+            var first_row = 0;
+            for (col in tile.values[first_row]){
+                frame.north.push(tile.values[first_row][col]);
+            }
+        }
+        if ( tile.coordinates.y == extent.y.min ) {
+            var last_row = tile.values.length-1;
+            for (col in tile.values[last_row]){
+                frame.south.push(tile.values[last_row][col]);
+            }
+        }
+    }
+
+    return frame;
+};
+
+/**
+ * getTileExtent() : get tile extent from the list of DEM tiles
+ *      - tiles: tiles of the DEM
+ */
+RANDO.Utils.getTileExtent = function (tiles) {
+    var tileExtent = {};
+    tileExtent.x = {};
+    tileExtent.y = {};
+    
+    // X extent
+    tileExtent.x.min = _.min(tiles, function (tile) { 
+        return tile.coordinates.x; 
+    }).coordinates.x;
+    
+    tileExtent.x.max = _.max(tiles, function (tile) { 
+        return tile.coordinates.x; 
+    }).coordinates.x;
+
+    // Y extent
+    tileExtent.y.min = _.min(tiles, function (tile) { 
+        return tile.coordinates.y; 
+    }).coordinates.y;
+    tileExtent.y.max = _.max(tiles, function (tile) { 
+        return tile.coordinates.y; 
+    }).coordinates.y;
+    
+    return tileExtent;
+    
+    
+};
+
 
 /****    CONVERSIONS     ************************/
 /**
