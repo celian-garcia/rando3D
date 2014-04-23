@@ -531,7 +531,7 @@ RANDO.Utils.angleFromPoints = function (A, B, H) {
     return angle;
 }
 
-/**to refac
+/**
  * Subdivide a grid of points in several tiles 
  *      - grid: grid to subdivide
  *      - zoom: level of zoom 
@@ -564,59 +564,90 @@ RANDO.Utils.angleFromPoints = function (A, B, H) {
  */
 RANDO.Utils.subdivideGrid = function (grid, zoom) {
     var tiles = {},
-        prev_index = null,
-        prev_point = null,
-        prev_tile_n = null,
-        line = [],
+        curr_index,  prev_index  = null,
+        curr_point,  prev_point  = null,
+        curr_tile_n, prev_tile_n = null,
+        line_tmp = [],
         new_line = true;
         
     // Subdivide grid in tiles 
     for (row in grid) {
         for (col in grid[row]) {
-            var point = grid[row][col];
-            
-            // Get tile number corresponding to the point
-            var tile_n = RANDO.Utils.meters2num( point.x, point.z, zoom );
-            var index = "" + zoom + "/" + tile_n.xtile + "/" + tile_n.ytile + "";
-            
-            // tiles["z/x/y"] exists or not
-            tiles[index] = tiles[index] || {};
-            
-            
-            // if the previous index exist and is different from the current index
-            if (prev_index != index && prev_index != null) {
-                var mid = RANDO.Utils.middle(point, prev_point);
-                if(new_line == false) {
-                    line.push($.extend({}, mid));
-                }
-                // previous tile exists or not
-                tiles[prev_index].grid = tiles[prev_index].grid || [];
-                tiles[prev_index].grid.push(line); // push the line into previous tile
-                tiles[prev_index].coordinates = {
-                    z: zoom,
-                    x: prev_tile_n.xtile,
-                    y: prev_tile_n.ytile 
-                }
-                line = []; // reset the line
-                if(new_line == false) {
-                    line.push($.extend({}, mid));
-                }
-            }
-            
-            line.push($.extend({}, point));
+            curr_point = grid[row][col];
 
-            prev_index = index;
-            prev_point = point;
+            // Get current tile number corresponding to the current point
+            curr_tile_n = RANDO.Utils.meters2num( curr_point.x, curr_point.z, zoom );
+            curr_index = "" + zoom + "/" + curr_tile_n.xtile + "/" + curr_tile_n.ytile + "";
+
+            // tiles["z/x/y"] exists or not
+            tiles[curr_index] = tiles[curr_index] || {};
+
+            // if the previous index exists and is different from the current index
+            if ( prev_index != null && prev_index != curr_index ) {
+                if ( tiles[prev_index].grid == null ) {
+                    tiles[prev_index].grid = [];
+                    tiles[prev_index].coordinates = {
+                        z: zoom,
+                        x: prev_tile_n.xtile,
+                        y: prev_tile_n.ytile 
+                    };
+                }
+                tiles[prev_index].grid.push(line_tmp); // push the line into previous tile
+
+                line_tmp = []; // reset the line
+            }
+
+            line_tmp.push($.extend({}, curr_point));
+
+            prev_index = curr_index;
+            prev_point = curr_point;
             new_line = false;
-            prev_tile_n = tile_n;
+            prev_tile_n = curr_tile_n;
         }
         new_line = true;
     }
     
     // Push the last line of the last tile 
-    tiles[index].grid.push(line);
+    tiles[curr_index].grid.push(line_tmp);
     
-    // Delete gaps between tiles 
+    // At this moment, tiles are not joined at all, so we need to join it 
+    tiles = RANDO.Utils.joinTiles(tiles);
+    
+    return tiles;
+};
+
+/**
+ * joinTiles() : Join each tile with its east and north neightboors  
+ *      - tiles: list of tiles
+ */
+RANDO.Utils.joinTiles = function (tiles) {
+    // Joins East and West sides of tiles  
+    for (it in tiles) {
+        var current_tile = tiles[it];
+        var next_coord = {
+            z: current_tile.coordinates.z,
+            x: current_tile.coordinates.x + 1,
+            y: current_tile.coordinates.y
+        };
+        var next_index = ""  + next_coord.z + "/" + next_coord.x + "/" + next_coord.y + "";
+        
+        // if next tile exist 
+        if (tiles[next_index]) {
+            var current_grid = current_tile.grid;
+            var next_grid = tiles[next_index].grid;
+            
+            // for each row in the current tile grid
+            for (row in current_grid) {
+                var prev_point = current_grid[row][current_grid[row].length-1];
+                var next_point = next_grid[row][0];
+                var mid = RANDO.Utils.middle(prev_point, next_point);
+                current_grid[row].push(mid);
+                next_grid[row].splice(0, 0, $.extend({}, mid));
+            }
+        }
+    }
+    
+    // Joins North and South sides of tiles  
     for (it in tiles) {
         var current_tile = $.extend({}, tiles[it]);
         var next_coord = {
@@ -653,8 +684,7 @@ RANDO.Utils.subdivideGrid = function (grid, zoom) {
         } 
     }
     return tiles;
-}
-
+};
 /**
  * generateGrid() : generates a grid from a, extent and an array of altitudes
  *      - extent: extent of the new grid
@@ -942,7 +972,7 @@ RANDO.Utils.getFrameFromTiles = function (tiles) {
     return frame;
 };
 
-/**
+/**tested
  * getTileExtent() : get tile extent from the list of DEM tiles
  *      - tiles: tiles of the DEM
  */
@@ -969,8 +999,6 @@ RANDO.Utils.getTileExtent = function (tiles) {
     }).coordinates.y;
     
     return tileExtent;
-    
-    
 };
 
 
