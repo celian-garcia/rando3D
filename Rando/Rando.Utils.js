@@ -19,7 +19,7 @@ RANDO.Utils = {};
  *      - updatable : 
  * 
  ****************************************************************/
-RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
+RANDO.Utils.createGroundFromExtent = function (name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -68,7 +68,7 @@ RANDO.Utils.createGroundFromExtent = function(name, A, B, C, D, w_subdivisions, 
  *      - updatable : 
  * 
  ****************************************************************/
-RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
+RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
     var ground = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -121,7 +121,7 @@ RANDO.Utils.createGroundFromGrid = function(name, grid, scene, updatable) {
  *      - updatable : 
  * 
  ****************************************************************/
-RANDO.Utils.createGroundFromVertices = function(name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
+RANDO.Utils.createGroundFromVertices = function( name, vertices, w_subdivisions, h_subdivisions, scene, updatable) {
     console.assert(vertices.length%3 == 0);
     console.assert((vertices.length/3) == w_subdivisions*h_subdivisions,
     (vertices.length/3) + "!=" + w_subdivisions + "*" + h_subdivisions);
@@ -308,7 +308,7 @@ RANDO.Utils.ComputeMeshNormals = function (mesh) {
  * 
  * return the middle of the segment form by A and B
  */
-RANDO.Utils.middle = function(A, B) {
+RANDO.Utils.middle = function (A, B) {
     return {
         x: (A.x+B.x)/2,
         y: (A.y+B.y)/2,
@@ -340,7 +340,7 @@ RANDO.Utils.middle = function(A, B) {
  *          result : [A, M1, M2, B]
  * 
  */
-RANDO.Utils.subdivide = function(n, A, B){
+RANDO.Utils.subdivide = function (n, A, B) {
     
     if (n<=0) return null;
     
@@ -397,7 +397,7 @@ RANDO.Utils.subdivide = function(n, A, B){
  * D *-------------------------* C
  * 
  */
-RANDO.Utils.createGrid = function (A, B, C, D, n_horiz, n_verti){
+RANDO.Utils.createGrid = function (A, B, C, D, n_horiz, n_verti) {
     if(n_verti<=0) return null;
     if(n_horiz<=0) return null;
 
@@ -685,6 +685,7 @@ RANDO.Utils.joinTiles = function (tiles) {
     }
     return tiles;
 };
+
 /**
  * generateGrid() : generates a grid from a, extent and an array of altitudes
  *      - extent: extent of the new grid
@@ -724,7 +725,7 @@ RANDO.Utils.generateGrid = function (extent, altitudes) {
  *      - callback  : callback to call at the end of move
  * 
  */
-RANDO.Utils.moveCameraTo = function(camera, position, target, callback){
+RANDO.Utils.moveCameraTo = function (camera, position, target, callback) {
     var rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
     
     // Translation
@@ -771,7 +772,7 @@ RANDO.Utils.placeCameraByDefault = function (camera, center) {
  *      - target: target wanted (necessary to determine the rotation to apply)
  *      - angles: array of all angles of rotation (it is filled in each instance of this function) 
  */
-RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles){
+RANDO.Utils.addKeyToCamera = function (timeline, camera, position, target, angles) {
     var speed = 2- (RANDO.SETTINGS.CAM_SPEED_T)+0.1;
     
     var alpha1,
@@ -806,7 +807,7 @@ RANDO.Utils.addKeyToCamera = function(timeline, camera, position, target, angles
  *      - scene : the current scene
  * 
  * */
-RANDO.Utils.animateCamera = function(vertices, scene){
+RANDO.Utils.animateCamera = function (vertices, scene) {
     var d = 10, // Number of points between the current point and the point watched
         b_foll = {"value": false},
         b_pause = true,
@@ -861,7 +862,7 @@ RANDO.Utils.animateCamera = function(vertices, scene){
  *      - number (int)          : number of panels in the scene 
  *      - scene (BABYLON.Scene) : current scene
  */
-RANDO.Utils.refreshPanels = function(number, scene){
+RANDO.Utils.refreshPanels = function (number, scene) {
     var A = scene.activeCamera.position;
     for (var i = 1; i < number; i++){
         var panel = scene.getMeshByName("Panel" +i);
@@ -892,7 +893,7 @@ RANDO.Utils.getVerticesFromProfile = function (profile) {
         }
         tmp = RANDO.Utils.toMeters(tmp);
         tmp.z = tmp.y;
-        tmp.y = profile[it][1]
+        tmp.y = 0; 
         vertices.push(tmp);
     }
     
@@ -1104,7 +1105,7 @@ RANDO.Utils.rad2num = function (lat_rad, lng_rad, zoom) {
  *      - point: point to drape
  *      - dem: ground 
  */
-RANDO.Utils.drapePoint = function(point, dem){
+RANDO.Utils.drapePoint = function (point, dem) {
     var children = dem.getChildren();
     var ray =  new BABYLON.Ray(point, BABYLON.Axis.Y);
     for (it in children) {
@@ -1122,7 +1123,7 @@ RANDO.Utils.drapePoint = function(point, dem){
  *      - dy  : y coefficient  (altitudes in BABYLON)
  *      - dz  : z coefficient  (depth     in BABYLON)
  */
-RANDO.Utils.translateTrek = function(vertices, dx, dy, dz){
+RANDO.Utils.translateTrek = function (vertices, dx, dy, dz) {
     for (it in vertices){
         vertices[it].x += dx;
         vertices[it].y += dy;
