@@ -655,6 +655,13 @@ RANDO.Utils.subdivideGrid = function (grid, zoom) {
     return tiles;
 }
 
+/**
+ * generateGrid() : generates a grid from a, extent and an array of altitudes
+ *      - extent: extent of the new grid
+ *      - altitudes: two-dimensionnal array which contains altitudes 
+ * 
+ * return the grid of points
+ */
 RANDO.Utils.generateGrid = function (extent, altitudes) {
     // Generates grid from extent datas
     var grid = RANDO.Utils.createGrid(
@@ -712,6 +719,11 @@ RANDO.Utils.moveCameraTo = function(camera, position, target, callback){
     });
 }
 
+/**
+ * placeCameraByDefault() : Place camera taking the DEM center in parameter
+ *      - camera: camera to place
+ *      - center: DEM center
+ */
 RANDO.Utils.placeCameraByDefault = function (camera, center) {
     camera.rotation = new BABYLON.Vector3(0.6, 1, 0);
     camera.position = new BABYLON.Vector3(
@@ -1074,40 +1086,6 @@ RANDO.Utils.drapePoint = function(point, dem){
             point.y = pick.pickedPoint.y + RANDO.SETTINGS.TREK_OFFSET;
         }
     }
-}
-
-/**tested
- * translateDEM() : translate the DEM with coefficients given in parameters
- *      - dem : dem to translate 
- *      - dx  : x coefficient 
- *      - dy  : y coefficient  (altitudes in BABYLON)
- *      - dz  : z coefficient  (depth     in BABYLON)
- */
-RANDO.Utils.translateDEM = function(dem, dx, dy, dz){
-    for (row in dem.altitudes){
-        for (col in dem.altitudes[row]){
-            dem.altitudes[row][col] += dy;
-        }
-    }
-    
-    dem.center.x += dx;
-    dem.center.y += dy;
-    dem.center.z += dz;
-    
-    dem.extent.northwest.x += dx;
-    dem.extent.northwest.y += dz;
-    
-    dem.extent.northeast.x += dx;
-    dem.extent.northeast.y += dz;
-    
-    dem.extent.southeast.x += dx;
-    dem.extent.southeast.y += dz;
-    
-    dem.extent.southwest.x += dx;
-    dem.extent.southwest.y += dz;
-    
-    dem.extent.altitudes.min += dy;
-    dem.extent.altitudes.max += dy;
 }
 
 /**tested
