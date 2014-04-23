@@ -166,6 +166,15 @@ RANDO.Utils.createGroundFromVertices = function(name, vertices, w_subdivisions, 
     return ground;
 };
 
+/**
+ *  createSideFromLine(): Create a side of the DEM from a line of points (top line)
+ *      - name : Name of the new Ground
+ *      - line : Array of points [{x: ,y: ,z: }, ...]
+ *      - base : Altitude of the base line
+ *      - scene : Scene which contains the new side
+ *      - updatable : 
+ * 
+ */
 RANDO.Utils.createSideFromLine = function (name, line, base, scene, updatable) {
     var side = new BABYLON.Mesh(name, scene);
 
@@ -523,7 +532,7 @@ RANDO.Utils.angleFromPoints = function (A, B, H){
     return angle;
 }
 
-/**
+/**to refac
  * Subdivide a grid of points in several tiles 
  *      - grid: grid to subdivide
  *      - zoom: level of zoom 
@@ -802,7 +811,7 @@ RANDO.Utils.refreshPanels = function(number, scene){
  * 
  * return an array of vertices 
  */
-RANDO.Utils.getVerticesFromProfile = function(profile){
+RANDO.Utils.getVerticesFromProfile = function (profile) {
     var vertices =  [];
     
     for (it in profile){
@@ -823,7 +832,7 @@ RANDO.Utils.getVerticesFromProfile = function(profile){
  * getExtent() : get the four corners of the DEM (in meters) and altitudes minimum and maximum
  *      - extent : extent of the DEM served by the json
  */
-RANDO.Utils.getExtentinMeters = function(extent){
+RANDO.Utils.getExtentinMeters = function (extent) {
     return {
         northwest : RANDO.Utils.toMeters(extent.northwest),
         northeast : RANDO.Utils.toMeters(extent.northeast),
@@ -859,7 +868,7 @@ RANDO.Utils.getUrlFromCoordinates = function (z, x, y) {
  * 
  * { lat : .. , lng : .. }  ---> { x : .. , y : .. }
  */
-RANDO.Utils.toMeters = function(latlng) {
+RANDO.Utils.toMeters = function (latlng) {
     
     var R = 6378137;
 
@@ -881,7 +890,7 @@ RANDO.Utils.toMeters = function(latlng) {
  * 
  * { x : .. , y : .. }  --->  { lat : .. , lng : .. }  
  */
-RANDO.Utils.toLatlng = function(point) {
+RANDO.Utils.toLatlng = function (point) {
     
     var R = 6378137;
     
@@ -900,7 +909,7 @@ RANDO.Utils.toLatlng = function(point) {
  *      - y: y coordinate of point (in meters)
  *      - zoom: zoom level
  */
-RANDO.Utils.meters2num = function(x, y, zoom) {
+RANDO.Utils.meters2num = function (x, y, zoom) {
     var tmp_ll = RANDO.Utils.toLatlng({
         x: x,
         y: y
@@ -915,7 +924,7 @@ RANDO.Utils.meters2num = function(x, y, zoom) {
  *      - lng_deg: longitude coordinate of point (in degrees)
  *      - zoom: zoom level
  */
-RANDO.Utils.deg2num = function(lat_deg, lng_deg, zoom) {
+RANDO.Utils.deg2num = function (lat_deg, lng_deg, zoom) {
     var lat_rad = lat_deg*Math.PI/180;
     var n = Math.pow(2.0, zoom);
     var xtile = Math.floor((lng_deg + 180.0) / 360.0 * n);
@@ -933,7 +942,7 @@ RANDO.Utils.deg2num = function(lat_deg, lng_deg, zoom) {
  *      - lng_rad: longitude coordinate of point (in radians)
  *      - zoom: zoom level
  */
-RANDO.Utils.rad2num = function(lat_rad, lng_rad, zoom) {
+RANDO.Utils.rad2num = function (lat_rad, lng_rad, zoom) {
     var lat_deg = lat_rad*180/Math.PI;
     var lng_deg = lng_rad*180/Math.PI;
     var n = Math.pow(2.0, zoom);
