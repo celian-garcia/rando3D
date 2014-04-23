@@ -231,46 +231,6 @@ describe('Rando3D', function() {
                 done();
             });
         });
-    
-        describe('Translations ', function() {
-            describe('Trek - "translateTrek()', function() {
-                it("should translate the Trek vertices  ", function(done) {
-                    var vertices = [{
-                        x: 0,
-                        y: 0, 
-                        z: 0
-                    },
-                    {
-                        x: 5,
-                        y: 5, 
-                        z: 5
-                    },
-                    {
-                        x: 10,
-                        y: 10, 
-                        z: 10
-                    }];
-                    var tr_vertices = [{
-                        x: 5,
-                        y: 10, 
-                        z: 15
-                    },
-                    {
-                        x: 10,
-                        y: 15, 
-                        z: 20
-                    },
-                    {
-                        x: 15,
-                        y: 20, 
-                        z: 25
-                    }];
-                    RANDO.Utils.translateTrek(vertices, 5, 10, 15);
-                    assert.deepEqual(vertices, tr_vertices);
-                    done();
-                });
-            });
-        });
     });
     
     describe("Camera", function() {
@@ -278,16 +238,69 @@ describe('Rando3D', function() {
     });
     
     describe("Getters", function() {
-        
+        describe('Get an url of texture from coordinates z, x, y - "replaceUrlCoordinates()"', function () {
+            it("should return the new url with '{z}', '{x}' and '{y}' replaced  ", function(done) {
+                var url = "blablabla{z}blabla{y}blabla{x}";
+                var z = 12
+                var x = 135;
+                var y = 45;
+                var result = "blablabla12blabla45blabla135"
+                assert.equal(RANDO.Utils.replaceUrlCoordinates(url, z, x, y), result);
+                done();
+            });
+        });
+        describe('Get the extent of an array of tiles - "getTileExtent()"', function () {
+            it("should return x.min = 0, x.max = 10, y.min = 5, y.max = 15", function(done) {
+                var result = {
+                    'x': {
+                        'min': 0,
+                        'max': 10 
+                    },
+                    'y': {
+                        'min': 5,
+                        'max': 15
+                    }
+                };
+                
+                var tiles = {
+                    'tile1': {
+                        'coordinates': {
+                            'x': 5,
+                            'y': 15
+                        }
+                    },
+                    'tile2': {
+                        'coordinates': {
+                            'x': 0,
+                            'y': 10
+                        }
+                    },
+                    'tile3': {
+                        'coordinates': {
+                            'x': 10,
+                            'y': 5
+                        }
+                    },
+                    'tile4': {
+                        'coordinates': {
+                            'x': 8,
+                            'y': 8
+                        }
+                    }
+                };
+                
+                assert.deepEqual(RANDO.Utils.getTileExtent(tiles), result);
+                done();
+            });
+        });
     });
     
     describe('Conversions', function() {
-        describe('latitude/longitude to meters x/y - "toMeters()"', function() {
+        describe('latitude/longitude to meters x/y - "toMeters()"', function () {
             it("should return {x: 0 ,y: 0} .", function(done) {
                 var latlng = {
                     'lat': 0,
                     'lng': 0,
-                    'toto': "toto"
                 };
                 assert.deepEqual(RANDO.Utils.toMeters(latlng), {x: 0, y: 0});
                 done();
@@ -297,7 +310,6 @@ describe('Rando3D', function() {
                 var latlng = {
                     'lat': 45,
                     'lng': 45,
-                    'toto': "toto"
                 };
                 var meters = {
                     'x': 5009377,
@@ -308,10 +320,71 @@ describe('Rando3D', function() {
                 done();
             });
         });
+        
+        describe('meters x/y to latitude/longitude - "toLatlng()"', function () {
+            it("should return {lat: 0 ,lng: 0} .", function(done) {
+                var meters = {
+                    'x': 0,
+                    'y': 0,
+                };
+                assert.deepEqual(RANDO.Utils.toLatlng(meters), {lat: 0, lng: 0});
+                done();
+            });
+            
+            it("should return a result close to {lat: 45 ,y: 45} .", function(done) {
+                var latlng = {
+                    'lat': 45,
+                    'lng': 45,
+                };
+                var meters = {
+                    'x': 5009377,
+                    'y': 5621521
+                };
+                assert.closeTo(RANDO.Utils.toLatlng(meters).lat, latlng.lat, 0.0001);
+                assert.closeTo(RANDO.Utils.toLatlng(meters).lng, latlng.lng, 0.0001);
+                done();
+            });
+        });
     });
     
     describe("Translations ", function() {
-        
+        describe('Trek - "translateTrek()"', function() {
+            it("should translate the Trek vertices  ", function(done) {
+                var vertices = [{
+                    x: 0,
+                    y: 0, 
+                    z: 0
+                },
+                {
+                    x: 5,
+                    y: 5, 
+                    z: 5
+                },
+                {
+                    x: 10,
+                    y: 10, 
+                    z: 10
+                }];
+                var tr_vertices = [{
+                    x: 5,
+                    y: 10, 
+                    z: 15
+                },
+                {
+                    x: 10,
+                    y: 15, 
+                    z: 20
+                },
+                {
+                    x: 15,
+                    y: 20, 
+                    z: 25
+                }];
+                RANDO.Utils.translateTrek(vertices, 5, 10, 15);
+                assert.deepEqual(vertices, tr_vertices);
+                done();
+            });
+        });
     });
 
 });

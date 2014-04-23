@@ -83,7 +83,8 @@ RANDO.Builds.Tile = function (data, offsets) {
     tile.checkCollisions = true;
     
     // Get url of the texture
-    var url = RANDO.Utils.getUrlFromCoordinates(
+    var url = RANDO.Utils.replaceUrlCoordinates(
+        RANDO.SETTINGS.TILE_TEX_URL,
         data.coordinates.z, 
         data.coordinates.x, 
         data.coordinates.y

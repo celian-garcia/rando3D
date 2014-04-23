@@ -883,15 +883,14 @@ RANDO.Utils.getExtentinMeters = function (extent) {
     }
 }
 
-/**
+/**tested
  * getUrlFromCoordinates(): get the url of a tile texture 
  *      z : level of zoom
  *      x : x coordinates of tile
  *      y : y coordinates of tile
  * 
  */
-RANDO.Utils.getUrlFromCoordinates = function (z, x, y) {
-    var url = RANDO.SETTINGS.TILE_TEX_URL;
+RANDO.Utils.replaceUrlCoordinates = function (url, z, x, y) {
     url = url.replace("{z}", z);
     url = url.replace("{x}", x);
     url = url.replace("{y}", y);
@@ -976,7 +975,7 @@ RANDO.Utils.getTileExtent = function (tiles) {
 
 
 /****    CONVERSIONS     ************************/
-/**
+/**tested
  * toMeters() : convert a point in latitude/longitude to x/y meters coordinates
  *      - latlng : point in lat/lng 
  * 
@@ -998,7 +997,7 @@ RANDO.Utils.toMeters = function (latlng) {
     };
 }
 
-/**
+/**tested
  * toLatlng() : convert a point in x/y meters coordinates to latitude/longitude 
  *      - point : point in x/y meters coordinates
  * 
