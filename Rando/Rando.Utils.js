@@ -166,7 +166,7 @@ RANDO.Utils.createGroundFromVertices = function(name, vertices, w_subdivisions, 
     return ground;
 };
 
-RANDO.Utils.createSideFromLine = function (name, line, high_min, scene, updatable) {
+RANDO.Utils.createSideFromLine = function (name, line, base, scene, updatable) {
     var side = new BABYLON.Mesh(name, scene);
 
     var indices = [];
@@ -175,43 +175,38 @@ RANDO.Utils.createSideFromLine = function (name, line, high_min, scene, updatabl
     var uvs = [];
     var row, col;
     
-    var length = line.length-1;
+    var h_subdivisions = 1
+    var w_subdivisions = line.length-1;
     
-    console.log(line.length*2);
     // Positions, normals, and uvs
-    row = 0;
-    for (col = 0; col <= length; col++) {
-        var position = line[col];
-        var normal = new BABYLON.Vector3(0, 1.0, 0);
-        
-        //~ console.log(position.length);
-        positions.push(position.x, position.y, position.z);
-        normals.push(normal.x, normal.y, normal.z);
-        uvs.push(col / length, 1.0 - row/1);
+    for (row = 0; row <= h_subdivisions; row++) {
+        for (col = 0; col <= w_subdivisions; col++) {
+            var position = line[col];
+            var normal = new BABYLON.Vector3(0, 1.0, 0);
+            
+            if (row == 0) {
+                positions.push(position.x, position.y, position.z);
+            } else {
+                positions.push(position.x, base, position.z);
+            }
+            
+            normals.push(normal.x, normal.y, normal.z);
+            uvs.push(col / w_subdivisions, 1.0 - row/1);
+        }
     }
-    row = 1;
-    for (col = 0; col <= length; col++) {
-        var position = line[col];
-        var normal = new BABYLON.Vector3(0, 1.0, 0);
-        
-        positions.push(position.x, 1000, position.z);
-        normals.push(normal.x, normal.y, normal.z);
-        uvs.push(col / length, 1.0 - row/1);
-    }
-    console.log(positions.length/3);
 
     // Indices
-    row = 0
-    for (col = 0; col < length; col++) {
-        indices.push(col + 1 + (row + 1) * (length + 1));
-        indices.push(col + 1 + row * (length + 1));
-        indices.push(col + row * (length + 1));
+    for (row = 0; row < h_subdivisions; row++) {
+        for (col = 0; col < w_subdivisions; col++) {
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + row * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
 
-        indices.push(col + (row + 1) * (length + 1));
-        indices.push(col + 1 + (row + 1) * (length + 1));
-        indices.push(col + row * (length + 1));
+            indices.push(col + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
+            indices.push(col + row * (w_subdivisions + 1));
+        }
     }
-    
     
     side.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
     side.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);

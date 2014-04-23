@@ -137,8 +137,8 @@ RANDO.Builds.TiledDEM = function(data, scene, cam_b){
     }
 
     // Builds sides of DEM
-    RANDO.Builds.Sides(tiles, data.extent);
-    
+    RANDO.Builds.Sides(tiles, data.extent, data.orig_extent.altitudes.min);
+
     // DEM built ! 
     console.log("Tiled DEM built ! " + (Date.now() - RANDO.START_TIME) );
     return dem;
@@ -191,7 +191,7 @@ RANDO.Builds.Tile = function (data) {
  *      - tiles: differents tiles of the DEM
  *      - extent of the DEM
  */
-RANDO.Builds.Sides = function (tiles, extent) {
+RANDO.Builds.Sides = function (tiles, extent, z_min) {
     
     var xmax = _.max(tiles, function (tile) { 
         return tile.coordinates.x; 
@@ -244,12 +244,12 @@ RANDO.Builds.Sides = function (tiles, extent) {
             }
         }
     }
-    
-    
-    RANDO.Builds.Side("East Side",  east_line,  false);
-    RANDO.Builds.Side("West Side",  west_line,  true);
-    RANDO.Builds.Side("North Side", north_line, false);
-    RANDO.Builds.Side("South Side", south_line, true);
+
+    var z_min = z_min - RANDO.SETTINGS.MIN_THICKNESS;
+    RANDO.Builds.Side("East Side",  east_line,  z_min, false);
+    RANDO.Builds.Side("West Side",  west_line,  z_min, true);
+    RANDO.Builds.Side("North Side", north_line, z_min, false);
+    RANDO.Builds.Side("South Side", south_line, z_min, true);
     
 }
 
@@ -262,13 +262,13 @@ RANDO.Builds.Sides = function (tiles, extent) {
  *              true if positive
  *              
  */
-RANDO.Builds.Side = function (name, line, reverse) {
+RANDO.Builds.Side = function (name, line, base, reverse) {
     if (reverse) {
         line.reverse();
     }
     
     // Creates side
-    var side = RANDO.Utils.createSideFromLine(name, line, 100, scene);
+    var side = RANDO.Utils.createSideFromLine(name, line, base, scene);
 
     // Side material
     side.material = new BABYLON.StandardMaterial(name + "Material", scene);
