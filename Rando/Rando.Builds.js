@@ -79,8 +79,9 @@ RANDO.Builds.Tile = function (data, offsets) {
     );
 
     // Recomputes normals for lights and shadows
-    RANDO.Utils.ComputeMeshNormals(tile)
+    RANDO.Utils.computeMeshNormals(tile)
     
+    // 
     RANDO.Utils.setMeshUvs(tile, data.uv);
     
     // Enables collisions
@@ -122,19 +123,18 @@ RANDO.Builds.Sides = function (tiles, extent) {
     var sides = new BABYLON.Mesh("Sides", scene);
 
     var z_min = extent.altitudes.min - RANDO.SETTINGS.MIN_THICKNESS;
-    
+
     // Creates differents sides
     var e_side = RANDO.Builds.Side("East Side",  frame.east,  z_min, false);
     var w_side = RANDO.Builds.Side("West Side",  frame.west,  z_min, true);
     var n_side = RANDO.Builds.Side("North Side", frame.north, z_min, false);
     var s_side = RANDO.Builds.Side("South Side", frame.south, z_min, true);
-    
+
     // Set sides container as parent of sides
     e_side.parent = sides;
     w_side.parent = sides;
     n_side.parent = sides;
     s_side.parent = sides;
-    
 }
 
 /**
@@ -159,7 +159,7 @@ RANDO.Builds.Side = function (name, line, base, reverse) {
     side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
 
     // Recomputes normals for lights and shadows
-    RANDO.Utils.ComputeMeshNormals(side);
+    RANDO.Utils.computeMeshNormals(side);
     
     // Enables collisions
     side.checkCollisions = true;

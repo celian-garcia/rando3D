@@ -293,7 +293,7 @@ RANDO.Utils.placeCylinder = function (cylinder, A, B) {
  * ComputeMeshNormals() : recompute normals of a mesh (for the shadows after)
  *      - mesh: mesh to recompute
  */
-RANDO.Utils.ComputeMeshNormals = function (mesh) {
+RANDO.Utils.computeMeshNormals = function (mesh) {
     var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
     BABYLON.VertexData.ComputeNormals(vertices.positions, vertices.indices, vertices.normals);
     vertices.applyToMesh(mesh);
