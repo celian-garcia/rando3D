@@ -299,6 +299,89 @@ RANDO.Utils.ComputeMeshNormals = function (mesh) {
     vertices.applyToMesh(mesh);
 };
 
+RANDO.Utils.computeTilesUvs = function (tiles) {
+    // Fill the uv data of tiles
+    for (it in tiles) {
+        var tile = tiles[it];
+        tile.uv = {};
+        tile.uv.u = [];
+        tile.uv.v = [];
+        
+        var n = tile.grid[0].length-1;
+        for (col in tile.grid[0]) {
+            tile.uv.u.push(col/n);
+        }
+        
+        var m = tile.grid.length-1;
+        for (row in tile.grid) {
+            tile.uv.v.push(1- row/m);
+        }
+    }
+    
+    // Max height resolution of all tiles
+    var max_h_res = _.max(tiles, function(tile) {
+            return tile.grid.length;
+    }).grid.length-1;
+    
+    // Max width resolution of all tiles
+    var max_w_res = _.max(tiles, function(tile) {
+            return tile.grid[0].length;
+    }).grid[0].length-1;
+    
+    
+    // Compute north tiles v values
+    northTilesUvs(tiles, max_h_res);
+    eastTilesUvs(tiles, max_w_res);
+};
+
+function northTilesUvs (tiles, max_h_res) {
+    console.log("Computes UV values of north tiles");
+    var extent = RANDO.Utils.getTileExtent(tiles);
+
+    for (it in tiles) {
+        var tile = tiles[it];
+        if (tile.coordinates.y == extent.y.min) {
+            var curr_h_res = tile.grid.length;
+            var index = 0;
+            for (var j = curr_h_res-1; j >= 0; j--) {
+                tile.uv.v[index++] = j/max_h_res ;
+            }
+        }
+    }
+};
+
+function eastTilesUvs(tiles, max_w_res) {
+    console.log("Computes UV values of east tiles");
+    var extent = RANDO.Utils.getTileExtent(tiles);
+
+    for (it in tiles) {
+        var tile = tiles[it];
+        if (tile.coordinates.x == extent.x.max) {
+            var curr_w_res = tile.grid[0].length;
+            var index = 0;
+            for (var i = 0; i < curr_w_res; i++) {
+                tile.uv.u[index++] = i/max_w_res ;
+            }
+            console.log(tile.uv);
+        }
+    }
+    
+};
+
+RANDO.Utils.setMeshUvs = function (mesh, uv) {
+    var uv_array = [];
+    for (row in uv.v) {
+    for (col in uv.u) {
+            uv_array.push(uv.u[col]);
+            uv_array.push(uv.v[row]);
+        }
+    }
+    
+    var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
+    vertices.uvs = uv_array;
+    vertices.applyToMesh(mesh);
+    
+};
 
 /****    GEOMETRY     ************************/
 /**tested
@@ -942,16 +1025,16 @@ RANDO.Utils.getFrameFromTiles = function (tiles) {
                 frame.west.push(tile.grid[row][first_col]);
             }
         }
-        if ( tile.coordinates.y == extent.y.max ) {
-            var first_row = 0;
-            for (col in tile.grid[first_row]){
-                frame.north.push(tile.grid[first_row][col]);
-            }
-        }
         if ( tile.coordinates.y == extent.y.min ) {
             var last_row = tile.grid.length-1;
             for (col in tile.grid[last_row]){
                 frame.south.push(tile.grid[last_row][col]);
+            }
+        }
+        if ( tile.coordinates.y == extent.y.max ) {
+            var first_row = 0;
+            for (col in tile.grid[first_row]){
+                frame.north.push(tile.grid[first_row][col]);
             }
         }
     }

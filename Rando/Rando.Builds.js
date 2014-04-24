@@ -38,6 +38,8 @@ RANDO.Builds.TiledDEM = function(data, offsets, scene){
     var tiles = RANDO.Utils.subdivideGrid(grid, RANDO.SETTINGS.TILE_ZOOM);
     console.log("Number of tiles: " + Object.keys(tiles).length);
 
+    RANDO.Utils.computeTilesUvs(tiles);
+
     // Creates all tiles 
     for (it in tiles) {
         // Builds a tile
@@ -75,9 +77,11 @@ RANDO.Builds.Tile = function (data, offsets) {
         data.grid,
         scene
     );
-        
+
     // Recomputes normals for lights and shadows
     RANDO.Utils.ComputeMeshNormals(tile)
+    
+    RANDO.Utils.setMeshUvs(tile, data.uv);
     
     // Enables collisions
     tile.checkCollisions = true;
@@ -113,7 +117,7 @@ RANDO.Builds.Tile = function (data, offsets) {
  */
 RANDO.Builds.Sides = function (tiles, extent) {
     var frame = RANDO.Utils.getFrameFromTiles(tiles);
-    
+
     // Create the sides container
     var sides = new BABYLON.Mesh("Sides", scene);
 
