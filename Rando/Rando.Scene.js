@@ -2,8 +2,6 @@ RANDO = RANDO || {};
 RANDO.Scene = {};
 
 
-var scene;
-
 /**
  * launch():  launch the building of the DEM and trek from 2 json files
  * 
