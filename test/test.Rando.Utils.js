@@ -249,6 +249,7 @@ describe('Rando3D', function() {
                 done();
             });
         });
+        
         describe('Get the extent of an array of tiles - "getTileExtent()"', function () {
             it("should return x.min = 0, x.max = 10, y.min = 5, y.max = 15", function(done) {
                 var result = {

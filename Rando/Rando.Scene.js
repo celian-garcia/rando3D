@@ -45,7 +45,8 @@ RANDO.Scene.launch = function(canvas){
     $.getJSON(RANDO.SETTINGS.DEM_URL)
      .done(function (data) {
         var m_center = RANDO.Utils.toMeters(data.center);
-        var m_extent = RANDO.Utils.getExtentinMeters(data.extent);
+        var m_extent = RANDO.Utils.extent2meters (data.extent);
+        
         // Record DEM data
         dem_data.o_extent = $.extend(true, {}, m_extent);
         dem_data.extent = m_extent;
@@ -103,11 +104,11 @@ RANDO.Scene.launch = function(canvas){
          *    TREK
          ****************************************************/
         function build_trek() {
-            //~ // Translation of the route to make it visible
+            // Translation of the route to make it visible
             RANDO.Utils.translateTrek(
                 trek_data,
                 offsets.x,
-                0,
+                offsets.y,
                 offsets.z
             );
             
@@ -116,7 +117,10 @@ RANDO.Scene.launch = function(canvas){
             
             // Attach camera controls
             scene.activeCamera.attachControl(canvas);
-            scene.executeWhenReady(executeWhenReady);
+            
+            scene.executeWhenReady(function () {
+                executeWhenReady (scene);
+            });
         }
         /****************************************************/
          
@@ -126,14 +130,14 @@ RANDO.Scene.launch = function(canvas){
 };
 
 
-function renderLoop () {
+function renderLoop (scene) {
     scene.getEngine().runRenderLoop(function() {
         scene.render();
     });
 };
 
 
-function executeWhenReady () {
+function executeWhenReady (scene) {
     
     console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
     var dem = scene.getMeshByName("Digital Elevation Model");
@@ -172,7 +176,7 @@ function executeWhenReady () {
         console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         
         // At the end, run the render loop 
-        renderLoop();
+        renderLoop(scene);
     }
 };
 

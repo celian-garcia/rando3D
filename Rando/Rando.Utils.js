@@ -735,7 +735,7 @@ RANDO.Utils.moveCameraTo = function (camera, position, target, callback) {
         z: position.z,
         ease: 'ease-in',
         onComplete : function (){
-            if (typeof(callback) == "function") callback();
+            if (typeof(callback) === "function") callback();
         }
     });
     // Rotation
@@ -745,7 +745,7 @@ RANDO.Utils.moveCameraTo = function (camera, position, target, callback) {
         z: 0,
         ease: 'ease-in',
         onComplete : function (){
-            if (typeof(callback) == "function") callback();
+            if (typeof(callback) === "function") callback();
         }
     });
 }
@@ -900,20 +900,6 @@ RANDO.Utils.getVerticesFromProfile = function (profile) {
     return vertices;
 }
 
-/**
- * getExtent() : get the four corners of the DEM (in meters) and altitudes minimum and maximum
- *      - extent : extent of the DEM served by the json
- */
-RANDO.Utils.getExtentinMeters = function (extent) {
-    return {
-        northwest : RANDO.Utils.toMeters(extent.northwest),
-        northeast : RANDO.Utils.toMeters(extent.northeast),
-        southeast : RANDO.Utils.toMeters(extent.southeast),
-        southwest : RANDO.Utils.toMeters(extent.southwest),
-        altitudes : extent.altitudes
-    }
-}
-
 /**tested
  * getUrlFromCoordinates(): get the url of a tile texture 
  *      z : level of zoom
@@ -1047,6 +1033,20 @@ RANDO.Utils.toLatlng = function (point) {
 }
 
 /**
+ * extent2meters() : convert the four corners of the DEM in meters 
+ *      - extent : extent of the DEM in latitudes/longitudes
+ */
+RANDO.Utils.extent2meters = function (extent) {
+    return {
+        'northwest' : RANDO.Utils.toMeters(extent.northwest),
+        'northeast' : RANDO.Utils.toMeters(extent.northeast),
+        'southeast' : RANDO.Utils.toMeters(extent.southeast),
+        'southwest' : RANDO.Utils.toMeters(extent.southwest),
+        'altitudes' : extent.altitudes
+    };
+};
+
+/**
  * meters2num(): get the tile number of the tile containing a point 
  *  in a certain level of zoom
  *      - x: x coordinate of point (in meters)
@@ -1055,8 +1055,8 @@ RANDO.Utils.toLatlng = function (point) {
  */
 RANDO.Utils.meters2num = function (x, y, zoom) {
     var tmp_ll = RANDO.Utils.toLatlng({
-        x: x,
-        y: y
+        'x': x,
+        'y': y
     });
     return RANDO.Utils.deg2num(tmp_ll.lat, tmp_ll.lng, zoom);
 };
