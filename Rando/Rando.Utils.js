@@ -332,6 +332,8 @@ RANDO.Utils.computeTilesUvs = function (tiles) {
     // Compute north tiles v values
     northTilesUvs(tiles, max_h_res);
     eastTilesUvs(tiles, max_w_res);
+    southTilesUvs (tiles, max_h_res);
+    westTilesUvs(tiles, max_w_res);
 };
 
 function northTilesUvs (tiles, max_h_res) {
@@ -350,7 +352,7 @@ function northTilesUvs (tiles, max_h_res) {
     }
 };
 
-function eastTilesUvs(tiles, max_w_res) {
+function eastTilesUvs (tiles, max_w_res) {
     console.log("Computes UV values of east tiles");
     var extent = RANDO.Utils.getTileExtent(tiles);
 
@@ -362,10 +364,41 @@ function eastTilesUvs(tiles, max_w_res) {
             for (var i = 0; i < curr_w_res; i++) {
                 tile.uv.u[index++] = i/max_w_res ;
             }
+        }
+    }
+};
+
+function southTilesUvs (tiles, max_h_res) {
+    console.log("Computes UV values of south tiles");
+    var extent = RANDO.Utils.getTileExtent(tiles);
+
+    for (it in tiles) {
+        var tile = tiles[it];
+        if (tile.coordinates.y == extent.y.max) {
+            var curr_h_res = tile.grid.length;
+            var index = 0;
+            for (var j = 0 ; j < curr_h_res; j++) {
+                tile.uv.v[index++] = 1 - j/max_h_res ;
+            }
             console.log(tile.uv);
         }
     }
-    
+};
+
+function westTilesUvs (tiles, max_w_res) {
+    console.log("Computes UV values of west tiles");
+    var extent = RANDO.Utils.getTileExtent(tiles);
+
+    for (it in tiles) {
+        var tile = tiles[it];
+        if (tile.coordinates.x == extent.x.min) {
+            var curr_w_res = tile.grid[0].length;
+            var index = 0;
+            for (var i = curr_w_res-1; i >= 0; i--) {
+                tile.uv.u[index++] = 1 - i/max_w_res ;
+            }
+        }
+    }
 };
 
 RANDO.Utils.setMeshUvs = function (mesh, uv) {
@@ -380,8 +413,8 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
     var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
     vertices.uvs = uv_array;
     vertices.applyToMesh(mesh);
-    
 };
+
 
 /****    GEOMETRY     ************************/
 /**tested
