@@ -417,6 +417,11 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
     }
     
     var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
+    
+    console.assert(
+        vertices.uvs.length == uv_array.length, 
+        "setMeshUvs() : uvs in parameter are not well sized"
+    );
     vertices.uvs = uv_array;
     vertices.applyToMesh(mesh);
 };
