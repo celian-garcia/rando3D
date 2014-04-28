@@ -570,8 +570,6 @@ RANDO.Utils.createElevationGrid = function (A, B, C, D, altitudes) {
     return grid;
 }
 
-
-
 /**tested
  * angleFromAxis(): get an angle for a rotation 
  *      - A     (BABYLON.Vector3) : First point 

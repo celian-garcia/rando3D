@@ -14,14 +14,12 @@ RANDO.Builds = {};
 RANDO.Builds.Trek = function( vertices, offsets, scene, pan_b ){
     if(typeof(pan_b)==='undefined') pan_b = true;
 
-    console.log(offsets);
     RANDO.Utils.translateTrek(
         vertices,
         offsets.x,
         offsets.y,
         offsets.z
     );
-    console.log(vertices);
     RANDO.Utils.animateCamera(vertices, scene);
     
     // Trek building ...
