@@ -5,10 +5,8 @@
   <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
 </head>
 <body>
-  <div id="mocha">
-    <canvas id="canvas"></canvas>
-  
-  </div>
+  <div id="mocha"></div>
+
   <script src="../node_modules/chai/chai.js"></script>
   <script src="../node_modules/mocha/mocha.js"></script>
     
@@ -30,11 +28,26 @@
   <script src="../Rando/Rando.Utils.js"></script>
   <script src="../Rando/Rando.Settings.js"></script>
   <script src="../Rando/Rando.Events.js"></script>
-
+  
+  <script src="../Rando/Rando.Scene.Src.js"></script>
+  <script src="../Rando/Rando.Scene.Hdr.js"></script>
+  
+  <script src="../Rando/Rando.Dem.Src.js"></script>
+  <script src="../Rando/Rando.Dem.Hdr.js"></script>
+  
+  <script src="../Rando/Rando.Trek.Src.js"></script>
+  <script src="../Rando/Rando.Trek.Hdr.js"></script>
     
   <script>mocha.setup('bdd')</script>
-  <script src="test.Rando.Utils.js"></script>
-
+  <script>
+        var canvas = document.createElement("canvas");
+        var engine = new BABYLON.Engine(canvas, true);
+        var scene  = new BABYLON.Scene(engine);
+        RANDO.START_TIME = Date.now();
+  </script>
+  <script src="test.Rando.Scene.js"></script>
+  <script src="test.Rando.Dem.js"></script>
+  <script src="test.Rando.Trek.js"></script>
   <script>(window.mochaPhantomJS || window.mocha).run();</script>
 </body>
 </html>

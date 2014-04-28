@@ -1,6 +1,6 @@
 var assert = chai.assert;
 
-describe('Rando3D', function() {
+describe('Rando3D Utilitaries', function() {
     describe("BABYLON Extents", function() {
         
     });
