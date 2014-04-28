@@ -524,7 +524,7 @@ RANDO.Utils.subdivide = function (n, A, B) {
  * D *-------------------------* C
  * 
  */
-RANDO.Utils.createGrid = function (A, B, C, D, n_horiz, n_verti) {
+RANDO.Utils.createFlatGrid = function (A, B, C, D, n_horiz, n_verti) {
     if(n_verti<=0) return null;
     if(n_horiz<=0) return null;
 
@@ -547,6 +547,30 @@ RANDO.Utils.createGrid = function (A, B, C, D, n_horiz, n_verti) {
     }
     return grid;
 }
+
+/**
+ *
+ * 
+ */
+RANDO.Utils.createElevationGrid = function (A, B, C, D, altitudes) {
+    // Creates grid from extent datas
+    var grid = RANDO.Utils.createFlatGrid(
+        A, B, C, D,
+        altitudes[0].length,
+        altitudes.length
+    );
+    
+    // Gives altitudes to the grid 
+    for (row in altitudes){
+        for (col in altitudes[row]){
+            grid[row][col].z = grid[row][col].y;
+            grid[row][col].y = altitudes[row][col];
+        }
+    }
+    return grid;
+}
+
+
 
 /**tested
  * angleFromAxis(): get an angle for a rotation 
@@ -689,9 +713,8 @@ RANDO.Utils.angleFromPoints = function (A, B, H) {
  *      ...
  * }
  */
-RANDO.Utils.subdivideGrid = function (grid, zoom) {
-    var tiles = {},
-        curr_index,  prev_index  = null,
+RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
+    var curr_index,  prev_index  = null,
         curr_point,  prev_point  = null,
         curr_tile_n, prev_tile_n = null,
         line_tmp = [],
@@ -736,9 +759,6 @@ RANDO.Utils.subdivideGrid = function (grid, zoom) {
     
     // Push the last line of the last tile 
     tiles[curr_index].grid.push(line_tmp);
-    
-    // At this moment, tiles are not joined at all, so we need to join it 
-    tiles = RANDO.Utils.joinTiles(tiles);
     
     return tiles;
 };
@@ -813,33 +833,6 @@ RANDO.Utils.joinTiles = function (tiles) {
     return tiles;
 };
 
-/**
- * generateGrid() : generates a grid from a, extent and an array of altitudes
- *      - extent: extent of the new grid
- *      - altitudes: two-dimensionnal array which contains altitudes 
- * 
- * return the grid of points
- */
-RANDO.Utils.generateGrid = function (extent, altitudes) {
-    // Generates grid from extent datas
-    var grid = RANDO.Utils.createGrid(
-        extent.southwest, 
-        extent.southeast,
-        extent.northeast,
-        extent.northwest,
-        altitudes[0].length,
-        altitudes.length
-    );
-
-    // Gives altitudes to the grid 
-    for (row in altitudes){
-        for (col in altitudes[row]){
-            grid[row][col].z = grid[row][col].y;
-            grid[row][col].y = altitudes[row][col];
-        }
-    }
-    return grid;
-};
 
 
 /****    CAMERA     ************************/
@@ -876,20 +869,6 @@ RANDO.Utils.moveCameraTo = function (camera, position, target, callback) {
         }
     });
 }
-
-/**
- * placeCameraByDefault() : Place camera taking the DEM center in parameter
- *      - camera: camera to place
- *      - center: DEM center
- */
-RANDO.Utils.placeCameraByDefault = function (camera, center) {
-    camera.rotation = new BABYLON.Vector3(0.6, 1, 0);
-    camera.position = new BABYLON.Vector3(
-        center.x - 2000, 
-        center.y + 2500, 
-        center.z - 1500
-    );
-};
 
 /**
  * addKeyToCamera() : add a new position key and rotation key to the camera timeline
