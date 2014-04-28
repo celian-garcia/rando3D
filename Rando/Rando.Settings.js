@@ -36,4 +36,9 @@ RANDO.SETTINGS.TILE_ZOOM = 17;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+RANDO.SETTINGS.parse = function (settings) {
+    if ('test' in settings) {
+    }
+    
+};
 

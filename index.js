@@ -9,8 +9,7 @@ window.onload = function onload(){
         // Get the Canvas element from our HTML 
         var canvas = document.getElementById("canvas_renderer");
         
-        var scene = RANDO.Scene.launch(canvas);
-
+        var scene = new RANDO.Scene(canvas);
     });
     $("#menu .button:first").click();
 };

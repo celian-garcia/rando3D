@@ -1004,29 +1004,6 @@ RANDO.Utils.refreshPanels = function (number, scene) {
 
 
 /****    GETTERS     ************************/
-/**
- * getVerticesFromProfile() : 
- *      - profile : troncon profile in json 
- * 
- * return an array of vertices 
- */
-RANDO.Utils.getVerticesFromProfile = function (profile) {
-    var vertices =  [];
-    
-    for (it in profile){
-        var tmp = {
-            'lat' : profile[it][2][1],
-            'lng' : profile[it][2][0]
-        }
-        tmp = RANDO.Utils.toMeters(tmp);
-        tmp.z = tmp.y;
-        tmp.y = 0; 
-        vertices.push(tmp);
-    }
-    
-    return vertices;
-}
-
 /**tested
  * getUrlFromCoordinates(): get the url of a tile texture 
  *      z : level of zoom
