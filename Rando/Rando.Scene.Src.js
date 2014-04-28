@@ -49,7 +49,7 @@ function process (b_dem, b_trek) {
      // Trek building
      .then(function () {
         if (b_trek) {
-            RANDO.Builds.Trek(
+            that.trek = new RANDO.Trek  (
                 that._trek_data,
                 that._offsets,
                 that._scene

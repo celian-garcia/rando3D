@@ -20,10 +20,10 @@ RANDO = RANDO || {};
         this._data = data;
         this._offsets = offsets;
         this._scene = scene;
-        
+
         this._tiles = {};
         this.ground = new BABYLON.Mesh("Digital Elevation Model", scene);
-        this.sides  = new BABYLON.Mesh("Sides", scene);;
+        this.sides  = new BABYLON.Mesh("Sides", scene);
 
         /* Initialization */
         this._generateTiles();
