@@ -182,17 +182,17 @@ describe('Rando3D', function() {
             });
         });
         
-        describe('Trapeze grid - "createGrid()"', function() {
+        describe('Trapeze grid - "createFlatGrid()"', function() {
             it("should return null point", function(done) {
                 var A = { x : 54,  y : 545 };
                 var B = { x : 325, y : 245 };
                 var C = { x : 24,  y : 42  };
                 var D = { x : 525, y : 245 };
                     
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 0, 54), null);
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 45, 0), null);
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D,  0, 0), null);
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, -5,45), null);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D, 0, 54), null);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D, 45, 0), null);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D,  0, 0), null);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D, -5,45), null);
                 
                 done();
             });
@@ -209,7 +209,7 @@ describe('Rando3D', function() {
                     [D, { x : 1, y : 2 }, C]
                 ];
 
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 3, 3), res);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D, 3, 3), res);
                 
                 done();
             });
@@ -226,7 +226,7 @@ describe('Rando3D', function() {
                     [D, { x : 1, y :-1 }, C]
                 ];
 
-                assert.deepEqual(RANDO.Utils.createGrid(A, B, C, D, 3, 3), res);
+                assert.deepEqual(RANDO.Utils.createFlatGrid(A, B, C, D, 3, 3), res);
                 
                 done();
             });
