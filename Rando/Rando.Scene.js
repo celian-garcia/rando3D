@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Rando.Scene.Hdr.js
+ * 
+ * Scene class : header file
+ * Contains all attributes and prototypes of the Scene class
+ * 
+ * 
+ * /!\ Need to be included in html file in this order
+ *      <script src="Rando/Rando.Scene.Src.js"></script>
+ *      <script src="Rando/Rando.Scene.Hdr.js"></script>
+ * 
+ ******************************************************************************/
 RANDO = RANDO || {};
 
 (function () {
