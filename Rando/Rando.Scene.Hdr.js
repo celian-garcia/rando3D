@@ -15,63 +15,43 @@ RANDO = RANDO || {};
 (function () {
 
     RANDO.Scene = function (canvas, settings) {
-        if (typeof(settings) !== 'undefined') {
-            RANDO.SETTINGS.parse(settings);
-        }
-        
-        // Check support
-        if (!BABYLON.Engine.isSupported()) {
-            return null;
-        } 
-        var that = this;
-        
-        // Load BABYLON 3D engine
+        /* Attributes declaration */
+        this._canvas = canvas;
         this._engine = new BABYLON.Engine(canvas, true);
+        this._scene  = new BABYLON.Scene(this._engine);
+        this.camera  = null;
+        this.lights  = [];
+        this.dem     = null;
+        this.trek    = null;
+        
+        this._dem_data  = {};
+        this._trek_data = [];
+        this._offsets   = {};
+
+
+        /* Initialization */
+        var that = this;
         RANDO.Events.addEvent(window, "resize", function(){
             that._engine.resize();
         });
-        
-        this._canvas = canvas;
-        
-        // Creation of the scene 
-        this._scene = new BABYLON.Scene(this._engine);
-        
-        // Enable Collisions
+
+        if (typeof(settings) !== 'undefined') {
+            RANDO.SETTINGS.parse(settings);
+        }
+
         this._scene.collisionsEnabled = true;
-
-        // Camera
-        this.camera = RANDO.Builds.Camera(this._scene);
-
-        // Lights
-        this.lights = RANDO.Builds.Lights(this._scene);
-
-        this.dem = null;
-        this.trek = null;
-        
-        // Data used by DEM constructor
-        this._dem_data = {};
-        
-        // Data used by Trek constructor
-        this._trek_data = [];
-        
-        // Data used by both constructors
-        this._offsets = {};
-        
-        this.buildAndRun(true, true);
+        this._buildCamera();
+        this._buildLights();
+        this.process(true, true);
     };
 
     RANDO.Scene.prototype = {
-        buildAndRun:        buildAndRun,
+        process:            process,
+        _buildCamera:       _buildCamera,
+        _buildLights:       _buildLights,
         _executeWhenReady:  _executeWhenReady,
         _parseDemJson:      _parseDemJson,
         _parseTrekJson:     _parseTrekJson
     };
 
-
 })();
-
-
-
-
-
-

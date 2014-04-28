@@ -1,19 +1,23 @@
 
 /*******************************************************************************
- * Rando.Dem.Src.js
+ * Rando.Scene.Src.js
  * 
- * Dem class : sources file
- * Contains all functions relative to the Dem class
+ * Scene class : sources file
+ * Contains all functions relative to the Scene class
  * 
  * 
  * /!\ Need to be included in html file in this order
- *      <script src="Rando/Rando.Dem.Src.js"></script>
- *      <script src="Rando/Rando.Dem.Hdr.js"></script>
+ *      <script src="Rando/Rando.Scene.Src.js"></script>
+ *      <script src="Rando/Rando.Scene.Hdr.js"></script>
  * 
  ******************************************************************************/
 
-
-function buildAndRun (b_dem, b_trek) {
+/**
+ * RANDO.Scene.process() : launch the building process of the scene 
+ *      - b_dem : boolean which defines if we build the DEM or not (true by def)
+ *      - b_trek : boolean which defines if we build the Trek or not (true by def)
+ */
+function process (b_dem, b_trek) {
     var that = this;
     if (typeof(b_dem) === 'undefined')  b_dem  = true;
     if (typeof(b_trek) === 'undefined') b_trek = true;
@@ -61,6 +65,49 @@ function buildAndRun (b_dem, b_trek) {
      });
 };
 
+
+/**
+ * RANDO.Scene._buildCamera() : build the camera of the scene
+ */
+function _buildCamera() {
+    var camera = this.camera;
+    var scene  = this._scene;
+        
+    camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+    camera.checkCollisions = true;
+    camera.maxZ = 10000;
+    camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+    camera.keysUp = [90, 38]; // Touche Z and up
+    camera.keysDown = [83, 40]; // Touche S and down
+    camera.keysLeft = [81, 37]; // Touche Q and left
+    camera.keysRight = [68, 39]; // Touche D and right
+    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
+    
+    var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
+    l_cam.intensity = 0.8;
+    l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
+    l_cam.parent = camera;
+};
+
+
+/**
+ * RANDO.Scene._buildLights() : build the differents lights of the scene 
+ */
+function _buildLights() {
+    var lights = this.lights;
+    var scene = this._scene;
+    
+    // Sun
+    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
+    sun.specular = new BABYLON.Color4(0, 0, 0, 0);
+    lights.push(sun);
+};
+
+
+/**
+ * RANDO.Scene._executeWhenReady() : function which is executed when the scene 
+ * is ready, in other words, when the scene have built all its elements.
+ */
 function _executeWhenReady () {
     var scene = this._scene;
     
@@ -108,7 +155,10 @@ function _executeWhenReady () {
 };
 
 
-
+/**
+ * RANDO.Scene._parseDemJson() : parse data from the DEM json 
+ *      - data : data from DEM json
+ */
 function _parseDemJson (data) {
     var dem_data = this._dem_data,
         offsets = this._offsets;
@@ -144,7 +194,10 @@ function _parseDemJson (data) {
 };
 
 
-
+/**
+ * RANDO.Scene._parseTrekJson() : parse data from the Trek profile json 
+ *      - data : data from Trek profile json
+ */
 function _parseTrekJson (data) {
     var profile = data.profile;
     var trek_data = this._trek_data;
@@ -162,11 +215,3 @@ function _parseTrekJson (data) {
         trek_data.push(_.clone(tmp));
     }
 };
-
-
-
-
-
-
-
-

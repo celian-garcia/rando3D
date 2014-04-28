@@ -143,41 +143,5 @@ RANDO.Builds.Cardinals = function(extent, scene){
 
 }
 
-/**
- *  Camera() : initialize main parameters of camera    
- *      - scene : the current scene
- * 
- *  return the camera
- * */
-RANDO.Builds.Camera = function(scene){
-    var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
-    camera.checkCollisions = true;
-    camera.maxZ = 10000;
-    camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-    camera.keysUp = [90, 38]; // Touche Z
-    camera.keysDown = [83, 40]; // Touche S
-    camera.keysLeft = [81, 37]; // Touche Q
-    camera.keysRight = [68, 39]; // Touche D
-    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
-    var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
-    l_cam.intensity = 0.8;
-    l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
-    l_cam.parent = camera;
-    return camera;
-}
 
-/**
- *  Lights() : initialize main parameters of lights    
- *      - scene : the current scene
- * 
- *  return an array containing all lights
- * */
-RANDO.Builds.Lights = function(scene){
-    var lights = [];
-    
-    // Sun
-    var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
-    sun.specular = new BABYLON.Color4(0, 0, 0, 0);
-    lights.push(sun);
-    return lights;
-}
+
