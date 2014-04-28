@@ -67,7 +67,7 @@ function process (b_dem, b_trek) {
 
 
 /**
- * RANDO.Scene._buildCamera() : build the camera of the scene
+ * RANDO.Scene._buildCamera() : builds the camera of the scene
  */
 function _buildCamera() {
     var camera = this.camera;
@@ -91,7 +91,7 @@ function _buildCamera() {
 
 
 /**
- * RANDO.Scene._buildLights() : build the differents lights of the scene 
+ * RANDO.Scene._buildLights() : builds the differents lights of the scene 
  */
 function _buildLights() {
     var lights = this.lights;
@@ -101,6 +101,52 @@ function _buildLights() {
     var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
     sun.specular = new BABYLON.Color4(0, 0, 0, 0);
     lights.push(sun);
+};
+
+
+/**
+ * RANDO.Scene._buildCardinals() : builds the four cardinals points
+ */
+function _buildCardinals() {
+    
+    var tmp;
+    var sph_diam = 20;
+    var matA = new BABYLON.StandardMaterial("SphereMaterial", scene);
+    var A = BABYLON.Mesh.CreateSphere("SphereA", 5, sph_diam, scene);
+    tmp = extent.northwest;
+    A.position.x = tmp.x;
+    A.position.y = 1500;
+    A.position.z = tmp.y;
+    matA.diffuseColor = new BABYLON.Color3(255,255,255);
+    A.material = matA;
+    
+    var matB = new BABYLON.StandardMaterial("SphereMaterial", scene);
+    var B = BABYLON.Mesh.CreateSphere("SphereB", 5, sph_diam, scene);
+    tmp = extent.northeast;
+    B.position.x = tmp.x;
+    B.position.y = 1500;
+    B.position.z = tmp.y;
+    matB.diffuseColor = new BABYLON.Color3(255,0,0);
+    B.material = matB;
+    
+    var matC = new BABYLON.StandardMaterial("SphereMaterial", scene);
+    var C = BABYLON.Mesh.CreateSphere("SphereC", 5, sph_diam, scene);
+    tmp = extent.southeast;
+    C.position.x = tmp.x;
+    C.position.y = 1500;
+    C.position.z = tmp.y;
+    matC.diffuseColor = new BABYLON.Color3(0,0,255);
+    C.material = matC;
+    
+    var matD = new BABYLON.StandardMaterial("SphereMaterial", scene);
+    var D = BABYLON.Mesh.CreateSphere("SphereD", 5, sph_diam, scene);
+    tmp = extent.southwest;
+    D.position.x = tmp.x;
+    D.position.y = 1500;
+    D.position.z = tmp.y;
+    matD.diffuseColor = new BABYLON.Color3(0,255,0);
+    D.material = matD;
+
 };
 
 

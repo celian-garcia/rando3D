@@ -87,61 +87,7 @@ RANDO.Builds.Trek = function( vertices, offsets, scene, pan_b ){
     console.log("Trek built ! " + (Date.now() - RANDO.START_TIME) );
 }
 
-/**
- * cardinals() : build the NW, NE, SE and SW extrems points of the DEM with spheres
- * 
- *      - extent : contain the four corners of the DEM
- *      - scene  : current scene  
- * 
- * NB : each point have its own color
- *          NW --> White 
- *          NE --> Red
- *          SE --> Blue
- *          SW --> Green
- * 
- */
-RANDO.Builds.Cardinals = function(extent, scene){
 
-    var tmp;
-    var sph_diam = 20;
-    var matA = new BABYLON.StandardMaterial("SphereMaterial", scene);
-    var A = BABYLON.Mesh.CreateSphere("SphereA", 5, sph_diam, scene);
-    tmp = extent.northwest;
-    A.position.x = tmp.x;
-    A.position.y = 1500;
-    A.position.z = tmp.y;
-    matA.diffuseColor = new BABYLON.Color3(255,255,255);
-    A.material = matA;
-    
-    var matB = new BABYLON.StandardMaterial("SphereMaterial", scene);
-    var B = BABYLON.Mesh.CreateSphere("SphereB", 5, sph_diam, scene);
-    tmp = extent.northeast;
-    B.position.x = tmp.x;
-    B.position.y = 1500;
-    B.position.z = tmp.y;
-    matB.diffuseColor = new BABYLON.Color3(255,0,0);
-    B.material = matB;
-    
-    var matC = new BABYLON.StandardMaterial("SphereMaterial", scene);
-    var C = BABYLON.Mesh.CreateSphere("SphereC", 5, sph_diam, scene);
-    tmp = extent.southeast;
-    C.position.x = tmp.x;
-    C.position.y = 1500;
-    C.position.z = tmp.y;
-    matC.diffuseColor = new BABYLON.Color3(0,0,255);
-    C.material = matC;
-    
-    var matD = new BABYLON.StandardMaterial("SphereMaterial", scene);
-    var D = BABYLON.Mesh.CreateSphere("SphereD", 5, sph_diam, scene);
-    tmp = extent.southwest;
-    D.position.x = tmp.x;
-    D.position.y = 1500;
-    D.position.z = tmp.y;
-    matD.diffuseColor = new BABYLON.Color3(0,255,0);
-    D.material = matD;
-
-
-}
 
 
 

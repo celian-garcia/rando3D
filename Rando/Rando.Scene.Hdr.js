@@ -49,6 +49,7 @@ RANDO = RANDO || {};
         process:            process,
         _buildCamera:       _buildCamera,
         _buildLights:       _buildLights,
+        _buildCardinals:    _buildCardinals,
         _executeWhenReady:  _executeWhenReady,
         _parseDemJson:      _parseDemJson,
         _parseTrekJson:     _parseTrekJson
