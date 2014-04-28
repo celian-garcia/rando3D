@@ -22,9 +22,6 @@ function buildTrek () {
     var scene = this._scene;
     var spheres = this.spheres;
     var cylinders = this.cylinders;
-    
-    this.translate();
-    RANDO.Utils.animateCamera(vertices, scene);
 
     // Trek material
     var trek_material = new BABYLON.StandardMaterial("Trek Material", scene);
@@ -85,7 +82,7 @@ function buildTrek () {
 
 
 /**
- * RANDO.Trek.translate() : translate the Trek of the offsets attribute or of 
+ * RANDO.Trek.translate() : translate the Trek data of the offsets attribute or of 
  * the offsets given in parameters
  */
 function translate (dx, dy, dz) {

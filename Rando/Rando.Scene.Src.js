@@ -54,6 +54,9 @@ function process (b_dem, b_trek) {
                 that._offsets,
                 that._scene
             );
+            that.trek.init();
+            
+            RANDO.Utils.animateCamera(that._trek_data, that._scene);
         }
      })
      .then(function () {

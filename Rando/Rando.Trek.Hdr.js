@@ -24,15 +24,19 @@ RANDO = RANDO || {};
         this.spheres = new BABYLON.Mesh("Spheres", scene);
         this.cylinders = new BABYLON.Mesh("Cylinders", scene);
         
-        /* Initialization */
-        this.buildTrek();
     };
 
     RANDO.Trek.prototype = {
+        init:       init,
         buildTrek:  buildTrek,
         translate:  translate
     };
 
 })();
+
+function init () {
+    this.translate();
+    this.buildTrek();
+};
 
 
