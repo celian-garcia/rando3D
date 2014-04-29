@@ -305,30 +305,75 @@ RANDO.Utils.computeMeshNormals = function (mesh) {
     vertices.applyToMesh(mesh);
 };
 
+RANDO.Utils.computeTilesSize = function (tiles) {
+    for (var it in tiles) {
+        var tile = tiles[it];
+        var grid = tile.grid;
+        var n = grid.length-1;
+        var m = grid[0].length-1;
+        tile.size = {
+            'width' : grid[0][m].x - grid[0][0].x,
+            'height': grid[n][0].z - grid[0][0].z
+        };
+    }
+    console.log(tiles);
+};
 /**to refac
  * computeTilesUvs() :  compute and add uvs values of all tiles 
  *      - tiles: object which will contains uvs data
  */
 RANDO.Utils.computeTilesUvs = function (tiles) {
+
+    var max_width = _.max(tiles, function(tile) {
+            return tile.size.width;
+    }).size.width;
+    
+    var max_height = _.max(tiles, function(tile) {
+            return tile.size.height;
+    }).size.height;
+
+
     // Fill the uv data of tiles with classic values
     for (it in tiles) {
         var tile = tiles[it];
         tile.uv = {};
         tile.uv.u = [];
         tile.uv.v = [];
-        
+        var width, height;
         var n = tile.grid[0].length-1;
-        var width = tile.grid[0][n].x - tile.grid[0][0].x ;
+        var m = tile.grid.length-1;
+        var extent = RANDO.Utils.getTileExtent(tiles);
+
+        // If current tile is in east border
+        if (tile.coordinates.x == extent.x.max || tile.coordinates.x == extent.x.min) {
+            width = max_width;
+        }else {
+            width = tile.grid[0][n].x - tile.grid[0][0].x ;
+        }
+
+        // If current tile is in south border
+        if (tile.coordinates.y == extent.y.max || tile.coordinates.y == extent.y.min) {
+            height = max_height;
+        }else {
+            height = tile.grid[m][0].z - tile.grid[0][0].z ;
+        }
+
         tile.uv.u.push(0);
         for (var col = 0; col < n; col++) {
-            var crt_x = tile.grid[0][col].x;
-            var nxt_x = tile.grid[0][col+1].x;
+            var crt_x = tile.grid[0][n-col-1].x;
+            var nxt_x = tile.grid[0][n-col].x;
             var u = ((nxt_x - crt_x)/width) + tile.uv.u[col];
             tile.uv.u.push(u);
         }
-        
-        var m = tile.grid.length-1;
-        var height = tile.grid[m][0].z - tile.grid[0][0].z ;
+        if (tile.coordinates.x == extent.x.min) {
+            
+            tile.uv.u.reverse();
+            
+            for (i in tile.uv.u) {
+                tile.uv.u[i] = 1- tile.uv.u[i];
+            }
+        }
+
         tile.uv.v.push(0);
         for (var row = 0; row < m; row++) {
             var crt_z = tile.grid[row][0].z;
@@ -336,81 +381,20 @@ RANDO.Utils.computeTilesUvs = function (tiles) {
             var v = ((nxt_z - crt_z)/height) + tile.uv.v[row];
             tile.uv.v.push(v);
         }
-        tile.uv.v.reverse();
-    }
+        for (i in tile.uv.v) {
+            tile.uv.v[i] = 1- tile.uv.v[i];
+        }
 
-    // Computes uvs values of border tiles
-    RANDO.Utils.borderTilesUvs(tiles);
-};
-
-/**to refac
- * borderTilesUvs() : Computes uv values of the border tiles
- *      - tiles: array of tiles data
- */ 
-RANDO.Utils.borderTilesUvs = function (tiles) {
-    // Max height resolution of all tiles
-    var max_h_res = _.max(tiles, function(tile) {
-            return tile.grid.length;
-    }).grid.length-1;
-
-    // Max width resolution of all tiles
-    var max_w_res = _.max(tiles, function(tile) {
-            return tile.grid[0].length;
-    }).grid[0].length-1;
-
-
-    var extent = RANDO.Utils.getTileExtent(tiles);
-    for (it in tiles) {
-        var tile = tiles[it];
         if (tile.coordinates.y == extent.y.min) {
-            northTilesUvs(tile, max_h_res);
-        }
-        if (tile.coordinates.x == extent.x.max) {
-            eastTilesUvs(tile, max_w_res);
-        }
-        if (tile.coordinates.y == extent.y.max) {
-            southTilesUvs(tile, max_h_res);
-        }
-        if (tile.coordinates.x == extent.x.min) {
-            westTilesUvs(tile, max_w_res);
+            tile.uv.v.reverse();
+            
+            for (i in tile.uv.v) {
+                tile.uv.v[i] = 1- tile.uv.v[i];
+            }
+            console.log(tile.uv.v);
+            
         }
     }
-    
-    // Computes UV values of a north tile
-    function northTilesUvs (tile, max_h_res) {
-        var curr_h_res = tile.grid.length;
-        var index = 0;
-        for (var j = curr_h_res-1; j >= 0; j--) {
-            tile.uv.v[index++] = j/max_h_res ;
-        }
-    };
-
-    // Computes UV values of an east tile
-    function eastTilesUvs (tile, max_w_res) {
-        var curr_w_res = tile.grid[0].length;
-        var index = 0;
-        for (var i = 0; i < curr_w_res; i++) {
-            tile.uv.u[index++] = i/max_w_res ;
-        }
-    };
-
-    // Computes UV values of a south tile
-    function southTilesUvs (tile, max_h_res) {
-        var curr_h_res = tile.grid.length;
-        var index = 0;
-        for (var j = 0 ; j < curr_h_res; j++) {
-            tile.uv.v[index++] = 1 - j/max_h_res ;
-        }
-    };
-
-    // Computes UV values of a west tile
-    function westTilesUvs (tile, max_w_res) {
-        var curr_w_res = tile.grid[0].length;
-        var index = 0;
-        for (var i = curr_w_res-1; i >= 0; i--) {
-            tile.uv.u[index++] = 1 - i/max_w_res ;
-        }
-    };
 };
 
 /**

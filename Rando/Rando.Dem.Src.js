@@ -169,6 +169,8 @@ function _generateTiles () {
     // At this moment, tiles are not joined at all, so we need to join it 
     RANDO.Utils.joinTiles(tiles);
     
+    RANDO.Utils.computeTilesSize(tiles);
+    
     // Compute tiles uv for future texture mapping 
     RANDO.Utils.computeTilesUvs(tiles);
     
