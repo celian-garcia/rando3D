@@ -42,6 +42,7 @@ function process (b_dem, b_trek) {
                 that._scene
             );
             
+            that._scene.activeCamera.attachControl(that._canvas);
             that._scene.render();
         }
      })
@@ -60,7 +61,6 @@ function process (b_dem, b_trek) {
         }
      })
      .then(function () {
-        that._scene.activeCamera.attachControl(that._canvas);
         
         that._scene.executeWhenReady(function () {
             that._executeWhenReady ();

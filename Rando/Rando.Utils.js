@@ -305,7 +305,7 @@ RANDO.Utils.computeMeshNormals = function (mesh) {
     vertices.applyToMesh(mesh);
 };
 
-/**
+/**to refac
  * computeTilesUvs() :  compute and add uvs values of all tiles 
  *      - tiles: object which will contains uvs data
  */
@@ -318,21 +318,32 @@ RANDO.Utils.computeTilesUvs = function (tiles) {
         tile.uv.v = [];
         
         var n = tile.grid[0].length-1;
-        for (col in tile.grid[0]) {
-            tile.uv.u.push(col/n);
+        var width = tile.grid[0][n].x - tile.grid[0][0].x ;
+        tile.uv.u.push(0);
+        for (var col = 0; col < n; col++) {
+            var crt_x = tile.grid[0][col].x;
+            var nxt_x = tile.grid[0][col+1].x;
+            var u = ((nxt_x - crt_x)/width) + tile.uv.u[col];
+            tile.uv.u.push(u);
         }
         
         var m = tile.grid.length-1;
-        for (row in tile.grid) {
-            tile.uv.v.push(1- row/m);
+        var height = tile.grid[m][0].z - tile.grid[0][0].z ;
+        tile.uv.v.push(0);
+        for (var row = 0; row < m; row++) {
+            var crt_z = tile.grid[row][0].z;
+            var nxt_z = tile.grid[row+1][0].z;
+            var v = ((nxt_z - crt_z)/height) + tile.uv.v[row];
+            tile.uv.v.push(v);
         }
+        tile.uv.v.reverse();
     }
 
     // Computes uvs values of border tiles
     RANDO.Utils.borderTilesUvs(tiles);
 };
 
-/**
+/**to refac
  * borderTilesUvs() : Computes uv values of the border tiles
  *      - tiles: array of tiles data
  */ 
@@ -758,8 +769,6 @@ RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
         }
         new_line = true;
     }
-    
-    console.log(tiles);
 
     // Push the last line of the last tile 
     tiles[curr_index].grid.push(line_tmp);
@@ -793,14 +802,14 @@ RANDO.Utils.joinTiles = function (tiles) {
                 var next_point = next_grid[row][0];
                 var mid = RANDO.Utils.middle(prev_point, next_point);
                 current_grid[row].push(mid);
-                next_grid[row].splice(0, 0, $.extend({}, mid));
+                next_grid[row].splice(0, 0, _.clone(mid));
             }
         }
     }
     
     // Joins North and South sides of tiles  
     for (it in tiles) {
-        var current_tile = $.extend({}, tiles[it]);
+        var current_tile = _.clone(tiles[it]);
         var next_coord = {
             z: current_tile.coordinates.z,
             x: current_tile.coordinates.x,
@@ -812,10 +821,10 @@ RANDO.Utils.joinTiles = function (tiles) {
             var next_tile = tiles[next_index];
             
             // First line of current tile
-            var prev_line = $.extend({}, current_tile.grid[0]);
+            var prev_line = _.clone(current_tile.grid[0]);
             
             // Last line of next tile
-            var next_line = $.extend({}, next_tile.grid[next_tile.grid.length-1]);
+            var next_line = _.clone(next_tile.grid[next_tile.grid.length-1]);
             
             // we create a new line placed on the middle of the both previous
             // We need two variables to store this line 
@@ -824,8 +833,8 @@ RANDO.Utils.joinTiles = function (tiles) {
             
             for (i in prev_line) {
                 var mid = RANDO.Utils.middle(prev_line[i], next_line[i]);
-                mid_line1.push($.extend({}, mid));
-                mid_line2.push($.extend({}, mid));
+                mid_line1.push(_.clone(mid));
+                mid_line2.push(_.clone(mid));
             }
             
             // The "middle line" go to the bottom of current tile
@@ -1086,7 +1095,7 @@ RANDO.Utils.getTileExtent = function (tiles) {
  * { lat : .. , lng : .. }  ---> { x : .. , y : .. }
  */
 RANDO.Utils.toMeters = function (latlng) {
-    
+
     var R = 6378137;
 
     var d = Math.PI / 180;
@@ -1097,7 +1106,7 @@ RANDO.Utils.toMeters = function (latlng) {
         x : R * latlng.lng * d,
         y : R * Math.log((1 + sin) / (1 - sin)) / 2
     };
-}
+};
 
 /**tested
  * toLatlng() : convert a point in x/y meters coordinates to latitude/longitude 
