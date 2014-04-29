@@ -8,7 +8,8 @@ RANDO.SETTINGS = {};
 // Links
 RANDO.SETTINGS.DEM_URL; // Url of the DEM json
 RANDO.SETTINGS.PROFILE_URL; // Url of the trek's profile json
-RANDO.SETTINGS.TILE_TEX_URL = "https://api.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/{z}/{x}/{y}.png";
+RANDO.SETTINGS.TILE_TEX_URL = "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png";
+
 RANDO.SETTINGS.SIDE_TEXTURE  = "img/side.jpg";
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@ RANDO.SETTINGS.TREK_COLOR = new BABYLON.Color3(0.1,0.6,0.2); // Trek color (gree
                  
 RANDO.SETTINGS.TREK_WIDTH = 3; // Trek width (in meters)
 
-RANDO.SETTINGS.TILE_ZOOM = 17;
+RANDO.SETTINGS.TILE_ZOOM = 16;
 
 ////////////////////////////////////////////////////////////////////////////////
 

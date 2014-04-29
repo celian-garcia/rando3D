@@ -80,10 +80,15 @@ RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
     var h_subdivisions = grid.length-1;
     var w_subdivisions = grid[0].length-1;
     
+    
+    //~ console.log(grid    );
+    
     for (row = 0; row <= h_subdivisions; row++) {
+        w_subdivisions = grid[row].length-1;
         for (col = 0; col <= w_subdivisions; col++) {
             var position = grid[h_subdivisions - row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
+            //~ console.log(position);
             
             positions.push(position.x, position.y, position.z);
             normals.push(normal.x, normal.y, normal.z);
@@ -92,6 +97,7 @@ RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
     }
 
     for (row = 0; row < h_subdivisions; row++) {
+        w_subdivisions = grid[row].length-1;
         for (col = 0; col < w_subdivisions; col++) {
             indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
             indices.push(col + 1 + row * (w_subdivisions + 1));
@@ -729,23 +735,21 @@ RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
 
             // tiles["z/x/y"] exists or not
             tiles[curr_index] = tiles[curr_index] || {};
-
+            if (Object.keys(tiles[curr_index]).length == 0){
+                tiles[curr_index].grid = [];
+                tiles[curr_index].coordinates = {
+                    z: zoom,
+                    x: curr_tile_n.xtile,
+                    y: curr_tile_n.ytile 
+                };
+            }
             // if the previous index exists and is different from the current index
             if ( prev_index != null && prev_index != curr_index ) {
-                if ( tiles[prev_index].grid == null ) {
-                    tiles[prev_index].grid = [];
-                    tiles[prev_index].coordinates = {
-                        z: zoom,
-                        x: prev_tile_n.xtile,
-                        y: prev_tile_n.ytile 
-                    };
-                }
                 tiles[prev_index].grid.push(line_tmp); // push the line into previous tile
-
                 line_tmp = []; // reset the line
             }
 
-            line_tmp.push($.extend({}, curr_point));
+            line_tmp.push(_.clone(curr_point));
 
             prev_index = curr_index;
             prev_point = curr_point;
@@ -755,6 +759,8 @@ RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
         new_line = true;
     }
     
+    console.log(tiles);
+
     // Push the last line of the last tile 
     tiles[curr_index].grid.push(line_tmp);
     
@@ -762,7 +768,7 @@ RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
 };
 
 /**
- * joinTiles() : Join each tile with its east and north neightboors  
+ * joinTiles() : Join each tile with its east and north neighboors  
  *      - tiles: list of tiles
  */
 RANDO.Utils.joinTiles = function (tiles) {
@@ -780,7 +786,7 @@ RANDO.Utils.joinTiles = function (tiles) {
         if (tiles[next_index]) {
             var current_grid = current_tile.grid;
             var next_grid = tiles[next_index].grid;
-            
+
             // for each row in the current tile grid
             for (row in current_grid) {
                 var prev_point = current_grid[row][current_grid[row].length-1];

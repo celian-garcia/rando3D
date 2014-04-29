@@ -212,10 +212,9 @@ function _parseDemJson (data) {
     var dem_data = this._dem_data,
         offsets = this._offsets;
         
-        
     var m_center = RANDO.Utils.toMeters(data.center);
     var m_extent = RANDO.Utils.extent2meters (data.extent);
-    
+
     // Record DEM data
     dem_data.o_extent = _.clone(m_extent);
     dem_data.extent = m_extent;
