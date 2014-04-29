@@ -194,7 +194,7 @@ function _initCamera () {
     var center  = this._data.center;
     var offsets = this._offsets
     
-    scene.activeCamera.rotation = new BABYLON.Vector3(0.6, 1, 0);
+    scene.activeCamera.rotation = new BABYLON.Vector3(1.08, 1, 0);
     scene.activeCamera.position = new BABYLON.Vector3(
         center.x + offsets.x - 2000, 
         center.y + offsets.y + 2500, 

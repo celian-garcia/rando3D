@@ -17,8 +17,8 @@ RANDO = RANDO || {};
     RANDO.Scene = function (canvas, settings) {
         /* Attributes declaration */
         this._canvas = canvas;
-        this._engine = new BABYLON.Engine(canvas, true);
-        this._scene  = new BABYLON.Scene(this._engine);
+        this._engine = null;
+        this._scene  = null;
         this.camera  = null;
         this.lights  = [];
         this.dem     = null;
@@ -28,24 +28,10 @@ RANDO = RANDO || {};
         this._trek_data = [];
         this._offsets   = {};
 
-
-        /* Initialization */
-        var that = this;
-        RANDO.Events.addEvent(window, "resize", function(){
-            that._engine.resize();
-        });
-
-        if (typeof(settings) !== 'undefined') {
-            RANDO.SETTINGS.parse(settings);
-        }
-
-        this._scene.collisionsEnabled = true;
-        this._buildCamera();
-        this._buildLights();
-        this.process(true, true);
     };
 
     RANDO.Scene.prototype = {
+        init:               init,
         process:            process,
         _buildCamera:       _buildCamera,
         _buildLights:       _buildLights,
@@ -56,3 +42,29 @@ RANDO = RANDO || {};
     };
 
 })();
+
+function init() {
+    if(this._scene != null)  {
+        this._scene.dispose();
+        this._scene = null;
+        this._engine.dispose();
+        this._engine = null;
+        this.camera = null;
+    }
+        
+    this._engine = new BABYLON.Engine(this._canvas, true);
+    this._scene  = new BABYLON.Scene(this._engine);
+    var that = this;
+    RANDO.Events.addEvent(window, "resize", function(){
+        that._engine.resize();
+    });
+    
+    if (typeof(settings) !== 'undefined') {
+        RANDO.SETTINGS.parse(settings);
+    }
+
+    this._scene.collisionsEnabled = true;
+    this._buildCamera();
+    this._buildLights();
+    this.process(true, true);
+}
