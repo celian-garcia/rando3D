@@ -10,7 +10,6 @@ window.onload = function onload(){
         var canvas = document.getElementById("canvas_renderer");
         
         var scene = new RANDO.Scene(canvas);
-        scene.init();
     });
     $("#menu .button:first").click();
 };
