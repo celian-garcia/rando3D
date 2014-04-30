@@ -367,18 +367,17 @@ RANDO.Utils.computeTilesUvs = function (tiles) {
     }
 };
 
-RANDO.Utils.uValues = function(tile, width, string) {
+RANDO.Utils.uValues = function (tile, width, string) {
     if (typeof (string) === 'undefined') string = "normal";
     console.assert(
         string == "east" || string == "normal" || string == "west", 
         "uValues() function uncorrectly used"
     );
-    
-    
+
     if (string == "west") {
         string = "normal";
     }
-    
+
     var n = tile.grid[0].length-1;
     switch (string) {
         case "east": 
@@ -406,7 +405,7 @@ RANDO.Utils.uValues = function(tile, width, string) {
     }
 };
 
-RANDO.Utils.vValues = function(tile, height, string) {
+RANDO.Utils.vValues = function (tile, height, string) {
     if (typeof (string) === 'undefined') string = "normal";
     console.assert(
         string == "south" || string == "normal" || string == "north", 
@@ -416,7 +415,7 @@ RANDO.Utils.vValues = function(tile, height, string) {
     if (string == "north") {
         string = "normal";
     }
-    
+
     var m = tile.grid.length-1;
     switch (string) {
         case "south": 
