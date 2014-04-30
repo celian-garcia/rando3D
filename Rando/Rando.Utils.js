@@ -318,12 +318,12 @@ RANDO.Utils.computeTilesSize = function (tiles) {
     }
     console.log(tiles);
 };
-/**to refac
+
+/**
  * computeTilesUvs() :  compute and add uvs values of all tiles 
  *      - tiles: object which will contains uvs data
  */
 RANDO.Utils.computeTilesUvs = function (tiles) {
-
     var max_width = _.max(tiles, function(tile) {
             return tile.size.width;
     }).size.width;
@@ -332,70 +332,116 @@ RANDO.Utils.computeTilesUvs = function (tiles) {
             return tile.size.height;
     }).size.height;
 
+    var extent = RANDO.Utils.getTileExtent(tiles);
 
-    // Fill the uv data of tiles with classic values
+    // Fill the uv data of tiles 
     for (it in tiles) {
         var tile = tiles[it];
         tile.uv = {};
-        tile.uv.u = [];
-        tile.uv.v = [];
-        var width, height;
-        var n = tile.grid[0].length-1;
-        var m = tile.grid.length-1;
-        var extent = RANDO.Utils.getTileExtent(tiles);
 
-        // If current tile is in east border
-        if (tile.coordinates.x == extent.x.max || tile.coordinates.x == extent.x.min) {
-            width = max_width;
-        }else {
-            width = tile.grid[0][n].x - tile.grid[0][0].x ;
+        // Fill u array
+        if (tile.coordinates.x == extent.x.min) { // East tiles
+            tile.uv.u = RANDO.Utils.uValues(tile, max_width, "east");
+        }
+        else if (tile.coordinates.x == extent.x.max) { // West tiles
+            tile.uv.u = RANDO.Utils.uValues(tile, max_width, "west");
+        }
+        else { // Interior tiles
+            tile.uv.u = RANDO.Utils.uValues(tile, tile.size.width, "normal");
         }
 
-        // If current tile is in south border
-        if (tile.coordinates.y == extent.y.max || tile.coordinates.y == extent.y.min) {
-            height = max_height;
-        }else {
-            height = tile.grid[m][0].z - tile.grid[0][0].z ;
+        // Fill v array
+        if (tile.coordinates.y == extent.y.min) { // North tiles
+            tile.uv.v = RANDO.Utils.vValues(tile, max_height, "north");
         }
-
-        tile.uv.u.push(0);
-        for (var col = 0; col < n; col++) {
-            var crt_x = tile.grid[0][n-col-1].x;
-            var nxt_x = tile.grid[0][n-col].x;
-            var u = ((nxt_x - crt_x)/width) + tile.uv.u[col];
-            tile.uv.u.push(u);
+        else if (tile.coordinates.y == extent.y.max) { // South tiles
+            tile.uv.v = RANDO.Utils.vValues(tile, max_height, "south");
         }
-        if (tile.coordinates.x == extent.x.min) {
-            
-            tile.uv.u.reverse();
-            
-            for (i in tile.uv.u) {
-                tile.uv.u[i] = 1- tile.uv.u[i];
-            }
-        }
-
-        tile.uv.v.push(0);
-        for (var row = 0; row < m; row++) {
-            var crt_z = tile.grid[row][0].z;
-            var nxt_z = tile.grid[row+1][0].z;
-            var v = ((nxt_z - crt_z)/height) + tile.uv.v[row];
-            tile.uv.v.push(v);
-        }
-        for (i in tile.uv.v) {
-            tile.uv.v[i] = 1- tile.uv.v[i];
-        }
-
-        if (tile.coordinates.y == extent.y.min) {
-            tile.uv.v.reverse();
-            
-            for (i in tile.uv.v) {
-                tile.uv.v[i] = 1- tile.uv.v[i];
-            }
-            console.log(tile.uv.v);
-            
+        else { // Interior tiles
+            tile.uv.v = RANDO.Utils.vValues(tile, tile.size.height, "normal");
         }
     }
 };
+
+RANDO.Utils.uValues = function(tile, width, string) {
+    if (typeof (string) === 'undefined') string = "normal";
+    console.assert(
+        string == "east" || string == "normal" || string == "west", 
+        "uValues() function uncorrectly used"
+    );
+    
+    
+    if (string == "west") {
+        string = "normal";
+    }
+    
+    var n = tile.grid[0].length-1;
+    switch (string) {
+        case "east": 
+            var u = [];
+            u[n] = 1;
+            for (var col = n-1; col >= 0; col--) {
+                var crt_x = tile.grid[0][col].x;
+                var nxt_x = tile.grid[0][col+1].x;
+                u[col] = u[col+1] - (Math.abs(nxt_x - crt_x)/width);
+            }
+            return u;
+        break;
+        case "normal": 
+            var u = [];
+            u[0] = 0; 
+            for (var col = 1; col <= n; col++) {
+                var crt_x = tile.grid[0][col].x;
+                var prv_x = tile.grid[0][col-1].x;
+                u[col] = u[col-1] + (Math.abs(prv_x - crt_x)/width);
+            }
+            return u;
+        break;
+        default:
+            return null;
+    }
+};
+
+RANDO.Utils.vValues = function(tile, height, string) {
+    if (typeof (string) === 'undefined') string = "normal";
+    console.assert(
+        string == "south" || string == "normal" || string == "north", 
+        "uValues() function uncorrectly used"
+    );
+
+    if (string == "north") {
+        string = "normal";
+    }
+    
+    var m = tile.grid.length-1;
+    switch (string) {
+        case "south": 
+            var v = [];
+            v[m] = 1;
+            for (var row = m-1; row >= 0; row--) {
+                var crt_z = tile.grid[row][0].z;
+                var nxt_z = tile.grid[row+1][0].z;
+                v[row] = v[row+1] - (Math.abs(nxt_z - crt_z)/height);
+            }
+            v.reverse();
+            console.log(v);
+            return v;
+        break;
+        case "normal": 
+            var v = [];
+            v[0] = 0; 
+            for (var row = 1; row <= m; row++) {
+                var crt_z = tile.grid[row][0].z;
+                var prv_z = tile.grid[row-1][0].z;
+                v[row] = v[row-1] + (Math.abs(prv_z - crt_z)/height);
+            }
+            v.reverse();
+            return v;
+        break;
+        default: return null;
+    }
+};
+
 
 /**
  * setMeshUvs() : set the mesh uvs taking from the object uv taken in parameter
