@@ -11,6 +11,7 @@ RANDO = RANDO || {};
 
 (function () {
 
+    /* Constructor */
     RANDO.TileContainer = function (data, offsets) {
         /* Attributes declaration */
         this._data = _.clone(data);
@@ -354,5 +355,3 @@ RANDO = RANDO || {};
 
 
 })();
-
-

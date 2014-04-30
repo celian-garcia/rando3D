@@ -11,20 +11,18 @@ RANDO = RANDO || {};
 
 (function () {
 
+    /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {
         /* Attributes declaration */
         this._data = data;
         this._offsets = offsets;
         this._scene = scene;
         
-        this.spheres = new BABYLON.Mesh("Spheres", scene);
-        this.cylinders = new BABYLON.Mesh("Cylinders", scene);
-        
-        /*Initialization*/
-        this.init();
-        
+        this.spheres = new BABYLON.Mesh("Spheres", this._scene);
+        this.cylinders = new BABYLON.Mesh("Cylinders", this._scene);
     };
 
+    /* List of Methods */
     RANDO.Trek.prototype = {
         init:       init,
         buildTrek:  buildTrek,

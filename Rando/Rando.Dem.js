@@ -11,6 +11,7 @@ RANDO = RANDO || {};
 
 (function () {
 
+    /* Constructor */
     RANDO.Dem = function (data, offsets, scene) {
         /* Attributes declaration */
         this._data = data;
@@ -23,20 +24,26 @@ RANDO = RANDO || {};
         this.sides  = new BABYLON.Mesh("Sides", scene);
 
         /* Initialization */
-        this._initCamera();
-        this.buildGround();
-        this.buildSides();
+        this.init();
     };
 
     /* List of Methods */
     RANDO.Dem.prototype = {
+        init:               init,
         buildGround:        buildGround,
         buildSides:         buildSides,
         _buildTile:         _buildTile,
         _buildSide:         _buildSide,
         _initCamera:        _initCamera
     };
-    
+
+    function init() {
+        this._initCamera();
+        this.buildGround();
+        this.buildSides();
+    };
+
+
     /**
      * RANDO.Dem.buildGround() : build the ground of the DEM 
      */
@@ -186,8 +193,4 @@ RANDO = RANDO || {};
         );
     };
 
-
 })();
-
-
-

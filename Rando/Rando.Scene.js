@@ -9,30 +9,30 @@
  *      - a set of lights
  * 
  * @author: Célian GARCIA
- * 
  ******************************************************************************/
+
 RANDO = RANDO || {};
 
 (function () {
 
+    /* Constructor */
     RANDO.Scene = function (canvas, settings) {
-        /* Attributes declaration */
+        // Attributes declaration 
         this._canvas = canvas;
+        this._settings = settings;
         this._engine = null;
         this._scene  = null;
         this.camera  = null;
         this.lights  = [];
         this.dem     = null;
         this.trek    = null;
-        
+
         this._dem_data  = {};
         this._trek_data = [];
         this._offsets   = {};
-        
-        /*Initialization*/
-        this.init();
     };
 
+    /* List of Methods */
     RANDO.Scene.prototype = {
         init:               init,
         process:            process,
@@ -44,7 +44,7 @@ RANDO = RANDO || {};
         _parseTrekJson:     _parseTrekJson
     };
 
-
+    
     function init() {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
@@ -53,8 +53,8 @@ RANDO = RANDO || {};
             that._engine.resize();
         });
         
-        if (typeof(settings) !== 'undefined') {
-            RANDO.SETTINGS.parse(settings);
+        if (typeof(this._settings) !== 'undefined') {
+            RANDO.SETTINGS.parse(this._settings);
         }
 
         this._scene.collisionsEnabled = true;
@@ -105,7 +105,7 @@ RANDO = RANDO || {};
                     that._trek_data,
                     that._offsets,
                     that._scene
-                );
+                ).init();
                 
                 RANDO.Utils.animateCamera(that._trek_data, that._scene);
             }
