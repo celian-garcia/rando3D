@@ -146,49 +146,6 @@ function _buildSide (name, line, alt_min, reverse) {
 
 
 /**
- * RANDO.Dem._generateTiles() : generates an array of tiles which are js objects
- */
-function _generateTiles () {
-    var extent = this._data.extent;
-    var altitudes = this._data.altitudes;
-    var offsets = this._offsets;
-    var zoom = RANDO.SETTINGS.TILE_ZOOM;
-    var tiles = this._tiles;
-    
-    var grid = RANDO.Utils.createElevationGrid(
-        extent.southwest, 
-        extent.southeast,
-        extent.northeast,
-        extent.northwest,
-        altitudes
-    );
-
-    // Subdivide the elevation grid in tiles 
-    RANDO.Utils.subdivideGrid(tiles, grid, zoom);
-    
-    // At this moment, tiles are not joined at all, so we need to join it 
-    RANDO.Utils.joinTiles(tiles);
-    
-    RANDO.Utils.computeTilesSize(tiles);
-    
-    // Compute tiles uv for future texture mapping 
-    RANDO.Utils.computeTilesUvs(tiles);
-    
-    // Translate the tiles positions of the offsets
-    for (var it in tiles) {
-        var grid = tiles[it].grid;
-        for (row in grid) {
-            for (col in grid[row]) {
-                grid[row][col].x += offsets.x;
-                grid[row][col].y += offsets.y;
-                grid[row][col].z += offsets.z;
-            }
-        }
-    }
-};
-
-
-/**
  * RANDO.Dem._initCamera() : set the by default values of camera 
  */
 function _initCamera () {
