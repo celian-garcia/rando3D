@@ -305,6 +305,10 @@ RANDO.Utils.computeMeshNormals = function (mesh) {
     vertices.applyToMesh(mesh);
 };
 
+/**
+ * computeTilesSize() : computes height and width of each tile and add it to the tiles data container
+ *      - tiles: tiles data container
+ */
 RANDO.Utils.computeTilesSize = function (tiles) {
     for (var it in tiles) {
         var tile = tiles[it];
@@ -320,8 +324,8 @@ RANDO.Utils.computeTilesSize = function (tiles) {
 };
 
 /**
- * computeTilesUvs() :  compute and add uvs values of all tiles 
- *      - tiles: object which will contains uvs data
+ * computeTilesUvs() :  computes uv values of each tile and add it to the tiles data container
+ *      - tiles: tiles data container
  */
 RANDO.Utils.computeTilesUvs = function (tiles) {
     var max_width = _.max(tiles, function(tile) {
@@ -441,7 +445,6 @@ RANDO.Utils.vValues = function(tile, height, string) {
         default: return null;
     }
 };
-
 
 /**
  * setMeshUvs() : set the mesh uvs taking from the object uv taken in parameter
