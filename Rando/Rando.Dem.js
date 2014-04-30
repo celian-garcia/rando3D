@@ -17,8 +17,7 @@ RANDO = RANDO || {};
         this._data = data;
         this._offsets = offsets;
         this._scene = scene;
-
-        this._tiles = new RANDO.TileContainer(this._data, this._offsets)._tiles;
+        this._tiles = null;
         
         this.ground = new BABYLON.Mesh("Digital Elevation Model", scene);
         this.sides  = new BABYLON.Mesh("Sides", scene);
@@ -38,6 +37,11 @@ RANDO = RANDO || {};
     };
 
     function init() {
+        this._tiles = new RANDO.TileContainer(
+            this._data.extent, 
+            this._data.altitudes,
+            this._offsets
+        ).init();
         this._initCamera();
         this.buildGround();
         this.buildSides();

@@ -951,17 +951,3 @@ RANDO.Utils.drapePoint = function (point, dem) {
     }
 }
 
-/**tested
- * translateTrek() : translate a trek with coefficients given in parameters
- *      - vertices : vertices of the route 
- *      - dx  : x coefficient 
- *      - dy  : y coefficient  (altitudes in BABYLON)
- *      - dz  : z coefficient  (depth     in BABYLON)
- */
-RANDO.Utils.translateTrek = function (vertices, dx, dy, dz) {
-    for (it in vertices){
-        vertices[it].x += dx;
-        vertices[it].y += dy;
-        vertices[it].z += dz;
-    }
-}

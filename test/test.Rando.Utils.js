@@ -349,43 +349,6 @@ describe('Rando3D Utilitaries', function() {
     });
     
     describe("Translations ", function() {
-        describe('Trek - "translateTrek()"', function() {
-            it("should translate the Trek vertices  ", function(done) {
-                var vertices = [{
-                    x: 0,
-                    y: 0, 
-                    z: 0
-                },
-                {
-                    x: 5,
-                    y: 5, 
-                    z: 5
-                },
-                {
-                    x: 10,
-                    y: 10, 
-                    z: 10
-                }];
-                var tr_vertices = [{
-                    x: 5,
-                    y: 10, 
-                    z: 15
-                },
-                {
-                    x: 10,
-                    y: 15, 
-                    z: 20
-                },
-                {
-                    x: 15,
-                    y: 20, 
-                    z: 25
-                }];
-                RANDO.Utils.translateTrek(vertices, 5, 10, 15);
-                assert.deepEqual(vertices, tr_vertices);
-                done();
-            });
-        });
     });
 
 });

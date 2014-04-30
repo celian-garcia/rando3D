@@ -12,16 +12,13 @@ RANDO = RANDO || {};
 (function () {
 
     /* Constructor */
-    RANDO.TileContainer = function (data, offsets) {
+    RANDO.TileContainer = function (extent, altitudes, offsets) {
         /* Attributes declaration */
-        this._data = _.clone(data);
+        this._extent = _.clone(extent);
+        this._altitudes = _.clone(altitudes);
         this._offsets = _.clone(offsets);
-        
         this._grid = null;
         this._tiles = {};        
-        
-        /* Initialization */
-        this.init();
     };
 
     /* List of Methods */
@@ -35,18 +32,13 @@ RANDO = RANDO || {};
     };
     
     function init() {
-        this._grid = RANDO.Utils.createElevationGrid(
-            this._data.extent.southwest, 
-            this._data.extent.southeast,
-            this._data.extent.northeast,
-            this._data.extent.northwest,
-            this._data.altitudes
-        );
         this._generateTiles();
         this._joinTiles();
         this._computeSize();
         this._computeUvs();
         this.translate();
+        
+        return this._tiles;
     };
     
     
@@ -56,6 +48,15 @@ RANDO = RANDO || {};
     function _generateTiles () {
         var zoom = RANDO.SETTINGS.TILE_ZOOM;
         var tiles = this._tiles;
+        
+        this._grid = RANDO.Utils.createElevationGrid(
+            this._extent.southwest, 
+            this._extent.southeast,
+            this._extent.northeast,
+            this._extent.northwest,
+            this._altitudes
+        );
+        
         var grid = this._grid;
         
         var curr_index,  prev_index  = null,
