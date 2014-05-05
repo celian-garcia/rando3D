@@ -214,6 +214,7 @@ RANDO = RANDO || {};
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var ground = this.dem.ground;
         var tiles = this.dem._tiles;
+        var tilesKeys = Object.keys(tiles);
         var trek_length = scene.getMeshByName("Spheres").getChildren().length;
         
         console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
@@ -232,6 +233,7 @@ RANDO = RANDO || {};
             if (index < trek_length){
                 setTimeout(drape, 1);
             }else {
+                index = 0;
                 // At the end of draping we place cylinders
                 setTimeout(place, 1); 
             }
@@ -247,14 +249,19 @@ RANDO = RANDO || {};
                 );
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
-            texture();
+            
+            texture ();
         };
 
         function texture () {
-            console.log(tiles);
-            
-            for (it in tiles) {
-                var tile = tiles[it];
+            console.log(index);
+            if (index < tilesKeys.length) {
+                
+                var property = tilesKeys[index];
+                index++;
+                
+                var tile = tiles[property];
+                
                 // Get url of the texture
                 var url = RANDO.Utils.replaceUrlCoordinates(
                     RANDO.SETTINGS.TILE_TEX_URL,
@@ -262,20 +269,16 @@ RANDO = RANDO || {};
                     tile.coordinates.x, 
                     tile.coordinates.y
                 );
-                var child = scene.getMeshByName("Tile - " + it);
-                var texture = new BABYLON.Texture(
+                var child = scene.getMeshByName("Tile - " + property);
+                var tex = new BABYLON.Texture(
                     url,
                     scene
                 );
-                child.material.diffuseTexture = texture;
+                child.material.diffuseTexture = tex;
                 child.material.wireframe = false ;
+                setTimeout( texture, 20);
             }
-            
-            
-            // At the end, run the render loop 
-            scene.getEngine().runRenderLoop(function() {
-                scene.render();
-            });
+                
         };
         
     };
