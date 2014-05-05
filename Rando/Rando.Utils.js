@@ -81,10 +81,10 @@ RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
     var w_subdivisions = grid[0].length-1;
     
     for (row = 0; row <= h_subdivisions; row++) {
+        w_subdivisions = grid[row].length-1;
         for (col = 0; col <= w_subdivisions; col++) {
             var position = grid[h_subdivisions - row][col];
             var normal = new BABYLON.Vector3(0, 1.0, 0);
-            //~ console.log(position);
             
             positions.push(position.x, position.y, position.z);
             normals.push(normal.x, normal.y, normal.z);
@@ -93,6 +93,7 @@ RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
     }
 
     for (row = 0; row < h_subdivisions; row++) {
+        w_subdivisions = grid[row].length-1;
         for (col = 0; col < w_subdivisions; col++) {
             indices.push(col + 1 + (row + 1) * (w_subdivisions + 1));
             indices.push(col + 1 + row * (w_subdivisions + 1));
@@ -298,103 +299,6 @@ RANDO.Utils.computeMeshNormals = function (mesh) {
     var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
     BABYLON.VertexData.ComputeNormals(vertices.positions, vertices.indices, vertices.normals);
     vertices.applyToMesh(mesh);
-};
-
-/**
- * computeTilesUvs() :  compute and add uvs values of all tiles 
- *      - tiles: object which will contains uvs data
- */
-RANDO.Utils.computeTilesUvs = function (tiles) {
-    // Fill the uv data of tiles with classic values
-    for (it in tiles) {
-        var tile = tiles[it];
-        tile.uv = {};
-        tile.uv.u = [];
-        tile.uv.v = [];
-        
-        var n = tile.grid[0].length-1;
-        for (col in tile.grid[0]) {
-            tile.uv.u.push(col/n);
-        }
-        
-        var m = tile.grid.length-1;
-        for (row in tile.grid) {
-            tile.uv.v.push(1- row/m);
-        }
-    }
-
-    // Computes uvs values of border tiles
-    RANDO.Utils.borderTilesUvs(tiles);
-};
-
-/**
- * borderTilesUvs() : Computes uv values of the border tiles
- *      - tiles: array of tiles data
- */ 
-RANDO.Utils.borderTilesUvs = function (tiles) {
-    // Max height resolution of all tiles
-    var max_h_res = _.max(tiles, function(tile) {
-            return tile.grid.length;
-    }).grid.length-1;
-
-    // Max width resolution of all tiles
-    var max_w_res = _.max(tiles, function(tile) {
-            return tile.grid[0].length;
-    }).grid[0].length-1;
-
-
-    var extent = RANDO.Utils.getTileExtent(tiles);
-    for (it in tiles) {
-        var tile = tiles[it];
-        if (tile.coordinates.y == extent.y.min) {
-            northTilesUvs(tile, max_h_res);
-        }
-        if (tile.coordinates.x == extent.x.max) {
-            eastTilesUvs(tile, max_w_res);
-        }
-        if (tile.coordinates.y == extent.y.max) {
-            southTilesUvs(tile, max_h_res);
-        }
-        if (tile.coordinates.x == extent.x.min) {
-            westTilesUvs(tile, max_w_res);
-        }
-    }
-    
-    // Computes UV values of a north tile
-    function northTilesUvs (tile, max_h_res) {
-        var curr_h_res = tile.grid.length;
-        var index = 0;
-        for (var j = curr_h_res-1; j >= 0; j--) {
-            tile.uv.v[index++] = j/max_h_res ;
-        }
-    };
-
-    // Computes UV values of an east tile
-    function eastTilesUvs (tile, max_w_res) {
-        var curr_w_res = tile.grid[0].length;
-        var index = 0;
-        for (var i = 0; i < curr_w_res; i++) {
-            tile.uv.u[index++] = i/max_w_res ;
-        }
-    };
-
-    // Computes UV values of a south tile
-    function southTilesUvs (tile, max_h_res) {
-        var curr_h_res = tile.grid.length;
-        var index = 0;
-        for (var j = 0 ; j < curr_h_res; j++) {
-            tile.uv.v[index++] = 1 - j/max_h_res ;
-        }
-    };
-
-    // Computes UV values of a west tile
-    function westTilesUvs (tile, max_w_res) {
-        var curr_w_res = tile.grid[0].length;
-        var index = 0;
-        for (var i = curr_w_res-1; i >= 0; i--) {
-            tile.uv.u[index++] = 1 - i/max_w_res ;
-        }
-    };
 };
 
 /**
@@ -681,155 +585,6 @@ RANDO.Utils.angleFromPoints = function (A, B, H) {
     return angle;
 }
 
-/**
- * Subdivide a grid of points in several tiles 
- *      - grid: grid to subdivide
- *      - zoom: level of zoom 
- * 
- * return an associative array of tiles in this format :
- * 
- * {
- *      "{z}/{x}/{y}": {
- *              values: [
- *                  [{
- *                      x: ,
- *                      y: ,
- *                      z: 
- *                  }],
- *                  [{ ... }],
- *                  ...
- *                  ...
- *              ],
- *              coordinates: {
- *                  z: ,
- *                  x: ,
- *                  y:
- *              }
- *      },
- * 
- *      "{z}/{x}/{y}": { ... },
- *      ...
- *      ...
- * }
- */
-RANDO.Utils.subdivideGrid = function (tiles, grid, zoom) {
-    var curr_index,  prev_index  = null,
-        curr_point,  prev_point  = null,
-        curr_tile_n, prev_tile_n = null,
-        line_tmp = [],
-        new_line = true;
-        
-    // Subdivide grid in tiles 
-    for (row in grid) {
-        for (col in grid[row]) {
-            curr_point = grid[row][col];
-
-            // Get current tile number corresponding to the current point
-            curr_tile_n = RANDO.Utils.meters2num( curr_point.x, curr_point.z, zoom );
-            curr_index = "" + zoom + "/" + curr_tile_n.xtile + "/" + curr_tile_n.ytile + "";
-
-            // tiles["z/x/y"] exists or not
-            tiles[curr_index] = tiles[curr_index] || {};
-            if (Object.keys(tiles[curr_index]).length == 0){
-                tiles[curr_index].grid = [];
-                tiles[curr_index].coordinates = {
-                    z: zoom,
-                    x: curr_tile_n.xtile,
-                    y: curr_tile_n.ytile 
-                };
-            }
-            // if the previous index exists and is different from the current index
-            if ( prev_index != null && prev_index != curr_index ) {
-                tiles[prev_index].grid.push(line_tmp); // push the line into previous tile
-                line_tmp = []; // reset the line
-            }
-
-            line_tmp.push(_.clone(curr_point));
-
-            prev_index = curr_index;
-            prev_point = curr_point;
-            new_line = false;
-            prev_tile_n = curr_tile_n;
-        }
-        new_line = true;
-    }
-
-    // Push the last line of the last tile 
-    tiles[curr_index].grid.push(line_tmp);
-    
-    return tiles;
-};
-
-/**
- * joinTiles() : Join each tile with its east and north neighboors  
- *      - tiles: list of tiles
- */
-RANDO.Utils.joinTiles = function (tiles) {
-    // Joins East and West sides of tiles  
-    for (it in tiles) {
-        var current_tile = tiles[it];
-        var next_coord = {
-            z: current_tile.coordinates.z,
-            x: current_tile.coordinates.x + 1,
-            y: current_tile.coordinates.y
-        };
-        var next_index = ""  + next_coord.z + "/" + next_coord.x + "/" + next_coord.y + "";
-        
-        // if next tile exist 
-        if (tiles[next_index]) {
-            var current_grid = current_tile.grid;
-            var next_grid = tiles[next_index].grid;
-
-            // for each row in the current tile grid
-            for (row in current_grid) {
-                var prev_point = current_grid[row][current_grid[row].length-1];
-                var next_point = next_grid[row][0];
-                var mid = RANDO.Utils.middle(prev_point, next_point);
-                current_grid[row].push(mid);
-                next_grid[row].splice(0, 0, $.extend({}, mid));
-            }
-        }
-    }
-    
-    // Joins North and South sides of tiles  
-    for (it in tiles) {
-        var current_tile = $.extend({}, tiles[it]);
-        var next_coord = {
-            z: current_tile.coordinates.z,
-            x: current_tile.coordinates.x,
-            y: current_tile.coordinates.y + 1
-        };
-        var next_index = ""  + next_coord.z + "/" + next_coord.x + "/" + next_coord.y + "";
-
-        if (tiles[next_index]) {
-            var next_tile = tiles[next_index];
-            
-            // First line of current tile
-            var prev_line = $.extend({}, current_tile.grid[0]);
-            
-            // Last line of next tile
-            var next_line = $.extend({}, next_tile.grid[next_tile.grid.length-1]);
-            
-            // we create a new line placed on the middle of the both previous
-            // We need two variables to store this line 
-            var mid_line1 = [];
-            var mid_line2 = [];
-            
-            for (i in prev_line) {
-                var mid = RANDO.Utils.middle(prev_line[i], next_line[i]);
-                mid_line1.push($.extend({}, mid));
-                mid_line2.push($.extend({}, mid));
-            }
-            
-            // The "middle line" go to the bottom of current tile
-            current_tile.grid.splice(0, 0, mid_line1);
-            // ... and to the top of next tile
-            next_tile.grid.push(mid_line2);
-        } 
-    }
-    return tiles;
-};
-
 
 
 /****    CAMERA     ************************/
@@ -1079,7 +834,7 @@ RANDO.Utils.getTileExtent = function (tiles) {
  * { lat : .. , lng : .. }  ---> { x : .. , y : .. }
  */
 RANDO.Utils.toMeters = function (latlng) {
-    
+
     var R = 6378137;
 
     var d = Math.PI / 180;
@@ -1090,7 +845,7 @@ RANDO.Utils.toMeters = function (latlng) {
         x : R * latlng.lng * d,
         y : R * Math.log((1 + sin) / (1 - sin)) / 2
     };
-}
+};
 
 /**tested
  * toLatlng() : convert a point in x/y meters coordinates to latitude/longitude 
@@ -1196,17 +951,3 @@ RANDO.Utils.drapePoint = function (point, dem) {
     }
 }
 
-/**tested
- * translateTrek() : translate a trek with coefficients given in parameters
- *      - vertices : vertices of the route 
- *      - dx  : x coefficient 
- *      - dy  : y coefficient  (altitudes in BABYLON)
- *      - dz  : z coefficient  (depth     in BABYLON)
- */
-RANDO.Utils.translateTrek = function (vertices, dx, dy, dz) {
-    for (it in vertices){
-        vertices[it].x += dx;
-        vertices[it].y += dy;
-        vertices[it].z += dz;
-    }
-}
