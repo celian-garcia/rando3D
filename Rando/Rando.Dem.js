@@ -113,41 +113,22 @@ RANDO = RANDO || {};
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
-            "Tiled Digital Elevation Model - " + it,
+            "Tile - " + it,
             data.grid,
             scene
         );
 
         // Recomputes normals for lights and shadows
         RANDO.Utils.computeMeshNormals(tile)
-        
+
         // 
         RANDO.Utils.setMeshUvs(tile, data.uv);
-        
+
         // Enables collisions
         tile.checkCollisions = true;
-        
-        // Get url of the texture
-        var url = RANDO.Utils.replaceUrlCoordinates(
-            RANDO.SETTINGS.TILE_TEX_URL,
-            data.coordinates.z, 
-            data.coordinates.x, 
-            data.coordinates.y
-        );
-        
-        // Material & Texture
-        var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
-        var textureLoad = new Image();
-        textureLoad.onload = function () {
-            scene.render();
-        };
-        textureLoad.src = url;
-        
-        var texture = new BABYLON.Texture(
-            textureLoad.src,
-            scene
-        );
-        //~ material.diffuseTexture = texture;
+
+        // Material 
+        var material = new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;

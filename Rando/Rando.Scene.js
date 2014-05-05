@@ -212,7 +212,8 @@ RANDO = RANDO || {};
         var scene = this._scene;
         
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
-        var dem = scene.getMeshByName("Digital Elevation Model");
+        var ground = this.dem.ground;
+        var tiles = this.dem._tiles;
         var trek_length = scene.getMeshByName("Spheres").getChildren().length;
         
         console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
@@ -225,7 +226,7 @@ RANDO = RANDO || {};
         function drape(){
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
-                RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, dem);
+                RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, ground);
                 ++index;
             }
             if (index < trek_length){
@@ -246,12 +247,37 @@ RANDO = RANDO || {};
                 );
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
+            texture();
+        };
+
+        function texture () {
+            console.log(tiles);
+            
+            for (it in tiles) {
+                var tile = tiles[it];
+                // Get url of the texture
+                var url = RANDO.Utils.replaceUrlCoordinates(
+                    RANDO.SETTINGS.TILE_TEX_URL,
+                    tile.coordinates.z, 
+                    tile.coordinates.x, 
+                    tile.coordinates.y
+                );
+                var child = scene.getMeshByName("Tile - " + it);
+                var texture = new BABYLON.Texture(
+                    url,
+                    scene
+                );
+                child.material.diffuseTexture = texture;
+                child.material.wireframe = false ;
+            }
+            
             
             // At the end, run the render loop 
             scene.getEngine().runRenderLoop(function() {
                 scene.render();
             });
         };
+        
     };
 
 
