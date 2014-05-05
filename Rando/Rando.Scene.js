@@ -92,8 +92,7 @@ RANDO = RANDO || {};
                     that._offsets,
                     that._scene
                 );
-                
-                that._scene.activeCamera.attachControl(that._canvas);
+                console.log(that._scene);
                 that._scene.render();
             }
          })
@@ -111,10 +110,11 @@ RANDO = RANDO || {};
             }
          })
          .then(function () {
-            
-            that._scene.executeWhenReady(function () {
-                that._executeWhenReady ();
-            });
+            //~ setTimeout(function(){
+                that._scene.executeWhenReady(function () {
+                    that._executeWhenReady ();
+                });
+            //~ }, 5000);
          });
     };
 
@@ -135,6 +135,7 @@ RANDO = RANDO || {};
         camera.keysLeft = [81, 37]; // Touche Q and left
         camera.keysRight = [68, 39]; // Touche D and right
         camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
+        camera.attachControl(this._canvas);
         
         var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
         l_cam.intensity = 0.8;

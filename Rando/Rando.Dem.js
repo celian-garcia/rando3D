@@ -64,7 +64,8 @@ RANDO = RANDO || {};
             var meshTile = this._buildTile(tiles[it]);
             meshTile.parent = this.ground;
         }
-
+        
+        this._scene.render();
         // Ground built ! 
         console.log("Ground built ! " + (Date.now() - RANDO.START_TIME) );
     };
@@ -136,11 +137,18 @@ RANDO = RANDO || {};
         
         // Material & Texture
         var material =  new BABYLON.StandardMaterial("DEM Material - " + it, scene);
+        var textureLoad = new Image();
+        textureLoad.onload = function () {
+            scene.render();
+        };
+        textureLoad.src = url;
+        
         var texture = new BABYLON.Texture(
-            url,
+            textureLoad.src,
             scene
         );
         material.diffuseTexture = texture;
+        //~ material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;
 
