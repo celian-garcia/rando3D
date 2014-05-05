@@ -950,3 +950,93 @@ RANDO.Utils.drapePoint = function (point, dem) {
         }
     }
 }
+
+
+
+var getExponantOfTwo = function (value, max) {
+        var count = 1;
+
+        do {
+            count *= 2;
+        } while (count < value);
+
+        if (count > max)
+            count = max;
+
+        return count;
+    };
+
+var prepareWebGLTexture = function (texture, scene, width, height, invertY, noMipmap, processFunction) {
+        var engine = scene.getEngine();
+        var potWidth = getExponantOfTwo(width, engine._caps.maxTextureSize);
+        var potHeight = getExponantOfTwo(height, engine._caps.maxTextureSize);
+
+        engine._gl.bindTexture(engine._gl.TEXTURE_2D, texture);
+        engine._gl.pixelStorei(engine._gl.UNPACK_FLIP_Y_WEBGL, invertY === undefined ? true : invertY);
+
+        processFunction(potWidth, potHeight);
+
+        engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MAG_FILTER, engine._gl.LINEAR);
+
+        if (noMipmap) {
+            engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR);
+        } else {
+            engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR_MIPMAP_LINEAR);
+            engine._gl.generateMipmap(engine._gl.TEXTURE_2D);
+        }
+        engine._gl.bindTexture(engine._gl.TEXTURE_2D, null);
+
+        engine._activeTexturesCache = [];
+        texture._baseWidth = width;
+        texture._baseHeight = height;
+        texture._width = potWidth;
+        texture._height = potHeight;
+        texture.isReady = true;
+        scene._removePendingData(texture);
+    };
+
+RANDO.Utils.createTexture = function (engine, mesh, url, scene, noMipmap, invertY) {
+    var texture = engine._gl.createTexture();
+    var img = new Image();
+    scene._addPendingData(texture);
+    texture.url = url;
+    texture.noMipmap = noMipmap;
+    texture.references = 1;
+    engine._loadedTexturesCache.push(texture);
+    
+    
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+        prepareWebGLTexture(texture, scene, img.width, img.height, invertY, noMipmap, function (potWidth, potHeight) {
+            var isPot = (img.width == potWidth && img.height == potHeight);
+            if (!isPot) {
+                engine._workingCanvas.width = potWidth;
+                engine._workingCanvas.height = potHeight;
+
+                engine._workingContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, potWidth, potHeight);
+                console.log(img.width);
+            }
+
+            engine._gl.texImage2D(
+                engine._gl.TEXTURE_2D, 
+                0, 
+                engine._gl.RGBA, 
+                engine._gl.RGBA, 
+                engine._gl.UNSIGNED_BYTE, 
+                isPot ? img : engine._workingCanvas
+            );
+            mesh.material.wireframe = false;
+            console.log("preparewebgl");
+            
+        });
+       
+    }
+    
+    img.onerror = function() {
+        scene._removePendingData(texture);
+    };
+    
+    img.src = url;
+    
+    return texture;
+};

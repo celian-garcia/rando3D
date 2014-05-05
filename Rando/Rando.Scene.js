@@ -251,13 +251,19 @@ RANDO = RANDO || {};
                 );
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
+            scene.getEngine().runRenderLoop(function() {
+                scene.render();
+            });
             texture ();
         };
 
+        
+                
         // Load tile's textures over the DEM
         function texture () {
+            //~ scene.render();
             if (index < tilesKeys.length) {
-                scene.render();
+                
                 var property = tilesKeys[index];
                 index++;
                 var tile = tiles[property];
@@ -275,14 +281,11 @@ RANDO = RANDO || {};
                     url,
                     scene
                 );
+                tex._texture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
+                console.log("texture should be load ");
                 child.material.diffuseTexture = tex;
-                child.material.wireframe = false;
                 
-                setTimeout( texture, 1 );
-            }else {
-                scene.getEngine().runRenderLoop(function() {
-                    scene.render();
-                });
+                setTimeout( texture, 10 );
             }
         };
     };
