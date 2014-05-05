@@ -274,9 +274,9 @@ RANDO = RANDO || {};
                     scene
                 );
                 child.material.diffuseTexture = tex;
-                child.material.wireframe = false ;
+                child.material.wireframe = false;
 
-                setTimeout( texture, 20);
+                setTimeout( texture, 50);
             }
         };
     };
