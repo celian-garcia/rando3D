@@ -147,8 +147,8 @@ RANDO = RANDO || {};
             textureLoad.src,
             scene
         );
-        material.diffuseTexture = texture;
-        //~ material.wireframe = true;
+        //~ material.diffuseTexture = texture;
+        material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;
 
