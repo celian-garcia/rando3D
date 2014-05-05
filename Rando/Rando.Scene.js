@@ -211,6 +211,7 @@ RANDO = RANDO || {};
     function _executeWhenReady () {
         var scene = this._scene;
         var engine = this._engine;
+        scene.render();
         
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var ground = this.dem.ground;
@@ -256,6 +257,7 @@ RANDO = RANDO || {};
         // Load tile's textures over the DEM
         function texture () {
             if (index < tilesKeys.length) {
+                scene.render();
                 var property = tilesKeys[index];
                 index++;
                 var tile = tiles[property];
@@ -275,8 +277,12 @@ RANDO = RANDO || {};
                 );
                 child.material.diffuseTexture = tex;
                 child.material.wireframe = false;
-
-                setTimeout( texture, 50);
+                
+                setTimeout( texture, 1 );
+            }else {
+                scene.getEngine().runRenderLoop(function() {
+                    scene.render();
+                });
             }
         };
     };

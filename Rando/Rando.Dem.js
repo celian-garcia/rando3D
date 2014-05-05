@@ -47,9 +47,9 @@ RANDO = RANDO || {};
         this.buildSides();
         // At the end, run the render loop 
         var scene = this._scene;
-        scene.getEngine().runRenderLoop(function() {
-            scene.render();
-        });
+        //~ scene.getEngine().runRenderLoop(function() {
+            //~ scene.render();
+        //~ });
     };
 
 
