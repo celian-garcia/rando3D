@@ -267,14 +267,14 @@ RANDO = RANDO || {};
                     tile.coordinates.x, 
                     tile.coordinates.y
                 );
+                
                 var child = scene.getMeshByName("Tile - " + property);
                 var tex = new BABYLON.Texture(
                     url,
                     scene
                 );
-                tex._texture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
                 child.material.diffuseTexture = tex;
-                //~ child.material.wireframe = false ;
+                child.material.wireframe = false ;
 
                 setTimeout( texture, 20);
             }

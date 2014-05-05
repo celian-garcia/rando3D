@@ -4,7 +4,7 @@ html, body, div, canvas {
     height: 100%;
     padding: 0;
     margin: 0;
-    font-family: arial; 
+    font-family: verdana; 
     overflow: hidden;
 }
 canvas {
@@ -20,10 +20,21 @@ h1 {
     margin-left : 20px;
 }
 
-#mapbox {
+#mapbox_attribution {
     position: absolute;
     right: 10px;
     bottom: 10px;
     height: auto;
     width: auto;
+}
+
+#mapbox_attribution a {
+    text-decoration: none;
+    color: inherit;
+}
+#mapbox_attribution a:hover  {
+/*
+    text-decoration: underline;
+*/
+    color: #166EAB; 
 }
