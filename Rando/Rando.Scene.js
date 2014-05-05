@@ -210,6 +210,7 @@ RANDO = RANDO || {};
      */
     function _executeWhenReady () {
         var scene = this._scene;
+        var engine = this._engine;
         
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var ground = this.dem.ground;
@@ -249,17 +250,14 @@ RANDO = RANDO || {};
                 );
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
-            
             texture ();
         };
 
+        // Load tile's textures over the DEM
         function texture () {
-            console.log(index);
             if (index < tilesKeys.length) {
-                
                 var property = tilesKeys[index];
                 index++;
-                
                 var tile = tiles[property];
                 
                 // Get url of the texture
@@ -274,13 +272,13 @@ RANDO = RANDO || {};
                     url,
                     scene
                 );
+                tex._texture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
                 child.material.diffuseTexture = tex;
-                child.material.wireframe = false ;
+                //~ child.material.wireframe = false ;
+
                 setTimeout( texture, 20);
             }
-                
         };
-        
     };
 
 
