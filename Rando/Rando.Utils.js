@@ -1014,7 +1014,6 @@ RANDO.Utils.createTexture = function (engine, mesh, url, scene, noMipmap, invert
                 engine._workingCanvas.height = potHeight;
 
                 engine._workingContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, potWidth, potHeight);
-                console.log(img.width);
             }
 
             engine._gl.texImage2D(
@@ -1026,7 +1025,6 @@ RANDO.Utils.createTexture = function (engine, mesh, url, scene, noMipmap, invert
                 isPot ? img : engine._workingCanvas
             );
             mesh.material.wireframe = false;
-            console.log("preparewebgl");
             
         });
        

@@ -127,7 +127,7 @@ RANDO = RANDO || {};
     function _buildCamera() {
         var camera = this.camera;
         var scene  = this._scene;
-            
+
         if (this._demo) {
             camera = new BABYLON.ArcRotateCamera("ArcRotate Camera", 1, 0.5, 10, new BABYLON.Vector3(0, 1800, 0), scene);
             camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
@@ -136,6 +136,11 @@ RANDO = RANDO || {};
             camera.keysLeft = [68, 39]; // Touche Q and left
             camera.keysRight = [81, 37]; // Touche D and right
             camera.wheelPrecision = 0.2;
+            camera.upperBetaLimit = Math.PI/3;
+
+            scene.beforeRender = function () {
+                scene.activeCamera.alpha -= .003;
+            };
             $("#controls_ar_cam").css("display", "block");
         }else {
             camera = new BABYLON.FreeCamera("Fly Camera", new BABYLON.Vector3(0, 0, 0), scene);
@@ -146,15 +151,12 @@ RANDO = RANDO || {};
             
             $("#controls_f_cam").css("display", "block");
         }
-        
-        
+
         camera.checkCollisions = true;
         camera.maxZ = 10000;
         camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
         camera.attachControl(this._canvas);
-        
-        
+
         var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
         l_cam.intensity = 0.8;
         l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
@@ -270,7 +272,7 @@ RANDO = RANDO || {};
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
             scene.getEngine().runRenderLoop(function() {
-                scene.render();
+                renderLoop();
             });
             texture ();
         };
@@ -298,11 +300,15 @@ RANDO = RANDO || {};
                     scene
                 );
                 tex._texture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
-                console.log("texture should be load ");
                 child.material.diffuseTexture = tex;
                 
                 setTimeout( texture, 10 );
             }
+        };
+        
+        
+        function renderLoop() {
+            scene.render();
         };
     };
 
