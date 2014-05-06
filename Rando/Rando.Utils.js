@@ -1024,7 +1024,7 @@ RANDO.Utils.createTexture = function (engine, mesh, url, scene, noMipmap, invert
                 engine._gl.UNSIGNED_BYTE, 
                 isPot ? img : engine._workingCanvas
             );
-            mesh.material.wireframe = false;
+            //~ mesh.material.wireframe = false;
             
         });
        

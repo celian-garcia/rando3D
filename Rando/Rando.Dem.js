@@ -129,6 +129,11 @@ RANDO = RANDO || {};
 
         // Material 
         var material = new BABYLON.StandardMaterial("DEM Material - " + it, scene);
+        var tex = new BABYLON.Texture(
+            "img/white.png",
+            scene
+        );
+        material.diffuseTexture = tex;
         material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;

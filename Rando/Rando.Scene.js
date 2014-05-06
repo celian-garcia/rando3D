@@ -320,12 +320,10 @@ RANDO = RANDO || {};
                 );
                 
                 var child = scene.getMeshByName("Tile - " + property);
-                var tex = new BABYLON.Texture(
-                    url,
-                    scene
-                );
-                tex._texture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
-                child.material.diffuseTexture = tex;
+                var newTexture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
+                child.material.diffuseTexture._texture = newTexture;
+                //~ child.material.diffuseTexture = tex;
+                child.material.wireframe = false;
                 
                 setTimeout( texture, 10 );
             }
