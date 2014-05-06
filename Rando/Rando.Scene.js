@@ -16,16 +16,19 @@ RANDO = RANDO || {};
 (function () {
 
     /* Constructor */
-    RANDO.Scene = function (canvas, settings) {
+    RANDO.Scene = function (canvas, demo,  settings) {
         // Attributes declaration 
         this._canvas = canvas;
         this._settings = settings;
+        this._demo   = demo;
+        
         this._engine = null;
         this._scene  = null;
         this.camera  = null;
         this.lights  = [];
         this.dem     = null;
         this.trek    = null;
+        
 
         this._dem_data  = {};
         this._trek_data = [];
@@ -105,16 +108,15 @@ RANDO = RANDO || {};
                     that._offsets,
                     that._scene
                 ).init();
-                
-                RANDO.Utils.animateCamera(that._trek_data, that._scene);
+                if (!that._demo) {
+                    RANDO.Utils.animateCamera(that._trek_data, that._scene);
+                }
             }
          })
          .then(function () {
-            //~ setTimeout(function(){
-                that._scene.executeWhenReady(function () {
-                    that._executeWhenReady ();
-                });
-            //~ }, 5000);
+            that._scene.executeWhenReady(function () {
+                that._executeWhenReady ();
+            });
          });
     };
 
@@ -126,16 +128,32 @@ RANDO = RANDO || {};
         var camera = this.camera;
         var scene  = this._scene;
             
-        camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+        if (this._demo) {
+            camera = new BABYLON.ArcRotateCamera("ArcRotate Camera", 1, 0.5, 10, new BABYLON.Vector3(0, 1800, 0), scene);
+            camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
+            camera.keysUp = [83, 40];// Touche Z and up
+            camera.keysDown = [90, 38]; // Touche S and down
+            camera.keysLeft = [68, 39]; // Touche Q and left
+            camera.keysRight = [81, 37]; // Touche D and right
+            camera.wheelPrecision = 0.2;
+            $("#controls_ar_cam").css("display", "block");
+        }else {
+            camera = new BABYLON.FreeCamera("Fly Camera", new BABYLON.Vector3(0, 0, 0), scene);
+            camera.keysUp = [90, 38]; // Touche Z and up
+            camera.keysDown = [83, 40]; // Touche S and down
+            camera.keysLeft = [81, 37]; // Touche Q and left
+            camera.keysRight = [68, 39]; // Touche D and right
+            
+            $("#controls_f_cam").css("display", "block");
+        }
+        
+        
         camera.checkCollisions = true;
         camera.maxZ = 10000;
         camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        camera.keysUp = [90, 38]; // Touche Z and up
-        camera.keysDown = [83, 40]; // Touche S and down
-        camera.keysLeft = [81, 37]; // Touche Q and left
-        camera.keysRight = [68, 39]; // Touche D and right
         camera.ellipsoid = new BABYLON.Vector3(1, 1, 1); // Hitbox
         camera.attachControl(this._canvas);
+        
         
         var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
         l_cam.intensity = 0.8;
@@ -261,9 +279,7 @@ RANDO = RANDO || {};
                 
         // Load tile's textures over the DEM
         function texture () {
-            //~ scene.render();
             if (index < tilesKeys.length) {
-                
                 var property = tilesKeys[index];
                 index++;
                 var tile = tiles[property];

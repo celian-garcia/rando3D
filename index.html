@@ -8,7 +8,7 @@
     
     <!-- Style -->
     <link rel="stylesheet" type="text/css" href="css/main.css" media="all"/>
-    <link rel="stylesheet" type="text/css" href="css/commands.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="css/controls.css" media="all"/>
     <link rel="stylesheet" type="text/css" href="css/buttons.css" media="all"/>
     
     <!-- JQuery-->
@@ -40,15 +40,20 @@
 
  <body>
 
-    <h1>Demo Babylon for Geotrek 3D</h1>
+    <h1>Geotrek 3D</h1>
     <div id="rootDiv">
         <canvas id="canvas_renderer"></canvas>
     </div>
     
     
-    <div id="infos" >
+    <div class = "controls" id="controls_f_cam" >
         <span><b>Flèches</b>: se déplacer </span>
         <span><b>Souris</b>: tourner </span>
+    </div>
+    
+    <div class = "controls" id="controls_ar_cam" >
+        <span><b>Molette de souris</b>: zoom </span>
+        <span><b>Flèches</b>: rotation du MNT </span>
     </div>
     
     <div id = "mapbox_attribution" style = "padding:3px;">
