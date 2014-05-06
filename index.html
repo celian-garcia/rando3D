@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/main.css" media="all"/>
     <link rel="stylesheet" type="text/css" href="css/controls.css" media="all"/>
     <link rel="stylesheet" type="text/css" href="css/buttons.css" media="all"/>
+    <link rel="icon" type="image/png" href="/img/logo_geotrek.png" />
     
     <!-- JQuery-->
     <script src="lib/jquery-1.10.2.js"></script>
@@ -40,7 +41,12 @@
 
  <body>
 
-    <h1>Geotrek 3D</h1>
+    <h1 id="logo">
+        <a href="http://geotrek.fr/" target = "_blank">
+            <span>Geotrek 3D</span>
+        </a>
+    </h1>
+
     <div id="rootDiv">
         <canvas id="canvas_renderer"></canvas>
     </div>
@@ -52,8 +58,8 @@
     </div>
     
     <div class = "controls" id="controls_ar_cam" >
-        <span><b>Molette</b>: zoom </span>
-        <span><b>Flèches</b>: rotation </span>
+        <span> Zoom : <b>Molette souris</b></span>
+        <span> Inclinaison/Rotation : <img src = "img/icon_783__.png"/></span>
     </div>
     
     <div id = "mapbox_attribution" style = "padding:3px;">

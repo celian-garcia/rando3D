@@ -2,8 +2,8 @@
 
 .controls {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     height: auto;
     width : 300px;
     padding : 5px;
@@ -12,4 +12,9 @@
 .controls span{
     float: left;
     width: 100%;
+    margin: 5px;
+}
+
+.controls img {
+    vertical-align: sub;
 }

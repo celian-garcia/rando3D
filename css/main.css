@@ -6,19 +6,72 @@ html, body, div, canvas {
     margin: 0;
     font-family: verdana; 
     overflow: hidden;
+    color: white
+}
+a {
+    text-decoration: none;
 }
 canvas {
     display:block;
 }
 div {
     border-radius: 3px;
-    background-color: rgba(255,255,255, 0.8);
+    background-color: rgba(255,255,255, 0.2);
 }
-h1 {
+
+#logo {
     position: absolute;
-    color: rgba(255,255,255, 0.8);
-    margin-left : 20px;
+    z-index: 1;
+    top: 0;
+    left: 50px;
+    width: 30em;
+    margin-left: -6.5em;
+    height: 6em;
+    
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    border-radius: 0 0 0.35em 0.35em;
+    
+    background: url('../img/logo_geotrek.png') -3px 1px no-repeat;
+    
+    color: #52575c;
 }
+
+
+#logo a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 6em;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-top: 0;
+    border-radius: 0 0 0.35em 0.35em;
+    color: #fff;
+    display: inline-block;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+#logo span {
+
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    padding-left: 5em;
+}
+
+
 
 #mapbox_attribution {
     position: absolute;
@@ -33,8 +86,5 @@ h1 {
     color: inherit;
 }
 #mapbox_attribution a:hover  {
-/*
-    text-decoration: underline;
-*/
     color: #166EAB; 
 }

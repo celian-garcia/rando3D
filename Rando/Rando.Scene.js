@@ -143,9 +143,9 @@ RANDO = RANDO || {};
             camera.lowerRadiusLimit = 1000;
             camera.upperRadiusLimit = 5000;
 
-            scene.beforeRender = function () {
-                scene.activeCamera.alpha -= .003;
-            };
+            //~ scene.beforeRender = function () {
+                //~ scene.activeCamera.alpha -= .003;
+            //~ };
             $("#controls_ar_cam").css("display", "block");
         }else {
             camera = new BABYLON.FreeCamera("Fly Camera", new BABYLON.Vector3(0, 0, 0), scene);
@@ -183,8 +183,6 @@ RANDO = RANDO || {};
     };
 
     function _buildEnvironment() {
-        
-        
         // Fog
         //~ this._scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
         //~ this._scene.fogDensity = 0.00002;
