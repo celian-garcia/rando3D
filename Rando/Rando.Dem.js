@@ -45,11 +45,6 @@ RANDO = RANDO || {};
         this._initCamera();
         this.buildGround();
         this.buildSides();
-        // At the end, run the render loop 
-        var scene = this._scene;
-        //~ scene.getEngine().runRenderLoop(function() {
-            //~ scene.render();
-        //~ });
     };
 
 
