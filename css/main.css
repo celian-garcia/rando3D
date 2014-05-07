@@ -6,7 +6,9 @@ html, body, div, canvas {
     margin: 0;
     font-family: verdana; 
     overflow: hidden;
-    color: white
+    color: white;
+    border:0;
+    border-radius: 0 0 0.35em 0.35em;
 }
 
 body {
@@ -16,12 +18,21 @@ body {
 }
 a {
     text-decoration: none;
+    color: inherit;
 }
-canvas {
-    display:block;
+a:hover{
+    color: #c4ca26; 
 }
+a:hover span{
+    color: #c4ca26; 
+}
+
+p {
+    text-align: center;
+    font: inherit
+}
+
 div {
-    border-radius: 3px;
     background-color: rgba(255,255,255, 0.2);
 }
 
@@ -31,63 +42,43 @@ div {
     top: 0;
     left: 50px;
     width: 34em;
-    margin-left: -6.5em;
     height: 6em;
     
     margin: 0;
-    padding: 0;
-    border: 0;
     font-size: 100%;
-    font: inherit;
+    font-weight: 400;
     vertical-align: baseline;
-    border-radius: 0 0 0.35em 0.35em;
     
-    background: url('../img/logo_geotrek.png') -3px 1px no-repeat;
+    background: url('../img/logo_geotrek.png') -3px 0px no-repeat ;
     
     
 }
 
 
 #geotrek {
-    display: block;
+    display: inline-block;
     width: 100%;
     height: 100%;
-    line-height: 6em;
+    
     background: rgba(255,255,255,0.15);
     border: none;
-    border-top: 0;
     border-radius: 0 0 0.35em 0.35em;
-    color: #fff;
-    display: inline-block;
-    font-weight: 600;
+    
+    line-height: 6em;
     letter-spacing: 3px;
     text-align: center;
     text-transform: uppercase;
-    font-weight: 400;
 }
 
-#geotrek:hover {
-    color: #c4ca26;
-}
 
-#title span {
+#geotrek span {
     margin: 0;
     padding: 0;
-    border: 0;
     font-size: 100%;
-    font: inherit;
     vertical-align: baseline;
     padding-left: 5em;
 }
-#title p {
-    text-align: center;
-}
-#title p a{
-    color: white;
-}
-#title p a:hover{
-    color: #c4ca26;
-}
+
 
 #mapbox_attribution {
     position: absolute;
@@ -95,12 +86,6 @@ div {
     bottom: 10px;
     height: auto;
     width: auto;
+    border-radius: 0.35em;
 }
 
-#mapbox_attribution a {
-    text-decoration: none;
-    color: inherit;
-}
-#mapbox_attribution a:hover  {
-    color: #c4ca26; 
-}
