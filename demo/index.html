@@ -10,16 +10,16 @@
     <link rel="stylesheet" type="text/css" href="css/main.css" media="all"/>
     <link rel="stylesheet" type="text/css" href="css/controls.css" media="all"/>
     <link rel="stylesheet" type="text/css" href="css/buttons.css" media="all"/>
-    <link rel="icon" type="image/png" href="/img/logo_geotrek.png" />
+    <link rel="icon" type="../image/png" href="/img/logo_geotrek.png" />
     
     <!-- JQuery-->
-    <script src="lib/jquery-1.10.2.js"></script>
+    <script src="../lib/jquery-1.10.2.js"></script>
 
     <!-- Underscore-->
-    <script src="lib/underscore.js"></script>
+    <script src="../lib/underscore.js"></script>
     
     <!-- BABYLON-->
-    <script src="lib/babylon.1.11.js"></script>
+    <script src="../lib/babylon.1.11.js"></script>
     
     <!-- TweenLite -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
@@ -27,13 +27,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
 
     <!-- Rando-->
-    <script src="Rando/Rando.Utils.js"></script>
-    <script src="Rando/Rando.Settings.js"></script>
-    <script src="Rando/Rando.Events.js"></script>
-    <script src="Rando/Rando.TileContainer.js"></script>
-    <script src="Rando/Rando.Scene.js"></script>
-    <script src="Rando/Rando.Dem.js"></script>
-    <script src="Rando/Rando.Trek.js"></script>
+    <script src="../Rando/Rando.Utils.js"></script>
+    <script src="../Rando/Rando.Settings.js"></script>
+    <script src="../Rando/Rando.Events.js"></script>
+    <script src="../Rando/Rando.TileContainer.js"></script>
+    <script src="../Rando/Rando.Scene.js"></script>
+    <script src="../Rando/Rando.Dem.js"></script>
+    <script src="../Rando/Rando.Trek.js"></script>
 
     
     
@@ -41,11 +41,13 @@
 
  <body>
 
-    <h1><a href = "http://geotrek.fr/" target = "_blank" >Geotrek 3D</a></h1>
-    <div id="rootDiv">
-        <canvas id="canvas_renderer"></canvas>
-    </div>
-    
+    <h1 id="logo">
+        <a href="http://geotrek.fr/" target = "_blank">
+            <span>Geotrek 3D</span>
+        </a>
+    </h1>
+
+    <canvas id="canvas_renderer"></canvas>
     
     <div class = "controls" id="controls_f_cam" >
         <span><b>Flèches</b>: se déplacer </span>
@@ -53,8 +55,8 @@
     </div>
     
     <div class = "controls" id="controls_ar_cam" >
-        <span><b>Molette</b>: Zoomer </span>
-        <span><b>Flèches</b>: Changer l'inclinaison </span>
+        <span> Zoom : <b>Molette souris</b></span>
+        <span> Inclinaison/Rotation : <img src = "../img/icon_783__.png"/></span>
     </div>
     
     <div id = "mapbox_attribution" style = "padding:3px;">

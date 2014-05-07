@@ -66,6 +66,10 @@ div {
     font-weight: 400;
 }
 
+#logo a:hover {
+    color: #c4ca26;
+}
+
 #logo span {
 
     margin: 0;
