@@ -8,9 +8,9 @@ RANDO.SETTINGS = {};
 // Links
 RANDO.SETTINGS.DEM_URL; // Url of the DEM json
 RANDO.SETTINGS.PROFILE_URL; // Url of the trek's profile json
-RANDO.SETTINGS.TILE_TEX_URL = "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png";
-
-RANDO.SETTINGS.SIDE_TEXTURE  = "img/side.jpg";
+RANDO.SETTINGS.TILE_TEX_URL; // Url of a tile texture
+RANDO.SETTINGS.SIDE_TEX_URL; // Url of the side texture
+RANDO.SETTINGS.FAKE_TEX_URL; // Url of the fake texture
 ////////////////////////////////////////////////////////////////////////////////
 
 

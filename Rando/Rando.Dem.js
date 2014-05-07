@@ -131,7 +131,7 @@ RANDO = RANDO || {};
         // Material 
         var material = new BABYLON.StandardMaterial("DEM Material - " + it, scene);
         var fakeTexture = new BABYLON.Texture(
-            "img/white.png",
+            RANDO.SETTINGS.FAKE_TEX_URL,
             scene
         );
         material.diffuseTexture = fakeTexture;
@@ -164,7 +164,7 @@ RANDO = RANDO || {};
 
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
-        side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEXTURE, scene);
+        side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEX_URL, scene);
 
         // Recomputes normals for lights and shadows
         RANDO.Utils.computeMeshNormals(side);
