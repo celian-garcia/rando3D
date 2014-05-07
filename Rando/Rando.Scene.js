@@ -256,20 +256,21 @@ RANDO = RANDO || {};
      * is ready, in other words, when the scene have built all its elements.
      */
     function _executeWhenReady () {
+        console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var scene = this._scene;
         var engine = this._engine;
-        scene.render();
         
-        console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var ground = this.dem.ground;
         var tiles = this.dem._tiles;
         var tilesKeys = Object.keys(tiles);
         var trek_length = scene.getMeshByName("Spheres").getChildren().length;
+        var finalTextures = [];
         
         console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
         
         var index = 0;
         var chunk = 100; // By chunks of 100 points
+        prepareFinalTextures();
         drape();
 
         // Drape vertices (spheres) over the DEM
@@ -304,28 +305,33 @@ RANDO = RANDO || {};
             texture ();
         };
 
-        // Load tile's textures over the DEM
-        function texture () {
-            if (index < tilesKeys.length) {
-                var property = tilesKeys[index];
-                index++;
-                var tile = tiles[property];
+        function prepareFinalTextures() {
+            for (it in tiles) {
+                var tileData = tiles[it];
                 
                 // Get url of the texture
                 var url = RANDO.Utils.replaceUrlCoordinates(
                     RANDO.SETTINGS.TILE_TEX_URL,
-                    tile.coordinates.z, 
-                    tile.coordinates.x, 
-                    tile.coordinates.y
+                    tileData.coordinates.z, 
+                    tileData.coordinates.x, 
+                    tileData.coordinates.y
                 );
+                finalTextures.push(engine.createTexture(url, true, true, scene));
+            }
+        };
+        // Load tile's textures over the DEM
+        function texture () {
+            if (index < tilesKeys.length) {
+                var property = tilesKeys[index];
+                
+                var tile = tiles[property];
                 
                 var child = scene.getMeshByName("Tile - " + property);
-                var newTexture = RANDO.Utils.createTexture(engine, child, url, scene, true, true);
-                child.material.diffuseTexture._texture = newTexture;
-                //~ child.material.diffuseTexture = tex;
+                child.material.diffuseTexture._texture = finalTextures[index];
                 child.material.wireframe = false;
                 
-                setTimeout( texture, 10 );
+                index++;
+                setTimeout( texture, 1 );
             }
         };
         

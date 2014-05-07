@@ -110,6 +110,7 @@ RANDO = RANDO || {};
      */
     function _buildTile (data) {
         var scene = this._scene;
+        var engine = scene.getEngine();
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
@@ -126,14 +127,14 @@ RANDO = RANDO || {};
 
         // Enables collisions
         tile.checkCollisions = true;
-
+        
         // Material 
         var material = new BABYLON.StandardMaterial("DEM Material - " + it, scene);
-        var tex = new BABYLON.Texture(
+        var fakeTexture = new BABYLON.Texture(
             "img/white.png",
             scene
         );
-        material.diffuseTexture = tex;
+        material.diffuseTexture = fakeTexture;
         material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;
