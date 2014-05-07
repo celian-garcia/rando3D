@@ -25,12 +25,12 @@ div {
     background-color: rgba(255,255,255, 0.2);
 }
 
-#logo {
+#title {
     position: absolute;
     z-index: 1;
     top: 0;
     left: 50px;
-    width: 30em;
+    width: 34em;
     margin-left: -6.5em;
     height: 6em;
     
@@ -44,11 +44,11 @@ div {
     
     background: url('../img/logo_geotrek.png') -3px 1px no-repeat;
     
-    color: #52575c;
+    
 }
 
 
-#logo a {
+#geotrek {
     display: block;
     width: 100%;
     height: 100%;
@@ -66,12 +66,11 @@ div {
     font-weight: 400;
 }
 
-#logo a:hover {
+#geotrek:hover {
     color: #c4ca26;
 }
 
-#logo span {
-
+#title span {
     margin: 0;
     padding: 0;
     border: 0;
@@ -80,8 +79,15 @@ div {
     vertical-align: baseline;
     padding-left: 5em;
 }
-
-
+#title p {
+    text-align: center;
+}
+#title p a{
+    color: white;
+}
+#title p a:hover{
+    color: #c4ca26;
+}
 
 #mapbox_attribution {
     position: absolute;
