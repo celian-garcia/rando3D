@@ -138,7 +138,6 @@ RANDO = RANDO || {};
         material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;
-
         return tile;
     };
 

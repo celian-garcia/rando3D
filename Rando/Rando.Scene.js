@@ -98,8 +98,6 @@ RANDO = RANDO || {};
                     that._offsets,
                     that._scene
                 );
-                console.log(that._scene);
-                that._scene.render();
             }
          })
          
@@ -143,9 +141,6 @@ RANDO = RANDO || {};
             camera.lowerRadiusLimit = 1000;
             camera.upperRadiusLimit = 5000;
 
-            //~ scene.beforeRender = function () {
-                //~ scene.activeCamera.alpha -= .003;
-            //~ };
             $("#controls_ar_cam").css("display", "block");
         }else {
             camera = new BABYLON.FreeCamera("Fly Camera", new BABYLON.Vector3(0, 0, 0), scene);
@@ -201,7 +196,7 @@ RANDO = RANDO || {};
         //~ skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         
         // Color
-        this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0.0000001);
+        this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
     };
     
     
@@ -259,6 +254,9 @@ RANDO = RANDO || {};
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var scene = this._scene;
         var engine = this._engine;
+        engine.runRenderLoop(function() {
+            scene.render();
+        }); 
         
         var ground = this.dem.ground;
         var tiles = this.dem._tiles;
@@ -287,6 +285,7 @@ RANDO = RANDO || {};
                 // At the end of draping we place cylinders
                 setTimeout(place, 1); 
             }
+            
         };
 
         // Place all cylinders between each pairs of spheres 
@@ -299,9 +298,8 @@ RANDO = RANDO || {};
                 );
             }
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
-            scene.getEngine().runRenderLoop(function() {
-                renderLoop();
-            });
+            
+            console.log("Textures application ..." + (Date.now() - RANDO.START_TIME) );
             texture ();
         };
 
@@ -319,11 +317,11 @@ RANDO = RANDO || {};
                 finalTextures.push(engine.createTexture(url, true, true, scene));
             }
         };
+        
         // Load tile's textures over the DEM
         function texture () {
             if (index < tilesKeys.length) {
                 var property = tilesKeys[index];
-                
                 var tile = tiles[property];
                 
                 var child = scene.getMeshByName("Tile - " + property);
@@ -332,12 +330,9 @@ RANDO = RANDO || {};
                 
                 index++;
                 setTimeout( texture, 1 );
+            } else {
+                console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
             }
-        };
-        
-        
-        function renderLoop() {
-            scene.render();
         };
     };
 
