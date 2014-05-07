@@ -8,6 +8,12 @@ html, body, div, canvas {
     overflow: hidden;
     color: white
 }
+
+body {
+    background-color: #00161F;
+    background-image: url('../img/background.jpg');
+    background-size: 100% 100%;
+}
 a {
     text-decoration: none;
 }
@@ -86,5 +92,5 @@ div {
     color: inherit;
 }
 #mapbox_attribution a:hover  {
-    color: #166EAB; 
+    color: #c4ca26; 
 }

@@ -201,7 +201,7 @@ RANDO = RANDO || {};
         //~ skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         
         // Color
-        //~ this._scene.clearColor = new BABYLON.Color3(0,0.1,0);
+        this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0.0000001);
     };
     
     
