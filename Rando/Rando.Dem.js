@@ -24,6 +24,7 @@ RANDO = RANDO || {};
 
         /* Initialization */
         this.init();
+        console.log(this._tiles);
     };
 
     /* List of Methods */

@@ -15,9 +15,14 @@
         }
 
     </style>
-    <script src="../lib/jquery-1.9.1.js"></script>
-    <script src="../lib/babylon.1.9.0.js"></script>
-    <script src="../lib/babylon.arcRotateCamera.js"></script>
+    <!-- JQuery-->
+    <script src="../lib/jquery-1.10.2.js"></script>
+
+    <!-- Underscore-->
+    <script src="../lib/underscore.js"></script>
+    
+    <!-- BABYLON-->
+    <script src="../lib/babylon.1.11.js"></script>
     <script src="../lib/neo.js"></script>
     <script src="../Rando/Rando.Utils.js"></script>
         
@@ -52,8 +57,9 @@
         var hard = true;
         if (hard){
             camera.position = new BABYLON.Vector3(0, 0, -20);
-            sph_A.position =  new BABYLON.Vector3(5,0,0);
-            sph_B.position =  new BABYLON.Vector3(10,10,10);
+            //~ camera.rotation.y = Math.PI/2;
+            sph_A.position =  new BABYLON.Vector3(5,5,5);
+            sph_B.position =  new BABYLON.Vector3(-5,-5,-5);
         }
         else{
             camera.position = new BABYLON.Vector3(1279, 222, 2600);
@@ -66,10 +72,11 @@
         // Container
         var container = new BABYLON.Mesh("Container", scene);
         container.isVisible = false;
+        
         // Cylinder
         var height = BABYLON.Vector3.Distance(A,B)
         var diameter = 2;
-        var tessellation = 5;
+        var tessellation = 10;
         var cylinder = BABYLON.Mesh.CreateCylinder(
             "Cylinder", 
             height, 
@@ -110,55 +117,7 @@
         camera.keysRight = [68]; // Touche D
         return camera;
     }
-    
-    function get_x_rotation(a, b){
-        var x = Math.acos(
-            (b[1]-a[1])/Math.sqrt(
-                Math.pow(b[1]-a[1],2)+
-                Math.pow(b[2]-a[2],2)
-            )
-        );
-        // Case 1
-        if (b[2] <= a[2])
-            return -x;
-        // Case 2
-        if (b[2] >= a[2])
-            return  x;
-        
-        return null;
-    }
 
-    
-    
-    function angle (A, B, axe){
-        var H;
-        switch (axe){
-            case BABYLON.Axis.X : 
-                H = new BABYLON.Vector3(B.x,B.y,A.z);   break;
-            case BABYLON.Axis.Y :
-                H = null;                               break;
-            case BABYLON.Axis.Z :
-                H = new BABYLON.Vector3(A.x,B.y,B.z);
-        }
-        
-        // Compute angle
-        var AH = BABYLON.Vector3.Distance(A, H);
-        var AB = BABYLON.Vector3.Distance(A, B);
-        var angle = Math.acos(AH/AB);
-        
-        switch (axe){
-            case BABYLON.Axis.X : 
-                if (H.z > B.z)
-                    return -angle;  break;
-            case BABYLON.Axis.Y :
-                return null;        break
-            case BABYLON.Axis.Z :
-                if (H.x < B.x)
-                    return -angle;  
-        }
-        
-        return angle;
-    }
     
     BABYLON.Mesh.prototype.place = function(A, B){
         // Initial position at the center of the AB vector
@@ -168,28 +127,22 @@
             (A.z+B.z)/2
         );
         
-        // First angle of rotation
-        //var angle1 = get_x_rotation(A.asArray(),B.asArray());
-        var angle1 = angle(A,B,BABYLON.Axis.X);
-        // Second angle of rotation 
-        var angle2 = angle(A,B,BABYLON.Axis.Z);
-        
-        //First rotation
+        // First rotation
+        var angle1 = RANDO.Utils.angleFromAxis(A, B, BABYLON.Axis.X);
         this.rotate(
             BABYLON.Axis.X, 
             angle1,
             BABYLON.Space.LOCAL
         );
-        console.log(angle1);
-        console.log(Math.PI/4);
-
-        // Second rotation
-        this.rotate(
-            BABYLON.Axis.Z, 
-            angle2, 
-            BABYLON.Space.LOCAL
-        );
-
+        
+        //~ // Second rotation
+        //~ var H = new BABYLON.Vector3(A.x,B.y,B.z);
+        //~ var angle2 = RANDO.Utils.angleFromPoints(A, B, H);
+        //~ this.rotate(
+            //~ BABYLON.Axis.Z, 
+            //~ angle2, 
+            //~ BABYLON.Space.LOCAL
+        //~ );
     }
  </script>
 

@@ -285,7 +285,6 @@ RANDO = RANDO || {};
                 // At the end of draping we place cylinders
                 setTimeout(place, 1); 
             }
-            
         };
 
         // Place all cylinders between each pairs of spheres 
@@ -326,8 +325,9 @@ RANDO = RANDO || {};
                 
                 var child = scene.getMeshByName("Tile - " + property);
                 child.material.diffuseTexture._texture = finalTextures[index];
-                child.material.wireframe = false;
-                
+                //~ if (child.material.isReady) {
+                    child.material.wireframe = false;
+                //~ }
                 index++;
                 setTimeout( texture, 1 );
             } else {

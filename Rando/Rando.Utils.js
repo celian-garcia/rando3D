@@ -289,7 +289,7 @@ RANDO.Utils.placeCylinder = function (cylinder, A, B) {
     );
     
     return cylinder;
-}
+};
 
 /**
  * ComputeMeshNormals() : recompute normals of a mesh (for the shadows after)

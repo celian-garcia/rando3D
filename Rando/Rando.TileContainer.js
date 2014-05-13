@@ -311,8 +311,7 @@ RANDO = RANDO || {};
                 break;
                 default: return null;
             }
-    };
-
+        };
     };
 
     /**
