@@ -334,19 +334,21 @@ RANDO = RANDO || {};
                     var cnt = chunk;
                     while (cnt-- && it < finalTextures.length) {
                         if (!checked[it] && finalTextures[it].isReady) {
-                            var property = tilesKeys[it];
                             checked[it] = true;
+                            var property = tilesKeys[it];
+                            
+                            // Set the texture when it's loaded
                             var material = scene.getMeshByName("Tile - " + property).material;
                             material.diffuseTexture._texture = finalTextures[it];
                             material.wireframe = false;
                             count--;
                         }
                         it++;
-                    } 
+                    }
                     if (it < finalTextures.length) {
                         setTimeout (apply, 1);
-                    }else if (count) {
-                        setTimeout(loop, 1);
+                    }else if (count > 0) {
+                        setTimeout (loop, 1);
                     }
                 };
             }
