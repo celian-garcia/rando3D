@@ -228,29 +228,6 @@ RANDO.Utils.createSideFromLine = function (name, line, base, scene, updatable) {
 }
 
 /**
-* processLargeArray(): Common utility to process large arrays
-*
-*       - array : large array
-*       - callback : function that will be called with (array, index)
-*/
-RANDO.Utils.processLargeArray = function (array, callback) {
-    // set this to whatever number of items you can process at once
-    var chunk = 10;
-    var index = 0;
-    function doChunk() {
-        var cnt = chunk;
-        while (cnt-- && index < array.length-1) {
-            callback(array, index);
-            ++index;
-        }
-        if (index < array.length-1) {
-            setTimeout(doChunk, 5);
-        }
-    }
-    doChunk();
-}
-
-/**
  *  placeCylinder()
  *      - cylinder (BABYLON.Mesh): BABYLON Cylinder object
  *      - A (BABYLON.Vector3):     First Point 
@@ -320,15 +297,13 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
             uv_array.push(uv.v[row]);
         }
     }
-    
-    var vertices = BABYLON.VertexData.ExtractFromMesh (mesh);
-    
+
     console.assert(
-        vertices.uvs.length == uv_array.length, 
+        mesh.getVerticesData(BABYLON.VertexBuffer.UVKind).length == uv_array.length, 
         "setMeshUvs() : uvs in parameter are not well sized"
     );
-    vertices.uvs = uv_array;
-    vertices.applyToMesh(mesh);
+
+    mesh.setVerticesData(uv_array, BABYLON.VertexBuffer.UVKind);
 };
 
 
