@@ -299,7 +299,7 @@ RANDO = RANDO || {};
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
             
             console.log("Textures application ..." + (Date.now() - RANDO.START_TIME) );
-            texture ();
+            setTimeout(texture, 1);
         };
 
         function prepareFinalTextures() {
@@ -319,21 +319,40 @@ RANDO = RANDO || {};
         
         // Load tile's textures over the DEM
         function texture () {
-            if (index < tilesKeys.length) {
-                var property = tilesKeys[index];
-                var tile = tiles[property];
-                
-                var child = scene.getMeshByName("Tile - " + property);
-                child.material.diffuseTexture._texture = finalTextures[index];
-                if (child.material.isReady) {
-                    child.material.wireframe = false;
-                }
-                index++;
-                setTimeout( texture, 1 );
-            } else {
-                console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
+            var count = finalTextures.length;
+            var checked = [];
+            for (var it in finalTextures){
+                checked.push(false);
             }
+            
+            loop();
+            function loop (){
+                var it = 0;
+                var chunk = 50;
+                apply();
+                function apply () {
+                    var cnt = chunk;
+                    while (cnt-- && it < finalTextures.length) {
+                        if (!checked[it] && finalTextures[it].isReady) {
+                            var property = tilesKeys[it];
+                            checked[it] = true;
+                            var material = scene.getMeshByName("Tile - " + property).material;
+                            material.diffuseTexture._texture = finalTextures[it];
+                            material.wireframe = false;
+                            count--;
+                        }
+                        it++;
+                    } 
+                    if (it < finalTextures.length) {
+                        setTimeout (apply, 1);
+                    }else if (count) {
+                        setTimeout(loop, 1);
+                    }
+                };
+            }
+            console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
         };
+        
     };
 
 
