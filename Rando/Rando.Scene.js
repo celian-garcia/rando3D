@@ -325,9 +325,9 @@ RANDO = RANDO || {};
                 
                 var child = scene.getMeshByName("Tile - " + property);
                 child.material.diffuseTexture._texture = finalTextures[index];
-                //~ if (child.material.isReady) {
+                if (child.material.isReady) {
                     child.material.wireframe = false;
-                //~ }
+                }
                 index++;
                 setTimeout( texture, 1 );
             } else {
