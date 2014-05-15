@@ -26,7 +26,9 @@ RANDO = RANDO || {};
     RANDO.Trek.prototype = {
         init:       init,
         buildTrek:  buildTrek,
-        translate:  translate
+        translate:  translate,
+        drape:      drape,
+        merge:      merge
     };
     
     
@@ -138,8 +140,46 @@ RANDO = RANDO || {};
             vertices[it].z += offsets.z;
         }
     };
+    function drape (ground) {
+        var spheres = this.spheres.getChildren();
+        var cylinders = this.cylinders.getChildren();
+        var trek_length = spheres.length;
+        var index = 0;
+        var chunk = 100; // By chunks of 100 points
+        
+        console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
+        drapeChunk();
+        
+        function drapeChunk () {
+            var cnt = chunk;
+            while (cnt-- && index < trek_length) {
+                RANDO.Utils.drapePoint(spheres[index].position, ground);
+                ++index;
+            }
+            if (index < trek_length){
+                setTimeout(drapeChunk, 1);
+            }else {
+                // At the end of draping we place cylinders
+                setTimeout(placeCylinders, 1); 
+            }
+        };
 
-
+        // Place all cylinders between each pairs of spheres 
+        function placeCylinders () {
+            for (var i = 0; i < trek_length-1; i++) {
+                RANDO.Utils.placeCylinder(
+                    cylinders[i], 
+                    spheres[i].position, 
+                    spheres[i+1].position
+                );
+            }
+            console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
+        };
+    };
+    
+    function merge () {
+        
+    };
 })();
 
 

@@ -18,12 +18,14 @@ RANDO = RANDO || {};
         this._altitudes = _.clone(altitudes);
         this._offsets = _.clone(offsets);
         this._grid = null;
-        this._tiles = {};        
+        this._tiles = {};
+        
+        this._init ();
     };
 
     /* List of Methods */
     RANDO.TileContainer.prototype = {
-        init:                   init,
+        _init:                   _init,
         _generateTiles:         _generateTiles,
         _joinTiles:             _joinTiles,
         _computeSize:           _computeSize,
@@ -31,14 +33,12 @@ RANDO = RANDO || {};
         translate:              translate
     };
     
-    function init() {
+    function _init () {
         this._generateTiles();
         this._joinTiles();
         this._computeSize();
         this._computeUvs();
         this.translate();
-        
-        return this._tiles;
     };
     
     

@@ -111,7 +111,8 @@ RANDO = RANDO || {};
                     that._trek_data,
                     that._offsets,
                     that._scene
-                ).init();
+                )
+                that.trek.init();
                 if (!that._demo) {
                     RANDO.Utils.animateCamera(that._trek_data, that._scene);
                 }
@@ -255,106 +256,21 @@ RANDO = RANDO || {};
      */
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
-        var scene = this._scene;
-        var engine = this._engine;
-        
-        
-        var ground = this.dem.ground;
-        var tiles = this.dem._tiles;
-        var tilesKeys = Object.keys(tiles);
-        var trek_length = scene.getMeshByName("Spheres").getChildren().length;
-        var finalTextures = [];
-        
-        console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
-        
-        var index = 0;
-        var chunk = 100; // By chunks of 100 points
-        prepareFinalTextures();
-        drape();
 
-        // Drape vertices (spheres) over the DEM
-        function drape(){
-            var cnt = chunk;
-            while (cnt-- && index < trek_length) {
-                RANDO.Utils.drapePoint(scene.getMeshByName("Sphere " + (index+1)).position, ground);
-                ++index;
-            }
-            if (index < trek_length){
-                setTimeout(drape, 1);
-            }else {
-                index = 0;
-                // At the end of draping we place cylinders
-                setTimeout(place, 1); 
-            }
-        };
-
-        // Place all cylinders between each pairs of spheres 
-        function place() {
-            for (var i = 0; i < trek_length-1; i++) {
-                RANDO.Utils.placeCylinder(
-                    scene.getMeshByName("Cylinder " + (i+1)), 
-                    scene.getMeshByName("Sphere "   + (i+1)).position, 
-                    scene.getMeshByName("Sphere "   + (i+2)).position
-                );
-            }
-            console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
-            
-            console.log("Textures application ..." + (Date.now() - RANDO.START_TIME) );
-            setTimeout(texture, 1);
-        };
-
-        function prepareFinalTextures() {
-            for (it in tiles) {
-                var tileData = tiles[it];
-                
-                // Get url of the texture
-                var url = RANDO.Utils.replaceUrlCoordinates(
-                    RANDO.SETTINGS.TILE_TEX_URL,
-                    tileData.coordinates.z, 
-                    tileData.coordinates.x, 
-                    tileData.coordinates.y
-                );
-                finalTextures.push(engine.createTexture(url, true, true, scene));
-            }
-        };
+        var that = this;
+        var dem = this.dem;
+        var trek = this.trek;
+        var ground = dem.ground
         
-        // Load tile's textures over the DEM
-        function texture () {
-            var count = finalTextures.length;
-            var checked = [];
-            for (var it in finalTextures){
-                checked.push(false);
-            }
-            
-            loop();
-            function loop (){
-                var it = 0;
-                var chunk = 50;
-                apply();
-                function apply () {
-                    var cnt = chunk;
-                    while (cnt-- && it < finalTextures.length) {
-                        if (!checked[it] && finalTextures[it].isReady) {
-                            checked[it] = true;
-                            var property = tilesKeys[it];
-                            
-                            // Set the texture when it's loaded
-                            var material = scene.getMeshByName("Tile - " + property).material;
-                            material.diffuseTexture._texture = finalTextures[it];
-                            material.wireframe = false;
-                            count--;
-                        }
-                        it++;
-                    }
-                    if (it < finalTextures.length) {
-                        setTimeout (apply, 1);
-                    }else if (count > 0) {
-                        setTimeout (loop, 1);
-                    }
-                };
-            }
-            console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
-        };
+        setTimeout( function () {
+            trek.drape(ground);
+        }, 1) ;
+        setTimeout( function () {
+            trek.merge();
+        }, 1) ;
+        setTimeout( function () {
+            dem.applyTextures();
+        }, 10) ;
         
     };
 

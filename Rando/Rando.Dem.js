@@ -18,13 +18,13 @@ RANDO = RANDO || {};
         this._offsets = offsets;
         this._scene = scene;
         this._tiles = null;
+        this._textures = [];
         
         this.ground = new BABYLON.Mesh("Digital Elevation Model", scene);
         this.sides  = new BABYLON.Mesh("Sides", scene);
 
         /* Initialization */
         this.init();
-        console.log(this._tiles);
     };
 
     /* List of Methods */
@@ -32,9 +32,11 @@ RANDO = RANDO || {};
         init:               init,
         buildGround:        buildGround,
         buildSides:         buildSides,
+        applyTextures:      applyTextures,
         _buildTile:         _buildTile,
         _buildSide:         _buildSide,
-        _initCamera:        _initCamera
+        _initCamera:        _initCamera,
+        _prepareTexture:    _prepareTexture
     };
 
     function init() {
@@ -42,7 +44,7 @@ RANDO = RANDO || {};
             this._data.extent, 
             this._data.altitudes,
             this._offsets
-        ).init();
+        )._tiles;
         this._initCamera();
         this.buildGround();
         this.buildSides();
@@ -112,6 +114,10 @@ RANDO = RANDO || {};
     function _buildTile (data) {
         var scene = this._scene;
         var engine = scene.getEngine();
+        var that = this;
+        //~ setTimeout ( function () {
+            //~ that._prepareTexture(data.coordinates);
+        //~ }, 1);
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
@@ -123,7 +129,7 @@ RANDO = RANDO || {};
         // Recomputes normals for lights and shadows
         RANDO.Utils.computeMeshNormals(tile)
 
-        // 
+        // Set Uvs data of the tile 
         RANDO.Utils.setMeshUvs(tile, data.uv);
 
         // Enables collisions
@@ -141,7 +147,67 @@ RANDO = RANDO || {};
         tile.material = material;
         return tile;
     };
+    
+    function _prepareTexture (coordinates) {
+        var scene = this._scene;
+        var engine = scene.getEngine();
+        var url = RANDO.Utils.replaceUrlCoordinates(
+            RANDO.SETTINGS.TILE_TEX_URL,
+            coordinates.z, 
+            coordinates.x, 
+            coordinates.y
+        );
+        this._textures.push(new BABYLON.Texture(url, scene));
+    };
+    
+    // Load tile's textures over the DEM
+    function applyTextures () {
+        console.log("Textures application ..." + (Date.now() - RANDO.START_TIME) );
+        var tiles = this._tiles;
 
+        // Prepare all textures 
+        for (var it in tiles) {
+            this._prepareTexture(tiles[it].coordinates);
+        }
+
+        var scene = this._scene;
+        var meshes = this.ground.getChildren ();
+        var finalTextures = this._textures;
+        var checked = [];
+        var count = finalTextures.length;
+        for (var it in finalTextures){
+            checked.push(false);
+        }
+
+        loop();
+        function loop (){
+            var it = 0;
+            var chunk = 50;
+            apply();
+            function apply () {
+                var cnt = chunk;
+                while (cnt-- && it < finalTextures.length) {
+                    if (!checked[it] && finalTextures[it]._texture.isReady) {
+                        checked[it] = true;
+
+                        // Set the texture when it's loaded
+                        var material = meshes[it].material;
+                        material.diffuseTexture = finalTextures[it];
+                        material.wireframe = false;
+                        count--;
+                    }
+                    it++;
+                }
+                if (it < finalTextures.length) {
+                    setTimeout (apply, 1);
+                } else if (count > 0) {
+                    setTimeout (loop, 1);
+                } else {
+                    console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
+                }
+            };
+        }
+    };
 
     /**
      * RANDO.Dem._buildSide() : build a side of the DEM
