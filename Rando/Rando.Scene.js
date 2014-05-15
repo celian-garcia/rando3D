@@ -92,6 +92,9 @@ RANDO = RANDO || {};
          
          // Tiled DEM mesh building
          .then(function () {
+            that._engine.runRenderLoop(function() {
+                that._scene.render();
+            }); 
             if (b_dem) {
                 that.dem = new RANDO.Dem(
                     that._dem_data,
@@ -254,9 +257,7 @@ RANDO = RANDO || {};
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
         var scene = this._scene;
         var engine = this._engine;
-        engine.runRenderLoop(function() {
-            scene.render();
-        }); 
+        
         
         var ground = this.dem.ground;
         var tiles = this.dem._tiles;
