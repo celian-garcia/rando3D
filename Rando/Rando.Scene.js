@@ -265,9 +265,9 @@ RANDO = RANDO || {};
         setTimeout( function () {
             trek.drape(ground);
         }, 1) ;
-        setTimeout( function () {
-            trek.merge();
-        }, 1) ;
+        //~ setTimeout( function () {
+            //~ trek.merge();
+        //~ }, 1) ;
         setTimeout( function () {
             dem.applyTextures();
         }, 10) ;

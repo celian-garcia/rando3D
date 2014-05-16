@@ -6,6 +6,7 @@ window.onload = function onload(){
         RANDO.SETTINGS.TILE_TEX_URL = "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png"
         RANDO.SETTINGS.SIDE_TEX_URL = "img/side.jpg";
         RANDO.SETTINGS.FAKE_TEX_URL = "img/white.png";
+        RANDO.SETTINGS.CAM_SPEED_F  = 100;
 
         RANDO.START_TIME = Date.now();
         
