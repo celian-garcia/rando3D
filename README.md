@@ -5,11 +5,11 @@ INSTALL
 
 # System
 
-sudo add-apt-repository ppa:chris-lea/node.js
-sudo apt-get update
-sudo apt-get install nodejs
-sudo apt-get autoremove
-sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+sudo add-apt-repository ppa:chris-lea/node.js   
+sudo apt-get update   
+sudo apt-get install nodejs   
+sudo apt-get autoremove   
+sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs  
 
 # Repository
 
