@@ -261,13 +261,11 @@ RANDO = RANDO || {};
         var dem = this.dem;
         var trek = this.trek;
         var ground = dem.ground
-        
+
         setTimeout( function () {
             trek.drape(ground);
         }, 1) ;
-        //~ setTimeout( function () {
-            //~ trek.merge();
-        //~ }, 1) ;
+
         setTimeout( function () {
             dem.applyTextures();
         }, 10) ;

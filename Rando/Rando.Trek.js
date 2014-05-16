@@ -20,7 +20,7 @@ RANDO = RANDO || {};
         
         this.spheres = new BABYLON.Mesh("Spheres", this._scene);
         this.cylinders = new BABYLON.Mesh("Cylinders", this._scene);
-        this.mergedMesh = new BABYLON.Mesh("Merged Trek", this._scene);
+        //~ this.mergedMesh = new BABYLON.Mesh("Merged Trek", this._scene);
     };
 
     /* List of Methods */
@@ -184,51 +184,9 @@ RANDO = RANDO || {};
     function merge () {
         var spheres = this.spheres.getChildren();
         var cylinders = this.cylinders.getChildren();
-        var mergedMesh = this.mergedMesh;
-        var mergedMesh_vdata = BABYLON.VertexData.ExtractFromMesh(spheres[0]);
         
-        //~ console.log(spheres[0]);
-        //~ spheres[0].locallyTranslate(new BABYLON.Vector3(0,100,0))
-        //~ spheres[0].locallyTranslate();
-        //~ var data1 = spheres[0].getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        //~ var data2 = BABYLON.VertexData.ExtractFromMesh(spheres[0]).positions;
-        //~ 
-        //~ console.log(data1);
-        //~ console.log(data2);
         var mergedTrek = RANDO.Utils.mergeMeshes("Trek merged", spheres.concat(cylinders), this._scene);
-        for (var it in spheres) {
-            spheres[it].isVisible = false;
-        }
-        for (var it in cylinders) {
-            cylinders[it].isVisible = false;
-        }
-        //~ for (var it in spheres) {
-            //~ if (it !=0) {
-                //~ var sphere = spheres[it];
-                //~ var sphere_vdata = BABYLON.VertexData.ExtractFromMesh(sphere);
-                //~ 
-                //~ mergedMesh_vdata.merge(sphere_vdata);
-                //~ sphere.isVisible = false;
-            //~ };
-        //~ }
-        //~ 
-        //~ for (var it in cylinders) {
-            //~ var cylinder = cylinders[it];
-            //~ cylinder.isVisible = false;
-            //~ var cylinder_vdata = BABYLON.VertexData.ExtractFromMesh(cylinder);
-            //~ 
-            //~ mergedMesh_vdata.merge(cylinder_vdata);
-        //~ }
-        //~ 
-        //~ 
-        //~ 
-        //~ mergedMesh_vdata.applyToMesh(spheres[0]);
-        //~ mergedMesh.position = new BABYLON.Vector3(0,3000,0);
         mergedTrek.material = spheres[0].material;
-        
-        //~ 
-        
-        
     };
 })();
 
