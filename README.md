@@ -9,7 +9,7 @@ sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get install nodejs
 sudo apt-get autoremove
-sudo ln -s /home/celian/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
 
 # Repository
 
@@ -20,7 +20,7 @@ npm install mocha chai mocha-phantomjs
 
 Browser
 
-file:///home/celian/Geotrek_3D/kata_fizzbuzz/test/index.html
+file:///home/user/Geotrek_3D/rando3D/test/index.html
 
 Command-line
 
@@ -28,7 +28,7 @@ Command-line
 
 
 
-# Démo
-https://kostar111.github.io/rando3D/
+# Démo(s)
+https://kostar111.github.io/rando3D/demo/v1/
 
 
