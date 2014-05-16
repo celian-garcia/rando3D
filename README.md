@@ -16,19 +16,21 @@ sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/l
 npm install mocha chai mocha-phantomjs
 
 
-## Run tests ##
+Run tests 
+======
 
-Browser
+### Browser ###
 
 file:///home/user/Geotrek_3D/rando3D/test/index.html
 
-Command-line
+### Command-line ###
 
 ./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html 
 
 
 
-## Démo(s) ##
+Démo
+======
 https://kostar111.github.io/rando3D/demo/v1/
 
 
