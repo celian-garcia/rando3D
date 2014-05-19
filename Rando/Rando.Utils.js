@@ -309,6 +309,8 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
 /**
  * RANDO.Utils.mergeMeshes() : Merge a mesh array in only one mesh. It permites 
  * to increase performance.
+ *      - newMesh : future merged Mesh
+ *      - arrayObj : array of Meshes to merge 
  * 
  * Function directly inspired from David Catuhe's one in the github wiki of BabylonJS
  * https://github.com/BabylonJS/Babylon.js/wiki/How-to-merge-meshes

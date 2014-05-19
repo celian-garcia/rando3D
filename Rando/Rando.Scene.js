@@ -252,7 +252,7 @@ RANDO = RANDO || {};
 
     /**
      * RANDO.Scene._executeWhenReady() : function which is executed when the scene 
-     * is ready, in other words, when the scene have built all its elements.
+     *  is ready, in other words, when the scene have built all its elements.
      */
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
