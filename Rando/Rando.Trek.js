@@ -63,6 +63,7 @@ RANDO = RANDO || {};
                 RANDO.SETTINGS.TREK_WIDTH, 
                 scene
             );
+            sphere.isVisible = false;
             sphere.position = vertex;
             sphere.material = trek_material;
             sphere.parent = spheres;
@@ -80,6 +81,7 @@ RANDO = RANDO || {};
                 10,
                 scene
             );
+            cylinder.isVisible = false;
             cylinder.material = trek_material;
             cylinder.parent = cylinders;
 
@@ -187,6 +189,7 @@ RANDO = RANDO || {};
         
         var mergedTrek = RANDO.Utils.mergeMeshes("Trek merged", spheres.concat(cylinders), this._scene);
         mergedTrek.material = spheres[0].material;
+        mergedTrek.isVisible = true;
     };
 })();
 

@@ -257,7 +257,6 @@ RANDO = RANDO || {};
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
-        var that = this;
         var dem = this.dem;
         var trek = this.trek;
         var ground = dem.ground
