@@ -20,7 +20,7 @@ RANDO = RANDO || {};
         
         this.spheres = new BABYLON.Mesh("Spheres", this._scene);
         this.cylinders = new BABYLON.Mesh("Cylinders", this._scene);
-        this.mergedTrek = null;
+        this.mergedTrek = new BABYLON.Mesh("Merged Trek", this._scene);
     };
 
     /* List of Methods */
@@ -195,9 +195,8 @@ RANDO = RANDO || {};
         var spheres = this.spheres.getChildren();
         var cylinders = this.cylinders.getChildren();
         var trek = this.mergedTrek;
-        trek = RANDO.Utils.mergeMeshes("Trek merged", spheres.concat(cylinders), this._scene);
         trek.material = spheres[0].material;
-        trek.isVisible = true;
+        RANDO.Utils.mergeMeshes(trek, spheres.concat(cylinders));
     };
 })();
 

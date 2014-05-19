@@ -313,7 +313,7 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
  * Function directly inspired from David Catuhe's one in the github wiki of BabylonJS
  * https://github.com/BabylonJS/Babylon.js/wiki/How-to-merge-meshes
  */
-RANDO.Utils.mergeMeshes = function (meshName, arrayObj, scene) {
+RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     var arrayPos = [];
     var arrayNormal = [];
     var arrayUv = [];
@@ -324,7 +324,6 @@ RANDO.Utils.mergeMeshes = function (meshName, arrayObj, scene) {
     var arrayIndice = [];
     var savedPosition = [];
     var savedNormal = [];
-    var newMesh = new BABYLON.Mesh(meshName, scene);
     var UVKind = true;
     var UV2Kind = true;
     var ColorKind = true;
@@ -407,7 +406,6 @@ RANDO.Utils.mergeMeshes = function (meshName, arrayObj, scene) {
         newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.MatricesWeightsKind, false);
 
     newMesh.setIndices(arrayIndice);
-    return newMesh;
 };
 
 /****    GEOMETRY     ************************/

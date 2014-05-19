@@ -262,12 +262,11 @@ RANDO = RANDO || {};
         var ground = dem.ground
 
         setTimeout( function () {
-            trek.drape(ground);
-        }, 1) ;
-
-        setTimeout( function () {
             dem.applyTextures();
-        }, 10) ;
+            setTimeout( function () {
+                trek.drape(ground);
+            }, 1) ;
+        }, 1) ;
         
     };
 
