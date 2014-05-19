@@ -1,7 +1,6 @@
 // Rando.Settings.js 
 // General settings  
 
-var START_TIME;
 var RANDO = RANDO || {};
 RANDO.SETTINGS = {};
 
