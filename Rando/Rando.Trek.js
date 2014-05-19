@@ -20,7 +20,7 @@ RANDO = RANDO || {};
         
         this.spheres = new BABYLON.Mesh("Spheres", this._scene);
         this.cylinders = new BABYLON.Mesh("Cylinders", this._scene);
-        //~ this.mergedMesh = new BABYLON.Mesh("Merged Trek", this._scene);
+        this.mergedTrek = null;
     };
 
     /* List of Methods */
@@ -143,6 +143,11 @@ RANDO = RANDO || {};
             vertices[it].z += offsets.z;
         }
     };
+    
+    /**
+     * RANDO.Trek.drape() : drape the trek over the ground 
+     *      - ground : Mesh in which we drape spheres
+     */
     function drape (ground) {
         var spheres = this.spheres.getChildren();
         var cylinders = this.cylinders.getChildren();
@@ -154,7 +159,7 @@ RANDO = RANDO || {};
         console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
         drapeChunk();
         
-        
+        // Step 1 : drape the spheres over the ground
         function drapeChunk () {
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
@@ -169,7 +174,7 @@ RANDO = RANDO || {};
             }
         };
 
-        // Place all cylinders between each pairs of spheres 
+        // Step 2 : Place all cylinders between each pairs of spheres 
         function placeCylinders () {
             for (var i = 0; i < trek_length-1; i++) {
                 RANDO.Utils.placeCylinder(
@@ -183,13 +188,16 @@ RANDO = RANDO || {};
         };
     };
     
+    /**
+     * RANDO.Trek.merge() : merge all elements (spheres and cylinders) of the Trek
+     */
     function merge () {
         var spheres = this.spheres.getChildren();
         var cylinders = this.cylinders.getChildren();
-        
-        var mergedTrek = RANDO.Utils.mergeMeshes("Trek merged", spheres.concat(cylinders), this._scene);
-        mergedTrek.material = spheres[0].material;
-        mergedTrek.isVisible = true;
+        var trek = this.mergedTrek;
+        trek = RANDO.Utils.mergeMeshes("Trek merged", spheres.concat(cylinders), this._scene);
+        trek.material = spheres[0].material;
+        trek.isVisible = true;
     };
 })();
 
