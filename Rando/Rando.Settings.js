@@ -34,6 +34,15 @@ RANDO.SETTINGS.TREK_WIDTH = 10; // Trek width (in meters)
 
 RANDO.SETTINGS.TILE_ZOOM = 17;
 
+RANDO.SETTINGS.POI_OFFSET = 100;
+RANDO.SETTINGS.POI_FORM1 = {
+    objectName :    "" ,
+    folder:         "blender/",
+    fileName:       "poi.babylon"
+};
+RANDO.SETTINGS.POI_SCALE = 10;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 RANDO.SETTINGS.parse = function (settings) {

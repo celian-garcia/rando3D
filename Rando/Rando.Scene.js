@@ -28,7 +28,6 @@ RANDO = RANDO || {};
         this.lights  = [];
         this.dem     = null;
         this.trek    = null;
-        
 
         this._dem_data  = {};
         this._trek_data = [];
@@ -50,7 +49,6 @@ RANDO = RANDO || {};
 
     
     function init() {
-        
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
         var that = this;
@@ -67,7 +65,7 @@ RANDO = RANDO || {};
         this._buildLights();
         this._buildEnvironment();
         this.process(true, true);
-    }
+    };
 
     /**
      * RANDO.Scene.process() : launch the building process of the scene 
@@ -117,6 +115,15 @@ RANDO = RANDO || {};
                     RANDO.Utils.animateCamera(that._trek_data, that._scene);
                 }
             }
+         })
+         .then(function () {
+            var position = that.trek.spheres.getChildren()[0].position;
+            var poi = new RANDO.Poi(
+                position,
+                "poi test",
+                that._scene
+            );
+            
          })
          .then(function () {
             that._scene.executeWhenReady(function () {
