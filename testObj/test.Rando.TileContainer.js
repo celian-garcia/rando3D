@@ -70,7 +70,7 @@ describe('Geotrek 3D - TileContainer Object', function() {
         describe('Tiles generation - this._generateTiles()', function () {
             it("should store all points (test the number of points).", function(done) {
                 var tilC = new RANDO.TileContainer(extent, altitudes, offsets);
-                tilC._generateTiles();
+                //~ tilC._generateTiles();
 
                 var tiles = tilC._tiles;
                 var count = 0;

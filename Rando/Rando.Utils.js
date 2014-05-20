@@ -410,6 +410,7 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     newMesh.setIndices(arrayIndice);
 };
 
+
 /****    GEOMETRY     ************************/
 /**tested
  * middle(): 

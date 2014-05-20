@@ -170,6 +170,7 @@ RANDO = RANDO || {};
             this._prepareTexture(tiles[it].coordinates);
         }
 
+
         var scene = this._scene;
         var meshes = this.ground.getChildren ();
         var finalTextures = this._textures;
