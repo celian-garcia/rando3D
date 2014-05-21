@@ -44,7 +44,7 @@ RANDO = RANDO || {};
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
-        panel.material.specularColor = new BABYLON.Color4(0,0,0, 0);
+        panel.material.specularColor = new BABYLON.Color4(0,0,0,0);
         this._panel = panel;
         var panel_size = RANDO.Utils.getSize (panel);
         

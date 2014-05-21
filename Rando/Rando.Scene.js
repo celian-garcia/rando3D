@@ -16,11 +16,12 @@ RANDO = RANDO || {};
 (function () {
 
     /* Constructor */
-    RANDO.Scene = function (canvas, demo,  settings) {
+    RANDO.Scene = function (canvas, demo, version,  settings) {
         // Attributes declaration 
         this._canvas = canvas;
         this._settings = settings;
         this._demo   = demo;
+        this._version = version;
         
         this._engine = null;
         this._scene  = null;
@@ -39,7 +40,8 @@ RANDO = RANDO || {};
     /* List of Methods */
     RANDO.Scene.prototype = {
         init:               init,
-        process:            process,
+        process_v10:        process_v10,
+        process_v11:        process_v11,
         _buildCamera:       _buildCamera,
         _buildLights:       _buildLights,
         _buildEnvironment:  _buildEnvironment,
@@ -67,18 +69,79 @@ RANDO = RANDO || {};
         this._buildCamera();
         this._buildLights();
         this._buildEnvironment();
-        this.process(true, true);
+        console.log(this._version);
+        switch (this._version) {
+            case "1.0" : 
+                this.process_v10();
+            break;
+            case "1.1" : 
+                this.process_v11();
+            break; 
+            default : this.process_v10();
+        }
     };
 
     /**
-     * RANDO.Scene.process() : launch the building process of the scene 
-     *      - b_dem : boolean which defines if we build the DEM or not (true by def)
-     *      - b_trek : boolean which defines if we build the Trek or not (true by def)
+     * RANDO.Scene.process_v10() : launch the building process of the scene 
+     *  It displays : 
+     *          - the terrain 
+     *          - the trek 
      */
-    function process (b_dem, b_trek) {
+    function process_v10 () {
         var that = this;
-        if (typeof(b_dem) === 'undefined')  b_dem  = true;
-        if (typeof(b_trek) === 'undefined') b_trek = true;
+
+        $.getJSON(RANDO.SETTINGS.DEM_URL)
+         .done(function (data) {
+            that._parseDemJson(data);
+         })
+         .then(function () {
+            return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
+         })
+         .done(function (data) {
+            that._parseTrekJson(data);
+         })
+         
+         // Tiled DEM mesh building
+         .then(function () {
+            that._engine.runRenderLoop(function() {
+                that._scene.render();
+            }); 
+            that.dem = new RANDO.Dem(
+                that._dem_data,
+                that._offsets,
+                that._scene
+            );
+         })
+         
+         // Trek building
+         .then(function () {
+            that.trek = new RANDO.Trek  (
+                that._trek_data,
+                that._offsets,
+                that._scene
+            )
+            that.trek.init();
+            if (!that._demo) {
+                RANDO.Utils.animateCamera(that._trek_data, that._scene);
+            }
+         })
+         
+         .then(function () {
+            that._scene.executeWhenReady(function () {
+                that._executeWhenReady ();
+            });
+         });
+    };
+    
+    /**
+     * RANDO.Scene.process_v11() : launch the building process of the scene 
+     *  It displays : 
+     *          - the terrain 
+     *          - the trek 
+     *          - POIs
+     */
+    function process_v11 () {
+        var that = this;
 
         $.getJSON(RANDO.SETTINGS.DEM_URL)
          .done(function (data) {
@@ -102,42 +165,37 @@ RANDO = RANDO || {};
             that._engine.runRenderLoop(function() {
                 that._scene.render();
             }); 
-            if (b_dem) {
-                that.dem = new RANDO.Dem(
-                    that._dem_data,
-                    that._offsets,
-                    that._scene
-                );
-            }
+            that.dem = new RANDO.Dem(
+                that._dem_data,
+                that._offsets,
+                that._scene
+            );
          })
          
          // Trek building
          .then(function () {
-             console.log(that._trek_data);
-            if (b_trek) {
-                that.trek = new RANDO.Trek  (
-                    that._trek_data,
-                    that._offsets,
-                    that._scene
-                )
-                that.trek.init();
-                if (!that._demo) {
-                    RANDO.Utils.animateCamera(that._trek_data, that._scene);
-                }
-                
+            that.trek = new RANDO.Trek  (
+                that._trek_data,
+                that._offsets,
+                that._scene
+            )
+            that.trek.init();
+            if (!that._demo) {
+                RANDO.Utils.animateCamera(that._trek_data, that._scene);
             }
          })
          
          // POIs building
          .then(function () {
-            for (var it in that._pois_data) {
-                that.pois.push(new RANDO.Poi(
-                    that._pois_data[it],
-                    that._offsets,
-                    that._scene
-                ));
+            if (that._version == "1.1") {
+                for (var it in that._pois_data) {
+                    that.pois.push(new RANDO.Poi(
+                        that._pois_data[it],
+                        that._offsets,
+                        that._scene
+                    ));
+                }
             }
-            console.log(that._pois_data);
          })
          .then(function () {
             that._scene.executeWhenReady(function () {
