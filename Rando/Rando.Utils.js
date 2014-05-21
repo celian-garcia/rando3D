@@ -410,6 +410,62 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     newMesh.setIndices(arrayIndice);
 };
 
+RANDO.Utils.createPanel = function (height, text, scene, bg_color, text_color) {
+    var panel_width = 128;
+    var texture_size = 512;
+    
+    var count = 0;
+    var texture = new BABYLON.DynamicTexture("dynamic texture", texture_size, scene, true);
+    texture.hasAlpha = true;
+    
+    
+    var textureContext = texture.getContext();
+    var size = texture.getSize();
+    
+    text = "  " + text + "  ";
+    
+    
+    textureContext.save();
+    textureContext.fillStyle = bg_color;
+    textureContext.fillRect(0,0,size.width,size.height);
+    textureContext.font = "bold " + height*(512/128) + "px Arial";
+    var textSize = textureContext.measureText(text);
+    textureContext.fillStyle = text_color;
+    while (size.width < textSize.width) {
+        var old_size = size.width;
+        var new_size = size.width + 10;
+        var scale = old_size/new_size;
+        size.width = new_size;
+        panel_width = panel_width/scale;
+        textureContext.scale(scale, 1);
+    }
+    textureContext.fillText(text, (size.width - textSize.width)/2, (size.height + 400)/2);
+
+    textureContext.restore();
+
+    texture.update();
+
+    var panel = BABYLON.Mesh.CreateGround("Panel", panel_width, height, 2, scene);
+    panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
+    panel.material = new BABYLON.StandardMaterial("background", scene);
+    panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+    panel.material.diffuseTexture = texture;
+    
+    panel.material.backFaceCulling = false;
+    
+    return panel;
+};
+
+RANDO.Utils.getSize = function (mesh) {
+    var minmax = BABYLON.Mesh.MinMax([mesh]);
+
+    return {
+        'width'  : (minmax.max.x - minmax.min.x) ,
+        'height' : (minmax.max.y - minmax.min.y) ,
+        'deep'   : (minmax.max.z - minmax.min.z)  
+    };
+}
+
 
 /****    GEOMETRY     ************************/
 /**tested

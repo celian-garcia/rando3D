@@ -28,9 +28,11 @@ RANDO = RANDO || {};
         this.lights  = [];
         this.dem     = null;
         this.trek    = null;
+        this.pois    = [];
 
         this._dem_data  = {};
         this._trek_data = [];
+        this._pois_data = [];
         this._offsets   = {};
     };
 
@@ -44,11 +46,12 @@ RANDO = RANDO || {};
         _buildCardinals:    _buildCardinals,
         _executeWhenReady:  _executeWhenReady,
         _parseDemJson:      _parseDemJson,
-        _parseTrekJson:     _parseTrekJson
+        _parseTrekJson:     _parseTrekJson,
+        _parsePoiJson:      _parsePoiJson
     };
 
     
-    function init() {
+    function init () {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
         var that = this;
@@ -87,6 +90,12 @@ RANDO = RANDO || {};
          .done(function (data) {
             that._parseTrekJson(data);
          })
+         .then(function () {
+            return $.getJSON(RANDO.SETTINGS.POI_URL);
+         })
+         .done(function (data) {
+            that._parsePoiJson(data);
+         })
          
          // Tiled DEM mesh building
          .then(function () {
@@ -104,6 +113,7 @@ RANDO = RANDO || {};
          
          // Trek building
          .then(function () {
+             console.log(that._trek_data);
             if (b_trek) {
                 that.trek = new RANDO.Trek  (
                     that._trek_data,
@@ -114,16 +124,20 @@ RANDO = RANDO || {};
                 if (!that._demo) {
                     RANDO.Utils.animateCamera(that._trek_data, that._scene);
                 }
+                
             }
          })
+         
+         // POIs building
          .then(function () {
-            var position = that.trek.spheres.getChildren()[0].position;
-            var poi = new RANDO.Poi(
-                position,
-                "poi test",
-                that._scene
-            );
-            
+            for (var it in that._pois_data) {
+                that.pois.push(new RANDO.Poi(
+                    that._pois_data[it],
+                    that._offsets,
+                    that._scene
+                ));
+            }
+            console.log(that._pois_data);
          })
          .then(function () {
             that._scene.executeWhenReady(function () {
@@ -324,7 +338,7 @@ RANDO = RANDO || {};
         var profile = data.profile;
         var trek_data = this._trek_data;
         
-        for (it in profile){
+        for (var it in profile){
             var tmp = {
                 'lat' : profile[it][2][1],
                 'lng' : profile[it][2][0]
@@ -334,7 +348,37 @@ RANDO = RANDO || {};
             tmp.z = tmp.y;
             tmp.y = 0;
 
-            trek_data.push(_.clone(tmp));
+            trek_data.push(tmp);
+        }
+    };
+    
+    
+    /**
+     * RANDO.Scene._parsePoiJson() : parse data from the POI json 
+     *      - data : data from POI json
+     */
+    function _parsePoiJson (data) {
+        var pois_data = this._pois_data;
+        console.log(pois_data);
+        for (var it in data.features) {
+            var feature = data.features[it];
+            
+            var tmp = {
+                'lat' : feature.geometry.coordinates[1],
+                'lng' : feature.geometry.coordinates[0]
+            };
+
+            tmp = RANDO.Utils.toMeters(tmp);
+            pois_data.push ({
+                'coordinates' : {
+                    'x': tmp.x,
+                    'y': feature.properties.elevation,
+                    'z': tmp.y
+                },
+                'properties' : feature.properties
+            });
+            console.log(feature);
+            console.log(pois_data[it]);
         }
     };
 

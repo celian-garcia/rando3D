@@ -15,8 +15,8 @@
         }
 
     </style>
-    <script src="../lib/jquery-1.9.1.js"></script>
-    <script src="../lib/babylon.1.9.0.js"></script>
+    <script src="../lib/jquery-1.10.2.js"></script>
+    <script src="../lib/babylon.1.11.js"></script>
     <script src="../lib/neo.js">
         
     </script>
@@ -43,15 +43,72 @@
         //camera.rotation.y = Math.PI/2;
         camera.attachControl(canvas);
         // Light
-        var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 200, 0), scene);
+        var light = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 50, 0), scene);
         
         
-        var panel = create_panel("youhou !", 100, 20, scene);
+        var box = BABYLON.Mesh.CreateBox("box", 100, scene);
+        box.position.z += 100;
+        box.material = new BABYLON.StandardMaterial("mat2", scene);
+        box.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        var panel_size = 128;
+        var texture_size = 512;
+        
+        var count = 0;
+        var texture = new BABYLON.DynamicTexture("dynamic texture", texture_size, scene, true);
+        texture.hasAlpha = true;
+        
+        var ratio = panel_size/texture_size;
+        
+        var textureContext = texture.getContext();
+        var size = texture.getSize();
+        
+        var text = "  small  ";
+        
+        
+        textureContext.save();
+        textureContext.fillStyle = "#ffffff";
+        textureContext.fillRect(0,0,size.width,size.height);
+        textureContext.font = "bold 120px Calibri";
+        var textSize = textureContext.measureText(text);
+        console.log(size.width);
+        console.log(textSize.width);
+        textureContext.fillStyle = "#000000";
+        while (size.width < textSize.width) {
+            var old_size = size.width;
+            var new_size = size.width + 10;
+            var scale = old_size/new_size;
+            size.width = new_size;
+            panel_size = panel_size/scale;
+            textureContext.scale(scale, 1);
+        }
+        textureContext.fillText(text, (size.width - textSize.width)/2, (size.height)/2);
+        
+        console.log(textureContext);
+        
+        textureContext.restore();
+        
+        texture.update();
+        
+        var panel = create_panel("youhou !", panel_size, 80, scene);
+        panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        panel.material.diffuseTexture = texture;
+        
+        panel.material.backFaceCulling = false;
+        console.log(panel.material);
+        
+        
+        
+        
+        
+        
+        
         
         
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function () {
             scene.render();
+            
+            
         });
     });
     </script>
@@ -72,17 +129,8 @@
     
     function create_panel(text, width, height, scene){
         var panel = BABYLON.Mesh.CreateGround("background", width, height, 2, scene);
-        panel.material = new BABYLON.StandardMaterial("background", scene);
         panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
-        
-        var texture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
-        panel.material.diffuseTexture = texture;
-        //panel.material.specularColor = new BABYLON.Color3(0, 0, 0);
-        panel.material.backFaceCulling = false;
-
-        texture.drawText(text, null, 200, "bold 100px Arial", "white", "brown");
-        //text.drawText("- browsers statistics -", null, 250, "35px Segoe UI", "white", null);
-        
+        panel.material = new BABYLON.StandardMaterial("background", scene);
         return panel;
     }
     

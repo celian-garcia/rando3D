@@ -115,9 +115,6 @@ RANDO = RANDO || {};
         var scene = this._scene;
         var engine = scene.getEngine();
         var that = this;
-        //~ setTimeout ( function () {
-            //~ that._prepareTexture(data.coordinates);
-        //~ }, 1);
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
