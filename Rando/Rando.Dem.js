@@ -9,7 +9,7 @@
 
 RANDO = RANDO || {};
 
-(function () {
+(function () {  "use strict" 
 
     /* Constructor */
     RANDO.Dem = function (data, offsets, scene) {
@@ -63,7 +63,7 @@ RANDO = RANDO || {};
         var tiles = this._tiles;
 
         // Creates all tiles 
-        for (it in tiles) {
+        for (var it in tiles) {
             var meshTile = this._buildTile(tiles[it]);
             meshTile.parent = this.ground;
         }
@@ -118,7 +118,7 @@ RANDO = RANDO || {};
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
-            "Tile - " + it,
+            "Tile",
             data.grid,
             scene
         );
@@ -133,7 +133,7 @@ RANDO = RANDO || {};
         tile.checkCollisions = true;
         
         // Material 
-        var material = new BABYLON.StandardMaterial("DEM Material - " + it, scene);
+        var material = new BABYLON.StandardMaterial("DEM Material", scene);
         var fakeTexture = new BABYLON.Texture(
             RANDO.SETTINGS.FAKE_TEX_URL,
             scene

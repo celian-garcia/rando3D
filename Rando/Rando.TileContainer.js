@@ -9,7 +9,7 @@
 
 RANDO = RANDO || {};
 
-(function () {
+(function () {  "use strict" 
 
     /* Constructor */
     RANDO.TileContainer = function (extent, altitudes, offsets) {
@@ -111,7 +111,7 @@ RANDO = RANDO || {};
         var tiles = this._tiles;
         
         // Joins East and West sides of tiles  
-        for (it in tiles) {
+        for (var it in tiles) {
             var current_tile = tiles[it];
             var next_coord = {
                 z: current_tile.coordinates.z,
@@ -160,7 +160,7 @@ RANDO = RANDO || {};
                 var med_line1 = [];
                 var med_line2 = [];
                 
-                for (i in prev_line) {
+                for (var i in prev_line) {
                     var mid = RANDO.Utils.middle(prev_line[i], next_line[i]);
                     med_line1.push(_.clone(mid));
                     med_line2.push(_.clone(mid));
@@ -208,7 +208,7 @@ RANDO = RANDO || {};
         var extent = RANDO.Utils.getTileExtent(tiles);
 
         // Fill the uv data of tiles 
-        for (it in tiles) {
+        for (var it in tiles) {
             var tile = tiles[it];
             tile.uv = {};
 

@@ -13,7 +13,7 @@
 
 RANDO = RANDO || {};
 
-(function () {
+(function () {  "use strict" 
 
     /* Constructor */
     RANDO.Scene = function (canvas, demo, version,  settings) {

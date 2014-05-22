@@ -9,7 +9,7 @@
 
 RANDO = RANDO || {};
 
-(function () {
+(function () {  "use strict" 
 
     /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {
@@ -177,7 +177,8 @@ RANDO = RANDO || {};
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
         var trek        = new BABYLON.Mesh("Merged Trek", scene)
-        trek.material = spheres[0].material;
+        
+        trek.material = this.material;
         RANDO.Utils.mergeMeshes(trek, spheres.concat(cylinders));
         
         this.trek = trek;

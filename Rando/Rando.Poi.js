@@ -9,7 +9,8 @@
 
 RANDO = RANDO || {};
 
-(function () {
+(function () {  "use strict" 
+    
     /* Constructor */
     RANDO.Poi = function (data, offsets, scene) {
         this._position      = this._offset(data.coordinates, offsets);
