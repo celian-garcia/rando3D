@@ -410,7 +410,7 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     newMesh.setIndices(arrayIndice);
 };
 
-RANDO.Utils.createPanel = function (height, text, scene, bg_color, text_color) {
+RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_color) {
     var panel_width = 128;
     var texture_size = 512;
     
@@ -445,7 +445,7 @@ RANDO.Utils.createPanel = function (height, text, scene, bg_color, text_color) {
 
     texture.update();
 
-    var panel = BABYLON.Mesh.CreateGround("Panel", panel_width, height, 2, scene);
+    var panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
     panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
     panel.material = new BABYLON.StandardMaterial("background", scene);
     panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
