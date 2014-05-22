@@ -13,29 +13,47 @@ RANDO = RANDO || {};
 
     /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {
-        /* Attributes declaration */
-        this._data = data;
-        this._offsets = offsets;
+        this._vertices = this._offsets(data, offsets);
         this._scene = scene;
         
-        this.spheres = new BABYLON.Mesh("Spheres", this._scene);
-        this.cylinders = new BABYLON.Mesh("Cylinders", this._scene);
-        this.mergedTrek = new BABYLON.Mesh("Merged Trek", this._scene);
+        this.spheres    = null;
+        this.cylinders  = null;
+        this.material   = null;
+        this.trek = null;
+        
+        this.init();
     };
 
     /* List of Methods */
     RANDO.Trek.prototype = {
         init:       init,
+        _offsets:   _offsets,
         buildTrek:  buildTrek,
-        translate:  translate,
         drape:      drape,
         merge:      merge
     };
     
     
     function init () {
-        this.translate();
-        this.buildTrek();
+        this.material = new BABYLON.StandardMaterial("Trek Material", this._scene)
+        this.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
+        
+        this.buildTrek ();
+    };
+
+    /**
+     * RANDO.Trek._offsets() : translate the Trek data of the offsets attribute 
+     * 
+     * return the array of vertices
+     */
+    function _offsets (data, offsets) {
+        var vertices = _.clone(data);
+        for (var it in vertices){
+            vertices[it].x += offsets.x;
+            vertices[it].y += offsets.y;
+            vertices[it].z += offsets.z;
+        }
+        return vertices;
     };
 
     /**
@@ -44,17 +62,13 @@ RANDO = RANDO || {};
     function buildTrek () {
         // Trek building ...
         console.log("Trek building... " + (Date.now() - RANDO.START_TIME) );
-        var vertices = this._data;
-        var offsets = this._offsets;
-        var scene = this._scene;
-        var spheres = this.spheres;
-        var cylinders = this.cylinders;
-
-        // Trek material
-        var trek_material = new BABYLON.StandardMaterial("Trek Material", scene);
-        trek_material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
-
-        var n_sph = 0;
+        var vertices    = this._vertices;
+        var scene       = this._scene;
+        var material    = this.material;
+        var spheres     = new BABYLON.Mesh("TREK - Spheres", scene);
+        var cylinders   = new BABYLON.Mesh("TREK - Cylinders", scene);
+        var n_sph = 0, n_cyl = 0;
+        
         function createSphere(vertex) {
             n_sph++;
             var sphere = BABYLON.Mesh.CreateSphere(
@@ -64,12 +78,11 @@ RANDO = RANDO || {};
                 scene
             );
             sphere.isVisible = false;
-            sphere.position = vertex;
-            sphere.material = trek_material;
-            sphere.parent = spheres;
-        }
+            sphere.position  = vertex;
+            sphere.material  = material;
+            sphere.parent    = spheres;
+        };
 
-        var n_cyl = 0;
         function createCylinder(vertexA, vertexB) {
             n_cyl++;
             var cyl_height = BABYLON.Vector3.Distance(vertexA, vertexB);
@@ -81,14 +94,14 @@ RANDO = RANDO || {};
                 10,
                 scene
             );
-            cylinder.isVisible = false;
-            cylinder.material = trek_material;
-            cylinder.parent = cylinders;
+            cylinder.isVisible  = false;
+            cylinder.material   = material;
+            cylinder.parent     = cylinders;
 
             // Height is not a variable from BABYLON mesh, 
             //  it is my own variable I put on the cylinder to use it later
             cylinder.height = cyl_height;
-        }
+        };
 
         var prev, curr = null;
         for (var it in vertices){
@@ -107,54 +120,22 @@ RANDO = RANDO || {};
 
         // Trek built !
         console.log("Trek built ! " + (Date.now() - RANDO.START_TIME) );
+        
+        this.spheres = spheres;
+        this.cylinders = cylinders;
     };
 
-
-    /**
-     * RANDO.Trek.translate() : translate the Trek data of the offsets attribute or of 
-     * the offsets given in parameters
-     */
-    function translate (dx, dy, dz) {
-        
-        var vertices = this._data;
-        var offsets = {};
-        
-        if (typeof(dx) === "undefined"){
-            offsets.x = this._offsets.x;
-        }else {
-            offsets.x = dx;
-        }
-        
-        if (typeof(dy) === "undefined"){
-            offsets.y = this._offsets.y;
-        }else {
-            offsets.y = dy;
-        }
-        
-        if (typeof(dz) === "undefined"){
-            offsets.z = this._offsets.z;
-        }else {
-            offsets.z = dz;
-        }
-        
-        for (it in vertices){
-            vertices[it].x += offsets.x;
-            vertices[it].y += offsets.y;
-            vertices[it].z += offsets.z;
-        }
-    };
-    
     /**
      * RANDO.Trek.drape() : drape the trek over the ground 
      *      - ground : Mesh in which we drape spheres
      */
     function drape (ground) {
-        var spheres = this.spheres.getChildren();
-        var cylinders = this.cylinders.getChildren();
+        var spheres     = this.spheres.getChildren();
+        var cylinders   = this.cylinders.getChildren();
         var trek_length = spheres.length;
-        var index = 0;
-        var chunk = 100; // By chunks of 100 points
-        var that = this;
+        var index       = 0;
+        var chunk       = 100; // By chunks of 100 points
+        var that        = this;
         
         console.log("Trek adjustments ... " + (Date.now() - RANDO.START_TIME) );
         drapeChunk();
@@ -187,16 +168,19 @@ RANDO = RANDO || {};
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         };
     };
-    
+
     /**
      * RANDO.Trek.merge() : merge all elements (spheres and cylinders) of the Trek
      */
     function merge () {
-        var spheres = this.spheres.getChildren();
-        var cylinders = this.cylinders.getChildren();
-        var trek = this.mergedTrek;
+        var scene       = this._scene;
+        var spheres     = this.spheres.getChildren();
+        var cylinders   = this.cylinders.getChildren();
+        var trek        = new BABYLON.Mesh("Merged Trek", scene)
         trek.material = spheres[0].material;
         RANDO.Utils.mergeMeshes(trek, spheres.concat(cylinders));
+        
+        this.trek = trek;
     };
 })();
 

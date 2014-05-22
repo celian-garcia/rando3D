@@ -415,7 +415,7 @@ RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_co
     var texture_size = 512;
     
     var count = 0;
-    var texture = new BABYLON.DynamicTexture("dynamic texture", texture_size, scene, true);
+    var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
     texture.hasAlpha = true;
     
     
@@ -447,7 +447,7 @@ RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_co
 
     var panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
     panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
-    panel.material = new BABYLON.StandardMaterial("background", scene);
+    panel.material = new BABYLON.StandardMaterial(name +" - Material", scene);
     panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
     panel.material.diffuseTexture = texture;
     

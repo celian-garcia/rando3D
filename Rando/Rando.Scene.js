@@ -72,12 +72,12 @@ RANDO = RANDO || {};
         
         switch (this._version) {
             case "1.0" : 
+                console.log("Launch of version 1.0 ! ")
                 this.process_v10();
             break;
             case "1.1" : 
+                console.log("Launch of version 1.1 ! ")
                 this.process_v11();
-            break; 
-            default : this.process_v10();
         }
     };
 
@@ -178,7 +178,6 @@ RANDO = RANDO || {};
                 that._offsets,
                 that._scene
             )
-            that.trek.init();
 
             // Activate the animation of camera
             if (!that._demo) {

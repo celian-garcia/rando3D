@@ -68,7 +68,7 @@ RANDO = RANDO || {};
         var position    = this._position;
 
         var sphere = BABYLON.Mesh.CreateSphere ("POI - Sphere", 10, 100, scene);
-        sphere.material = new BABYLON.StandardMaterial("POI - Sphere Mat", scene);
+        sphere.material = new BABYLON.StandardMaterial("POI - Sphere.material", scene);
         sphere.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
         sphere.position.x = position.x;
         sphere.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
