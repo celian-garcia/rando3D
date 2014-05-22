@@ -69,7 +69,7 @@ RANDO = RANDO || {};
         this._buildCamera();
         this._buildLights();
         this._buildEnvironment();
-        console.log(this._version);
+        
         switch (this._version) {
             case "1.0" : 
                 this.process_v10();
@@ -136,8 +136,8 @@ RANDO = RANDO || {};
     /**
      * RANDO.Scene.process_v11() : launch the building process of the scene 
      *  It displays : 
-     *          - the terrain 
-     *          - the trek 
+     *          - Terrain 
+     *          - Trek 
      *          - POIs
      */
     function process_v11 () {
@@ -159,65 +159,69 @@ RANDO = RANDO || {};
          .done(function (data) {
             that._parsePoiJson(data);
          })
-         
-         // Tiled DEM mesh building
          .then(function () {
+            // Run renderloop
             that._engine.runRenderLoop(function() {
                 that._scene.render();
             }); 
+
+            // Tiled DEM mesh building
             that.dem = new RANDO.Dem(
                 that._dem_data,
                 that._offsets,
                 that._scene
             );
-         })
-         
-         // Trek building
-         .then(function () {
+
+            // Trek building
             that.trek = new RANDO.Trek  (
                 that._trek_data,
                 that._offsets,
                 that._scene
             )
             that.trek.init();
+
+            // Activate the animation of camera
             if (!that._demo) {
                 RANDO.Utils.animateCamera(that._trek_data, that._scene);
             }
-         })
-         
-         // POIs building
-         .then(function () {
-            if (that._version == "1.1") {
-                for (var it in that._pois_data) {
-                    that.pois.push(new RANDO.Poi(
-                        that._pois_data[it],
-                        that._offsets,
-                        that._scene
-                    ));
-                }
+
+            // POIs building
+            for (var it in that._pois_data) {
+                that.pois.push(new RANDO.Poi(
+                    that._pois_data[it],
+                    that._offsets,
+                    that._scene
+                ));
             }
-         })
-         .then(function () {
+
+            // To execute when scene is ready
             that._scene.executeWhenReady(function () {
                 that._executeWhenReady ();
             });
-         });
+         })
     };
 
 
     /**
      * RANDO.Scene._buildCamera() : builds the camera of the scene
+     * 
+     *  If we are on demo mode, it creates an ArcRotateCamera
+     *  Else it creates a FreeCamera
      */
     function _buildCamera() {
         var camera = this.camera;
         var scene  = this._scene;
 
         if (this._demo) {
-            camera = new BABYLON.ArcRotateCamera("ArcRotate Camera", 1, 0.5, 10, new BABYLON.Vector3(0, 1800, 0), scene);
+            camera = new BABYLON.ArcRotateCamera(
+                "ArcRotate Camera", 1, 0.5, 10,
+                new BABYLON.Vector3(0, 1800, 0),
+                scene
+            );
             camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
-            camera.keysUp = [83, 40];// Touche Z and up
-            camera.keysDown = [90, 38]; // Touche S and down
-            camera.keysLeft = [68, 39]; // Touche Q and left
+            camera.keysUp    = [83, 40]; // Touche Z and up
+            camera.keysDown  = [90, 38]; // Touche S and down
+            camera.keysLeft  = [68, 39]; // Touche Q and left
             camera.keysRight = [81, 37]; // Touche D and right
             camera.wheelPrecision = 0.2;
             camera.upperBetaLimit = Math.PI/3;
@@ -226,7 +230,11 @@ RANDO = RANDO || {};
 
             $("#controls_ar_cam").css("display", "block");
         }else {
-            camera = new BABYLON.FreeCamera("Fly Camera", new BABYLON.Vector3(0, 0, 0), scene);
+            camera = new BABYLON.FreeCamera(
+                "Fly Camera", 
+                new BABYLON.Vector3(0, 0, 0), 
+                scene
+            );
             camera.keysUp = [90, 38]; // Touche Z and up
             camera.keysDown = [83, 40]; // Touche S and down
             camera.keysLeft = [81, 37]; // Touche Q and left
@@ -240,6 +248,7 @@ RANDO = RANDO || {};
         camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         camera.attachControl(this._canvas);
 
+        // Attached light
         var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
         l_cam.intensity = 0.8;
         l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
@@ -257,6 +266,7 @@ RANDO = RANDO || {};
         // Sun
         var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
+        
         lights.push(sun);
     };
 
@@ -417,26 +427,22 @@ RANDO = RANDO || {};
      */
     function _parsePoiJson (data) {
         var pois_data = this._pois_data;
-        console.log(pois_data);
+        
         for (var it in data.features) {
             var feature = data.features[it];
-            
-            var tmp = {
+            var coordinates = RANDO.Utils.toMeters({
                 'lat' : feature.geometry.coordinates[1],
                 'lng' : feature.geometry.coordinates[0]
-            };
+            });
 
-            tmp = RANDO.Utils.toMeters(tmp);
             pois_data.push ({
                 'coordinates' : {
-                    'x': tmp.x,
+                    'x': coordinates.x,
                     'y': feature.properties.elevation,
-                    'z': tmp.y
+                    'z': coordinates.y
                 },
                 'properties' : feature.properties
             });
-            console.log(feature);
-            console.log(pois_data[it]);
         }
     };
 

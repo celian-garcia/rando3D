@@ -156,7 +156,7 @@ RANDO = RANDO || {};
         var chunk = 100; // By chunks of 100 points
         var that = this;
         
-        console.log("Trek adjustments ..." + (Date.now() - RANDO.START_TIME) );
+        console.log("Trek adjustments ... " + (Date.now() - RANDO.START_TIME) );
         drapeChunk();
         
         // Step 1 : drape the spheres over the ground

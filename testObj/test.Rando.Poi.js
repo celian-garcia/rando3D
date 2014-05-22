@@ -1,45 +1,80 @@
 var assert = chai.assert;
 
 describe('Geotrek 3D - Poi Object', function() {
-    
-    var position = new BABYLON.Vector3(100, 1000, 100);
-    var label = "hello";
-    var picto = "img/picto.png"
-    
+    var data = {
+        'coordinates': {
+            'x': 100,
+            'y': -500,
+            'z': 10000 
+        },
+        'properties': {
+            'description': "description",
+            'elevation': 1640,
+            'model': "trekking.poi",
+            'name': "Sérotine de Nilsson",
+            'pictures': [],
+            'pk': 903772,
+            'thumbnail': null,
+            'type': {
+                'label': "Type1",
+                'pictogram': "/media/upload/picto_type1.png"
+            }
+        }
+    };
+
+    var offsets = {
+        'x': 100,
+        'y': 50,
+        'z': -200
+    };
+
     describe('Attributes', function () {
-        it("_position attribute should equals to position parameter.", function(done) {
-            var poi = new RANDO.Poi(position, label, scene);
-            assert.deepEqual(poi._position, position);
+        it("_position attribute should be equal to data.coordinates parameter translated by x and z offsets.", function(done) {
+            var poi = new RANDO.Poi(data, offsets, scene);
+
+            var expected_position = {
+                'x': data.coordinates.x + offsets.x,
+                'y': data.coordinates.y,
+                'z': data.coordinates.z + offsets.z
+            };
+
+            assert.deepEqual(poi._position, expected_position);
             done();
             poi.dispose();
         });
         
-        it("_label attribute should equals to label parameter.", function(done) {
-            var poi = new RANDO.Poi(position, label, scene);
-            assert.deepEqual(poi._label, label);
+        it("_name attribute should be equal to data.properties.name parameter.", function(done) {
+            var poi = new RANDO.Poi(data, offsets, scene);
+
+            assert.deepEqual(poi._name, data.properties.name);
             done();
             poi.dispose();
         });
+        
+        it("_type attribute should be equal to data.properties.type parameter.", function(done) {
+            var poi = new RANDO.Poi(data, offsets, scene);
+
+            assert.deepEqual(poi._type, data.properties.type);
+            done();
+            poi.dispose();
+        });
+        
+        it("_description attribute should be equal to data.properties.description parameter.", function(done) {
+            var poi = new RANDO.Poi(data, offsets, scene);
+
+            assert.deepEqual(poi._description, data.properties.description);
+            done();
+            poi.dispose();
+        });
+        
         
         it("_scene attribute should equals to scene parameter.", function(done) {
-            var poi = new RANDO.Poi(position, label, scene);
+            var poi = new RANDO.Poi(data, offsets, scene);
             assert.deepEqual(poi._scene, scene);
             done();
             poi.dispose();
         });
         
-        it("_picto attribute should equals to picto parameter if given", function(done) {
-            var poi = new RANDO.Poi(position, label, scene, picto);
-            assert.deepEqual(poi._picto, picto);
-            done();
-            poi.dispose();
-        });
-        it("_picto attribute should equals to null if not given", function(done) {
-            var poi = new RANDO.Poi(position, label, scene);
-            assert.deepEqual(poi._picto, null);
-            done();
-            poi.dispose();
-        });
     });
     describe('Properties', function () {
     });

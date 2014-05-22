@@ -159,7 +159,7 @@ RANDO = RANDO || {};
     
     // Load tile's textures over the DEM
     function applyTextures () {
-        console.log("Textures application ..." + (Date.now() - RANDO.START_TIME) );
+        console.log("Textures application ... " + (Date.now() - RANDO.START_TIME) );
         var tiles = this._tiles;
 
         // Prepare all textures 
@@ -201,7 +201,7 @@ RANDO = RANDO || {};
                 } else if (count > 0) {
                     setTimeout (loop, 1);
                 } else {
-                    console.log("Textures applied !" + (Date.now() - RANDO.START_TIME) );
+                    console.log("Textures applied ! " + (Date.now() - RANDO.START_TIME) );
                 }
             };
         }
