@@ -17,6 +17,7 @@ RANDO = RANDO || {};
         this._scene = scene;
         
         this._panel = null;
+        this._sphere = null;
         this.init();
     };
     
@@ -45,8 +46,18 @@ RANDO = RANDO || {};
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
         panel.material.specularColor = new BABYLON.Color4(0,0,0,0);
+        panel.isVisible = false;
         this._panel = panel;
         var panel_size = RANDO.Utils.getSize (panel);
+        
+        
+        var sphere = BABYLON.Mesh.CreateSphere ("sphere", 10, 100, scene);
+        sphere.material = new BABYLON.StandardMaterial("POI - Sphere Mat", scene);
+        sphere.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
+        sphere.position.x = position.x;
+        sphere.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
+        sphere.position.z = position.z;
+        sphere.isVisible = false;
         
         //~ var plane = panel.clone("plane");
         //~ console.log(plane);
@@ -60,8 +71,17 @@ RANDO = RANDO || {};
         
         console.log(scene.activeCamera);
         scene.registerBeforeRender( function () {
-            panel.lookAt(scene.activeCamera.position, 0, -Math.PI/2, 0);//Math.PI/2);
-            //~ plane.lookAt(scene.activeCamera.position, 0, Math.PI/2);
+            
+            if (BABYLON.Vector3.Distance(scene.activeCamera.position, position) > 2800) {
+                sphere.isVisible = true;
+                panel.isVisible  = false;
+            } else {
+                sphere.isVisible = false;
+                panel.isVisible  = true;
+                panel.lookAt(scene.activeCamera.position, 0, -Math.PI/2, 0);//Math.PI/2);
+                //~ plane.lookAt(scene.activeCamera.position, 0, Math.PI/2);
+            }
+            
         });
     };
     function _buildPanelFromBlenderObject (settings) {
