@@ -410,6 +410,17 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     newMesh.setIndices(arrayIndice);
 };
 
+/** to refac
+ * RANDO.Utils.createPanel() : create a panel containing the text in parameter
+ *      - name : name of the future mesh
+ *      - height : height of the future mesh 
+ *      - text : text of the panel
+ *      - scene : scene which will contain the panel
+ *      - bg_color : background color in the panel
+ *      - text_color : text color in the panel
+ * 
+ * return the panel 
+ */
 RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_color) {
     var panel_width = 128;
     var texture_size = 512;
@@ -417,14 +428,12 @@ RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_co
     var count = 0;
     var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
     texture.hasAlpha = true;
-    
-    
+
     var textureContext = texture.getContext();
     var size = texture.getSize();
-    
+
     text = "  " + text + "  ";
-    
-    
+
     textureContext.save();
     textureContext.fillStyle = bg_color;
     textureContext.fillRect(0,0,size.width,size.height);
@@ -456,6 +465,12 @@ RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_co
     return panel;
 };
 
+/**
+ * RANDO.Utils.getSize () : get the size of a mesh
+ *      - mesh : mesh 
+ * 
+ * return an object containing the width, height and deep of the mesh
+ */
 RANDO.Utils.getSize = function (mesh) {
     var minmax = BABYLON.Mesh.MinMax([mesh]);
 

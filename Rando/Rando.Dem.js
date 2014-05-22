@@ -133,7 +133,7 @@ RANDO = RANDO || {};
         tile.checkCollisions = true;
         
         // Material 
-        var material = new BABYLON.StandardMaterial("DEM Material", scene);
+        var material = new BABYLON.StandardMaterial("DEM - Material", scene);
         var fakeTexture = new BABYLON.Texture(
             RANDO.SETTINGS.FAKE_TEX_URL,
             scene
@@ -145,6 +145,13 @@ RANDO = RANDO || {};
         return tile;
     };
     
+    
+    /**
+     * RANDO.Dem._prepareTexture() : Prepare a tile of textures for the DEM and add
+     *  it to the textures Array.
+     *      - coordinates : coordinates of a tile
+     *  
+     */
     function _prepareTexture (coordinates) {
         var scene = this._scene;
         var engine = scene.getEngine();
@@ -157,7 +164,9 @@ RANDO = RANDO || {};
         this._textures.push(new BABYLON.Texture(url, scene));
     };
     
-    // Load tile's textures over the DEM
+    /**
+     * RANDO.Dem.applyTextures() : Load tile's textures over the DEM
+     */ 
     function applyTextures () {
         console.log("Textures application ... " + (Date.now() - RANDO.START_TIME) );
         var tiles = this._tiles;
@@ -210,9 +219,9 @@ RANDO = RANDO || {};
     /**
      * RANDO.Dem._buildSide() : build a side of the DEM
      *      - name: name of the side 
-     *      - line: Array of point 
+     *      - line: Array of point corresponding to a border of the DEM
      *      - alt_min: altitude minimale of the DEM
-     *      - reverse: boolean ->if true reverse the line
+     *      - reverse: Boolean, if true reverse the line
      * 
      *  return the side mesh 
      */
