@@ -89,3 +89,7 @@ div {
     border-radius: 0.35em;
 }
 
+#picto_frame {
+    position : absolute;
+}
+

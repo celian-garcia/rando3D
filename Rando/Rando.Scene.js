@@ -51,7 +51,8 @@ RANDO = RANDO || {};
         _parseDemJson:      _parseDemJson,
         _parseTrekJson:     _parseTrekJson,
         _parsePoiJson:      _parsePoiJson,
-        setActiveCamera:    setActiveCamera
+        setActiveCamera:    setActiveCamera,
+        clickHandler:       clickHandler
     };
 
     
@@ -372,6 +373,7 @@ RANDO = RANDO || {};
         var version = this._version;
         var dem     = this.dem;
         var trek    = this.trek;
+        var that    = this;
 
         dem.applyTextures();
         trek.drape(dem.ground, onDrapeComplete);
@@ -387,6 +389,8 @@ RANDO = RANDO || {};
 
             // Merges the trek to increase performances
             trek.merge();
+            
+            that.clickHandler();
         }
     };
 
@@ -478,6 +482,25 @@ RANDO = RANDO || {};
                 'properties' : feature.properties
             });
         }
+    };
+    
+    function clickHandler () {
+        var scene = this._scene;
+        //When click event is raised
+        window.addEventListener("click", function (evt) {
+            // We try to pick an object
+            var pickResult = scene.pick(evt.clientX, evt.clientY);
+            console.log(pickResult);
+            // if the click hits the ground object, we change the impact position
+            if (pickResult.hit && pickResult.pickedMesh.name == "POI - Panel") {
+                console.log("panel hit !");
+                
+                console.log(evt.clientX, evt.clientY);
+                $('body').append('<div id = "picto_frame"> You clicked on a Picto !');
+                $('#picto_frame').css('left', evt.clientX+'px');
+                $('#picto_frame').css('top', evt.clientY+'px');
+            }
+        });
     };
 })();
 
