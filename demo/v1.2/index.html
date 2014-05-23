@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Geotrek 3D</title>
+
+    
+    <!-- Style -->
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../../css/controls.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../../css/buttons.css" media="all"/>
+    <link rel="icon" type="image/png" href="../../img/logo_geotrek.png" />
+    
+    <!-- JQuery-->
+    <script src="../../lib/jquery-1.10.2.js"></script>
+
+    <!-- Underscore-->
+    <script src="../../lib/underscore.js"></script>
+    
+    <!-- BABYLON-->
+    <script src="../../lib/babylon.1.11.js"></script>
+    
+    <!-- TweenLite -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
+
+    <!-- Rando-->
+    <script src="../../Rando/Rando.Utils.js"></script>
+    <script src="../../Rando/Rando.Settings.js"></script>
+    <script src="../../Rando/Rando.Events.js"></script>
+    <script src="../../Rando/Rando.TileContainer.js"></script>
+    <script src="../../Rando/Rando.Scene.js"></script>
+    <script src="../../Rando/Rando.Dem.js"></script>
+    <script src="../../Rando/Rando.Trek.js"></script>
+    <script src="../../Rando/Rando.Poi.js"></script>
+
+    
+    
+</head>
+
+ <body>
+
+    <h1 id="title">
+        <a href="http://geotrek.fr/" target = "_blank" id = "geotrek">
+            <span>Geotrek 3D</span>
+        </a>
+        <p>Work in progress ...</p>
+    </h1>
+
+    <canvas id="canvas_renderer"></canvas>
+    
+    <div class = "controls" id="controls_f_cam" >
+        <span><b>Flèches</b>: se déplacer </span>
+        <span><b>Souris</b>: tourner </span>
+    </div>
+    
+    <div class = "controls" id="controls_ar_cam" >
+        <span> Zoom : <b>Molette souris</b></span>
+        <span> Inclinaison/Rotation : <img src = "../../img/icon_783__.png"/></span>
+    </div>
+
+    <div id = "mapbox_attribution" style = "padding:3px;">
+        <span >
+            Tiles from  <a href='https://www.mapbox.com/about/maps/' target='_blank'><strong>©Mapbox</strong></a> 
+        </span>
+    </div>
+
+
+    <script src="index.js"></script>
+
+ </body>
+ 
+</html>
