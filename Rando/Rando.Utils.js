@@ -815,8 +815,9 @@ RANDO.Utils.addKeyToCamera = function (timeline, camera, position, target, angle
  *      - scene : the current scene
  * 
  * */
-RANDO.Utils.animateCamera = function (vertices, scene) {
-    var d = 10, // Number of points between the current point and the point watched
+RANDO.Utils.animateCamera = function (trek, scene) {
+    var vertices = trek._vertices,
+        d = 10, // Number of points between the current point and the point watched
         b_foll = {"value": false},
         b_pause = true,
         timeline = new TimelineLite(),

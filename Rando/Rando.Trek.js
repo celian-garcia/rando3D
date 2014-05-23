@@ -26,11 +26,12 @@ RANDO = RANDO || {};
 
     /* List of Methods */
     RANDO.Trek.prototype = {
-        init:       init,
-        _offsets:   _offsets,
-        buildTrek:  buildTrek,
-        drape:      drape,
-        merge:      merge
+        init:           init,
+        _offsets:       _offsets,
+        buildTrek:      buildTrek,
+        updateVertices: updateVertices,
+        drape:          drape,
+        merge:          merge
     };
     
     
@@ -128,8 +129,9 @@ RANDO = RANDO || {};
     /**
      * RANDO.Trek.drape() : drape the trek over the ground 
      *      - ground : Mesh in which we drape spheres
+     *      - onComplete : callback called at the end of the function 
      */
-    function drape (ground) {
+    function drape (ground, onComplete) {
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
         var trek_length = spheres.length;
@@ -145,6 +147,7 @@ RANDO = RANDO || {};
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
                 RANDO.Utils.drapePoint(spheres[index].position, ground);
+                
                 ++index;
             }
             if (index < trek_length){
@@ -164,6 +167,8 @@ RANDO = RANDO || {};
                     spheres[i+1].position
                 );
             }
+            
+            onComplete();
             that.merge();
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         };
@@ -182,6 +187,20 @@ RANDO = RANDO || {};
         RANDO.Utils.mergeMeshes(trek, spheres.concat(cylinders));
         
         this.trek = trek;
+    };
+
+    /**
+     * RANDO.Trek.updateVertices() : update this._vertices attributes
+     */
+    function updateVertices () {
+        var vertices    = this._vertices;
+        var spheres     = this.spheres.getChildren();
+        console.assert(vertices.length == spheres.length);
+        for (var it in spheres) {
+            vertices[it].x = spheres[it].position.x;
+            vertices[it].y = spheres[it].position.y;
+            vertices[it].z = spheres[it].position.z;
+        }
     };
 })();
 

@@ -177,12 +177,7 @@ RANDO = RANDO || {};
                 that._trek_data,
                 that._offsets,
                 that._scene
-            )
-
-            // Activate the animation of camera
-            if (!that._demo) {
-                RANDO.Utils.animateCamera(that._trek_data, that._scene);
-            }
+            );
 
             // POIs building
             for (var it in that._pois_data) {
@@ -345,17 +340,31 @@ RANDO = RANDO || {};
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
+        var scene = this._scene;
+        var demo = this._demo;
         var dem = this.dem;
         var trek = this.trek;
-        var ground = dem.ground
+        var ground = dem.ground;
 
         setTimeout( function () {
             dem.applyTextures();
-            setTimeout( function () {
-                trek.drape(ground);
-            }, 1) ;
+            
+                trek.drape(ground, onDrapeComplete);
+            
         }, 1) ;
-        
+
+        function onDrapeComplete () {
+            // Updates trek vertices
+            trek.updateVertices();
+
+            // Activates the animation of camera
+            if (!demo) {
+                RANDO.Utils.animateCamera(trek, scene);
+            }
+
+            // Merges the trek to increase performances
+            trek.merge();
+        }
     };
 
 
@@ -365,7 +374,7 @@ RANDO = RANDO || {};
      */
     function _parseDemJson (data) {
         var dem_data = this._dem_data,
-            offsets = this._offsets;
+            offsets  = this._offsets;
             
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
