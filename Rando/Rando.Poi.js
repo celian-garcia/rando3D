@@ -35,7 +35,7 @@ RANDO = RANDO || {};
 
     function init () {
         this._buildPanel ();
-        this._buildSphere ();
+        //~ this._buildSphere ();
 
         var that = this;
         this._scene.registerBeforeRender( function () {
@@ -54,44 +54,48 @@ RANDO = RANDO || {};
         var scene       = this._scene;
         var position    = this._position;
         var text        = this._name;
-        var src         = "../img/picto_faune.png";
+        var src         = RANDO.SETTINGS.PICTO_SUFFIX + this._type.pictogram;
         
-        var panel = RANDO.Utils.createTextPanel (
-            "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
-            text, scene, "rgba(1,1,1,0)", "#FFFFFF"
-        );
+        // Text Panel
+        //~ var panel = RANDO.Utils.createTextPanel (
+            //~ "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
+            //~ text, scene, "rgba(1,1,1,0)", "#FFFFFF"
+        //~ );
+        //~ panel.position.x = position.x;
+        //~ panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
+        //~ panel.position.z = position.z;
+        //~ panel.material.specularColor = new BABYLON.Color4(0,0,0,0);
+        //~ panel.isVisible = false;
+        //~ this.panel = panel;
+        
+        
+        // Picto Panel
+        var panel = BABYLON.Mesh.CreateGround("POI - Panel", 200, 200, 2, scene);
+        panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
-        panel.material.specularColor = new BABYLON.Color4(0,0,0,0);
-        panel.isVisible = false;
+        panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
+        panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        
+        
+        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", 64, scene, true);
+        texture.hasAlpha = true;
+        
+        panel.material.backFaceCulling = false;
+        panel.isVisible = true;
         this.panel = panel;
         
-        //~ var panel_width = height;
-        //~ var texture_size = 512;
-//~ 
-        //~ var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
-        //~ texture.hasAlpha = true;
-//~ 
-        //~ var textureContext = texture.getContext();
-        //~ var size = texture.getSize();
-//~ 
-        //~ var img = new Image();
-        //~ img.onload = function () {
-            //~ textureContext.drawImage(img, 0, 0);
-            //~ textureContext.restore();
-//~ 
-            //~ texture.update();
-//~ 
-            //~ panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
-            //~ panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
-            //~ panel.material = new BABYLON.StandardMaterial(name +" - Material", scene);
-            //~ panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-            //~ panel.material.diffuseTexture = texture;
-            //~ 
-            //~ panel.material.backFaceCulling = false;
-        //~ };
-        //~ img.src = src;
+        
+        var img = new Image();
+        img.onload = function () {
+            var textureContext = texture.getContext();
+            textureContext.drawImage(img, 0, 0);
+            textureContext.restore();
+            texture.update();
+            panel.material.diffuseTexture = texture;
+        };
+        img.src = src;
     };
 
     function _buildSphere () {
@@ -114,17 +118,18 @@ RANDO = RANDO || {};
         var sphere      = this.sphere;
         var panel       = this.panel;
 
-        var distance = BABYLON.Vector3.Distance(scene.activeCamera.position, position);
-        if (distance > 2800) {
-            sphere.isVisible = true;
-            panel.isVisible  = false;
-        } else {
-            sphere.isVisible = false;
-            panel.isVisible  = true;
 
-            lookAtCamera (scene.activeCamera);
-        }
-
+        //~ var distance = BABYLON.Vector3.Distance(scene.activeCamera.position, position);
+        //~ if (distance > 2800) {
+            //~ sphere.isVisible = true;
+            //~ panel.isVisible  = false;
+        //~ } else {
+            //~ sphere.isVisible = false;
+            //~ panel.isVisible  = true;
+            //~ lookAtCamera (scene.activeCamera);
+        //~ }
+        //~ 
+        lookAtCamera (scene.activeCamera);
         function lookAtCamera (camera) {
             if (camera.id == "Fly camera") {
                 var camTarget   = scene.activeCamera.getTarget();

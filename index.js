@@ -7,12 +7,13 @@ window.onload = function onload(){
         RANDO.SETTINGS.TILE_TEX_URL = "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png"
         RANDO.SETTINGS.SIDE_TEX_URL = "img/side.jpg";
         RANDO.SETTINGS.FAKE_TEX_URL = "img/white.png";
+        RANDO.SETTINGS.PICTO_SUFFIX = "img/";
         RANDO.SETTINGS.CAM_SPEED_F  = 100;
 
         RANDO.START_TIME = Date.now();
         
         var canvas = document.getElementById('canvas_renderer');
-        var scene = new RANDO.Scene(canvas, false, "1.1" );
+        var scene = new RANDO.Scene(canvas, false, "1.2" );
         scene.init();
 
 };

@@ -41,6 +41,7 @@ RANDO.SETTINGS.POI_FORM1 = {
     fileName:       "poi.babylon"
 };
 RANDO.SETTINGS.POI_SIZE = 80;
+RANDO.SETTINGS.PICTO_SUFFIX = "";
 
 
 ////////////////////////////////////////////////////////////////////////////////
