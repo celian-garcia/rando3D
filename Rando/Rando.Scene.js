@@ -18,18 +18,19 @@ RANDO = RANDO || {};
     /* Constructor */
     RANDO.Scene = function (canvas, demo, version,  settings) {
         // Attributes declaration 
-        this._canvas = canvas;
-        this._settings = settings;
-        this._demo   = demo;
-        this._version = version;
+        this._canvas    = canvas;
+        this._demo      = demo;
+        this._version   = version;
+        this._settings  = settings;
         
-        this._engine = null;
-        this._scene  = null;
-        this.camera  = null;
-        this.lights  = [];
-        this.dem     = null;
-        this.trek    = null;
-        this.pois    = [];
+        this._engine    = null;
+        this._scene     = null;
+        this.cameras    = [];
+        this._camLight  = null;
+        this.lights     = [];
+        this.dem        = null;
+        this.trek       = null;
+        this.pois       = [];
 
         this._dem_data  = {};
         this._trek_data = [];
@@ -42,14 +43,15 @@ RANDO = RANDO || {};
         init:               init,
         process_v10:        process_v10,
         process:            process,
-        _buildCamera:       _buildCamera,
+        _buildCameras:      _buildCameras,
         _buildLights:       _buildLights,
         _buildEnvironment:  _buildEnvironment,
         _buildCardinals:    _buildCardinals,
         _executeWhenReady:  _executeWhenReady,
         _parseDemJson:      _parseDemJson,
         _parseTrekJson:     _parseTrekJson,
-        _parsePoiJson:      _parsePoiJson
+        _parsePoiJson:      _parsePoiJson,
+        setActiveCamera:    setActiveCamera
     };
 
     
@@ -66,7 +68,7 @@ RANDO = RANDO || {};
         }
 
         this._scene.collisionsEnabled = true;
-        this._buildCamera();
+        this._buildCameras();
         this._buildLights();
         this._buildEnvironment();
         
@@ -104,7 +106,7 @@ RANDO = RANDO || {};
          .done(function (data) {
             that._parseTrekJson(data);
          })
-         
+
          // Tiled DEM mesh building
          .then(function () {
             that._engine.runRenderLoop(function() {
@@ -116,7 +118,7 @@ RANDO = RANDO || {};
                 that._scene
             );
          })
-         
+
          // Trek building
          .then(function () {
             that.trek = new RANDO.Trek  (
@@ -126,14 +128,14 @@ RANDO = RANDO || {};
             )
             that.trek.init();
          })
-         
+
          .then(function () {
             that._scene.executeWhenReady(function () {
                 that._executeWhenReady ();
             });
          });
     };
-    
+
     /**
      * RANDO.Scene.process() : launch the building process of the scene 
      *  It displays : 
@@ -203,53 +205,77 @@ RANDO = RANDO || {};
      *  If we are on demo mode, it creates an ArcRotateCamera
      *  Else it creates a FreeCamera
      */
-    function _buildCamera() {
-        var camera = this.camera;
-        var scene  = this._scene;
+    function _buildCameras() {
+        var cameras = this.cameras;
+        var scene   = this._scene;
+        var canvas  = this._canvas;
+        var demo    = this._demo;
 
-        if (this._demo) {
-            camera = new BABYLON.ArcRotateCamera(
-                "ArcRotate Camera", 1, 0.5, 10,
-                new BABYLON.Vector3(0, 1800, 0),
-                scene
-            );
-            camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
-            camera.keysUp    = [83, 40]; // Touche Z and up
-            camera.keysDown  = [90, 38]; // Touche S and down
-            camera.keysLeft  = [68, 39]; // Touche Q and left
-            camera.keysRight = [81, 37]; // Touche D and right
-            camera.wheelPrecision = 0.2;
-            camera.upperBetaLimit = Math.PI/3;
-            camera.lowerRadiusLimit = 1000;
-            camera.upperRadiusLimit = 5000;
+        // Demo Camera
+        var demo_camera = new BABYLON.ArcRotateCamera(
+            "Demo Camera", 1, 0.5, 10,
+            new BABYLON.Vector3(0, 1800, 0),
+            scene
+        );
+        demo_camera.id = "demo_camera";
+        demo_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
+        demo_camera.keysUp    = [83, 40]; // Touche Z and up
+        demo_camera.keysDown  = [90, 38]; // Touche S and down
+        demo_camera.keysLeft  = [68, 39]; // Touche Q and left
+        demo_camera.keysRight = [81, 37]; // Touche D and right
+        demo_camera.wheelPrecision      = 0.2;
+        demo_camera.upperBetaLimit      = Math.PI/3;
+        demo_camera.lowerRadiusLimit    = 1000;
+        demo_camera.upperRadiusLimit    = 5000;
+        demo_camera.checkCollisions     = true;
+        demo_camera.maxZ    = 10000;
+        demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
+        demo_camera.attachControl(canvas);
+        cameras.push(demo_camera);
 
-            $("#controls_ar_cam").css("display", "block");
-        }else {
-            camera = new BABYLON.FreeCamera(
-                "Fly Camera", 
-                new BABYLON.Vector3(0, 0, 0), 
-                scene
-            );
-            camera.keysUp = [90, 38]; // Touche Z and up
-            camera.keysDown = [83, 40]; // Touche S and down
-            camera.keysLeft = [81, 37]; // Touche Q and left
-            camera.keysRight = [68, 39]; // Touche D and right
-            
-            $("#controls_f_cam").css("display", "block");
-        }
-
-        camera.checkCollisions = true;
-        camera.maxZ = 10000;
-        camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        camera.attachControl(this._canvas);
+        // Flying Camera
+        var fly_camera = new BABYLON.FreeCamera(
+            "Flying Camera", 
+            new BABYLON.Vector3(0, 0, 0), 
+            scene
+        );
+        fly_camera.id = "fly_camera";
+        fly_camera.keysUp     = [90, 38]; // Touche Z and up
+        fly_camera.keysDown   = [83, 40]; // Touche S and down
+        fly_camera.keysLeft   = [81, 37]; // Touche Q and left
+        fly_camera.keysRight  = [68, 39]; // Touche D and right
+        fly_camera.checkCollisions = true;
+        fly_camera.maxZ = 10000;
+        fly_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        fly_camera.attachControl(canvas);
+        cameras.push(fly_camera);
 
         // Attached light
-        var l_cam = new BABYLON.HemisphericLight("LightCamera", new BABYLON.Vector3(0,1000,0), scene)
-        l_cam.intensity = 0.8;
-        l_cam.specular = new BABYLON.Color4(0, 0, 0, 0);
-        l_cam.parent = camera;
+        this._camLight = new BABYLON.HemisphericLight("Camera Light", new BABYLON.Vector3(0,1000,0), scene)
+        this._camLight.intensity = 0.8;
+        this._camLight.specular = new BABYLON.Color4(0, 0, 0, 0);
+
+        // Defines active camera
+        if (demo) {
+            this.setActiveCamera (demo_camera.id);
+        }
+        else
+            this.setActiveCamera (fly_camera.id);
     };
 
+    /**
+     * RANDO.Scene.setActiveCamera() : set the active camera of the scene
+     *      - cameraID: ID of the camera we want to set as active
+     * 
+     * NB : cameraID should be "demo_camera" or "fly_camera" 
+     */
+    function setActiveCamera (cameraID) {
+        var scene = this._scene;
+
+        scene.setActiveCameraByID (cameraID);
+        this._camLight.parent = scene.getCameraByID (cameraID);
+        $("#controls_" + cameraID).css("display", "block");
+    };
 
     /**
      * RANDO.Scene._buildLights() : builds the differents lights of the scene 
@@ -373,9 +399,12 @@ RANDO = RANDO || {};
         var dem_data = this._dem_data,
             offsets  = this._offsets;
             
+        console.log(data.center);
+        //~ console.log(data.extent);
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
-
+        console.log(m_center);
+        //~ console.log(m_extent);
         // Record DEM data
         dem_data.o_extent = _.clone(m_extent);
         dem_data.extent = m_extent;
@@ -450,7 +479,6 @@ RANDO = RANDO || {};
             });
         }
     };
-
 })();
 
 

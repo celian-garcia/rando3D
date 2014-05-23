@@ -421,7 +421,7 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
  * 
  * return the panel 
  */
-RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_color) {
+RANDO.Utils.createTextPanel = function (name, height, text, scene, bg_color, text_color) {
     var panel_width = height;
     var texture_size = 512;
     
@@ -463,6 +463,46 @@ RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_co
     panel.material.backFaceCulling = false;
     
     return panel;
+};
+
+/** to refac
+ * RANDO.Utils.createPanel() : create a panel containing the text in parameter
+ *      - name : name of the future mesh
+ *      - size : size of the future mesh 
+ *      - text : text of the panel
+ *      - scene : scene which will contain the panel
+ *      - bg_color : background color in the panel
+ *      - text_color : text color in the panel
+ * 
+ * return the panel 
+ */
+RANDO.Utils.createPictoPanel = function (panel, name, height, src, scene, bg_color, text_color) {
+    var panel_width = height;
+    var texture_size = 512;
+    
+    var count = 0;
+    var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
+    texture.hasAlpha = true;
+
+    var textureContext = texture.getContext();
+    var size = texture.getSize();
+
+    var img = new Image();
+    img.onload = function () {
+        textureContext.drawImage(img, 0, 0);
+        textureContext.restore();
+
+        texture.update();
+
+        panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
+        panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
+        panel.material = new BABYLON.StandardMaterial(name +" - Material", scene);
+        panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        panel.material.diffuseTexture = texture;
+        
+        panel.material.backFaceCulling = false;
+    };
+    img.src = src;
 };
 
 /**
