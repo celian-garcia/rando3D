@@ -413,7 +413,7 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
 /** to refac
  * RANDO.Utils.createPanel() : create a panel containing the text in parameter
  *      - name : name of the future mesh
- *      - height : height of the future mesh 
+ *      - size : size of the future mesh 
  *      - text : text of the panel
  *      - scene : scene which will contain the panel
  *      - bg_color : background color in the panel
@@ -422,7 +422,7 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
  * return the panel 
  */
 RANDO.Utils.createPanel = function (name, height, text, scene, bg_color, text_color) {
-    var panel_width = 128;
+    var panel_width = height;
     var texture_size = 512;
     
     var count = 0;

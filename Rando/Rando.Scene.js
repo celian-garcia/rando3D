@@ -41,7 +41,7 @@ RANDO = RANDO || {};
     RANDO.Scene.prototype = {
         init:               init,
         process_v10:        process_v10,
-        process_v11:        process_v11,
+        process:            process,
         _buildCamera:       _buildCamera,
         _buildLights:       _buildLights,
         _buildEnvironment:  _buildEnvironment,
@@ -77,7 +77,11 @@ RANDO = RANDO || {};
             break;
             case "1.1" : 
                 console.log("Launch of version 1.1 ! ")
-                this.process_v11();
+                this.process();
+            break;
+            case "1.2" : 
+                console.log("Launch of version 1.2 ! ")
+                this.process();
         }
     };
 
@@ -121,9 +125,6 @@ RANDO = RANDO || {};
                 that._scene
             )
             that.trek.init();
-            if (!that._demo) {
-                RANDO.Utils.animateCamera(that._trek_data, that._scene);
-            }
          })
          
          .then(function () {
@@ -134,13 +135,13 @@ RANDO = RANDO || {};
     };
     
     /**
-     * RANDO.Scene.process_v11() : launch the building process of the scene 
+     * RANDO.Scene.process() : launch the building process of the scene 
      *  It displays : 
      *          - Terrain 
      *          - Trek 
      *          - POIs
      */
-    function process_v11 () {
+    function process () {
         var that = this;
 
         $.getJSON(RANDO.SETTINGS.DEM_URL)
@@ -202,7 +203,7 @@ RANDO = RANDO || {};
      *  If we are on demo mode, it creates an ArcRotateCamera
      *  Else it creates a FreeCamera
      */
-    function _buildCamera() {
+    function _buildCameras() {
         var camera = this.camera;
         var scene  = this._scene;
 
@@ -340,25 +341,21 @@ RANDO = RANDO || {};
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
-        var scene = this._scene;
-        var demo = this._demo;
-        var dem = this.dem;
-        var trek = this.trek;
-        var ground = dem.ground;
+        var scene   = this._scene;
+        var demo    = this._demo;
+        var version = this._version;
+        var dem     = this.dem;
+        var trek    = this.trek;
 
-        setTimeout( function () {
-            dem.applyTextures();
-            
-                trek.drape(ground, onDrapeComplete);
-            
-        }, 1) ;
+        dem.applyTextures();
+        trek.drape(dem.ground, onDrapeComplete);
 
         function onDrapeComplete () {
             // Updates trek vertices
             trek.updateVertices();
 
             // Activates the animation of camera
-            if (!demo) {
+            if (!demo && version == "1.2" ) {
                 RANDO.Utils.animateCamera(trek, scene);
             }
 

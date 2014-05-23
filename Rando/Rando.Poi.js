@@ -55,7 +55,10 @@ RANDO = RANDO || {};
         var position    = this._position;
         var text        = this._name;
 
-        var panel = RANDO.Utils.createPanel ("POI - Panel", 100, text, scene, "rgba(1,1,1,0)", "#FFFFFF");
+        var panel = RANDO.Utils.createPanel (
+            "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
+            text, scene, "rgba(1,1,1,0)", "#FFFFFF"
+        );
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
@@ -84,7 +87,8 @@ RANDO = RANDO || {};
         var sphere      = this.sphere;
         var panel       = this.panel;
 
-        if (BABYLON.Vector3.Distance(scene.activeCamera.position, position) > 2800) {
+        var distance = BABYLON.Vector3.Distance(scene.activeCamera.position, position);
+        if (distance > 2800) {
             sphere.isVisible = true;
             panel.isVisible  = false;
         } else {
