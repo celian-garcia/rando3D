@@ -203,7 +203,7 @@ RANDO = RANDO || {};
      *  If we are on demo mode, it creates an ArcRotateCamera
      *  Else it creates a FreeCamera
      */
-    function _buildCameras() {
+    function _buildCamera() {
         var camera = this.camera;
         var scene  = this._scene;
 
