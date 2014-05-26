@@ -25,8 +25,7 @@ RANDO = RANDO || {};
         
         this._engine    = null;
         this._scene     = null;
-        this.cameras    = [];
-        this._camLight  = null;
+        this.camContainer    = null;
         this.lights     = [];
         this.dem        = null;
         this.trek       = null;
@@ -50,9 +49,7 @@ RANDO = RANDO || {};
         _executeWhenReady:  _executeWhenReady,
         _parseDemJson:      _parseDemJson,
         _parseTrekJson:     _parseTrekJson,
-        _parsePoiJson:      _parsePoiJson,
-        setActiveCamera:    setActiveCamera,
-        clickHandler:       clickHandler
+        _parsePoiJson:      _parsePoiJson
     };
 
     
@@ -186,11 +183,13 @@ RANDO = RANDO || {};
             // POIs building
             for (var it in that._pois_data) {
                 that.pois.push(new RANDO.Poi(
+                    it,
                     that._pois_data[it],
                     that._offsets,
                     that._scene
                 ));
             }
+            RANDO.Poi.runClickListener(that.pois, that._scene);
 
             // To execute when scene is ready
             that._scene.executeWhenReady(function () {
@@ -201,81 +200,25 @@ RANDO = RANDO || {};
 
 
     /**
-     * RANDO.Scene._buildCamera() : builds the camera of the scene
+     * RANDO.Scene._buildCameras() : builds cameras of the scene
      * 
-     *  If we are on demo mode, it creates an ArcRotateCamera
-     *  Else it creates a FreeCamera
+     *  If we are on demo mode, the camera is set as demo_camera
+     *  Else it is set as fly_camera
      */
     function _buildCameras() {
-        var cameras = this.cameras;
-        var scene   = this._scene;
-        var canvas  = this._canvas;
-        var demo    = this._demo;
-
-        // Demo Camera
-        var demo_camera = new BABYLON.ArcRotateCamera(
-            "Demo Camera", 1, 0.5, 10,
-            new BABYLON.Vector3(0, 1800, 0),
-            scene
-        );
-        demo_camera.id = "demo_camera";
-        demo_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
-        demo_camera.keysUp    = [83, 40]; // Touche Z and up
-        demo_camera.keysDown  = [90, 38]; // Touche S and down
-        demo_camera.keysLeft  = [68, 39]; // Touche Q and left
-        demo_camera.keysRight = [81, 37]; // Touche D and right
-        demo_camera.wheelPrecision      = 0.2;
-        demo_camera.upperBetaLimit      = Math.PI/3;
-        demo_camera.lowerRadiusLimit    = 1000;
-        demo_camera.upperRadiusLimit    = 5000;
-        demo_camera.checkCollisions     = true;
-        demo_camera.maxZ    = 10000;
-        demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
-        demo_camera.attachControl(canvas);
-        cameras.push(demo_camera);
-
-        // Flying Camera
-        var fly_camera = new BABYLON.FreeCamera(
-            "Flying Camera", 
-            new BABYLON.Vector3(0, 0, 0), 
-            scene
-        );
-        fly_camera.id = "fly_camera";
-        fly_camera.keysUp     = [90, 38]; // Touche Z and up
-        fly_camera.keysDown   = [83, 40]; // Touche S and down
-        fly_camera.keysLeft   = [81, 37]; // Touche Q and left
-        fly_camera.keysRight  = [68, 39]; // Touche D and right
-        fly_camera.checkCollisions = true;
-        fly_camera.maxZ = 10000;
-        fly_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        fly_camera.attachControl(canvas);
-        cameras.push(fly_camera);
-
-        // Attached light
-        this._camLight = new BABYLON.HemisphericLight("Camera Light", new BABYLON.Vector3(0,1000,0), scene)
-        this._camLight.intensity = 0.8;
-        this._camLight.specular = new BABYLON.Color4(0, 0, 0, 0);
+        var camContainer    = this.camContainer;
+        var canvas          = this._canvas;
+        var scene           = this._scene;
+        var demo            = this._demo;
+        
+        camContainer = new RANDO.CameraContainer(canvas, scene);
 
         // Defines active camera
         if (demo) {
-            this.setActiveCamera (demo_camera.id);
+            camContainer.setActiveCamera ("demo_camera");
         }
         else
-            this.setActiveCamera (fly_camera.id);
-    };
-
-    /**
-     * RANDO.Scene.setActiveCamera() : set the active camera of the scene
-     *      - cameraID: ID of the camera we want to set as active
-     * 
-     * NB : cameraID should be "demo_camera" or "fly_camera" 
-     */
-    function setActiveCamera (cameraID) {
-        var scene = this._scene;
-
-        scene.setActiveCameraByID (cameraID);
-        this._camLight.parent = scene.getCameraByID (cameraID);
-        $("#controls_" + cameraID).css("display", "block");
+            camContainer.setActiveCamera ("fly_camera");
     };
 
     /**
@@ -389,8 +332,6 @@ RANDO = RANDO || {};
 
             // Merges the trek to increase performances
             trek.merge();
-            
-            that.clickHandler();
         }
     };
 
@@ -403,12 +344,9 @@ RANDO = RANDO || {};
         var dem_data = this._dem_data,
             offsets  = this._offsets;
             
-        console.log(data.center);
-        //~ console.log(data.extent);
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
-        console.log(m_center);
-        //~ console.log(m_extent);
+
         // Record DEM data
         dem_data.o_extent = _.clone(m_extent);
         dem_data.extent = m_extent;
@@ -482,25 +420,6 @@ RANDO = RANDO || {};
                 'properties' : feature.properties
             });
         }
-    };
-    
-    function clickHandler () {
-        var scene = this._scene;
-        //When click event is raised
-        window.addEventListener("click", function (evt) {
-            // We try to pick an object
-            var pickResult = scene.pick(evt.clientX, evt.clientY);
-            console.log(pickResult);
-            // if the click hits the ground object, we change the impact position
-            if (pickResult.hit && pickResult.pickedMesh.name == "POI - Panel") {
-                console.log("panel hit !");
-                
-                console.log(evt.clientX, evt.clientY);
-                $('body').append('<div id = "picto_frame"> You clicked on a Picto !');
-                $('#picto_frame').css('left', evt.clientX+'px');
-                $('#picto_frame').css('top', evt.clientY+'px');
-            }
-        });
     };
 })();
 

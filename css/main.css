@@ -91,5 +91,7 @@ div {
 
 #picto_frame {
     position : absolute;
+    width: auto;
+    height: auto;
 }
 

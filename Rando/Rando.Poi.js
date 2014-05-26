@@ -12,7 +12,8 @@ RANDO = RANDO || {};
 (function () {  "use strict" 
     
     /* Constructor */
-    RANDO.Poi = function (data, offsets, scene) {
+    RANDO.Poi = function (id, data, offsets, scene) {
+        this._id            = id
         this._position      = this._offset(data.coordinates, offsets);
         this._name          = data.properties.name;
         this._type          = data.properties.type;
@@ -20,7 +21,6 @@ RANDO = RANDO || {};
         this._scene         = scene;
         
         this.panel  = null;
-        this.sphere = null;
         this.init();
     };
 
@@ -29,7 +29,6 @@ RANDO = RANDO || {};
         init:                           init,
         _offset:                        _offset,
         _buildPanel:                    _buildPanel,
-        _buildSphere:                   _buildSphere,
         _registerBeforeRender:          _registerBeforeRender
     };
 
@@ -54,31 +53,19 @@ RANDO = RANDO || {};
         var scene       = this._scene;
         var position    = this._position;
         var text        = this._name;
-        var src         = RANDO.SETTINGS.PICTO_SUFFIX + this._type.pictogram;
-        
-        // Text Panel
-        //~ var panel = RANDO.Utils.createTextPanel (
-            //~ "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
-            //~ text, scene, "rgba(1,1,1,0)", "#FFFFFF"
-        //~ );
-        //~ panel.position.x = position.x;
-        //~ panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
-        //~ panel.position.z = position.z;
-        //~ panel.material.specularColor = new BABYLON.Color4(0,0,0,0);
-        //~ panel.isVisible = false;
-        //~ this.panel = panel;
-        
-        
+        var src         = RANDO.SETTINGS.PICTO_PREFIX + this._type.pictogram;
+        var id          = this._id;
+
         // Picto Panel
         var panel = BABYLON.Mesh.CreateGround("POI - Panel", 200, 200, 2, scene);
+        panel.id = id;
         panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-        
-        
+
         var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", 64, scene, true);
         texture.hasAlpha = true;
         
@@ -98,19 +85,6 @@ RANDO = RANDO || {};
         img.src = src;
     };
 
-    function _buildSphere () {
-        var scene       = this._scene;
-        var position    = this._position;
-
-        var sphere = BABYLON.Mesh.CreateSphere ("POI - Sphere", 10, 100, scene);
-        sphere.material = new BABYLON.StandardMaterial("POI - Sphere.material", scene);
-        sphere.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
-        sphere.position.x = position.x;
-        sphere.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
-        sphere.position.z = position.z;
-        sphere.isVisible = false;
-        this.sphere = sphere;
-    };
 
     function _registerBeforeRender () {
         var scene       = this._scene;
@@ -118,17 +92,6 @@ RANDO = RANDO || {};
         var sphere      = this.sphere;
         var panel       = this.panel;
 
-
-        //~ var distance = BABYLON.Vector3.Distance(scene.activeCamera.position, position);
-        //~ if (distance > 2800) {
-            //~ sphere.isVisible = true;
-            //~ panel.isVisible  = false;
-        //~ } else {
-            //~ sphere.isVisible = false;
-            //~ panel.isVisible  = true;
-            //~ lookAtCamera (scene.activeCamera);
-        //~ }
-        //~ 
         lookAtCamera (scene.activeCamera);
         function lookAtCamera (camera) {
             if (camera.id == "Fly camera") {
@@ -144,5 +107,25 @@ RANDO = RANDO || {};
                 panel.lookAt(camera.position, 0, -Math.PI/2, 0);
             }
         };
+    };
+    
+    RANDO.Poi.runClickListener = function (pois, scene) {
+        RANDO.Events.addEvent(window, "mousedown", function (evt) {
+            var pickResult = scene.pick (evt.clientX, evt.clientY);
+            var pickedMesh = pickResult.pickedMesh;
+
+            // Remove the picto frame if it exists
+            var elem = $('#picto_frame');
+            if (elem) {
+                elem.remove();
+            }
+
+            // if the click hits a pictogram, we display informations of POI
+            if (pickResult.hit && pickedMesh.name == "POI - Panel") {
+                $('body').append('<div id = "picto_frame"> ' + pois[pickedMesh.id]._name + '</div>');
+                $('#picto_frame').css('left', evt.clientX + 'px');
+                $('#picto_frame').css('top',  evt.clientY + 'px');
+            }
+        });
     };
 })();
