@@ -29,7 +29,9 @@ RANDO = RANDO || {};
         init:                           init,
         _offset:                        _offset,
         _buildPanel:                    _buildPanel,
-        _registerBeforeRender:          _registerBeforeRender
+        _registerBeforeRender:          _registerBeforeRender,
+        onMouseDownHandler:             onMouseDownHandler,
+        onMouseOverHandler:             onMouseOverHandler
     };
 
     function init () {
@@ -109,23 +111,48 @@ RANDO = RANDO || {};
         };
     };
     
-    RANDO.Poi.runClickListener = function (pois, scene) {
-        RANDO.Events.addEvent(window, "mousedown", function (evt) {
+    RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
+        //~ RANDO.Events.addEvent(window, "mousedown", function (evt) {
+            //~ var pickResult = scene.pick (evt.clientX, evt.clientY);
+            //~ var pickedMesh = pickResult.pickedMesh;
+//~ 
+            //~ RANDO.Poi.removePictoFrame();
+//~ 
+            //~ // if the click hits a pictogram, we display informations of POI
+            //~ if (pickResult.hit && pickedMesh.name == "POI - Panel") {
+                //~ pois[pickedMesh.id].onMouseDownHandler(evt);
+            //~ }
+        //~ });
+        
+        RANDO.Events.addEvent(document.getElementById("canvas_renderer"), "mousemove", function (evt) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
-            // Remove the picto frame if it exists
-            var elem = $('#picto_frame');
-            if (elem) {
-                elem.remove();
-            }
+            RANDO.Poi.removePictoFrame();
 
             // if the click hits a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                $('body').append('<div id = "picto_frame"> ' + pois[pickedMesh.id]._name + '</div>');
-                $('#picto_frame').css('left', evt.clientX + 'px');
-                $('#picto_frame').css('top',  evt.clientY + 'px');
+                pois[pickedMesh.id].onMouseOverHandler(evt);
             }
         });
+    };
+    
+    RANDO.Poi.removePictoFrame = function () {
+        var elem = $('#picto_frame');
+        if (elem) {
+            elem.remove();
+        }
+    };
+    
+    function onMouseDownHandler (evt) {
+        $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
+        $('#picto_frame').css('left', evt.clientX + 'px');
+        $('#picto_frame').css('top',  evt.clientY + 'px');
+    };
+    
+    function onMouseOverHandler (evt) {
+        $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
+        $('#picto_frame').css('left', evt.clientX + 'px');
+        $('#picto_frame').css('top',  evt.clientY + 'px');
     };
 })();

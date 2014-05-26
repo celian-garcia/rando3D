@@ -189,7 +189,7 @@ RANDO = RANDO || {};
                     that._scene
                 ));
             }
-            RANDO.Poi.runClickListener(that.pois, that._scene);
+            RANDO.Poi.runMouseListener(that._canvas, that.pois, that._scene);
 
             // To execute when scene is ready
             that._scene.executeWhenReady(function () {
