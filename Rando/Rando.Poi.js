@@ -112,19 +112,9 @@ RANDO = RANDO || {};
     };
     
     RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
-        //~ RANDO.Events.addEvent(window, "mousedown", function (evt) {
-            //~ var pickResult = scene.pick (evt.clientX, evt.clientY);
-            //~ var pickedMesh = pickResult.pickedMesh;
-//~ 
-            //~ RANDO.Poi.removePictoFrame();
-//~ 
-            //~ // if the click hits a pictogram, we display informations of POI
-            //~ if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                //~ pois[pickedMesh.id].onMouseDownHandler(evt);
-            //~ }
-        //~ });
         
-        RANDO.Events.addEvent(document.getElementById("canvas_renderer"), "mousemove", function (evt) {
+        var clicked = false;
+        RANDO.Events.addEvent(window, "mousedown", function (evt) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
@@ -132,7 +122,24 @@ RANDO = RANDO || {};
 
             // if the click hits a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                pois[pickedMesh.id].onMouseOverHandler(evt);
+                pois[pickedMesh.id].onMouseDownHandler(evt);
+                clicked = true;
+            } else {
+                clicked = false;
+            }
+        });
+        
+        RANDO.Events.addEvent(window, "mousemove", function (evt) {
+            if (!clicked) {
+                var pickResult = scene.pick (evt.clientX, evt.clientY);
+                var pickedMesh = pickResult.pickedMesh;
+                
+                RANDO.Poi.removePictoFrame();
+                
+                // if the click hits a pictogram, we display informations of POI
+                if (pickResult.hit && pickedMesh.name == "POI - Panel") {
+                    pois[pickedMesh.id].onMouseOverHandler(evt);
+                }
             }
         });
     };

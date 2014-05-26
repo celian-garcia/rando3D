@@ -89,9 +89,12 @@ div {
     border-radius: 0.35em;
 }
 
-#picto_frame {
+#picto_frame{
     position : absolute;
     width: auto;
     height: auto;
+    padding: 5px;
 }
+
+
 
