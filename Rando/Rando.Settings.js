@@ -40,7 +40,8 @@ RANDO.SETTINGS.POI_FORM1 = {
     folder:         "blender/",
     fileName:       "poi.babylon"
 };
-RANDO.SETTINGS.POI_SIZE = 80;
+RANDO.SETTINGS.POI_SIZE = 20;
+RANDO.SETTINGS.PICTO_SIZE = 80;
 RANDO.SETTINGS.PICTO_PREFIX = "";
 
 

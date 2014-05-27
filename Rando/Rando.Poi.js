@@ -21,6 +21,7 @@ RANDO = RANDO || {};
         this._scene         = scene;
         
         this.panel  = null;
+        this.sphere = null;
         this.init();
     };
 
@@ -28,6 +29,7 @@ RANDO = RANDO || {};
     RANDO.Poi.prototype = {
         init:                           init,
         _buildPanel:                    _buildPanel,
+        _buildSphere:                   _buildSphere,
         _registerBeforeRender:          _registerBeforeRender,
         place:                          place,
         drape:                          drape,
@@ -37,6 +39,7 @@ RANDO = RANDO || {};
 
     function init () {
         this._buildPanel ();
+        this._buildSphere ();
 
         var that = this;
         this._scene.registerBeforeRender( function () {
@@ -57,8 +60,8 @@ RANDO = RANDO || {};
 
         // Picto Panel
         var panel = BABYLON.Mesh.CreateGround(
-            "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
-            RANDO.SETTINGS.POI_SIZE, 2, scene
+            "POI - Panel", RANDO.SETTINGS.PICTO_SIZE, RANDO.SETTINGS.PICTO_SIZE, 
+            2, scene
         );
         panel.id = id;
         panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
@@ -86,6 +89,25 @@ RANDO = RANDO || {};
             panel.material.diffuseTexture = texture;
         };
         img.src = src;
+    };
+    
+    function _buildSphere() {
+        var scene       = this._scene;
+        var position    = this._position;
+
+        var sphere = BABYLON.Mesh.CreateSphere(
+            "POI - Sphere", 10, RANDO.SETTINGS.POI_SIZE, scene
+        );
+        sphere.position = new BABYLON.Vector3(
+            position.x,
+            position.y,
+            position.z
+        );
+        sphere.material = new BABYLON.StandardMaterial(
+            "POI - Sphere - Material", scene
+        );
+        sphere.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        this.sphere = sphere;
     };
 
     /**
@@ -138,6 +160,7 @@ RANDO = RANDO || {};
      */
     function drape(ground) {
         RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
+        RANDO.Utils.drapePoint(this.sphere.position, ground);
     };
 
     /**
