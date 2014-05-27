@@ -146,8 +146,7 @@ RANDO = RANDO || {};
         function drapeChunk () {
             var cnt = chunk;
             while (cnt-- && index < trek_length) {
-                RANDO.Utils.drapePoint(spheres[index].position, ground);
-                
+                RANDO.Utils.drapePoint(spheres[index].position, ground, RANDO.SETTINGS.TREK_OFFSET);
                 ++index;
             }
             if (index < trek_length){

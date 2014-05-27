@@ -1016,13 +1016,16 @@ RANDO.Utils.rad2num = function (lat_rad, lng_rad, zoom) {
  *      - point: point to drape
  *      - dem: ground 
  */
-RANDO.Utils.drapePoint = function (point, dem) {
+RANDO.Utils.drapePoint = function (point, dem, offset) {
+    if (typeof(offset) === "undefined") {
+        var offset = 0;
+    }
     var children = dem.getChildren();
     var ray =  new BABYLON.Ray(point, BABYLON.Axis.Y);
     for (it in children) {
         var pick = children[it].intersects(ray, true);
         if (pick.pickedPoint) {
-            point.y = pick.pickedPoint.y + RANDO.SETTINGS.TREK_OFFSET;
+            point.y = pick.pickedPoint.y + offset;
         }
     }
 }
