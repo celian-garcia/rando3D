@@ -14,7 +14,7 @@ RANDO = RANDO || {};
     /* Constructor */
     RANDO.Poi = function (id, data, offsets, scene) {
         this._id            = id
-        this._position      = this._offset(data.coordinates, offsets);
+        this._position      = this.place(data.coordinates, offsets);
         this._name          = data.properties.name;
         this._type          = data.properties.type;
         this._description   = data.properties.description;
@@ -27,16 +27,15 @@ RANDO = RANDO || {};
     /* List of Methods */
     RANDO.Poi.prototype = {
         init:                           init,
-        _offset:                        _offset,
         _buildPanel:                    _buildPanel,
         _registerBeforeRender:          _registerBeforeRender,
+        place:                          place,
         onMouseDownHandler:             onMouseDownHandler,
         onMouseOverHandler:             onMouseOverHandler
     };
 
     function init () {
         this._buildPanel ();
-        //~ this._buildSphere ();
 
         var that = this;
         this._scene.registerBeforeRender( function () {
@@ -44,13 +43,27 @@ RANDO = RANDO || {};
         });
     };
 
-    function _offset (position, offsets) {
+    /**
+     * RANDO.Poi.place() : place a POI
+     *      - position: position of POI
+     *      - offsets: offsets 
+     */
+    function place (position, offsets) {
+        if (typeof(offsets) === "undefined") {
+            var offsets = {
+                x: 0,
+                z: 0
+            };
+        }
         var newPosition = _.clone(position);
         newPosition.x += offsets.x;
         newPosition.z += offsets.z;
         return newPosition;
     };
 
+    /**
+     * RANDO.Poi._buildPanel() : build a Panel with a picto which defines the type of POI
+     */
     function _buildPanel () {
         var scene       = this._scene;
         var position    = this._position;
@@ -87,7 +100,9 @@ RANDO = RANDO || {};
         img.src = src;
     };
 
-
+    /**
+     * RANDO.Poi._registerBeforeRender() : function to call before each scene render
+     */
     function _registerBeforeRender () {
         var scene       = this._scene;
         var position    = this._position;
@@ -110,15 +125,25 @@ RANDO = RANDO || {};
             }
         };
     };
-    
+
+    /**
+     * RANDO.Poi.runMouseListener() : Static function which run all mouse 
+     *  listeners linked to POIs, we give it a POI's array and it adds 
+     *  mouse events over all its elements.
+     * 
+     *      - canvas : canvas where the scene is
+     *      - pois : array of POIs
+     *      - scene : scene 
+     */
     RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
-        
         var clicked = false;
+
+        // MouseDown Event : check if the mouse is over a Picto when Mouse left click is down
         RANDO.Events.addEvent(window, "mousedown", function (evt) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
-            RANDO.Poi.removePictoFrame();
+            removePictoFrame();
 
             // if the click hits a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel") {
@@ -128,38 +153,49 @@ RANDO = RANDO || {};
                 clicked = false;
             }
         });
-        
+
+        // MouseMove Event : always check if mouse is over a Picto
         RANDO.Events.addEvent(window, "mousemove", function (evt) {
             if (!clicked) {
                 var pickResult = scene.pick (evt.clientX, evt.clientY);
                 var pickedMesh = pickResult.pickedMesh;
 
-                RANDO.Poi.removePictoFrame();
+                removePictoFrame();
 
-                // if the click hits a pictogram, we display informations of POI
+                // if mouse is over a pictogram, we display informations of POI
                 if (pickResult.hit && pickedMesh.name == "POI - Panel") {
                     pois[pickedMesh.id].onMouseOverHandler(evt);
                 }
             }
         });
+
+        // A function which remove the picto frame if it exists
+        function removePictoFrame () {
+            var elem = $('#picto_frame');
+            if (elem) {
+                elem.remove();
+            }
+        };
     };
-    
-    RANDO.Poi.removePictoFrame = function () {
-        var elem = $('#picto_frame');
-        if (elem) {
-            elem.remove();
-        }
-    };
-    
+
+    /**
+     * onMouseDownHandler() : callback to run if the mouse is down over a picto
+     *      - evt: event informations
+     */
     function onMouseDownHandler (evt) {
         $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
-        
+
         $('#picto_frame').css('left', evt.clientX - 20 + 'px');
         $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
     };
-    
+
+    /**
+     * onMouseOverHandler() : callback to run if the mouse is over a picto
+     *      - evt: event informations
+     */
     function onMouseOverHandler (evt) {
         $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
+
         $('#picto_frame').css('left', evt.clientX - 20 + 'px');
         $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
     };
