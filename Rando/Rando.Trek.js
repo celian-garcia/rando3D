@@ -16,10 +16,10 @@ RANDO = RANDO || {};
         this._vertices = this._offsets(data, offsets);
         this._scene = scene;
         
-        this.spheres    = null;
-        this.cylinders  = null;
-        this.material   = null;
-        this.trek = null;
+        this.spheres     = null;
+        this.cylinders   = null;
+        this.material    = null;
+        this.mergedTreks = [];
         
         this.init();
     };
@@ -74,7 +74,7 @@ RANDO = RANDO || {};
             n_sph++;
             var sphere = BABYLON.Mesh.CreateSphere(
                 "Sphere " + n_sph, 
-                5, 
+                RANDO.SETTINGS.TREK_TESSEL, 
                 RANDO.SETTINGS.TREK_WIDTH, 
                 scene
             );
@@ -92,7 +92,7 @@ RANDO = RANDO || {};
                 cyl_height,
                 RANDO.SETTINGS.TREK_WIDTH,
                 RANDO.SETTINGS.TREK_WIDTH,
-                10,
+                RANDO.SETTINGS.TREK_TESSEL,
                 scene
             );
             cylinder.isVisible  = false;
@@ -179,12 +179,12 @@ RANDO = RANDO || {};
         var scene       = this._scene;
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
-        var trek        = new BABYLON.Mesh("Merged Trek", scene)
         
-        trek.material = this.material;
-        RANDO.Utils.mergeMeshes(trek, spheres.concat(cylinders));
+        var meshes = spheres.concat(cylinders);
+        var mergedTrek = new BABYLON.Mesh("Merged Trek", scene);
+        RANDO.Utils.mergeMeshes(mergedTrek, meshes);
         
-        this.trek = trek;
+        this.mergedTreks.push(mergedTrek);
     };
 
     /**

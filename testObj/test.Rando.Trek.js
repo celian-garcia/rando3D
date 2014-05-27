@@ -59,5 +59,45 @@ describe('Geotrek 3D - Trek Object', function() {
     });
     
     describe('Methods', function () {
+        describe('Merge function - this.merge()', function (done) {
+            it("this.mergedTreks array should not be empty", function (done) {
+                var trek = new RANDO.Trek(data, offsets, scene);
+                trek.merge();
+                assert(trek.mergedTreks.length > 0, "this.mergedTreks array is empty !");
+                done();
+                trek.dispose();
+            });
+            
+            it("this.mergedTreks array should not contain any mesh which have more vertices than the limit of vertices by mesh", function (done) {
+                var nMax = RANDO.SETTINGS.LIMIT_VERT_BY_MESH;
+                var hugeDataLength = 180; /* number chosen to reach the limit of vertices,
+                                            *for a tessellation of 10 it trains a number of 
+                                            *vertices equal to 66018*/
+                var hugeData = [];
+                
+                // Fill a huge set of data
+                for (var i = 0; i < hugeDataLength; i++) {
+                    hugeData.push({
+                        x: i,
+                        y: i,
+                        z: i
+                    });
+                }
+                var trek = new RANDO.Trek(hugeData, offsets, scene);
+                trek.merge();
+                var result = trek.mergedTreks;
+
+                for (var it in result) {
+                    assert(result[it].getTotalVertices() < nMax, 
+                        "one or several mergedTrek(s) have too many vertices "
+                    );
+                }
+
+                console.log(check);
+                
+                done();
+                trek.dispose();
+            });
+        });
     });
 });

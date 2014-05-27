@@ -27,24 +27,24 @@ describe('Geotrek 3D - Poi Object', function() {
         'y': 50,
         'z': -200
     };
-
+    var id = 0;
+    
     describe('Attributes', function () {
         it("_position attribute should be equal to data.coordinates parameter translated by x and z offsets.", function(done) {
-            var poi = new RANDO.Poi(data, offsets, scene);
-
+            var poi = new RANDO.Poi(id, data, offsets, scene);
             var expected_position = {
                 'x': data.coordinates.x + offsets.x,
                 'y': data.coordinates.y,
                 'z': data.coordinates.z + offsets.z
             };
-
+            
             assert.deepEqual(poi._position, expected_position);
             done();
             poi.dispose();
         });
         
         it("_name attribute should be equal to data.properties.name parameter.", function(done) {
-            var poi = new RANDO.Poi(data, offsets, scene);
+            var poi = new RANDO.Poi(id, data, offsets, scene);
 
             assert.deepEqual(poi._name, data.properties.name);
             done();
@@ -52,7 +52,7 @@ describe('Geotrek 3D - Poi Object', function() {
         });
         
         it("_type attribute should be equal to data.properties.type parameter.", function(done) {
-            var poi = new RANDO.Poi(data, offsets, scene);
+            var poi = new RANDO.Poi(id, data, offsets, scene);
 
             assert.deepEqual(poi._type, data.properties.type);
             done();
@@ -60,7 +60,7 @@ describe('Geotrek 3D - Poi Object', function() {
         });
         
         it("_description attribute should be equal to data.properties.description parameter.", function(done) {
-            var poi = new RANDO.Poi(data, offsets, scene);
+            var poi = new RANDO.Poi(id, data, offsets, scene);
 
             assert.deepEqual(poi._description, data.properties.description);
             done();
@@ -69,7 +69,7 @@ describe('Geotrek 3D - Poi Object', function() {
         
         
         it("_scene attribute should equals to scene parameter.", function(done) {
-            var poi = new RANDO.Poi(data, offsets, scene);
+            var poi = new RANDO.Poi(id, data, offsets, scene);
             assert.deepEqual(poi._scene, scene);
             done();
             poi.dispose();
