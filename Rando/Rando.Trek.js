@@ -38,7 +38,7 @@ RANDO = RANDO || {};
     function init () {
         this.material = new BABYLON.StandardMaterial("Trek Material", this._scene)
         this.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
-        
+
         this.buildTrek ();
     };
 
@@ -168,7 +168,6 @@ RANDO = RANDO || {};
             }
             
             onComplete();
-            that.merge();
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         };
     };

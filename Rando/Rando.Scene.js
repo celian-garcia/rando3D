@@ -228,12 +228,13 @@ RANDO = RANDO || {};
     function _buildLights() {
         var lights = this.lights;
         var scene = this._scene;
-        
+
         // Sun
         var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
-        
+
         lights.push(sun);
+
     };
 
     function _buildEnvironment() {
@@ -320,10 +321,6 @@ RANDO = RANDO || {};
         var pois    = this.pois;
         var that    = this;
 
-        for (var it in pois) {
-            pois[it].drape(dem.ground);
-        }
-        
         dem.applyTextures();
         trek.drape(dem.ground, onDrapeComplete);
 

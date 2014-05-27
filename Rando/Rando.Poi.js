@@ -20,8 +20,9 @@ RANDO = RANDO || {};
         this._description   = data.properties.description;
         this._scene         = scene;
         
-        this.panel  = null;
-        this.sphere = null;
+        this.panel          = null;
+        this.sphere         = null;
+        this._attachedLight = null;
         this.init();
     };
 
@@ -86,7 +87,8 @@ RANDO = RANDO || {};
             textureContext.drawImage(img, 0, 0, size.width, size.height);
             textureContext.restore();
             texture.update();
-            panel.material.diffuseTexture = texture;
+            panel.material.diffuseTexture   = texture;
+            panel.material.emissiveTexture  = texture;
         };
         img.src = src;
     };
@@ -107,6 +109,7 @@ RANDO = RANDO || {};
             "POI - Sphere - Material", scene
         );
         sphere.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        sphere.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         this.sphere = sphere;
     };
 
@@ -120,6 +123,7 @@ RANDO = RANDO || {};
         var panel       = this.panel;
 
         lookAtCamera (scene.activeCamera);
+
         function lookAtCamera (camera) {
             if (camera.id == "Fly camera") {
                 var camTarget   = scene.activeCamera.getTarget();
