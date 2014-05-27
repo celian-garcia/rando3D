@@ -316,8 +316,13 @@ RANDO = RANDO || {};
         var version = this._version;
         var dem     = this.dem;
         var trek    = this.trek;
+        var pois    = this.pois;
         var that    = this;
 
+        for (var it in pois) {
+            pois[it].drape(dem.ground);
+        }
+        
         dem.applyTextures();
         trek.drape(dem.ground, onDrapeComplete);
 

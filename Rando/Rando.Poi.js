@@ -31,7 +31,8 @@ RANDO = RANDO || {};
         _registerBeforeRender:          _registerBeforeRender,
         place:                          place,
         onMouseDownHandler:             onMouseDownHandler,
-        onMouseOverHandler:             onMouseOverHandler
+        onMouseOverHandler:             onMouseOverHandler,
+        drape:                          drape
     };
 
     function init () {
@@ -179,7 +180,7 @@ RANDO = RANDO || {};
     };
 
     /**
-     * onMouseDownHandler() : callback to run if the mouse is down over a picto
+     * RANDO.Poi.onMouseDownHandler() : callback to run if the mouse is down over a picto
      *      - evt: event informations
      */
     function onMouseDownHandler (evt) {
@@ -190,7 +191,7 @@ RANDO = RANDO || {};
     };
 
     /**
-     * onMouseOverHandler() : callback to run if the mouse is over a picto
+     * RANDO.Poi.onMouseOverHandler() : callback to run if the mouse is over a picto
      *      - evt: event informations
      */
     function onMouseOverHandler (evt) {
@@ -198,5 +199,13 @@ RANDO = RANDO || {};
 
         $('#picto_frame').css('left', evt.clientX - 20 + 'px');
         $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
+    };
+
+    /**
+     * RANDO.Poi.drape() : drape the POI over the DEM
+     *      - ground : ground of the DEM 
+     */
+    function drape(ground) {
+        RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
     };
 })();
