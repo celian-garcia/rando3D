@@ -22,6 +22,9 @@ RANDO = RANDO || {};
         this.init();
     };
 
+    // Static Array defining possibles cameras IDs
+    RANDO.CameraIDs = ["demo_camera", "fly_camera"];
+
     /* List of Methods */
     RANDO.CameraContainer.prototype = {
         init:                   init,
@@ -30,15 +33,16 @@ RANDO = RANDO || {};
         _buildAttachedLight:    _buildAttachedLight,
         setActiveCamera:        setActiveCamera
     };
-    
-    RANDO.CameraIDs = ["demo_camera", "fly_camera"];
 
     function init () {
         this._buildDemoCamera ();
         this._buildFlyingCamera ();
         this._buildAttachedLight ();
     };
-    
+
+    /**
+     * RANDO.CameraContainer._buildDemoCamera() : build of the demo camera
+     */
     function _buildDemoCamera () {
         var demo_camera = new BABYLON.ArcRotateCamera(
             "Demo Camera", 1, 0.5, 10,
@@ -63,6 +67,9 @@ RANDO = RANDO || {};
         this.cameras.push(demo_camera);
     };
 
+    /**
+     * RANDO.CameraContainer._buildFlyingCamera() : build of the flying camera
+     */
     function _buildFlyingCamera () {
         var fly_camera = new BABYLON.FreeCamera(
             "Flying Camera", 
@@ -81,14 +88,17 @@ RANDO = RANDO || {};
 
         this.cameras.push(fly_camera);
     };
-    
+
+    /**
+     * RANDO.CameraContainer._buildAttachedLight() : build the attached light of camera
+     */
     function _buildAttachedLight () {
         var scene = this._scene;
         this._camLight = new BABYLON.HemisphericLight("Camera Light", new BABYLON.Vector3(0,1000,0), scene)
         this._camLight.intensity = 0.8;
         this._camLight.specular = new BABYLON.Color4(0, 0, 0, 0);
     };
-    
+
     /**
      * RANDO.CameraContainer.setActiveCamera() : set the active camera of the scene
      *      - cameraID: ID of the camera we want to set as active
@@ -115,5 +125,5 @@ RANDO = RANDO || {};
             console.log("Error in setActiveCamera : the camera ID entered is not available");
         }
     };
-    
+
 })();
