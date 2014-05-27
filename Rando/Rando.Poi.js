@@ -30,9 +30,9 @@ RANDO = RANDO || {};
         _buildPanel:                    _buildPanel,
         _registerBeforeRender:          _registerBeforeRender,
         place:                          place,
+        drape:                          drape,
         onMouseDownHandler:             onMouseDownHandler,
-        onMouseOverHandler:             onMouseOverHandler,
-        drape:                          drape
+        onMouseOverHandler:             onMouseOverHandler
     };
 
     function init () {
@@ -44,23 +44,6 @@ RANDO = RANDO || {};
         });
     };
 
-    /**
-     * RANDO.Poi.place() : place a POI
-     *      - position: position of POI
-     *      - offsets: offsets 
-     */
-    function place (position, offsets) {
-        if (typeof(offsets) === "undefined") {
-            var offsets = {
-                x: 0,
-                z: 0
-            };
-        }
-        var newPosition = _.clone(position);
-        newPosition.x += offsets.x;
-        newPosition.z += offsets.z;
-        return newPosition;
-    };
 
     /**
      * RANDO.Poi._buildPanel() : build a Panel with a picto which defines the type of POI
@@ -73,7 +56,10 @@ RANDO = RANDO || {};
         var id          = this._id;
 
         // Picto Panel
-        var panel = BABYLON.Mesh.CreateGround("POI - Panel", 200, 200, 2, scene);
+        var panel = BABYLON.Mesh.CreateGround(
+            "POI - Panel", RANDO.SETTINGS.POI_SIZE, 
+            RANDO.SETTINGS.POI_SIZE, 2, scene
+        );
         panel.id = id;
         panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
         panel.position.x = position.x;
@@ -82,7 +68,7 @@ RANDO = RANDO || {};
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
 
-        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", 64, scene, true);
+        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", 512, scene, true);
         texture.hasAlpha = true;
         
         panel.material.backFaceCulling = false;
@@ -93,7 +79,8 @@ RANDO = RANDO || {};
         var img = new Image();
         img.onload = function () {
             var textureContext = texture.getContext();
-            textureContext.drawImage(img, 0, 0);
+            var size = texture.getSize();
+            textureContext.drawImage(img, 0, 0, size.width, size.height);
             textureContext.restore();
             texture.update();
             panel.material.diffuseTexture = texture;
@@ -125,6 +112,32 @@ RANDO = RANDO || {};
                 panel.lookAt(camera.position, 0, -Math.PI/2, 0);
             }
         };
+    };
+
+    /**
+     * RANDO.Poi.place() : place a POI
+     *      - position: position of POI
+     *      - offsets: offsets 
+     */
+    function place (position, offsets) {
+        if (typeof(offsets) === "undefined") {
+            var offsets = {
+                x: 0,
+                z: 0
+            };
+        }
+        var newPosition = _.clone(position);
+        newPosition.x += offsets.x;
+        newPosition.z += offsets.z;
+        return newPosition;
+    };
+
+    /**
+     * RANDO.Poi.drape() : drape the POI over the DEM
+     *      - ground : ground of the DEM 
+     */
+    function drape(ground) {
+        RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
     };
 
     /**
@@ -201,11 +214,4 @@ RANDO = RANDO || {};
         $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
     };
 
-    /**
-     * RANDO.Poi.drape() : drape the POI over the DEM
-     *      - ground : ground of the DEM 
-     */
-    function drape(ground) {
-        RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
-    };
 })();
