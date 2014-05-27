@@ -133,9 +133,9 @@ RANDO = RANDO || {};
             if (!clicked) {
                 var pickResult = scene.pick (evt.clientX, evt.clientY);
                 var pickedMesh = pickResult.pickedMesh;
-                
+
                 RANDO.Poi.removePictoFrame();
-                
+
                 // if the click hits a pictogram, we display informations of POI
                 if (pickResult.hit && pickedMesh.name == "POI - Panel") {
                     pois[pickedMesh.id].onMouseOverHandler(evt);
@@ -153,13 +153,14 @@ RANDO = RANDO || {};
     
     function onMouseDownHandler (evt) {
         $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
-        $('#picto_frame').css('left', evt.clientX + 'px');
-        $('#picto_frame').css('top',  evt.clientY + 'px');
+        
+        $('#picto_frame').css('left', evt.clientX - 20 + 'px');
+        $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
     };
     
     function onMouseOverHandler (evt) {
         $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
-        $('#picto_frame').css('left', evt.clientX + 'px');
-        $('#picto_frame').css('top',  evt.clientY + 'px');
+        $('#picto_frame').css('left', evt.clientX - 20 + 'px');
+        $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
     };
 })();

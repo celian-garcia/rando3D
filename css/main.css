@@ -93,7 +93,9 @@ div {
     position : absolute;
     width: auto;
     height: auto;
-    padding: 5px;
+    padding: 2px;
+    border-radius: 0.35em;
+    text-align:center;
 }
 
 
