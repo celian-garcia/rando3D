@@ -4,8 +4,9 @@
  * Scene class : 
  *  Permites the creation and manipulation of a scene 3D containing (or not) :
  *      - a Digital Elevation Model
- *      - a Trek which is draped over the DEM if it exists
- *      - a Camera floating and animated
+ *      - a Trek which is draped over the DEM 
+ *      - a set of Points Of Interest draped over the DEM too
+ *      - a set of Cameras
  *      - a set of lights
  * 
  * @author: Célian GARCIA
@@ -253,7 +254,7 @@ RANDO = RANDO || {};
         //~ skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("skybox/skybox", scene);
         //~ skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         
-        // Color
+        // Color : transparent to see the html background
         this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
     };
     
