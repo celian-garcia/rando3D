@@ -410,101 +410,6 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
     newMesh.setIndices(arrayIndice);
 };
 
-/** to refac
- * RANDO.Utils.createPanel() : create a panel containing the text in parameter
- *      - name : name of the future mesh
- *      - size : size of the future mesh 
- *      - text : text of the panel
- *      - scene : scene which will contain the panel
- *      - bg_color : background color in the panel
- *      - text_color : text color in the panel
- * 
- * return the panel 
- */
-RANDO.Utils.createTextPanel = function (name, height, text, scene, bg_color, text_color) {
-    var panel_width = height;
-    var texture_size = 512;
-    
-    var count = 0;
-    var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
-    texture.hasAlpha = true;
-
-    var textureContext = texture.getContext();
-    var size = texture.getSize();
-
-    text = "  " + text + "  ";
-
-    textureContext.save();
-    textureContext.fillStyle = bg_color;
-    textureContext.fillRect(0,0,size.width,size.height);
-    textureContext.font = "bold " + height*(512/128) + "px Arial";
-    var textSize = textureContext.measureText(text);
-    textureContext.fillStyle = text_color;
-    while (size.width < textSize.width) {
-        var old_size = size.width;
-        var new_size = size.width + 10;
-        var scale = old_size/new_size;
-        size.width = new_size;
-        panel_width = panel_width/scale;
-        textureContext.scale(scale, 1);
-    }
-    textureContext.fillText(text, (size.width - textSize.width)/2, (size.height + 400)/2);
-
-    textureContext.restore();
-
-    texture.update();
-
-    var panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
-    panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
-    panel.material = new BABYLON.StandardMaterial(name +" - Material", scene);
-    panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-    panel.material.diffuseTexture = texture;
-    
-    panel.material.backFaceCulling = false;
-    
-    return panel;
-};
-
-/** to refac
- * RANDO.Utils.createPanel() : create a panel containing the text in parameter
- *      - name : name of the future mesh
- *      - size : size of the future mesh 
- *      - text : text of the panel
- *      - scene : scene which will contain the panel
- *      - bg_color : background color in the panel
- *      - text_color : text color in the panel
- * 
- * return the panel 
- */
-RANDO.Utils.createPictoPanel = function (panel, name, height, src, scene, bg_color, text_color) {
-    var panel_width = height;
-    var texture_size = 512;
-    
-    var count = 0;
-    var texture = new BABYLON.DynamicTexture(name +" - Texture", texture_size, scene, true);
-    texture.hasAlpha = true;
-
-    var textureContext = texture.getContext();
-    var size = texture.getSize();
-
-    var img = new Image();
-    img.onload = function () {
-        textureContext.drawImage(img, 0, 0);
-        textureContext.restore();
-
-        texture.update();
-
-        panel = BABYLON.Mesh.CreateGround(name, panel_width, height, 2, scene);
-        panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
-        panel.material = new BABYLON.StandardMaterial(name +" - Material", scene);
-        panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-        panel.material.diffuseTexture = texture;
-        
-        panel.material.backFaceCulling = false;
-    };
-    img.src = src;
-};
-
 /**
  * RANDO.Utils.getSize () : get the size of a mesh
  *      - mesh : mesh 
@@ -776,7 +681,6 @@ RANDO.Utils.angleFromPoints = function (A, B, H) {
 }
 
 
-
 /****    CAMERA     ************************/
 /**
  * moveCameraTo() : move a camera at the position given, and make it look at the 
@@ -903,25 +807,6 @@ RANDO.Utils.animateCamera = function (trek, scene) {
             }
         }
     });
-}
-
-/**
- * refreshPanels() : refresh pivot matrices of all panels to always have panels 
- *  directed to the camera.
- *      - number (int)          : number of panels in the scene 
- *      - scene (BABYLON.Scene) : current scene
- */
-RANDO.Utils.refreshPanels = function (number, scene) {
-    var A = scene.activeCamera.position;
-    for (var i = 1; i < number; i++){
-        var panel = scene.getMeshByName("Panel" +i);
-        if (!panel) return null;
-        var B = panel.position;
-        var angle = RANDO.Utils.angleFromAxis(A, B, BABYLON.Axis.Y);
-        var matrix = BABYLON.Matrix.RotationY(angle);
-        panel.setPivotMatrix(matrix);
-    }
-    return 1;
 }
 
 
@@ -1141,91 +1026,3 @@ RANDO.Utils.drapePoint = function (point, dem) {
         }
     }
 }
-
-
-
-var getExponantOfTwo = function (value, max) {
-        var count = 1;
-
-        do {
-            count *= 2;
-        } while (count < value);
-
-        if (count > max)
-            count = max;
-
-        return count;
-    };
-
-var prepareWebGLTexture = function (texture, scene, width, height, invertY, noMipmap, processFunction) {
-        var engine = scene.getEngine();
-        var potWidth = getExponantOfTwo(width, engine._caps.maxTextureSize);
-        var potHeight = getExponantOfTwo(height, engine._caps.maxTextureSize);
-
-        engine._gl.bindTexture(engine._gl.TEXTURE_2D, texture);
-        engine._gl.pixelStorei(engine._gl.UNPACK_FLIP_Y_WEBGL, invertY === undefined ? true : invertY);
-
-        processFunction(potWidth, potHeight);
-
-        engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MAG_FILTER, engine._gl.LINEAR);
-
-        if (noMipmap) {
-            engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR);
-        } else {
-            engine._gl.texParameteri(engine._gl.TEXTURE_2D, engine._gl.TEXTURE_MIN_FILTER, engine._gl.LINEAR_MIPMAP_LINEAR);
-            engine._gl.generateMipmap(engine._gl.TEXTURE_2D);
-        }
-        engine._gl.bindTexture(engine._gl.TEXTURE_2D, null);
-
-        engine._activeTexturesCache = [];
-        texture._baseWidth = width;
-        texture._baseHeight = height;
-        texture._width = potWidth;
-        texture._height = potHeight;
-        texture.isReady = true;
-        scene._removePendingData(texture);
-    };
-
-RANDO.Utils.createTexture = function (engine, mesh, url, scene, noMipmap, invertY) {
-    var texture = engine._gl.createTexture();
-    var img = new Image();
-    scene._addPendingData(texture);
-    texture.url = url;
-    texture.noMipmap = noMipmap;
-    texture.references = 1;
-    engine._loadedTexturesCache.push(texture);
-    
-    
-    img.crossOrigin = 'anonymous';
-    img.onload = function() {
-        prepareWebGLTexture(texture, scene, img.width, img.height, invertY, noMipmap, function (potWidth, potHeight) {
-            var isPot = (img.width == potWidth && img.height == potHeight);
-            if (!isPot) {
-                engine._workingCanvas.width = potWidth;
-                engine._workingCanvas.height = potHeight;
-
-                engine._workingContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, potWidth, potHeight);
-            }
-
-            engine._gl.texImage2D(
-                engine._gl.TEXTURE_2D, 
-                0, 
-                engine._gl.RGBA, 
-                engine._gl.RGBA, 
-                engine._gl.UNSIGNED_BYTE, 
-                isPot ? img : engine._workingCanvas
-            );
-            //~ mesh.material.wireframe = false;
-            
-        });
-       
-    }
-    
-    img.onerror = function() {
-        scene._removePendingData(texture);
-    };
-    
-    img.src = url;
-    
-    return texture;
-};
