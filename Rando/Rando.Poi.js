@@ -17,7 +17,7 @@ RANDO = RANDO || {};
         this._position      = this.place(data.coordinates, offsets);
         this._name          = data.properties.name;
         this._type          = data.properties.type;
-        this._description   = data.properties.description;
+        this._description   = data.properties.description || RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE;
         this._scene         = scene;
         
         this.panel          = null;
@@ -105,7 +105,6 @@ RANDO = RANDO || {};
                 width : textureContext.measureText(text).width,
                 height : fontSize
             };
-            console.log(text_size);
             textureContext.fillStyle = "#ffffff";
             
             textureContext.fillText(text, (tex_size.width - text_size.width)/2, tex_size.height);
@@ -258,6 +257,12 @@ RANDO = RANDO || {};
 
         $('#picto_frame').css('left', evt.clientX - 20 + 'px');
         $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
+
+        $('#poi_description').html("<h2>" + this._name + "</h2>" + this._description);
+        $('#poi_description').css('display', 'block');
+
+        $('section').css('width', '80%');
+        this._scene.getEngine().resize();
     };
 
     /**

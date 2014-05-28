@@ -36,6 +36,20 @@ div {
     background-color: rgba(255,255,255, 0.2);
 }
 
+section {
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 0px;
+    width : 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+section * {
+    pointer-events: auto;
+}
+
 #title {
     position: absolute;
     z-index: 1;
@@ -50,8 +64,6 @@ div {
     vertical-align: baseline;
     
     background: url('../img/logo_geotrek.png') -3px 0px no-repeat ;
-    
-    
 }
 
 
@@ -98,5 +110,25 @@ div {
     text-align:center;
 }
 
+#poi_description {
+    display: none;
+    border-radius: 0.35em;
+    background-color: rgba(20, 20, 20, 0.5);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    float: right;
+    width: 20%;
+    height: 100%;
+}
 
+#poi_description p{
+    text-align: justify;
+    margin : 20px;
+}
+
+#poi_description h2{
+    text-align: center;
+    margin : 20px;
+}
 

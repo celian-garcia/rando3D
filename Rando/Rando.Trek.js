@@ -219,8 +219,6 @@ RANDO = RANDO || {};
 
             this.mergedTreks.push(mergedTrek);
         }
-        
-        console.log(this.mergedTreks);
     };
 
     /**

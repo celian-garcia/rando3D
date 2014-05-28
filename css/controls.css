@@ -8,6 +8,7 @@
     width : 300px;
     padding : 5px;
     display: none;
+    float:right;
 }
 .controls span{
     float: left;
