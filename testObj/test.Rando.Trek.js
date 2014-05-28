@@ -70,9 +70,14 @@ describe('Geotrek 3D - Trek Object', function() {
             
             it("this.mergedTreks array should not contain any mesh which have more vertices than the limit of vertices by mesh", function (done) {
                 var nMax = RANDO.SETTINGS.LIMIT_VERT_BY_MESH;
-                var hugeDataLength = 180; /* number chosen to reach the limit of vertices,
-                                            *for a tessellation of 10 it trains a number of 
-                                            *vertices equal to 66018*/
+                RANDO.SETTINGS.TREK_SPH_TESSEL = 5;
+                RANDO.SETTINGS.TREK_CYL_TESSEL = 10;
+                var hugeDataLength = 420; 
+                /* 420 is a number chosen to reach the limit of vertices, it 
+                 * trains a number of vertices equal to 67998 with this configuration : 
+                 *      - RANDO.SETTINGS.TREK_SPH_TESSEL = 5;
+                 *      - RANDO.SETTINGS.TREK_CYL_TESSEL = 10;
+                 */
                 var hugeData = [];
                 
                 // Fill a huge set of data
@@ -86,15 +91,45 @@ describe('Geotrek 3D - Trek Object', function() {
                 var trek = new RANDO.Trek(hugeData, offsets, scene);
                 trek.merge();
                 var result = trek.mergedTreks;
-
                 for (var it in result) {
+                    console.log(result[it].getTotalVertices());
                     assert(result[it].getTotalVertices() < nMax, 
                         "one or several mergedTrek(s) have too many vertices "
                     );
                 }
 
-                console.log(check);
-                
+                done();
+                trek.dispose();
+            });
+            
+            it("the number of merged Treks should be equal to the number of necessary subdivisions in the total number of vertices", function (done) {
+                var nMax = RANDO.SETTINGS.LIMIT_VERT_BY_MESH;
+                RANDO.SETTINGS.TREK_SPH_TESSEL = 5;
+                RANDO.SETTINGS.TREK_CYL_TESSEL = 10;
+                var hugeDataLength = 420; 
+                /* 420 is a number chosen to reach the limit of vertices, it 
+                 * trains a number of vertices equal to 67998 with this configuration : 
+                 *      - RANDO.SETTINGS.TREK_SPH_TESSEL = 5;
+                 *      - RANDO.SETTINGS.TREK_CYL_TESSEL = 10;
+                 */
+                var hugeData = [];
+
+                // Fill a huge set of data
+                for (var i = 0; i < hugeDataLength; i++) {
+                    hugeData.push({
+                        x: i,
+                        y: i,
+                        z: i
+                    });
+                }
+                var trek = new RANDO.Trek(hugeData, offsets, scene);
+                var totalVertices = trek.getTotalVertices();
+
+                trek.merge();
+                var result = trek.mergedTreks;
+
+                assert.equal(result.length, Math.floor(totalVertices/nMax) + 1);
+
                 done();
                 trek.dispose();
             });

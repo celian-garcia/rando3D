@@ -23,7 +23,8 @@ RANDO.SETTINGS.CAM_SPEED_F = 50;  // Camera speed in Flying mode(from 0 to infin
 
 // Geometry
 RANDO.SETTINGS.LIMIT_VERT_BY_MESH = 65536;
-RANDO.SETTINGS.TREK_TESSEL = 5;
+RANDO.SETTINGS.TREK_SPH_TESSEL = 5;
+RANDO.SETTINGS.TREK_CYL_TESSEL = 10;
 RANDO.SETTINGS.MIN_THICKNESS = 200; // Minimum thickness of the DEM
 RANDO.SETTINGS.TREK_OFFSET = 2; // Trek's altitude offset (in meters)
 

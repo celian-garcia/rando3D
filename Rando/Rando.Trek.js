@@ -26,12 +26,13 @@ RANDO = RANDO || {};
 
     /* List of Methods */
     RANDO.Trek.prototype = {
-        init:           init,
-        _offsets:       _offsets,
-        buildTrek:      buildTrek,
-        updateVertices: updateVertices,
-        drape:          drape,
-        merge:          merge
+        init:               init,
+        _offsets:           _offsets,
+        buildTrek:          buildTrek,
+        updateVertices:     updateVertices,
+        getTotalVertices:   getTotalVertices,
+        drape:              drape,
+        merge:              merge
     };
     
     
@@ -74,7 +75,7 @@ RANDO = RANDO || {};
             n_sph++;
             var sphere = BABYLON.Mesh.CreateSphere(
                 "Sphere " + n_sph, 
-                RANDO.SETTINGS.TREK_TESSEL, 
+                RANDO.SETTINGS.TREK_SPH_TESSEL, 
                 RANDO.SETTINGS.TREK_WIDTH, 
                 scene
             );
@@ -92,7 +93,7 @@ RANDO = RANDO || {};
                 cyl_height,
                 RANDO.SETTINGS.TREK_WIDTH,
                 RANDO.SETTINGS.TREK_WIDTH,
-                RANDO.SETTINGS.TREK_TESSEL,
+                RANDO.SETTINGS.TREK_CYL_TESSEL,
                 scene
             );
             cylinder.isVisible  = false;
@@ -179,16 +180,51 @@ RANDO = RANDO || {};
         var scene       = this._scene;
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
+        var meshes      = spheres.concat(cylinders);
+        var limit       = RANDO.SETTINGS.LIMIT_VERT_BY_MESH;
         
-        var meshes = spheres.concat(cylinders);
-        var mergedTrek = new BABYLON.Mesh("Merged Trek", scene);
-        RANDO.Utils.mergeMeshes(mergedTrek, meshes);
+        var count = 0;
+        var nMergedTrek = 0;
+        var buffer = [];
+        for (var i = 0; i < meshes.length; i++) {
+            count += meshes[i].getTotalVertices();
+            // The number of vertices in the buffer is acceptable
+            if (count < limit) {
+                buffer.push(meshes[i]);
+            } 
+            // The number of vertices in the buffer will not be acceptable
+            else {
+                //... so we merge all meshes of buffer
+                var mergedTrek = new BABYLON.Mesh(
+                    "Merged Trek " + nMergedTrek++, scene
+                );
+                RANDO.Utils.mergeMeshes(mergedTrek, buffer);
+                mergedTrek.material = this.material;
+                
+                this.mergedTreks.push(mergedTrek);
+                // ... and we push the current mesh in a new empty buffer
+                buffer = [];
+                buffer.push(meshes[i]);
+                count = meshes[i].getTotalVertices();
+            }
+        }
+
+        // If the count never reached the limit
+        if (buffer.length != 0) {
+            var mergedTrek = new BABYLON.Mesh(
+                "Merged Trek " + nMergedTrek++, scene
+            );
+            RANDO.Utils.mergeMeshes(mergedTrek, buffer);
+            mergedTrek.material = this.material;
+
+            this.mergedTreks.push(mergedTrek);
+        }
         
-        this.mergedTreks.push(mergedTrek);
+        console.log(this.mergedTreks);
     };
 
     /**
-     * RANDO.Trek.updateVertices() : update this._vertices attributes
+     * RANDO.Trek.updateVertices() : update this._vertices attribute
      */
     function updateVertices () {
         var vertices    = this._vertices;
@@ -199,6 +235,19 @@ RANDO = RANDO || {};
             vertices[it].y = spheres[it].position.y;
             vertices[it].z = spheres[it].position.z;
         }
+    };
+    
+    function getTotalVertices () {
+        var spheresArray    = this.spheres.getChildren();
+        var cylindersArray  = this.cylinders.getChildren();
+        var meshes          = spheresArray.concat(cylindersArray);
+
+        var totalVertices = 0;
+        for (var it in meshes) {
+            totalVertices += meshes[it].getTotalVertices();
+        }
+
+        return totalVertices;
     };
 })();
 
