@@ -93,11 +93,6 @@ RANDO = RANDO || {};
             var textureContext = texture.getContext();
             var tex_size = texture.getSize();
 
-            //~ textureContext.fillStyle = "#ffffff";
-            //~ textureContext.fillRect(0,0,tex_size.width,tex_size.height);
-
-            
-
             var pic_size = {
                 width : tex_size.width,
                 height : tex_size.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.height
@@ -123,7 +118,11 @@ RANDO = RANDO || {};
         };
         img.src = src;
     };
-    
+
+    /**
+     * RANDO.Poi._buildSphere() : build a Sphere which will be on the real position 
+     *  of the POI on the DEM.
+     */
     function _buildSphere() {
         var scene       = this._scene;
         var position    = this._position;
