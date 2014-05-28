@@ -47,7 +47,17 @@ RANDO.SETTINGS.POI_SIZE = 20;
 RANDO.SETTINGS.PICTO_SIZE = 80;
 RANDO.SETTINGS.PICTO_PREFIX = "";
 
-RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE = "<p>Pas de description liée à ce point d'intérêt.</p>"
+RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE = "<p>Pas de description liée à ce point d'intérêt.</p>";
+
+RANDO.SETTINGS.SCALE_VIEWER_SIZE = {
+    'width' : 200,
+    'height' : 200
+};
+RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION = {
+    'x' : 50,
+    'y' : 50
+};
+RANDO.SETTINGS.SCALE_VIEWER_OFFSET = 20;
 ////////////////////////////////////////////////////////////////////////////////
 
 RANDO.SETTINGS.parse = function (settings) {

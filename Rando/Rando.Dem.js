@@ -22,6 +22,7 @@ RANDO = RANDO || {};
         
         this.ground = new BABYLON.Mesh("Digital Elevation Model", scene);
         this.sides  = new BABYLON.Mesh("Sides", scene);
+        this.scaleViewer = null;
 
         /* Initialization */
         this.init();
@@ -33,6 +34,7 @@ RANDO = RANDO || {};
         buildGround:        buildGround,
         buildSides:         buildSides,
         applyTextures:      applyTextures,
+        buildScaleViewer:   buildScaleViewer,
         _buildTile:         _buildTile,
         _buildSide:         _buildSide,
         _initCamera:        _initCamera,
@@ -40,11 +42,13 @@ RANDO = RANDO || {};
     };
 
     function init() {
+        console.log(this._data.extent.southwest);
         this._tiles = new RANDO.TileContainer(
             this._data.extent, 
             this._data.altitudes,
             this._offsets
         )._tiles;
+        console.log(this._data.extent.southwest);
         this._initCamera();
         this.buildGround();
         this.buildSides();
@@ -57,10 +61,10 @@ RANDO = RANDO || {};
     function buildGround () {
         // Ground building...
         console.log("Ground building... " + (Date.now() - RANDO.START_TIME) );
-        var scene = this._scene;
-        var center = this._data.center;
+        var scene   = this._scene;
+        var center  = this._data.center;
         var offsets = this._offsets;
-        var tiles = this._tiles;
+        var tiles   = this._tiles;
 
         // Creates all tiles 
         for (var it in tiles) {
@@ -112,9 +116,9 @@ RANDO = RANDO || {};
      *  return the tile mesh
      */
     function _buildTile (data) {
-        var scene = this._scene;
-        var engine = scene.getEngine();
-        var that = this;
+        var scene   = this._scene;
+        var engine  = scene.getEngine();
+        var that    = this;
         
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
@@ -214,6 +218,63 @@ RANDO = RANDO || {};
                 }
             };
         }
+    };
+
+    function buildScaleViewer () {
+        var corner = this._data.extent.southwest;
+        var scene = this._scene;
+
+        var width  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.width;
+        var height  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.height;
+        var A = {
+            'x': corner.x + this._offsets.x,
+            'y': corner.z + this._offsets.z
+        };
+        var B = {
+            'x': A.x + width,
+            'y': A.y
+        };
+        var C = {
+            'x': A.x + width,
+            'y': A.y + height
+        };
+        var D = {
+            'x': A.x,
+            'y': A.y + height
+        };
+
+        var scaleViewer = RANDO.Utils.createGroundFromExtent(
+            "DEM - ScaleViewer", A, B, C, D,
+            RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION.x,
+            RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION.y,
+            scene
+        );
+        scaleViewer.material = new BABYLON.StandardMaterial("material", scene);
+        scaleViewer.material.alpha = 0.5;
+        scaleViewer.material.diffuseColor = BABYLON.Color3.FromInts(96, 41, 108);
+        console.log(scaleViewer.material);
+        scaleViewer.material.backFaceCulling = false;
+        drapeScaleViewer (this.ground);
+        
+        this.scaleViewer = scaleViewer;
+        
+        function drapeScaleViewer (ground) {
+            var vertices = scaleViewer.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+            var new_vertices = [];
+            var result
+            for (var i = 0; i < vertices.length; i+=3) {
+                var position = new BABYLON.Vector3(
+                    vertices[i],
+                    vertices[i+1],
+                    vertices[i+2]
+                );
+                RANDO.Utils.drapePoint(position, ground, RANDO.SETTINGS.SCALE_VIEWER_OFFSET);
+                new_vertices.push(position.x);
+                new_vertices.push(position.y);
+                new_vertices.push(position.z);
+            }
+            scaleViewer.setVerticesData(new_vertices, BABYLON.VertexBuffer.PositionKind);
+        };
     };
 
     /**

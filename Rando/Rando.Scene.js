@@ -173,6 +173,7 @@ RANDO = RANDO || {};
                 that._offsets,
                 that._scene
             );
+            that.dem.buildScaleViewer();
 
             // Trek building
             that.trek = new RANDO.Trek  (
@@ -423,6 +424,8 @@ RANDO = RANDO || {};
                 'properties' : feature.properties
             });
         }
+        
+        console.log(data);
     };
 })();
 

@@ -28,7 +28,7 @@ RANDO.Utils.createGroundFromExtent = function (name, A, B, C, D, w_subdivisions,
     var uvs = [];
     var row, col;
     
-    var grid = RANDO.Utils.createGrid(A, B, C, D, w_subdivisions+ 1, h_subdivisions+ 1);
+    var grid = RANDO.Utils.createFlatGrid(A, B, C, D, w_subdivisions+ 1, h_subdivisions+ 1);
     for (row = 0; row <= h_subdivisions; row++) {
         for (col = 0; col <= w_subdivisions; col++) {
             var position = grid[row][col];
@@ -568,7 +568,7 @@ RANDO.Utils.createElevationGrid = function (A, B, C, D, altitudes) {
         }
     }
     return grid;
-}
+};
 
 /**tested
  * angleFromAxis(): get an angle for a rotation 
