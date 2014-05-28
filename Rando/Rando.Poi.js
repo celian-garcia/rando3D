@@ -58,10 +58,18 @@ RANDO = RANDO || {};
         var text        = this._name;
         var src         = RANDO.SETTINGS.PICTO_PREFIX + this._type.pictogram;
         var id          = this._id;
+        var elevation   = this._position.y;
+
+        var pan_size = {
+            width : RANDO.SETTINGS.PICTO_SIZE,
+            height : RANDO.SETTINGS.PICTO_SIZE + 20
+        };
 
         // Picto Panel
         var panel = BABYLON.Mesh.CreateGround(
-            "POI - Panel", RANDO.SETTINGS.PICTO_SIZE, RANDO.SETTINGS.PICTO_SIZE, 
+            "POI - Panel", 
+            pan_size.width, 
+            pan_size.height, 
             2, scene
         );
         panel.id = id;
@@ -83,8 +91,31 @@ RANDO = RANDO || {};
         var img = new Image();
         img.onload = function () {
             var textureContext = texture.getContext();
-            var size = texture.getSize();
-            textureContext.drawImage(img, 0, 0, size.width, size.height);
+            var tex_size = texture.getSize();
+
+            //~ textureContext.fillStyle = "#ffffff";
+            //~ textureContext.fillRect(0,0,tex_size.width,tex_size.height);
+
+            
+
+            var pic_size = {
+                width : tex_size.width,
+                height : tex_size.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.height
+            };
+
+            var text = elevation + "m";
+            var fontSize = tex_size.height - pic_size.height;
+            textureContext.font = "bold " + fontSize + "px Arial";
+            var text_size = {
+                width : textureContext.measureText(text).width,
+                height : fontSize
+            };
+            console.log(text_size);
+            textureContext.fillStyle = "#ffffff";
+            
+            textureContext.fillText(text, (tex_size.width - text_size.width)/2, tex_size.height);
+
+            textureContext.drawImage(img, 0, 0, pic_size.width, pic_size.height);
             textureContext.restore();
             texture.update();
             panel.material.diffuseTexture   = texture;
