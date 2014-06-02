@@ -42,13 +42,11 @@ RANDO = RANDO || {};
     };
 
     function init() {
-        console.log(this._data.extent.southwest);
         this._tiles = new RANDO.TileContainer(
             this._data.extent, 
             this._data.altitudes,
             this._offsets
         )._tiles;
-        console.log(this._data.extent.southwest);
         this._initCamera();
         this.buildGround();
         this.buildSides();
@@ -252,7 +250,6 @@ RANDO = RANDO || {};
         scaleViewer.material = new BABYLON.StandardMaterial("material", scene);
         scaleViewer.material.alpha = 0.5;
         scaleViewer.material.diffuseColor = BABYLON.Color3.FromInts(96, 41, 108);
-        console.log(scaleViewer.material);
         scaleViewer.material.backFaceCulling = false;
         drapeScaleViewer (this.ground);
         

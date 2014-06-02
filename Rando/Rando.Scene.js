@@ -424,8 +424,6 @@ RANDO = RANDO || {};
                 'properties' : feature.properties
             });
         }
-        
-        console.log(data);
     };
 })();
 
