@@ -231,7 +231,7 @@ RANDO = RANDO || {};
             var pickedMesh = pickResult.pickedMesh;
 
             $('.poi--hover').css('display', 'none');
-            document.body.style.cursor = 'default';
+            $('#canvas_renderer')[0].style.cursor = 'default';
 
             // if mouse is over a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel"
@@ -239,6 +239,18 @@ RANDO = RANDO || {};
                 pois[pickedMesh.id].onMouseOverHandler(evt);
             }
         });
+        
+        $(".close_btn").on('click', function () {
+            $(".poi_side").css('display', 'none');
+            $('.interface').css('width', '100%');
+        });
+        $(".close_btn").mouseover( function () {
+           this.style.cursor = 'pointer';
+        });
+        $(".close_btn").mouseout( function () {
+            this.style.cursor = 'default';
+        });
+        
     };
 
     /**
@@ -255,7 +267,7 @@ RANDO = RANDO || {};
         $('.poi_side .description').html(this._description);
         $('.poi_side').css('display', 'block');
 
-        $('section').css('width', '80%');
+        $('.interface').css('width', '80%');
     };
 
     /**
@@ -267,8 +279,8 @@ RANDO = RANDO || {};
         $('.poi--hover').css('left', evt.clientX - 20 + 'px');
         $('.poi--hover').css('top',  evt.clientY - 40 + 'px');
         $('.poi--hover').css('display', 'block');
-        
-        document.body.style.cursor = 'pointer';
+
+        $('#canvas_renderer')[0].style.cursor = 'pointer';
     };
 
 })();
