@@ -5,12 +5,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Geotrek 3D</title>
 
-    
     <!-- Style -->
-    <link rel="stylesheet" type="text/css" href="css/main.css" media="all"/>
-    <link rel="stylesheet" type="text/css" href="css/controls.css" media="all"/>
-    <link rel="stylesheet" type="text/css" href="css/buttons.css" media="all"/>
+    <link rel="stylesheet/less" type="text/css" href="css/main.less" />
+    <link rel="stylesheet/less" type="text/css" href="css/modules/poi_side.less" />
+    <link rel="stylesheet/less" type="text/css" href="css/modules/interface.less" />
     <link rel="icon" type="image/png" href="/img/logo_geotrek.png" />
+    
+    <!-- Less-->
+    <script src="lib/less-1.7.0.min.js"></script>
     
     <!-- JQuery-->
     <script src="lib/jquery-1.10.2.js"></script>
@@ -41,43 +43,50 @@
 </head>
 
  <body>
-    
-    <section>
-        
-        <h1 id="title">
-            <a href="http://geotrek.fr/" target = "_blank" id = "geotrek">
+    <section class = "interface">
+        <h1>
+            <a class = "geotrek_link" href="http://geotrek.fr/" target = "_blank" >
                 <span>Geotrek 3D</span>
             </a>
-            <p>Visualisation des données de Geotrek en 3D grâce à <a href='http://www.babylonjs.com/' target='_blank'><strong>BabylonJs</strong></a> </p>
+            <p> Visualisation des données de Geotrek en 3D grâce à 
+                <a href='http://www.babylonjs.com/' target='_blank'>
+                    <strong>BabylonJs</strong>
+                </a> 
+            </p>
         </h1>
-        
-        
-        <div class = "controls" id="controls_fly_camera" >
+
+        <div class = "controls controls--fly_camera" >
             <span><b>Flèches</b>: se déplacer </span>
             <span><b>Souris</b>: tourner </span>
         </div>
-        
-        <div class = "controls" id="controls_demo_camera" >
+
+        <div class = "controls controls--demo_camera" >
             <span> Zoom : <b>Molette souris</b></span>
-            <span> Inclinaison/Rotation : <img src = "../../img/icon_783__.png"/></span>
+            <span> Inclinaison/Rotation : <img src = "img/icon_783__.png"/></span>
         </div>
 
-        <div id = "mapbox_attribution" style = "padding:3px;">
-            <span >
+        <div class = "mapbox" style = "padding:3px;">
+            <span>
                 Tiles from  <a href='https://www.mapbox.com/about/maps/' target='_blank'><strong>©Mapbox</strong></a> 
             </span>
         </div>
-        
-        
     </section>
     
-    <canvas id="canvas_renderer"></canvas>
+    <canvas id = "canvas_renderer"></canvas>
+
+    <div class = "poi_side">
+        <h2></h2>
+        <span class = "description"></span>
+    </div>
     
-    <div id="poi_description"></div>
+    <div class = "poi poi--clicked">
+    </div>
+    
+    <div class = "poi poi--hover">
+    </div>
 
 
     <script src="index.js"></script>
-
  </body>
  
 </html>

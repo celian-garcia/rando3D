@@ -17,6 +17,7 @@ RANDO = RANDO || {};
         this._position      = this.place(data.coordinates, offsets);
         this._name          = data.properties.name;
         this._type          = data.properties.type;
+        this._elevation     = data.coordinates.y;
         this._description   = data.properties.description || RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE;
         this._scene         = scene;
         
@@ -58,7 +59,7 @@ RANDO = RANDO || {};
         var text        = this._name;
         var src         = RANDO.SETTINGS.PICTO_PREFIX + this._type.pictogram;
         var id          = this._id;
-        var elevation   = this._position.y;
+        var elevation   = this._elevation;
 
         var pan_size = {
             width : RANDO.SETTINGS.PICTO_SIZE,
@@ -206,46 +207,38 @@ RANDO = RANDO || {};
      *      - scene : scene 
      */
     RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
-        var clicked = false;
+        var clickedID;
 
         // MouseDown Event : check if the mouse is over a Picto when Mouse left click is down
         RANDO.Events.addEvent(window, "mousedown", function (evt) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
-            removePictoFrame();
+            $('.poi--hover').css('display', 'none');
+            $('.poi--clicked').css('display', 'none');
+            clickedID = -1;
 
             // if the click hits a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel") {
                 pois[pickedMesh.id].onMouseDownHandler(evt);
-                clicked = true;
-            } else {
-                clicked = false;
+                clickedID = pickedMesh.id;
             }
         });
 
         // MouseMove Event : always check if mouse is over a Picto
         RANDO.Events.addEvent(window, "mousemove", function (evt) {
-            if (!clicked) {
-                var pickResult = scene.pick (evt.clientX, evt.clientY);
-                var pickedMesh = pickResult.pickedMesh;
+            var pickResult = scene.pick (evt.clientX, evt.clientY);
+            var pickedMesh = pickResult.pickedMesh;
 
-                removePictoFrame();
+            $('.poi--hover').css('display', 'none');
+            document.body.style.cursor = 'default';
 
-                // if mouse is over a pictogram, we display informations of POI
-                if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                    pois[pickedMesh.id].onMouseOverHandler(evt);
-                }
+            // if mouse is over a pictogram, we display informations of POI
+            if (pickResult.hit && pickedMesh.name == "POI - Panel"
+                && clickedID != pickedMesh.id) {
+                pois[pickedMesh.id].onMouseOverHandler(evt);
             }
         });
-
-        // A function which remove the picto frame if it exists
-        function removePictoFrame () {
-            var elem = $('#picto_frame');
-            if (elem) {
-                elem.remove();
-            }
-        };
     };
 
     /**
@@ -253,16 +246,16 @@ RANDO = RANDO || {};
      *      - evt: event informations
      */
     function onMouseDownHandler (evt) {
-        $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
+        $('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
+        $('.poi--clicked').css('left', evt.clientX - 20 + 'px');
+        $('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
+        $('.poi--clicked').css('display', 'block');
 
-        $('#picto_frame').css('left', evt.clientX - 20 + 'px');
-        $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
-
-        $('#poi_description').html("<h2>" + this._name + "</h2>" + this._description);
-        $('#poi_description').css('display', 'block');
+        $('.poi_side h2').html(this._name );
+        $('.poi_side .description').html(this._description);
+        $('.poi_side').css('display', 'block');
 
         $('section').css('width', '80%');
-        this._scene.getEngine().resize();
     };
 
     /**
@@ -270,10 +263,12 @@ RANDO = RANDO || {};
      *      - evt: event informations
      */
     function onMouseOverHandler (evt) {
-        $('body').append('<div id = "picto_frame"> ' + this._name + '</div>');
-
-        $('#picto_frame').css('left', evt.clientX - 20 + 'px');
-        $('#picto_frame').css('top',  evt.clientY - 40 + 'px');
+        $('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
+        $('.poi--hover').css('left', evt.clientX - 20 + 'px');
+        $('.poi--hover').css('top',  evt.clientY - 40 + 'px');
+        $('.poi--hover').css('display', 'block');
+        
+        document.body.style.cursor = 'pointer';
     };
 
 })();

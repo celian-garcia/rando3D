@@ -114,10 +114,10 @@ RANDO = RANDO || {};
             if (cameraID == idArray[it]) {
                 scene.setActiveCameraByID (cameraID);
                 this._camLight.parent = scene.getCameraByID (cameraID);
-                $("#controls_" + cameraID).css("display", "block");
+                $(".controls--" + cameraID).css("display", "block");
                 found = true;
             }else {
-                $("#controls_" + idArray[it]).css("display", "none");
+                $(".controls--" + idArray[it]).css("display", "none");
             }
         }
 
