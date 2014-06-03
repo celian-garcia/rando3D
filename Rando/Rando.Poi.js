@@ -7,7 +7,7 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-RANDO = RANDO || {};
+var RANDO = RANDO || {};
 
 (function () {  "use strict" 
     

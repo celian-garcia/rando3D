@@ -1,4 +1,4 @@
-RANDO = RANDO || {};
+var RANDO = RANDO || {};
 
 RANDO.Events = {};
 /*
