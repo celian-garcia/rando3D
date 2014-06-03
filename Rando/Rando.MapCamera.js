@@ -34,6 +34,7 @@ var RANDO = RANDO || {};
         this._newPosition = BABYLON.Vector3.Zero();
         this._lookAtTemp = BABYLON.Matrix.Zero();
         this._tempMatrix = BABYLON.Matrix.Zero();
+        this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         RANDO.MapCamera.prototype._initCache.call(this);
     };
@@ -206,7 +207,7 @@ var RANDO = RANDO || {};
                 }
             };
 
-            this._wheel = function (event) {
+            this._onWheel = function (event) {
                 var delta = 0;
                 if (event.wheelDelta) {
                     delta = event.wheelDelta / (that.wheelPrecision * 40);
@@ -216,7 +217,6 @@ var RANDO = RANDO || {};
 
                 if (delta)
                     that.inertialRadiusOffset += delta;
-                    console.log(that.inertialRadiusOffset);
 
                 if (event.preventDefault) {
                     if (!noPreventDefault) {
@@ -273,8 +273,8 @@ var RANDO = RANDO || {};
         canvas.addEventListener("mouseup", this._onMouseUp, false);
         canvas.addEventListener("mouseout", this._onMouseOut, false);
         canvas.addEventListener("mousemove", this._onMouseMove, false);
-        window.addEventListener('mousewheel', this._wheel, false);
-        window.addEventListener('DOMMouseScroll', this._wheel);
+        window.addEventListener('mousewheel', this._onWheel, false);
+        window.addEventListener('DOMMouseScroll', this._onWheel);
         window.addEventListener("keydown", this._onKeyDown, false);
         window.addEventListener("keyup", this._onKeyUp, false);
         window.addEventListener("blur", this._onLostFocus, false);
@@ -289,8 +289,8 @@ var RANDO = RANDO || {};
         canvas.removeEventListener("mouseup", this._onMouseUp);
         canvas.removeEventListener("mouseout", this._onMouseOut);
         canvas.removeEventListener("mousemove", this._onMouseMove);
-        window.removeEventListener('mousewheel', this._wheel);
-        window.removeEventListener('DOMMouseScroll', this._wheel);
+        window.removeEventListener('mousewheel', this._onWheel);
+        window.removeEventListener('DOMMouseScroll', this._onWheel);
         window.removeEventListener("keydown", this._onKeyDown);
         window.removeEventListener("keyup", this._onKeyUp);
         window.removeEventListener("blur", this._onLostFocus);
@@ -348,6 +348,7 @@ var RANDO = RANDO || {};
 
         var needToMove = this._needMoveForGravity || Math.abs(this.cameraDirection.x) > 0 || Math.abs(this.cameraDirection.y) > 0 || Math.abs(this.cameraDirection.z) > 0;
         var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
+        var needToZoom = this.inertialRadiusOffset;
 
         // Move
         if (needToMove) {
@@ -369,7 +370,6 @@ var RANDO = RANDO || {};
             this.rotation.x += this.cameraRotation.x;
             this.rotation.y += this.cameraRotation.y;
 
-
             if (!this.noRotationConstraint) {
                 var limit = (Math.PI / 2) * 0.95;
 
@@ -378,6 +378,21 @@ var RANDO = RANDO || {};
                 if (this.rotation.x < -limit)
                     this.rotation.x = -limit;
             }
+        }
+
+        // Zoom
+        if (needToZoom) {
+            BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
+
+            this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
+            BABYLON.Vector3.TransformNormalToRef(
+                this._referencePoint, 
+                this._cameraTransformMatrix, 
+                this._positionAfterZoom
+            );
+
+            this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
+            this.position.addInPlace(this._positionAfterZoom);
         }
 
         // Inertia
@@ -402,42 +417,11 @@ var RANDO = RANDO || {};
 
             this.cameraRotation.scaleInPlace(this.inertia);
         }
-        if (this.inertialRadiusOffset) {
-            var radius = Math.sqrt(
-                Math.pow(this.position.x, 2) +
-                Math.pow(this.position.y, 2) +
-                Math.pow(this.position.z, 2)
-            );
-
-            var sphCoord = {
-                alpha : Math.acos(this.position.y / radius),
-                beta : Math.atan(this.position.z / this.position.x) ,
-                r: radius
-            };
-            var oldCart = new BABYLON.Vector3(
-                sphCoord.r * Math.sin(sphCoord.alpha) * Math.cos(sphCoord.beta),
-                sphCoord.r * Math.cos(sphCoord.alpha),
-                sphCoord.r * Math.sin(sphCoord.alpha) * Math.sin(sphCoord.beta)
-            );
-            sphCoord.r -= this.inertialRadiusOffset;
-            
-            var newCart = new BABYLON.Vector3(
-                sphCoord.r * Math.sin(sphCoord.alpha) * Math.cos(sphCoord.beta),
-                sphCoord.r * Math.cos(sphCoord.alpha),
-                sphCoord.r * Math.sin(sphCoord.alpha) * Math.sin(sphCoord.beta)
-            );
-            
-            var d = new BABYLON.Vector3(
-                newCart.x - oldCart.x,
-                newCart.y - oldCart.y,
-                newCart.z - oldCart.z   
-            );
-            this.position.addInPlace(d);
-
-            this.inertialRadiusOffset *= this.inertia;
-            
+        if (needToZoom) {
             if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
                 this.inertialRadiusOffset = 0;
+            
+            this.inertialRadiusOffset *= this.inertia;
         }
     };
 
