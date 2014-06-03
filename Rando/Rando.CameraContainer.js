@@ -62,7 +62,7 @@ RANDO = RANDO || {};
         demo_camera.checkCollisions     = true;
         demo_camera.maxZ    = 10000;
         demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
-        //~ demo_camera.attachControl(this._canvas);
+        demo_camera.attachControl(this._canvas);
 
         this.cameras.push(demo_camera);
     };
