@@ -51,7 +51,7 @@ RANDO = RANDO || {};
         );
         demo_camera.id = "demo_camera";
         demo_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
-        demo_camera.keysUp    = [83]; // Touche Z and up
+        demo_camera.keysUp    = [83, 40]; // Touche Z and up
         demo_camera.keysDown  = [90, 38]; // Touche S and down
         demo_camera.keysLeft  = [68, 39]; // Touche Q and left
         demo_camera.keysRight = [81, 37]; // Touche D and right
@@ -71,22 +71,25 @@ RANDO = RANDO || {};
      * RANDO.CameraContainer._buildFlyingCamera() : build of the flying camera
      */
     function _buildFlyingCamera () {
-        var fly_camera = new RANDO.MapCamera(
-            "Flying Camera", 
-            new BABYLON.Vector3(0, 0, 0), 
+        var fly_camera = new RANDO.HelicoCamera(
+            "Flying Camera",1, 0.5, 10,
+            new BABYLON.Vector3(0, 1800, 0),
             this._scene
         );
         fly_camera.id = "fly_camera";
+        fly_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
         fly_camera.keysUp     = [90, 38]; // Touche Z and up
         fly_camera.keysDown   = [83, 40]; // Touche S and down
         fly_camera.keysLeft   = [81, 37]; // Touche Q and left
         fly_camera.keysRight  = [68, 39]; // Touche D and right
 
+        fly_camera.wheelPrecision = 0.1;
         fly_camera.checkCollisions = true;
         fly_camera.maxZ = 10000;
         fly_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         fly_camera.attachControl(this._canvas);
-
+        
+        
         this.cameras.push(fly_camera);
     };
 

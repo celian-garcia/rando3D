@@ -434,7 +434,6 @@ var RANDO = RANDO || {};
                 BABYLON.Matrix.LookAtLHToRef(BABYLON.Vector3.Zero(), this._referencePoint, this.upVector, this._lookAtTemp);
                 BABYLON.Matrix.RotationYawPitchRollToRef(this.rotation.y, this.rotation.x, this.rotation.z, this._cameraRotationMatrix);
 
-
                 this._lookAtTemp.multiplyToRef(this._cameraRotationMatrix, this._tempMatrix);
                 this._lookAtTemp.invert();
                 this._tempMatrix.multiplyToRef(this._lookAtTemp, this._cameraRotationMatrix);
