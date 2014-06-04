@@ -18,6 +18,7 @@ var RANDO = RANDO || {};
         
         this.cameras    = [];
         this._camLight  = null;
+        this.isAnimate  = false;
         
         this.init();
     };
@@ -33,7 +34,8 @@ var RANDO = RANDO || {};
         _buildHelicoCamera:     _buildHelicoCamera,
         _buildMapCamera:        _buildMapCamera,
         _buildAttachedLight:    _buildAttachedLight,
-        setActiveCamera:        setActiveCamera
+        setActiveCamera:        setActiveCamera,
+        loadAnimationPath:      loadAnimationPath
     };
 
     function init () {
@@ -94,6 +96,7 @@ var RANDO = RANDO || {};
 
         this.cameras.push(free_camera);
     };
+
     /**
      * RANDO.CameraContainer._buildHelicoCamera() : build of the Helico camera
      */
@@ -115,8 +118,7 @@ var RANDO = RANDO || {};
         helico_camera.maxZ = 10000;
         helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         helico_camera.attachControl(this._canvas);
-        
-        
+
         this.cameras.push(helico_camera);
     };
 
@@ -140,8 +142,6 @@ var RANDO = RANDO || {};
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         map_camera.attachControl(this._canvas);
 
-        
-        
         this.cameras.push(map_camera);
     };
 
@@ -179,6 +179,12 @@ var RANDO = RANDO || {};
 
         if (!found) {
             console.log("Error in setActiveCamera : the camera ID entered is not available");
+        }
+    };
+
+    function loadAnimationPath (vertices) {
+        if (this.isAnimate) {
+            RANDO.Utils.animateCamera(vertices, this._scene);
         }
     };
 

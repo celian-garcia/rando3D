@@ -207,18 +207,19 @@ var RANDO = RANDO || {};
      *  If the camera ID is not available, it is changed to "demo_camera"
      */
     function _buildCameras() {
-        var camContainer    = this.camContainer;
         var canvas          = this._canvas;
         var scene           = this._scene;
         var cameraID        = this._cameraID;
+        var version         = this._version;
+        var trek            = this.trek;
 
-        camContainer = new RANDO.CameraContainer(canvas, scene);
+        this.camContainer = new RANDO.CameraContainer(canvas, scene);
 
         // Defines active camera
-        if (!$.inArray(cameraID, RANDO.CameraIDs ))
+        if (!$.inArray(cameraID, RANDO.CameraIDs))
             cameraID = "demo_camera";
 
-        camContainer.setActiveCamera (cameraID);
+        this.camContainer.setActiveCamera (cameraID);
     };
 
     /**
@@ -233,7 +234,6 @@ var RANDO = RANDO || {};
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
 
         lights.push(sun);
-
     };
 
     function _buildEnvironment() {
@@ -312,12 +312,12 @@ var RANDO = RANDO || {};
     function _executeWhenReady () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
-        var scene   = this._scene;
-        var version = this._version;
-        var dem     = this.dem;
-        var trek    = this.trek;
-        var pois    = this.pois;
-        var that    = this;
+        var scene           = this._scene;
+        var version         = this._version;
+        var dem             = this.dem;
+        var trek            = this.trek;
+        var pois            = this.pois;
+        var camContainer    = this.camContainer;
 
         dem.applyTextures();
         trek.drape(dem.ground, onDrapeComplete);
@@ -326,9 +326,9 @@ var RANDO = RANDO || {};
             // Updates trek vertices
             trek.updateVertices();
 
-            // Activates the animation of camera
-            if (version == "1.2" ) {
-                RANDO.Utils.animateCamera(trek, scene);
+            if (version == "1.2") {
+                camContainer.isAnimate = true;
+                camContainer.loadAnimationPath(trek._vertices);
             }
 
             // Merges the trek to increase performances
