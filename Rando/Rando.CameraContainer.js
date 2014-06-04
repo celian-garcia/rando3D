@@ -18,8 +18,8 @@ var RANDO = RANDO || {};
         
         this.cameras    = [];
         this._camLight  = null;
-        this.isAnimate  = false;
-        
+        this._animationPath = null;
+
         this.init();
     };
 
@@ -35,7 +35,7 @@ var RANDO = RANDO || {};
         _buildMapCamera:        _buildMapCamera,
         _buildAttachedLight:    _buildAttachedLight,
         setActiveCamera:        setActiveCamera,
-        loadAnimationPath:      loadAnimationPath
+        setAnimationPath:       setAnimationPath
     };
 
     function init () {
@@ -178,14 +178,13 @@ var RANDO = RANDO || {};
         }
 
         if (!found) {
-            console.log("Error in setActiveCamera : the camera ID entered is not available");
+            console.error("RANDO.CameraContainer.setActiveCamera() : the camera ID entered is not available");
         }
     };
 
-    function loadAnimationPath (vertices) {
-        if (this.isAnimate) {
-            RANDO.Utils.animateCamera(vertices, this._scene);
-        }
+    function setAnimationPath (vertices) {
+        this._animationPath = vertices;
+        RANDO.Utils.animateCamera(this._animationPath, this._scene);
     };
 
 })();
