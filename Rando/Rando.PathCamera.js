@@ -16,9 +16,7 @@ var RANDO = RANDO || {};
         //~ this.keysDown = [40];
         //~ this.keysLeft = [37];
         //~ this.keysRight = [39];
-        this.keysStart = [32];
-        this.keysReturn  = [13];
-        this.keysPause = [32];
+        this.keysPlayPause = [32];
         this.keysStop  = [13];
 
         // Collisions
@@ -41,6 +39,9 @@ var RANDO = RANDO || {};
         this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         this._timeline = new TimelineLite();
+        this._path = [];
+        this._state = null;
+        this._oldState = null;
 
         RANDO.PathCamera.prototype._initCache.call(this);
     };
@@ -110,42 +111,6 @@ var RANDO = RANDO || {};
     RANDO.PathCamera.prototype._computeLocalCameraSpeed = function () {
         return this.speed * ((BABYLON.Tools.GetDeltaTime() / (BABYLON.Tools.GetFps() * 10.0)));
     };
-
-    // Target
-    //~ RANDO.PathCamera.prototype.setTarget = function (target) {
-        //~ this.upVector.normalize();
-//~ 
-        //~ BABYLON.Matrix.LookAtLHToRef(this.position, target, this.upVector, this._camMatrix);
-        //~ this._camMatrix.invert();
-//~ 
-        //~ this.rotation.x = Math.atan(this._camMatrix.m[6] / this._camMatrix.m[10]);
-//~ 
-        //~ var vDir = target.subtract(this.position);
-//~ 
-        //~ if (vDir.x >= 0.0) {
-            //~ this.rotation.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
-        //~ } else {
-            //~ this.rotation.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
-        //~ }
-//~ 
-        //~ this.rotation.z = -Math.acos(BABYLON.Vector3.Dot(new BABYLON.Vector3(0, 1.0, 0), this.upVector));
-//~ 
-        //~ if (isNaN(this.rotation.x)) {
-            //~ this.rotation.x = 0;
-        //~ }
-//~ 
-        //~ if (isNaN(this.rotation.y)) {
-            //~ this.rotation.y = 0;
-        //~ }
-//~ 
-        //~ if (isNaN(this.rotation.z)) {
-            //~ this.rotation.z = 0;
-        //~ }
-    //~ };
-//~ 
-    //~ RANDO.PathCamera.prototype.getTarget = function () {
-        //~ return this._currentTarget;
-    //~ };
 
     // Controls
     RANDO.PathCamera.prototype.attachControl = function (canvas, noPreventDefault) {
@@ -232,37 +197,20 @@ var RANDO = RANDO || {};
             };
 
             this._onKeyDown = function (evt) {
-                if (that.keysUp.indexOf(evt.keyCode) !== -1 ||
-                    that.keysDown.indexOf(evt.keyCode) !== -1 ||
-                    that.keysLeft.indexOf(evt.keyCode) !== -1 ||
-                    that.keysRight.indexOf(evt.keyCode) !== -1) {
-                    var index = that._keys.indexOf(evt.keyCode);
+                var keyCode = evt.keyCode;
+                console.log(keyCode);
+                that._oldState = that._state;
 
-                    if (index === -1) {
-                        that._keys.push(evt.keyCode);
+                if (that.keysPlayPause.indexOf(keyCode) !== -1) {
+                    if (that._state == "stop" || that._state == "pause") {
+                        that._state = "play";
+                    } else if (that._state == "play") {
+                        console.log("pause ! ");
+                        that._state = "pause";
                     }
-                    if (!noPreventDefault) {
-                        evt.preventDefault();
-                    }
-                }
-            };
-
-            this._onKeyUp = function (evt) {
-                //~ if (that.keysUp.indexOf(evt.keyCode) !== -1 ||
-                    //~ that.keysDown.indexOf(evt.keyCode) !== -1 ||
-                    //~ that.keysLeft.indexOf(evt.keyCode) !== -1 ||
-                    //~ that.keysRight.indexOf(evt.keyCode) !== -1) {
-                if (that.keysStart.indexOf(evt.keyCode) !== -1 ||
-                    that.keysPause.indexOf(evt.keyCode) !== -1 ||
-                    that.keysStop.indexOf(evt.keyCode) !== -1 ||
-                    that.keysReturn.indexOf(evt.keyCode) !== -1) {
-                    var index = that._keys.indexOf(evt.keyCode);
-
-                    if (index >= 0) {
-                        that._keys.splice(index, 1);
-                    }
-                    if (!noPreventDefault) {
-                        evt.preventDefault();
+                } else if (that.keysStop.indexOf(keyCode) !== -1) {
+                    if (that._state == "play" || that._state == "pause" || !that._state) {
+                        that._state = "stop";
                     }
                 }
             };
@@ -286,7 +234,6 @@ var RANDO = RANDO || {};
         window.addEventListener('mousewheel', this._onWheel, false);
         window.addEventListener('DOMMouseScroll', this._onWheel);
         window.addEventListener("keydown", this._onKeyDown, false);
-        window.addEventListener("keyup", this._onKeyUp, false);
         window.addEventListener("blur", this._onLostFocus, false);
     };
 
@@ -302,7 +249,6 @@ var RANDO = RANDO || {};
         window.removeEventListener('mousewheel', this._onWheel);
         window.removeEventListener('DOMMouseScroll', this._onWheel);
         window.removeEventListener("keydown", this._onKeyDown);
-        window.removeEventListener("keyup", this._onKeyUp);
         window.removeEventListener("blur", this._onLostFocus);
 
         this._attachedCanvas = null;
@@ -326,35 +272,37 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.PathCamera.prototype._checkInputs = function () {
-        if (!this._localDirection) {
-            this._localDirection = BABYLON.Vector3.Zero();
-            this._transformedDirection = BABYLON.Vector3.Zero();
-        }
-
-        // Keyboard
-        for (var index = 0; index < this._keys.length; index++) {
-            var keyCode = this._keys[index];
-            var speed = this._computeLocalCameraSpeed();
-
-            if (this.keysLeft.indexOf(keyCode) !== -1) {
-                this._localDirection.copyFromFloats(-speed, 0, 0);
-            } else if (this.keysUp.indexOf(keyCode) !== -1) {
-                this._localDirection.copyFromFloats(0, 0, speed);
-            } else if (this.keysRight.indexOf(keyCode) !== -1) {
-                this._localDirection.copyFromFloats(speed, 0, 0);
-            } else if (this.keysDown.indexOf(keyCode) !== -1) {
-                this._localDirection.copyFromFloats(0, 0, -speed);
-            }
-        }
-    };
-
     RANDO.PathCamera.prototype._update = function () {
-        this._checkInputs();
 
         var needToMove = this._needMoveForGravity || Math.abs(this.cameraDirection.x) > 0 || Math.abs(this.cameraDirection.y) > 0 || Math.abs(this.cameraDirection.z) > 0;
         var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
-        var needToZoom = this.inertialRadiusOffset;
+        //~ var needToZoom = this.inertialRadiusOffset;
+        var stateHaveChanged = (this._state != this._oldState);
+
+        var that = this;
+        if (stateHaveChanged) {
+            switch (this._state) {
+                case "stop" : 
+                    console.log("stopMode");
+                    RANDO.Utils.moveObjectTo(this, this._path[0], this._path[5], function(){
+                        //~ that._state = "play";
+                    });
+                break
+                case "play" : 
+                    console.log("playMode");
+                    if (this._timeline) { 
+                        this._timeline.play();
+                    }
+                break
+                case "pause" : 
+                    console.log("pauseMode");
+                    if (this._timeline) { 
+                        this._timeline.pause();
+                    }
+                break
+                case "returning" : 
+            }
+        }
 
         // Move
         if (needToMove) {
@@ -387,33 +335,33 @@ var RANDO = RANDO || {};
         }
 
         // Zoom
-        if (needToZoom) {
-            BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
-
-            this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
-            BABYLON.Vector3.TransformNormalToRef(
-                this._referencePoint, 
-                this._cameraTransformMatrix, 
-                this._positionAfterZoom
-            );
-
-            this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
-            this.position.addInPlace(this._positionAfterZoom);
-        }
+        //~ if (needToZoom) {
+            //~ BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
+//~ 
+            //~ this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
+            //~ BABYLON.Vector3.TransformNormalToRef(
+                //~ this._referencePoint, 
+                //~ this._cameraTransformMatrix, 
+                //~ this._positionAfterZoom
+            //~ );
+//~ 
+            //~ this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
+            //~ this.position.addInPlace(this._positionAfterZoom);
+        //~ }
 
         // Inertia
-        if (needToMove) {
-            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
-                this.cameraDirection.x = 0;
-
-            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
-                this.cameraDirection.y = 0;
-
-            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
-                this.cameraDirection.z = 0;
-
-            this.cameraDirection.scaleInPlace(this.inertia);
-        }
+        //~ if (needToMove) {
+            //~ if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
+                //~ this.cameraDirection.x = 0;
+//~ 
+            //~ if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
+                //~ this.cameraDirection.y = 0;
+//~ 
+            //~ if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
+                //~ this.cameraDirection.z = 0;
+//~ 
+            //~ this.cameraDirection.scaleInPlace(this.inertia);
+        //~ }
         if (needToRotate) {
             if (Math.abs(this.cameraRotation.x) < BABYLON.Engine.epsilon)
                 this.cameraRotation.x = 0;
@@ -423,12 +371,12 @@ var RANDO = RANDO || {};
 
             this.cameraRotation.scaleInPlace(this.inertia);
         }
-        if (needToZoom) {
-            if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
-                this.inertialRadiusOffset = 0;
-            
-            this.inertialRadiusOffset *= this.inertia;
-        }
+        //~ if (needToZoom) {
+            //~ if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
+                //~ this.inertialRadiusOffset = 0;
+            //~ 
+            //~ this.inertialRadiusOffset *= this.inertia;
+        //~ }
     };
 
     RANDO.PathCamera.prototype._getViewMatrix = function () {
@@ -461,13 +409,12 @@ var RANDO = RANDO || {};
     
     RANDO.PathCamera.prototype.setPath = function (vertices) {
         var d = 10; // Number of points between the current point and the point watched
-        var timeline = this._timeline;
         var angles = [];
         var camera = this;
 
         var quantity = vertices.length;
         var duration = 10;
-        var path = [];
+        var path = this._path;
         for (var i = 0 ;i < vertices.length; i+=20) {
             path.push(vertices[i]);
         }
@@ -482,11 +429,10 @@ var RANDO = RANDO || {};
 
         var tween = TweenLite.to(position, quantity, {bezier:path, ease:Linear.easeNone});
 
-        path.shift();
         for (var i = 0; i < quantity; i++) {
             tween.time(i); //jumps to the appropriate time in the tween, causing position.x and position.y to be updated accordingly.
 
-            timeline.add(
+            this._timeline.add(
                 TweenLite.to(this.position, (duration / quantity), {
                     x: position.x, 
                     y: position.y + RANDO.SETTINGS.CAM_OFFSET, 
@@ -497,38 +443,38 @@ var RANDO = RANDO || {};
         }
 
         // Animation paused by default
-        timeline.pause(0);
+        this._timeline.pause(0);
 
-        // Controls
-        var state = "flying";
-        $(document).keyup(function(e){
-            var keyCode = e.keyCode;
-
-            // Space
-            if (keyCode == 32){
-                if (state == "start" || state == "pause") {
-                    state = "moving";
-                    timeline.play();
-                }
-                else if (state == "moving") {
-                    state = "pause";
-                    timeline.pause();
-                }
-            }
-
-            // Enter
-            if (keyCode == 13){
-                if (state == "flying"){
-                    RANDO.Utils.moveCameraTo(camera, vertices[0], vertices[d], function(){
-                        state = "start";
-                    });
-                }
-                else if ( state == "pause" || state == "moving" || state == "end" ){
-                    timeline.pause(0);
-                    state = "start";
-                }
-            }
-        });
+        //~ // Controls
+        //~ var state = "flying";
+        //~ $(document).keyup(function(e){
+            //~ var keyCode = e.keyCode;
+//~ 
+            //~ // Space
+            //~ if (keyCode == 32){
+                //~ if (state == "start" || state == "pause") {
+                    //~ state = "moving";
+                    //~ timeline.play();
+                //~ }
+                //~ else if (state == "moving") {
+                    //~ state = "pause";
+                    //~ timeline.pause();
+                //~ }
+            //~ }
+//~ 
+            //~ // Enter
+            //~ if (keyCode == 13){
+                //~ if (state == "flying"){
+                    //~ RANDO.Utils.moveCameraTo(camera, vertices[0], vertices[d], function(){
+                        //~ state = "start";
+                    //~ });
+                //~ }
+                //~ else if ( state == "pause" || state == "moving" || state == "end" ){
+                    //~ timeline.pause(0);
+                    //~ state = "start";
+                //~ }
+            //~ }
+        //~ });
     };
 })();
 

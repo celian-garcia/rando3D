@@ -716,6 +716,32 @@ RANDO.Utils.moveCameraTo = function (camera, position, target, callback) {
     });
 }
 
+
+RANDO.Utils.moveObjectTo = function (object, position, target, callback) {
+    var rotation_y = RANDO.Utils.angleFromAxis(position, target, BABYLON.Axis.Y);
+    
+    // Translation
+    TweenLite.to(object.position, 2, { 
+        x: position.x, 
+        y: position.y + RANDO.SETTINGS.CAM_OFFSET,
+        z: position.z,
+        ease: 'ease-in',
+        onComplete : function (){
+            if (typeof(callback) === "function") callback();
+        }
+    });
+    // Rotation
+    TweenLite.to(object.rotation, 2, { 
+        x: 0,
+        y: rotation_y, 
+        z: 0,
+        ease: 'ease-in',
+        onComplete : function (){
+            if (typeof(callback) === "function") callback();
+        }
+    });
+}
+
 /**
  * addKeyToCamera() : add a new position key and rotation key to the camera timeline
  *      - timeline: timeline of the camera (TimelineLite)
