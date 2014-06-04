@@ -759,7 +759,7 @@ RANDO.Utils.addKeyToCamera = function (timeline, camera, position, target, angle
  *      - scene : the current scene
  * 
  * */
-RANDO.Utils.animateCamera = function (vertices, scene) {
+RANDO.Utils.animateCamera = function (vertices, camera) {
     var d = 10, // Number of points between the current point and the point watched
         b_foll = {"value": false},
         b_pause = true,
@@ -768,10 +768,10 @@ RANDO.Utils.animateCamera = function (vertices, scene) {
 
     // Filling of the timeline "tl_foll"
     for (var i=d; i< vertices.length-d; i+=d){
-        RANDO.Utils.addKeyToCamera(timeline, scene.activeCamera, vertices[i], vertices[i+d], angles);
+        RANDO.Utils.addKeyToCamera(timeline, camera, vertices[i], vertices[i+d], angles);
     }
     
-    RANDO.Utils.addKeyToCamera(timeline, scene.activeCamera, vertices[i], vertices[vertices.length-1], angles);
+    RANDO.Utils.addKeyToCamera(timeline, camera, vertices[i], vertices[vertices.length-1], angles);
     
     // Animation paused by default
     timeline.pause(0);
@@ -796,7 +796,7 @@ RANDO.Utils.animateCamera = function (vertices, scene) {
         // Enter
         if (keyCode == 13){
             if (state == "flying"){
-                RANDO.Utils.moveCameraTo(scene.activeCamera, vertices[0], vertices[d], function(){
+                RANDO.Utils.moveCameraTo(camera, vertices[0], vertices[d], function(){
                     state = "start";
                 });
             }

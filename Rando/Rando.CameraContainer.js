@@ -16,7 +16,7 @@ var RANDO = RANDO || {};
         this._canvas    = canvas;
         this._scene     = scene;
         
-        this.cameras    = [];
+        this.cameras    = {};
         this._camLight  = null;
         this._animationPath = null;
 
@@ -24,7 +24,7 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera"];
+    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera", "path_camera"];
 
     /* List of Methods */
     RANDO.CameraContainer.prototype = {
@@ -33,6 +33,7 @@ var RANDO = RANDO || {};
         _buildFreeCamera:       _buildFreeCamera,
         _buildHelicoCamera:     _buildHelicoCamera,
         _buildMapCamera:        _buildMapCamera,
+        _buildPathCamera:       _buildPathCamera,
         _buildAttachedLight:    _buildAttachedLight,
         setActiveCamera:        setActiveCamera,
         setAnimationPath:       setAnimationPath
@@ -43,6 +44,7 @@ var RANDO = RANDO || {};
         this._buildFreeCamera ();
         this._buildHelicoCamera ();
         this._buildMapCamera ();
+        this._buildPathCamera ();
         this._buildAttachedLight ();
     };
 
@@ -70,7 +72,7 @@ var RANDO = RANDO || {};
         demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
         demo_camera.attachControl(this._canvas);
 
-        this.cameras.push(demo_camera);
+        this.cameras.demo_camera = demo_camera;
     };
 
     /**
@@ -94,7 +96,7 @@ var RANDO = RANDO || {};
         free_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         free_camera.attachControl(this._canvas);
 
-        this.cameras.push(free_camera);
+        this.cameras.free_camera = free_camera;
     };
 
     /**
@@ -119,7 +121,7 @@ var RANDO = RANDO || {};
         helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         helico_camera.attachControl(this._canvas);
 
-        this.cameras.push(helico_camera);
+        this.cameras.helico_camera = helico_camera;
     };
 
     /**
@@ -142,7 +144,30 @@ var RANDO = RANDO || {};
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         map_camera.attachControl(this._canvas);
 
-        this.cameras.push(map_camera);
+        this.cameras.map_camera = map_camera;
+    };
+
+    /**
+     * RANDO.CameraContainer._buildPathCamera() : build of the Path camera
+     */
+    function _buildPathCamera () {
+        var path_camera = new RANDO.PathCamera(
+            "Path Camera", 
+            new BABYLON.Vector3(0, 0, 0), 
+            this._scene
+        );
+        path_camera.id = "path_camera";
+        //~ path_camera.keysUp     = [90, 38]; // Touche Z and up
+        //~ path_camera.keysDown   = [83, 40]; // Touche S and down
+        //~ path_camera.keysLeft   = [81, 37]; // Touche Q and left
+        //~ path_camera.keysRight  = [68, 39]; // Touche D and right
+
+        path_camera.checkCollisions = true;
+        path_camera.maxZ = 10000;
+        path_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        path_camera.attachControl(this._canvas);
+
+        this.cameras.path_camera = path_camera;
     };
 
     /**
@@ -184,7 +209,9 @@ var RANDO = RANDO || {};
 
     function setAnimationPath (vertices) {
         this._animationPath = vertices;
-        RANDO.Utils.animateCamera(this._animationPath, this._scene);
+        
+        var path_camera = this.cameras.path_camera;
+        path_camera.setPath(vertices);
     };
 
 })();

@@ -25,10 +25,12 @@
     <script src="lib/neo.js"></script>
     
     <!-- TweenLite -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/easing/EasePack.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenLite.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TimelineLite.min.js"></script>
-
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/plugins/BezierPlugin.min.js"></script>
+    
     <!-- Rando-->
     <script src="Rando/Rando.Utils.js"></script>
     <script src="Rando/Rando.Settings.js"></script>
@@ -41,6 +43,7 @@
     <script src="Rando/Rando.CameraContainer.js"></script>
     <script src="Rando/Rando.MapCamera.js"></script>
     <script src="Rando/Rando.HelicoCamera.js"></script>
+    <script src="Rando/Rando.PathCamera.js"></script>
 
 </head>
 
@@ -73,6 +76,11 @@
         </div>
         
         <div class = "controls controls--map_camera" >
+            <span><b>Flèches</b>: se déplacer </span>
+            <span><b>Souris</b>: tourner </span>
+        </div>
+
+        <div class = "controls controls--path_camera" >
             <span><b>Flèches</b>: se déplacer </span>
             <span><b>Souris</b>: tourner </span>
         </div>
