@@ -11,11 +11,11 @@ window.onload = function onload(){
         RANDO.SETTINGS.CAM_SPEED_F  = 100;
 
         RANDO.START_TIME = Date.now();
-        
-        var canvas = document.getElementById('canvas_renderer');
-        var scene = new RANDO.Scene(canvas, false, "1.2" );
-        scene.init();
 
+        var canvas = document.getElementById('canvas_renderer');
+        var cameraID = "map_camera";
+        var scene = new RANDO.Scene(canvas, cameraID, "1.2" );
+        scene.init();
 };
 
 

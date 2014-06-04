@@ -17,10 +17,10 @@ var RANDO = RANDO || {};
 (function () {  "use strict" 
 
     /* Constructor */
-    RANDO.Scene = function (canvas, demo, version,  settings) {
+    RANDO.Scene = function (canvas, cameraID, version, settings) {
         // Attributes declaration 
         this._canvas    = canvas;
-        this._demo      = demo;
+        this._cameraID  = cameraID;
         this._version   = version;
         this._settings  = settings;
         
@@ -204,23 +204,21 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Scene._buildCameras() : builds cameras of the scene
      * 
-     *  If we are on demo mode, the camera is set as demo_camera
-     *  Else it is set as fly_camera
+     *  If the camera ID is not available, it is changed to "demo_camera"
      */
     function _buildCameras() {
         var camContainer    = this.camContainer;
         var canvas          = this._canvas;
         var scene           = this._scene;
-        var demo            = this._demo;
-        
+        var cameraID        = this._cameraID;
+
         camContainer = new RANDO.CameraContainer(canvas, scene);
 
         // Defines active camera
-        if (demo) {
-            camContainer.setActiveCamera ("demo_camera");
-        }
-        else
-            camContainer.setActiveCamera ("fly_camera");
+        if (!$.inArray(cameraID, RANDO.CameraIDs ))
+            cameraID = "demo_camera";
+
+        camContainer.setActiveCamera (cameraID);
     };
 
     /**
@@ -315,7 +313,6 @@ var RANDO = RANDO || {};
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
         var scene   = this._scene;
-        var demo    = this._demo;
         var version = this._version;
         var dem     = this.dem;
         var trek    = this.trek;
@@ -330,7 +327,7 @@ var RANDO = RANDO || {};
             trek.updateVertices();
 
             // Activates the animation of camera
-            if (!demo && version == "1.2" ) {
+            if (version == "1.2" ) {
                 RANDO.Utils.animateCamera(trek, scene);
             }
 

@@ -23,20 +23,24 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "fly_camera"];
+    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera"];
 
     /* List of Methods */
     RANDO.CameraContainer.prototype = {
         init:                   init,
         _buildDemoCamera:       _buildDemoCamera,
-        _buildFlyingCamera:     _buildFlyingCamera,
+        _buildFreeCamera:       _buildFreeCamera,
+        _buildHelicoCamera:     _buildHelicoCamera,
+        _buildMapCamera:        _buildMapCamera,
         _buildAttachedLight:    _buildAttachedLight,
         setActiveCamera:        setActiveCamera
     };
 
     function init () {
         this._buildDemoCamera ();
-        this._buildFlyingCamera ();
+        this._buildFreeCamera ();
+        this._buildHelicoCamera ();
+        this._buildMapCamera ();
         this._buildAttachedLight ();
     };
 
@@ -68,29 +72,77 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraContainer._buildFlyingCamera() : build of the flying camera
+     * RANDO.CameraContainer._buildFreeCamera() : build of the Free camera
      */
-    function _buildFlyingCamera () {
-        var fly_camera = new RANDO.HelicoCamera(
-            "Flying Camera",1, 0.5, 10,
+    function _buildFreeCamera () {
+        var free_camera = new BABYLON.FreeCamera(
+            "Flying Camera", 
+            new BABYLON.Vector3(0, 0, 0), 
+            this._scene
+        );
+
+        free_camera.id = "free_camera";
+        free_camera.keysUp     = [90, 38]; // Touche Z and up
+        free_camera.keysDown   = [83, 40]; // Touche S and down
+        free_camera.keysLeft   = [81, 37]; // Touche Q and left
+        free_camera.keysRight  = [68, 39]; // Touche D and right
+
+        free_camera.checkCollisions = true;
+        free_camera.maxZ = 10000;
+        free_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        free_camera.attachControl(this._canvas);
+
+        this.cameras.push(free_camera);
+    };
+    /**
+     * RANDO.CameraContainer._buildHelicoCamera() : build of the Helico camera
+     */
+    function _buildHelicoCamera () {
+        var helico_camera = new RANDO.HelicoCamera(
+            "Helico Camera",1, 0.5, 10,
             new BABYLON.Vector3(0, 1800, 0),
             this._scene
         );
-        fly_camera.id = "fly_camera";
-        fly_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
-        fly_camera.keysUp     = [90, 38]; // Touche Z and up
-        fly_camera.keysDown   = [83, 40]; // Touche S and down
-        fly_camera.keysLeft   = [81, 37]; // Touche Q and left
-        fly_camera.keysRight  = [68, 39]; // Touche D and right
+        helico_camera.id = "helico_camera";
+        helico_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
+        helico_camera.keysUp     = [90, 38]; // Touche Z and up
+        helico_camera.keysDown   = [83, 40]; // Touche S and down
+        helico_camera.keysLeft   = [81, 37]; // Touche Q and left
+        helico_camera.keysRight  = [68, 39]; // Touche D and right
 
-        fly_camera.wheelPrecision = 0.1;
-        fly_camera.checkCollisions = true;
-        fly_camera.maxZ = 10000;
-        fly_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        fly_camera.attachControl(this._canvas);
+        helico_camera.wheelPrecision = 0.1;
+        helico_camera.checkCollisions = true;
+        helico_camera.maxZ = 10000;
+        helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        helico_camera.attachControl(this._canvas);
         
         
-        this.cameras.push(fly_camera);
+        this.cameras.push(helico_camera);
+    };
+
+    /**
+     * RANDO.CameraContainer._buildMapCamera() : build of the Map camera
+     */
+    function _buildMapCamera () {
+        var map_camera = new RANDO.MapCamera(
+            "Map Camera", 
+            new BABYLON.Vector3(0, 0, 0), 
+            this._scene
+        );
+        map_camera.id = "map_camera";
+        map_camera.keysUp     = [90, 38]; // Touche Z and up
+        map_camera.keysDown   = [83, 40]; // Touche S and down
+        map_camera.keysLeft   = [81, 37]; // Touche Q and left
+        map_camera.keysRight  = [68, 39]; // Touche D and right
+
+        map_camera.checkCollisions = true;
+        map_camera.maxZ = 10000;
+        map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        map_camera.attachControl(this._canvas);
+
+        
+        
+        this.cameras.push(map_camera);
     };
 
     /**
@@ -107,13 +159,13 @@ var RANDO = RANDO || {};
      * RANDO.CameraContainer.setActiveCamera() : set the active camera of the scene
      *      - cameraID: ID of the camera we want to set as active
      * 
-     * NB : cameraID should be "demo_camera" or "fly_camera" 
+     * NB : cameraID should be in the static array RANDO.cameraIDs
      */
     function setActiveCamera (cameraID) {
         var scene = this._scene;
         var idArray = RANDO.CameraIDs;
         var found = false;
-        
+
         for (var it in idArray) {
             if (cameraID == idArray[it]) {
                 scene.setActiveCameraByID (cameraID);

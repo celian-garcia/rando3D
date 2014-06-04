@@ -12,7 +12,8 @@ window.onload = function onload(){
         RANDO.START_TIME = Date.now();
         
         var canvas = document.getElementById('canvas_renderer');
-        var scene = new RANDO.Scene(canvas, true, "1.0");
+        var cameraID = "demo_camera";
+        var scene = new RANDO.Scene(canvas, cameraID, "1.0" );
         scene.init();
 
 };
