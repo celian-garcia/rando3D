@@ -34,7 +34,10 @@ var RANDO = RANDO || {};
         this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         // Animation
-        this._timeline = new TimelineLite();
+        var that = this;
+        this._timeline = new TimelineLite({onComplete: function () {
+            that._onCompleteTimeline();
+        }});
         this._path = [];
         this._state = null;
         this._oldState = null;
@@ -212,7 +215,7 @@ var RANDO = RANDO || {};
                     }
                     that._oldState  = oldState;
                     that._state     = state;
-                    console.log(oldState + " to " + state);
+                    //~ console.log(oldState + " to " + state);
                 }
             };
 
@@ -304,12 +307,15 @@ var RANDO = RANDO || {};
 
         // State 
         if (stateHaveChanged) {
+            console.log(this._oldState + " to " + this._state);
             var newState = this._state;
-            var that = this;
+
             switch (newState) {
                 case "stop" : 
                     this._isMoving = true;
-                    RANDO.Utils.moveCameraTo(that, that._path[0], that._path[1], function(){
+                    this._timeline.pause();
+                    var that = this;
+                    this.moveTo(this._path[0], this._path[1], 3, function(){
                         that._timeline.pause(0);
                         that._isMoving = false;
                     });
@@ -320,6 +326,7 @@ var RANDO = RANDO || {};
                 case "pause" : 
                     this._timeline.pause();
             }
+
             this._oldState = this._state;
         }
     };
@@ -402,6 +409,33 @@ var RANDO = RANDO || {};
 
         // Animation paused by default
         this._timeline.pause(0);
+    };
+
+    RANDO.PathCamera.prototype._onCompleteTimeline = function () {
+        this._state = "stop";
+    };
+
+    RANDO.PathCamera.prototype.moveTo = function (futurePosition, futureTarget, duration, onComplete) {
+        var rotation_y = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
+
+        // Translation
+        TweenLite.to(this.position, duration, { 
+            x: futurePosition.x, 
+            y: futurePosition.y + RANDO.SETTINGS.CAM_OFFSET,
+            z: futurePosition.z,
+            ease: 'ease-in',
+            onComplete : function (){
+                if (typeof(onComplete) === "function") onComplete();
+            }
+        });
+
+        // Rotation
+        TweenLite.to(this.rotation, duration, { 
+            x: 0,
+            y: rotation_y, 
+            z: 0,
+            ease: 'ease-in'
+        });
     };
 })();
 
