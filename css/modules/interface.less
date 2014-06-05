@@ -4,6 +4,8 @@
  * @author: Célian GARCIA
  */
 
+@bg_color: rgba(255,255,255, 0.2);
+
 .interface {
     position: absolute;
     z-index: 0;
@@ -34,7 +36,7 @@
         width: 100%;
         height: 100%;
         
-        background: rgba(255,255,255,0.15);
+        background: @bg_color;
         border: none;
         border-radius: 0 0 0.35em 0.35em;
         
@@ -53,6 +55,7 @@
     }
     
     .mapbox {
+        background-color: @bg_color;
         position: absolute;
         right: 10px;
         bottom: 10px;
@@ -62,6 +65,8 @@
     }
     
     .controls {
+        background-color: @bg_color;
+        border-radius: 0 0 0.35em 0.35em;
         position: absolute;
         top: 0px;
         right: 0px;
@@ -81,6 +86,25 @@
             vertical-align: sub;
         }
     }
+    
+    .camera_switcher {
+        background-color: @bg_color;
+        border-radius: 0.35em;
+        position:absolute;
+        left: 10px;
+        bottom: 10px;
+        width: auto;
+        height: auto;
+        padding: 5px;
+        
+        .camera {
+            background-color: black;
+            width: 20px;
+            height: 20px;
+            float:left;
+            margin: 5px;
+        }
+    }
 }
 
 .poi{
@@ -92,4 +116,5 @@
     text-align:center;
     display : none;
 }
+
 
