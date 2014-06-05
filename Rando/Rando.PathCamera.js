@@ -11,11 +11,6 @@ var RANDO = RANDO || {};
         this.rotation = new BABYLON.Vector3(0, 0, 0);
         this.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
-        this._keys = [];
-        //~ this.keysUp = [38];
-        //~ this.keysDown = [40];
-        //~ this.keysLeft = [37];
-        //~ this.keysRight = [39];
         this.keysPlayPause = [32];
         this.keysStop  = [13];
 
@@ -38,10 +33,12 @@ var RANDO = RANDO || {};
         this._tempMatrix = BABYLON.Matrix.Zero();
         this._positionAfterZoom = BABYLON.Vector3.Zero();
 
+        // Animation
         this._timeline = new TimelineLite();
         this._path = [];
         this._state = null;
         this._oldState = null;
+        this._isMoving = false;
 
         RANDO.PathCamera.prototype._initCache.call(this);
     };
@@ -197,21 +194,25 @@ var RANDO = RANDO || {};
             };
 
             this._onKeyDown = function (evt) {
-                var keyCode = evt.keyCode;
-                console.log(keyCode);
-                that._oldState = that._state;
+                var state = that._state;
+                var oldState = state;
+                if (that._timeline && !that._isMoving) {
+                    var keyCode = evt.keyCode;
 
-                if (that.keysPlayPause.indexOf(keyCode) !== -1) {
-                    if (that._state == "stop" || that._state == "pause") {
-                        that._state = "play";
-                    } else if (that._state == "play") {
-                        console.log("pause ! ");
-                        that._state = "pause";
+                    if (that.keysPlayPause.indexOf(keyCode) !== -1) {
+                        if (state == "stop" || state == "pause") {
+                            state = "play";
+                        } else if (state == "play") {
+                            state = "pause";
+                        }
+                    } else if (that.keysStop.indexOf(keyCode) !== -1) {
+                        if (state == "play" || state == "pause" || !state) {
+                            state = "stop";
+                        }
                     }
-                } else if (that.keysStop.indexOf(keyCode) !== -1) {
-                    if (that._state == "play" || that._state == "pause" || !that._state) {
-                        that._state = "stop";
-                    }
+                    that._oldState  = oldState;
+                    that._state     = state;
+                    console.log(oldState + " to " + state);
                 }
             };
 
@@ -274,50 +275,8 @@ var RANDO = RANDO || {};
 
     RANDO.PathCamera.prototype._update = function () {
 
-        var needToMove = this._needMoveForGravity || Math.abs(this.cameraDirection.x) > 0 || Math.abs(this.cameraDirection.y) > 0 || Math.abs(this.cameraDirection.z) > 0;
         var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
-        //~ var needToZoom = this.inertialRadiusOffset;
-        var stateHaveChanged = (this._state != this._oldState);
-
-        var that = this;
-        if (stateHaveChanged) {
-            switch (this._state) {
-                case "stop" : 
-                    console.log("stopMode");
-                    RANDO.Utils.moveObjectTo(this, this._path[0], this._path[5], function(){
-                        //~ that._state = "play";
-                    });
-                break
-                case "play" : 
-                    console.log("playMode");
-                    if (this._timeline) { 
-                        this._timeline.play();
-                    }
-                break
-                case "pause" : 
-                    console.log("pauseMode");
-                    if (this._timeline) { 
-                        this._timeline.pause();
-                    }
-                break
-                case "returning" : 
-            }
-        }
-
-        // Move
-        if (needToMove) {
-            if (this.checkCollisions && this._scene.collisionsEnabled) {
-                this._collideWithWorld(this.cameraDirection);
-
-                if (this.applyGravity) {
-                    var oldPosition = this.position;
-                    this._collideWithWorld(this._scene.gravity);
-                    this._needMoveForGravity = (BABYLON.Vector3.DistanceSquared(oldPosition, this.position) != 0);
-                }
-            } else {
-                this.position.addInPlace(this.cameraDirection);
-            }
-        }
+        var stateHaveChanged = this._oldState != this._state;
 
         // Rotate
         if (needToRotate) {
@@ -332,37 +291,8 @@ var RANDO = RANDO || {};
                 if (this.rotation.x < -limit)
                     this.rotation.x = -limit;
             }
-        }
-
-        // Zoom
-        //~ if (needToZoom) {
-            //~ BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
-//~ 
-            //~ this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
-            //~ BABYLON.Vector3.TransformNormalToRef(
-                //~ this._referencePoint, 
-                //~ this._cameraTransformMatrix, 
-                //~ this._positionAfterZoom
-            //~ );
-//~ 
-            //~ this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
-            //~ this.position.addInPlace(this._positionAfterZoom);
-        //~ }
-
-        // Inertia
-        //~ if (needToMove) {
-            //~ if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
-                //~ this.cameraDirection.x = 0;
-//~ 
-            //~ if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
-                //~ this.cameraDirection.y = 0;
-//~ 
-            //~ if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
-                //~ this.cameraDirection.z = 0;
-//~ 
-            //~ this.cameraDirection.scaleInPlace(this.inertia);
-        //~ }
-        if (needToRotate) {
+            
+            // Inertia
             if (Math.abs(this.cameraRotation.x) < BABYLON.Engine.epsilon)
                 this.cameraRotation.x = 0;
 
@@ -371,12 +301,27 @@ var RANDO = RANDO || {};
 
             this.cameraRotation.scaleInPlace(this.inertia);
         }
-        //~ if (needToZoom) {
-            //~ if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
-                //~ this.inertialRadiusOffset = 0;
-            //~ 
-            //~ this.inertialRadiusOffset *= this.inertia;
-        //~ }
+
+        // State 
+        if (stateHaveChanged) {
+            var newState = this._state;
+            var that = this;
+            switch (newState) {
+                case "stop" : 
+                    this._isMoving = true;
+                    RANDO.Utils.moveCameraTo(that, that._path[0], that._path[1], function(){
+                        that._timeline.pause(0);
+                        that._isMoving = false;
+                    });
+                break;
+                case "play" :
+                    this._timeline.play();
+                break;
+                case "pause" : 
+                    this._timeline.pause();
+            }
+            this._oldState = this._state;
+        }
     };
 
     RANDO.PathCamera.prototype._getViewMatrix = function () {
@@ -406,28 +351,40 @@ var RANDO = RANDO || {};
         BABYLON.Matrix.LookAtLHToRef(this.position, this._currentTarget, this.upVector, this._viewMatrix);
         return this._viewMatrix;
     };
-    
-    RANDO.PathCamera.prototype.setPath = function (vertices) {
-        var d = 10; // Number of points between the current point and the point watched
-        var angles = [];
-        var camera = this;
 
-        var quantity = vertices.length;
-        var duration = 10;
+    RANDO.PathCamera.prototype.setPath = function (vertices) {
         var path = this._path;
-        for (var i = 0 ;i < vertices.length; i+=20) {
+        if (path.length) {
+            path = [];
+        }
+
+        for (var i = 0; i < vertices.length; i+=20) {
             path.push(vertices[i]);
         }
         if (vertices[vertices.length] != path[path.length]) {
             path.push(vertices[vertices.length]);
         }
+
+        this._loadPathOnTimeline (vertices.length);
+    };
+    
+    RANDO.PathCamera.prototype._loadPathOnTimeline = function (lengthOfBezier) {
+        var toRemove = this._timeline.getChildren()
+        if (toRemove.length) {
+            for (var it in toRemove) {
+                this._timeline.remove(toRemove[it]);
+            }
+        }
+
+        var quantity = lengthOfBezier;
+        var duration = 10;
         var position = {
-            x: path[0].x,
-            y: path[0].y,
-            z: path[0].z
+            x: this._path[0].x,
+            y: this._path[0].y,
+            z: this._path[0].z
         };
 
-        var tween = TweenLite.to(position, quantity, {bezier:path, ease:Linear.easeNone});
+        var tween = TweenLite.to(position, quantity, {bezier: this._path, ease:Linear.easeNone});
 
         for (var i = 0; i < quantity; i++) {
             tween.time(i); //jumps to the appropriate time in the tween, causing position.x and position.y to be updated accordingly.
@@ -444,37 +401,8 @@ var RANDO = RANDO || {};
 
         // Animation paused by default
         this._timeline.pause(0);
-
-        //~ // Controls
-        //~ var state = "flying";
-        //~ $(document).keyup(function(e){
-            //~ var keyCode = e.keyCode;
-//~ 
-            //~ // Space
-            //~ if (keyCode == 32){
-                //~ if (state == "start" || state == "pause") {
-                    //~ state = "moving";
-                    //~ timeline.play();
-                //~ }
-                //~ else if (state == "moving") {
-                    //~ state = "pause";
-                    //~ timeline.pause();
-                //~ }
-            //~ }
-//~ 
-            //~ // Enter
-            //~ if (keyCode == 13){
-                //~ if (state == "flying"){
-                    //~ RANDO.Utils.moveCameraTo(camera, vertices[0], vertices[d], function(){
-                        //~ state = "start";
-                    //~ });
-                //~ }
-                //~ else if ( state == "pause" || state == "moving" || state == "end" ){
-                    //~ timeline.pause(0);
-                    //~ state = "start";
-                //~ }
-            //~ }
-        //~ });
+        
+        console.log(this._timeline.getChildren());
     };
 })();
 
