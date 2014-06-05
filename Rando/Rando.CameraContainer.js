@@ -35,6 +35,8 @@ var RANDO = RANDO || {};
         _buildMapCamera:        _buildMapCamera,
         _buildPathCamera:       _buildPathCamera,
         _buildAttachedLight:    _buildAttachedLight,
+        _cameraSwitcher:        _cameraSwitcher,
+        _resetByDefault:        _resetByDefault,
         setActiveCamera:        setActiveCamera,
         setAnimationPath:       setAnimationPath
     };
@@ -46,6 +48,7 @@ var RANDO = RANDO || {};
         this._buildMapCamera ();
         this._buildPathCamera ();
         this._buildAttachedLight ();
+        this._cameraSwitcher();
     };
 
     /**
@@ -81,7 +84,7 @@ var RANDO = RANDO || {};
     function _buildFreeCamera () {
         var free_camera = new BABYLON.FreeCamera(
             "Flying Camera", 
-            new BABYLON.Vector3(0, 0, 0), 
+            new BABYLON.Vector3(3000, 5000, -3000),
             this._scene
         );
 
@@ -130,7 +133,7 @@ var RANDO = RANDO || {};
     function _buildMapCamera () {
         var map_camera = new RANDO.MapCamera(
             "Map Camera", 
-            new BABYLON.Vector3(0, 0, 0), 
+            new BABYLON.Vector3(-3000, 5000, 3000),
             this._scene
         );
         map_camera.id = "map_camera";
@@ -153,14 +156,10 @@ var RANDO = RANDO || {};
     function _buildPathCamera () {
         var path_camera = new RANDO.PathCamera(
             "Path Camera", 
-            new BABYLON.Vector3(0, 0, 0), 
+            new BABYLON.Vector3(-3000, 5000, 3000),
             this._scene
         );
         path_camera.id = "path_camera";
-        //~ path_camera.keysUp     = [90, 38]; // Touche Z and up
-        //~ path_camera.keysDown   = [83, 40]; // Touche S and down
-        //~ path_camera.keysLeft   = [81, 37]; // Touche Q and left
-        //~ path_camera.keysRight  = [68, 39]; // Touche D and right
 
         path_camera.checkCollisions = true;
         path_camera.maxZ = 10000;
@@ -191,16 +190,31 @@ var RANDO = RANDO || {};
         var idArray = RANDO.CameraIDs;
         var found = false;
 
+        if(scene.activeCamera) {
+            scene.activeCamera.detachControl();
+        }
+        
+        console.log(cameraID);
+
         for (var it in idArray) {
             if (cameraID == idArray[it]) {
-                scene.setActiveCameraByID (cameraID);
-                this._camLight.parent = scene.getCameraByID (cameraID);
+                // Interface
                 $(".controls--" + cameraID).css("display", "block");
+                $("#" + cameraID).css("background-color", "red");
+
+                
+                scene.setActiveCameraByID (cameraID);
+                this._resetByDefault();
+                this._camLight.parent = scene.activeCamera;
+                
+                scene.activeCamera.attachControl(this._canvas);
                 found = true;
             }else {
                 $(".controls--" + idArray[it]).css("display", "none");
+                $("#" + idArray[it]).css("background-color", "black");
             }
         }
+        console.log(scene.activeCamera.position);
 
         if (!found) {
             console.error("RANDO.CameraContainer.setActiveCamera() : the camera ID entered is not available");
@@ -212,6 +226,32 @@ var RANDO = RANDO || {};
         
         var path_camera = this.cameras.path_camera;
         path_camera.setPath(vertices);
+    };
+
+    function _cameraSwitcher () {
+        var idArray = RANDO.CameraIDs;
+        var that = this;
+
+        for (var it in idArray) {
+            $("#" + idArray[it]).on("click", function () {
+                console.log(this.id);
+                that.setActiveCamera (this.id);
+            });
+        }
+    };
+    
+    function _resetByDefault () {
+        var activeCam = this._scene.activeCamera;
+        console.log(activeCam.id);
+        if (activeCam.id == "helico_camera" || activeCam.id == "demo_camera") {
+            console.log(activeCam);
+            activeCam.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
+            activeCam._update();
+        } else if (activeCam.id == "map_camera" || activeCam.id == "path_camera" ||
+                    activeCam.id == "free_camera" ) {
+            activeCam.position = new BABYLON.Vector3(-3000, 5000, 3000);
+            activeCam._update();
+        }
     };
 
 })();
