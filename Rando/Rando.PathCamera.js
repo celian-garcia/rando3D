@@ -193,7 +193,7 @@ var RANDO = RANDO || {};
                 }
             };
 
-            this._onKeyDown = function (evt) {
+            this._onKeyUp = function (evt) {
                 var state = that._state;
                 var oldState = state;
                 if (that._timeline && !that._isMoving) {
@@ -234,7 +234,7 @@ var RANDO = RANDO || {};
         canvas.addEventListener("mousemove", this._onMouseMove, false);
         window.addEventListener('mousewheel', this._onWheel, false);
         window.addEventListener('DOMMouseScroll', this._onWheel);
-        window.addEventListener("keydown", this._onKeyDown, false);
+        window.addEventListener("keyup", this._onKeyUp, false);
         window.addEventListener("blur", this._onLostFocus, false);
     };
 
@@ -249,7 +249,7 @@ var RANDO = RANDO || {};
         canvas.removeEventListener("mousemove", this._onMouseMove);
         window.removeEventListener('mousewheel', this._onWheel);
         window.removeEventListener('DOMMouseScroll', this._onWheel);
-        window.removeEventListener("keydown", this._onKeyDown);
+        window.removeEventListener("keyup", this._onKeyUp);
         window.removeEventListener("blur", this._onLostFocus);
 
         this._attachedCanvas = null;
@@ -291,7 +291,7 @@ var RANDO = RANDO || {};
                 if (this.rotation.x < -limit)
                     this.rotation.x = -limit;
             }
-            
+
             // Inertia
             if (Math.abs(this.cameraRotation.x) < BABYLON.Engine.epsilon)
                 this.cameraRotation.x = 0;
@@ -387,7 +387,8 @@ var RANDO = RANDO || {};
         var tween = TweenLite.to(position, quantity, {bezier: this._path, ease:Linear.easeNone});
 
         for (var i = 0; i < quantity; i++) {
-            tween.time(i); //jumps to the appropriate time in the tween, causing position.x and position.y to be updated accordingly.
+            tween.time(i); // Jumps to the appropriate time in the tween, causing 
+                            // position variable to be updated accordingly.
 
             this._timeline.add(
                 TweenLite.to(this.position, (duration / quantity), {
@@ -401,8 +402,6 @@ var RANDO = RANDO || {};
 
         // Animation paused by default
         this._timeline.pause(0);
-        
-        console.log(this._timeline.getChildren());
     };
 })();
 
