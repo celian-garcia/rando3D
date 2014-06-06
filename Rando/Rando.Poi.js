@@ -64,8 +64,8 @@ var RANDO = RANDO || {};
         // Size of panel (in pixel and in meters)
         var pan_size = {
             px: {
-                width : 1024,
-                height : 1024
+                width : 512,
+                height : 512
             },
             m: {
                 width : RANDO.SETTINGS.PICTO_SIZE,
@@ -105,14 +105,14 @@ var RANDO = RANDO || {};
 
             // Draws pictogram on the texture
             textureContext.fillStyle = "white";
-            RANDO.Utils.roundRect(textureContext, 0, 0, picto_size.width, picto_size.height, 90);
+            RANDO.Utils.roundRect(textureContext, 0, 0, picto_size.width, picto_size.height, 45);
             textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
             // Set the text
             var text = elevation + "m";
-            var fontSize = pan_size.px.height - picto_size.height + 90;
+            var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
             // (It is important to set the font size of texture context before measuring text width)
-            textureContext.font = "bolder " + fontSize + "px Arial";
+            textureContext.font = "bolder " + fontSize + "pt Arial";
             var text_size = {
                 width : textureContext.measureText(text).width,
                 height : fontSize
