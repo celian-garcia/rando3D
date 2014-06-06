@@ -61,56 +61,68 @@ var RANDO = RANDO || {};
         var id          = this._id;
         var elevation   = this._elevation;
 
+        // Size of panel (in pixel and in meters)
         var pan_size = {
-            width : RANDO.SETTINGS.PICTO_SIZE,
-            height : RANDO.SETTINGS.PICTO_SIZE + 20
+            px: {
+                width : 512,
+                height : 512
+            },
+            m: {
+                width : RANDO.SETTINGS.PICTO_SIZE,
+                height : RANDO.SETTINGS.PICTO_SIZE + 20
+            }
         };
 
-        // Picto Panel
+        // Building
         var panel = BABYLON.Mesh.CreateGround(
             "POI - Panel", 
-            pan_size.width, 
-            pan_size.height, 
+            pan_size.m.width, 
+            pan_size.m.height, 
             2, scene
         );
         panel.id = id;
-        panel.rotate(BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
+        panel.rotate (BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-
-        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", 512, scene, true);
-        texture.hasAlpha = true;
-        
-        panel.material.backFaceCulling = false;
-        panel.isVisible = true;
         this.panel = panel;
-        
+
+        // Texture
+        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
+        texture.hasAlpha = true;
         
         var img = new Image();
         img.onload = function () {
             var textureContext = texture.getContext();
-            var tex_size = texture.getSize();
 
-            var pic_size = {
-                width : tex_size.width,
-                height : tex_size.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.height
+            // Computes the size of the pictogram (in pixels)
+            var picto_size = {
+                width : pan_size.px.width,
+                height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
             };
 
+            // Draws pictogram on the texture
+            textureContext.fillStyle = "#ffffff";
+            textureContext.fillRect(0, 0, picto_size.width, picto_size.height);
+            textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
+
+            // Set the text
             var text = elevation + "m";
-            var fontSize = tex_size.height - pic_size.height;
+            var fontSize = pan_size.px.height - picto_size.height;
+            // (It is important to set the font size of texture context before measuring text width)
             textureContext.font = "bold " + fontSize + "px Arial";
             var text_size = {
                 width : textureContext.measureText(text).width,
                 height : fontSize
             };
-            textureContext.fillStyle = "#ffffff";
-            
-            textureContext.fillText(text, (tex_size.width - text_size.width)/2, tex_size.height);
 
-            textureContext.drawImage(img, 0, 0, pic_size.width, pic_size.height);
+            // Draw the text under the pictogram
+            textureContext.fillStyle = "#ffffff";
+            textureContext.fillText(text, (pan_size.px.width - text_size.width)/2, pan_size.px.height);
+
+            // Update
             textureContext.restore();
             texture.update();
             panel.material.diffuseTexture   = texture;
