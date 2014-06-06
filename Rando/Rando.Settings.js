@@ -44,7 +44,7 @@ RANDO.SETTINGS.POI_FORM1 = {
     fileName:       "poi.babylon"
 };
 RANDO.SETTINGS.POI_SIZE = 20;
-RANDO.SETTINGS.PICTO_SIZE = 80;
+RANDO.SETTINGS.PICTO_SIZE = 100;
 RANDO.SETTINGS.PICTO_PREFIX = "";
 
 RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE = "<p>Pas de description liée à ce point d'intérêt.</p>";

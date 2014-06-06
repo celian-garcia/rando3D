@@ -64,12 +64,12 @@ var RANDO = RANDO || {};
         // Size of panel (in pixel and in meters)
         var pan_size = {
             px: {
-                width : 512,
-                height : 512
+                width : 1024,
+                height : 1024
             },
             m: {
                 width : RANDO.SETTINGS.PICTO_SIZE,
-                height : RANDO.SETTINGS.PICTO_SIZE + 20
+                height : RANDO.SETTINGS.PICTO_SIZE + 30
             }
         };
 
@@ -104,7 +104,7 @@ var RANDO = RANDO || {};
             };
 
             // Draws pictogram on the texture
-            textureContext.fillStyle = "#ffffff";
+            textureContext.fillStyle = "#fff";
             textureContext.fillRect(0, 0, picto_size.width, picto_size.height);
             textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
@@ -119,8 +119,9 @@ var RANDO = RANDO || {};
             };
 
             // Draw the text under the pictogram
-            textureContext.fillStyle = "#ffffff";
-            textureContext.fillText(text, (pan_size.px.width - text_size.width)/2, pan_size.px.height);
+            textureContext.fillStyle = "#fff";
+            textureContext.textAlign = "center";
+            textureContext.fillText(text, pan_size.px.width/2, pan_size.px.height);
 
             // Update
             textureContext.restore();
