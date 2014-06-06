@@ -110,9 +110,9 @@ var RANDO = RANDO || {};
 
             // Set the text
             var text = elevation + "m";
-            var fontSize = pan_size.px.height - picto_size.height;
+            var fontSize = pan_size.px.height - picto_size.height + 90;
             // (It is important to set the font size of texture context before measuring text width)
-            textureContext.font = "bold " + fontSize + "px Arial";
+            textureContext.font = "bolder " + fontSize + "px Arial";
             var text_size = {
                 width : textureContext.measureText(text).width,
                 height : fontSize
