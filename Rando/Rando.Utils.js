@@ -698,6 +698,7 @@ RANDO.Utils.roundRect = function (context, x, y, w, h, radius) {
     context.fill()
 };
 
+
 /****    GETTERS     ************************/
 /**tested
  * getUrlFromCoordinates(): get the url of a tile texture 
@@ -836,11 +837,16 @@ RANDO.Utils.toLatlng = function (point) {
  *      - extent : extent of the DEM in latitudes/longitudes
  */
 RANDO.Utils.extent2meters = function (extent) {
+    var lngmin = Math.min(extent.northwest.lng, extent.southwest.lng);
+    var latmin = Math.min(extent.southwest.lat, extent.southeast.lat);
+    var lngmalng = Math.min(extent.southeast.lng, extent.northeast.lng);
+    var latmalng = Math.min(extent.northwest.lat, extent.northeast.lat);
+
     return {
-        'northwest' : RANDO.Utils.toMeters(extent.northwest),
-        'northeast' : RANDO.Utils.toMeters(extent.northeast),
-        'southeast' : RANDO.Utils.toMeters(extent.southeast),
-        'southwest' : RANDO.Utils.toMeters(extent.southwest),
+        'northwest' : RANDO.Utils.toMeters({lng: lngmin, lat: latmalng}),
+        'northeast' : RANDO.Utils.toMeters({lng: lngmalng, lat: latmalng}),
+        'southeast' : RANDO.Utils.toMeters({lng: lngmalng, lat: latmin}),
+        'southwest' : RANDO.Utils.toMeters({lng: lngmin, lat: latmin}),
         'altitudes' : extent.altitudes
     };
 };
