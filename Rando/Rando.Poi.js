@@ -104,8 +104,8 @@ var RANDO = RANDO || {};
             };
 
             // Draws pictogram on the texture
-            textureContext.fillStyle = "#fff";
-            textureContext.fillRect(0, 0, picto_size.width, picto_size.height);
+            textureContext.fillStyle = "white";
+            RANDO.Utils.roundRect(textureContext, 0, 0, picto_size.width, picto_size.height, 90);
             textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
             // Set the text
