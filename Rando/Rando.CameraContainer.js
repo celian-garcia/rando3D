@@ -19,7 +19,7 @@ var RANDO = RANDO || {};
         this.cameras    = {};
         this._camLight  = null;
         this._animationPath = null;
-        this._firstCamera = null;
+        this._controlsAttached = false;
 
         this.init();
     };
@@ -74,7 +74,6 @@ var RANDO = RANDO || {};
         demo_camera.checkCollisions     = true;
         demo_camera.maxZ    = 10000;
         demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
-        demo_camera.attachControl(this._canvas);
 
         this.cameras.demo_camera = demo_camera;
     };
@@ -98,7 +97,6 @@ var RANDO = RANDO || {};
         free_camera.checkCollisions = true;
         free_camera.maxZ = 10000;
         free_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        free_camera.attachControl(this._canvas);
 
         this.cameras.free_camera = free_camera;
     };
@@ -123,7 +121,6 @@ var RANDO = RANDO || {};
         helico_camera.checkCollisions = true;
         helico_camera.maxZ = 10000;
         helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        helico_camera.attachControl(this._canvas);
 
         this.cameras.helico_camera = helico_camera;
     };
@@ -146,7 +143,6 @@ var RANDO = RANDO || {};
         map_camera.checkCollisions = true;
         map_camera.maxZ = 10000;
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        map_camera.attachControl(this._canvas);
 
         this.cameras.map_camera = map_camera;
     };
@@ -165,7 +161,6 @@ var RANDO = RANDO || {};
         path_camera.checkCollisions = true;
         path_camera.maxZ = 10000;
         path_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        path_camera.attachControl(this._canvas);
 
         this.cameras.path_camera = path_camera;
     };
@@ -182,42 +177,36 @@ var RANDO = RANDO || {};
 
     /**
      * RANDO.CameraContainer.setActiveCamera() : set the active camera of the scene
-     *      - cameraID: ID of the camera we want to set as active
+     *      - newID: ID of the camera we want to set as active
      * 
-     * NB : cameraID should be in the static array RANDO.cameraIDs
+     * NB : newID should be in the static array RANDO.cameraIDs
      */
-    function setActiveCamera (cameraID) {
+    function setActiveCamera (newID) {
+        if (RANDO.CameraIDs.indexOf(newID) == -1) {
+            console.log(newID);
+            console.error("RANDO.CameraContainer.setActiveCamera () : ID in parameter is not available");
+            return;
+        }
+
         var scene = this._scene;
-        var idArray = RANDO.CameraIDs;
-        var found = false;
+        var oldID = scene.activeCamera.id;
 
-        if (scene.activeCamera) {
-            scene.activeCamera.detachControl();
-        } else {
-            this._firstCamera = cameraID;
+        // Controls
+        if (this._controlsAttached) {
+            this.cameras[oldID].detachControl();
         }
+        this.cameras[newID].attachControl(this._canvas);
 
-        for (var it in idArray) {
-            if (cameraID == idArray[it]) {
-                // Interface
-                $(".controls--" + cameraID).css("display", "block");
-                $("#" + cameraID).css("background-color", "red");
+        // Set camera
+        scene.setActiveCameraByID (newID);
+        this._resetByDefault();
+        this._camLight.parent = this.cameras[newID];
 
-                scene.setActiveCameraByID (cameraID);
-                this._resetByDefault();
-                this._camLight.parent = scene.activeCamera;
-
-                scene.activeCamera.attachControl(this._canvas);
-                found = true;
-            }else {
-                $(".controls--" + idArray[it]).css("display", "none");
-                $("#" + idArray[it]).css("background-color", "black");
-            }
-        }
-
-        if (!found) {
-            console.error("RANDO.CameraContainer.setActiveCamera() : the camera ID entered is not available");
-        }
+        // Interface changings
+        $(".controls--" + newID).css("display", "block");
+        $("#" + newID).css("background-color", "red");
+        $(".controls--" + oldID).css("display", "none");
+        $("#" + oldID).css("background-color", "black");
     };
 
     function setAnimationPath (vertices) {
