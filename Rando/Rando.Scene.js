@@ -346,7 +346,7 @@ var RANDO = RANDO || {};
             
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
-        console.log(m_extent);
+
         // Record DEM data
         dem_data.o_extent = _.clone(m_extent);
         dem_data.extent = m_extent;

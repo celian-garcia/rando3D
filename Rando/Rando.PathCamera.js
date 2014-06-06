@@ -35,13 +35,12 @@ var RANDO = RANDO || {};
 
         // Animation
         var that = this;
-        this._timeline = new TimelineLite({onComplete: function () {
-            that._onCompleteTimeline();
-        }});
+        this._timeline = null
         this._path = [];
         this._state = null;
         this._oldState = null;
         this._isMoving = false;
+        this._lenghtOfBezier = 0;
 
         RANDO.PathCamera.prototype._initCache.call(this);
     };
@@ -199,7 +198,7 @@ var RANDO = RANDO || {};
             this._onKeyUp = function (evt) {
                 var state = that._state;
                 var oldState = state;
-                if (that._timeline && !that._isMoving) {
+                if (that._path.length && !that._isMoving) {
                     var keyCode = evt.keyCode;
 
                     if (that.keysPlayPause.indexOf(keyCode) !== -1) {
@@ -371,19 +370,23 @@ var RANDO = RANDO || {};
         if (vertices[vertices.length] != path[path.length]) {
             path.push(vertices[vertices.length]);
         }
-
-        this._loadPathOnTimeline (vertices.length);
+        
+        this._lengthOfBezier = vertices.length;
+        this.loadPathOnTimeline ();
     };
     
-    RANDO.PathCamera.prototype._loadPathOnTimeline = function (lengthOfBezier) {
-        var toRemove = this._timeline.getChildren()
-        if (toRemove.length) {
-            for (var it in toRemove) {
-                this._timeline.remove(toRemove[it]);
-            }
+    RANDO.PathCamera.prototype.loadPathOnTimeline = function () {
+        if (this._timeline) {
+            this._timeline.kill();
+            this._timeline = null;
         }
+        var that = this;
+        this._timeline = new TimelineLite({onComplete: function () {
+            that._onCompleteTimeline();
+        }});
+        
 
-        var quantity = lengthOfBezier;
+        var quantity = this._lengthOfBezier;
         var duration = 10;
         var position = {
             x: this._path[0].x,
