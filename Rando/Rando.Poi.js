@@ -73,7 +73,7 @@ var RANDO = RANDO || {};
             }
         };
 
-        // Building
+        // Building panel
         var panel = BABYLON.Mesh.CreateGround(
             "POI - Panel", 
             pan_size.m.width, 
@@ -86,52 +86,66 @@ var RANDO = RANDO || {};
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
-        panel.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
         this.panel = panel;
+        
+        // Building pictogram Container
+        var picto = BABYLON.Mesh.CreateGround(
+            "POI - Panel",
+            pan_size.m.width, 
+            pan_size.m.height, 
+            2, scene
+        );
+        picto.id = id;
+        picto.material = new BABYLON.StandardMaterial("POI - Picto - Material", scene);
+        picto.position.y = 20;
+        picto.parent = panel;
+        
+        
+        // Computes the size of the pictogram (in pixels)
+        var picto_size = {
+            width : pan_size.px.width,
+            height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
+        };
 
         // Texture
-        var texture = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
-        texture.hasAlpha = true;
-        
+        var picto_tex = new BABYLON.DynamicTexture("POI - Picto - Texture", pan_size.px.width, scene, true);
+        var panel_tex = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
+        picto_tex.hasAlpha = true;
+        panel_tex.hasAlpha = true;
+        var pictoContext = picto_tex.getContext();
+        var panelContext = panel_tex.getContext();
+
+        // Load the pictogram on the pictogram container
         var img = new Image();
         img.onload = function () {
-            var textureContext = texture.getContext();
-
-            // Computes the size of the pictogram (in pixels)
-            var picto_size = {
-                width : pan_size.px.width,
-                height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
-            };
-
-            // Draws pictogram on the texture
-            textureContext.fillStyle = "rgba(255, 255, 255, 0.5)";
-            RANDO.Utils.roundRect(textureContext, 0, 0, picto_size.width, picto_size.height, 45);
             
-            //~ textureContext.fillStyle = "black";
-            //~ textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
-
-            // Set the text
-            var text = elevation + "m";
-            var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
-            // (It is important to set the font size of texture context before measuring text width)
-            textureContext.font = "bolder " + fontSize + "pt Arial";
-            var text_size = {
-                width : textureContext.measureText(text).width,
-                height : fontSize
-            };
-
-            // Draw the text under the pictogram
-            textureContext.fillStyle = "#fff";
-            textureContext.textAlign = "center";
-            textureContext.fillText(text, pan_size.px.width/2, pan_size.px.height);
+            pictoContext.drawImage(img, 0, 0, picto_size.width*2, picto_size.height);
 
             // Update
-            textureContext.restore();
-            texture.update();
-            panel.material.opacityTexture   = texture;
-            panel.material.emissiveTexture  = texture;
+            pictoContext.restore();
+            picto_tex.update();
+            picto.material.diffuseTexture = picto_tex;
+            picto.material.emissiveTexture = picto_tex;
         };
-        img.src = src;//"img/media/upload/poi-fauna.png";// Image Test
+        img.src = "img/media/upload/theme-fauna@2x.png";// Image Test
+
+        // Draws background of the pictogram on the panel
+        panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";
+        RANDO.Utils.roundRect(panelContext, 0, 0, picto_size.width, picto_size.height, pan_size.px.width/10);
+
+        // Set & draw the text on the panel
+        var text = elevation + "m";
+        var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
+        panelContext.font = "bolder " + fontSize + "pt Arial";
+        panelContext.fillStyle = "#fff";
+        panelContext.textAlign = "center";
+        panelContext.fillText(text, pan_size.px.width/2, pan_size.px.height);
+
+        // Update
+        panelContext.restore();
+        panel_tex.update();
+        panel.material.opacityTexture   = panel_tex;
+        panel.material.emissiveTexture  = panel_tex;
     };
 
     /**
