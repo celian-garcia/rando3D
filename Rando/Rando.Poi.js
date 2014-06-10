@@ -104,9 +104,11 @@ var RANDO = RANDO || {};
             };
 
             // Draws pictogram on the texture
-            textureContext.fillStyle = "white";
+            textureContext.fillStyle = "rgba(255, 255, 255, 0.5)";
             RANDO.Utils.roundRect(textureContext, 0, 0, picto_size.width, picto_size.height, 45);
-            textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
+            
+            //~ textureContext.fillStyle = "black";
+            //~ textureContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
             // Set the text
             var text = elevation + "m";
@@ -126,10 +128,10 @@ var RANDO = RANDO || {};
             // Update
             textureContext.restore();
             texture.update();
-            panel.material.diffuseTexture   = texture;
+            panel.material.opacityTexture   = texture;
             panel.material.emissiveTexture  = texture;
         };
-        img.src = src;
+        img.src = src;//"img/media/upload/poi-fauna.png";// Image Test
     };
 
     /**
