@@ -127,7 +127,7 @@ var RANDO = RANDO || {};
             picto.material.diffuseTexture = picto_tex;
             picto.material.emissiveTexture = picto_tex;
         };
-        img.src = "img/media/upload/theme-fauna@2x.png";// Image Test
+        img.src = RANDO.SETTINGS.PICTO_PREFIX + "/media/upload/theme-fauna@2x.png";// Image Test
 
         // Draws background of the pictogram on the panel
         panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";

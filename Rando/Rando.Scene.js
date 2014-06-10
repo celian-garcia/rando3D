@@ -213,7 +213,11 @@ var RANDO = RANDO || {};
         var version         = this._version;
         var trek            = this.trek;
 
-        this.camContainer = new RANDO.CameraContainer(canvas, scene);
+        if (version == "1.2") {
+            this.camContainer = new RANDO.CameraContainer(canvas, scene, true);
+        } else {
+            this.camContainer = new RANDO.CameraContainer(canvas, scene, false);
+        }
 
         // Defines active camera
         if (!$.inArray(cameraID, RANDO.CameraIDs))

@@ -12,7 +12,7 @@ var RANDO = RANDO || {};
 (function () {  "use strict" 
     
     /* Constructor */
-    RANDO.CameraContainer = function (canvas, scene) {
+    RANDO.CameraContainer = function (canvas, scene, switchEnabled) {
         this._canvas    = canvas;
         this._scene     = scene;
         
@@ -20,6 +20,7 @@ var RANDO = RANDO || {};
         this._camLight  = null;
         this._animationPath = null;
         this._controlsAttached = false;
+        this._switchEnabled = switchEnabled | false;
 
         this.init();
     };
@@ -219,6 +220,12 @@ var RANDO = RANDO || {};
     function _cameraSwitcher () {
         var idArray = RANDO.CameraIDs;
         var that = this;
+        
+        if (!this._switchEnabled) {
+            return ;
+        }else {
+             $(".camera_switcher").css("display", "block");
+        }
 
         for (var it in idArray) {
             $("#" + idArray[it]).on("click", function () {
