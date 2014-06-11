@@ -184,23 +184,26 @@ var RANDO = RANDO || {};
      */
     function setActiveCamera (newID) {
         if (RANDO.CameraIDs.indexOf(newID) == -1) {
-            console.log(newID);
-            console.error("RANDO.CameraContainer.setActiveCamera () : ID in parameter is not available");
+            console.error("RANDO.CameraContainer.setActiveCamera () : " + newID + " is not an available camera's ID");
             return;
         }
 
         var scene = this._scene;
         var oldID = scene.activeCamera.id;
+        if (oldID == newID) {
+            return;
+        }
 
         // Controls
         if (this._controlsAttached) {
-            this.cameras[oldID].detachControl();
+            scene.activeCamera.detachControl();
         }
-        this.cameras[newID].attachControl(this._canvas);
 
         // Set camera
         scene.setActiveCameraByID (newID);
         this._resetByDefault();
+        scene.activeCamera.attachControl(this._canvas);
+        this._controlsAttached = true;
         this._camLight.parent = this.cameras[newID];
 
         // Interface changings
@@ -222,7 +225,7 @@ var RANDO = RANDO || {};
         var that = this;
         
         if (!this._switchEnabled) {
-            return ;
+            return;
         }else {
              $(".camera_switcher").css("display", "block");
         }
@@ -236,18 +239,26 @@ var RANDO = RANDO || {};
 
     function _resetByDefault () {
         var activeCam = this._scene.activeCamera;
-
+        this.cameras.path_camera._state = null;
         if (activeCam.id == "helico_camera" || activeCam.id == "demo_camera") {
             activeCam.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
+            activeCam.alpha = 2.3;
+            activeCam.beta = 0.7
+            //~ console.log("reset on " + activeCam.id);
         } else if (activeCam.id == "map_camera" || activeCam.id == "path_camera" ||
                     activeCam.id == "free_camera" ) {
                         
             activeCam.position = new BABYLON.Vector3(-3000, 5000, 3000);
+            activeCam.rotation = new BABYLON.Vector3(0.7, 2.3, 0);
             if (activeCam.id == "path_camera") {
                 if (activeCam._path.length) {
                     activeCam.loadPathOnTimeline();
                 }
+                console.log(activeCam._state);
+                activeCam._state = "stop";
+                activeCam._update();
             }
+            //~ console.log("reset on " + activeCam.id);
         }
     };
 

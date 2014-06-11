@@ -47,7 +47,7 @@ var RANDO = RANDO || {};
             this._data.altitudes,
             this._offsets
         )._tiles;
-        this._initCamera();
+        //~ this._initCamera();
         this.buildGround();
         this.buildSides();
     };
