@@ -359,23 +359,34 @@ var RANDO = RANDO || {};
     };
 
     RANDO.PathCamera.prototype.setPath = function (vertices) {
+        // Reinitialize the path
         var path = this._path;
         if (path.length) {
             path = [];
         }
 
+        // Fill path array
         for (var i = 0; i < vertices.length; i+=20) {
             path.push(vertices[i]);
         }
         if (vertices[vertices.length] != path[path.length]) {
             path.push(vertices[vertices.length]);
         }
-        
+
+        // Load this path on the timeline
         this._lengthOfBezier = vertices.length;
         this.loadPathOnTimeline ();
     };
     
     RANDO.PathCamera.prototype.loadPathOnTimeline = function () {
+        // Verify if path and lengthOfBezier exist
+        if (!this._path) {
+            return;
+        }
+        if (!this._lengthOfBezier) {
+            this._lengthOfBezier = this._path.length*2;
+        }
+
         // Reinitialize timeline
         if (this._timeline) {
             this._timeline.kill();
