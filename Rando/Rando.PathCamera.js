@@ -387,7 +387,7 @@ var RANDO = RANDO || {};
         
 
         var quantity = this._lengthOfBezier;
-        var duration = 10;
+        var duration = quantity / RANDO.SETTINGS.CAM_SPEED_T;
         var position = {
             x: this._path[0].x,
             y: this._path[0].y,

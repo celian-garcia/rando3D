@@ -330,9 +330,7 @@ var RANDO = RANDO || {};
             // Updates trek vertices
             trek.updateVertices();
 
-            if (version == "1.2") {
-                camContainer.setAnimationPath(trek._vertices);
-            }
+            camContainer.setAnimationPath(trek._vertices);
 
             // Merges the trek to increase performances
             trek.merge();
