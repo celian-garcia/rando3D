@@ -34,13 +34,13 @@ var RANDO = RANDO || {};
         this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         // Animation
-        var that = this;
         this._timeline = null
         this._path = [];
         this._state = null;
         this._oldState = null;
         this._isMoving = false;
         this._lenghtOfBezier = 0;
+        this._speed = RANDO.SETTINGS.CAM_SPEED_T;
 
         RANDO.PathCamera.prototype._initCache.call(this);
     };
@@ -376,6 +376,7 @@ var RANDO = RANDO || {};
     };
     
     RANDO.PathCamera.prototype.loadPathOnTimeline = function () {
+        // Reinitialize timeline
         if (this._timeline) {
             this._timeline.kill();
             this._timeline = null;
@@ -384,18 +385,20 @@ var RANDO = RANDO || {};
         this._timeline = new TimelineLite({onComplete: function () {
             that._onCompleteTimeline();
         }});
-        
 
+        // Initials parameters of animation 
         var quantity = this._lengthOfBezier;
-        var duration = quantity / RANDO.SETTINGS.CAM_SPEED_T;
+        var duration = this._lengthOfBezier / this._speed;
         var position = {
             x: this._path[0].x,
             y: this._path[0].y,
             z: this._path[0].z
         };
 
+        // Creates the Bezier curve
         var tween = TweenLite.to(position, quantity, {bezier: this._path, ease:Linear.easeNone});
 
+        // Load the Bezier curve on timeline
         for (var i = 0; i < quantity; i++) {
             tween.time(i); // Jumps to the appropriate time in the tween, causing 
                             // position variable to be updated accordingly.
