@@ -227,6 +227,12 @@ var RANDO = RANDO || {};
                 previousPosition = null;
                 that.cameraDirection = new BABYLON.Vector3(0, 0, 0);
                 that.cameraRotation = new BABYLON.Vector2(0, 0);
+
+                if (that._path.length) {
+                    that.loadPathOnTimeline();
+                }
+                that._oldState = null;
+                that._state = "stop";
             };
         }
 
