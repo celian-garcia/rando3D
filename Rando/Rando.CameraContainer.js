@@ -244,7 +244,9 @@ var RANDO = RANDO || {};
                         
             activeCam.position = new BABYLON.Vector3(-3000, 5000, 3000);
             if (activeCam.id == "path_camera") {
-                activeCam.loadPathOnTimeline();
+                if (activeCam._path.length) {
+                    activeCam.loadPathOnTimeline();
+                }
             }
         }
     };
