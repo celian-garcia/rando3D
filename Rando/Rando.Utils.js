@@ -426,6 +426,16 @@ RANDO.Utils.getSize = function (mesh) {
     };
 }
 
+RANDO.Utils.isInExtent = function (coordinates, extent) {
+    if (coordinates.x > extent.northwest.x 
+     && coordinates.x < extent.northeast.x 
+     && coordinates.z < extent.northeast.z
+     && coordinates.z > extent.southeast.z ) {
+        return true;
+    }
+    return false;
+};
+
 
 /****    GEOMETRY     ************************/
 /**tested

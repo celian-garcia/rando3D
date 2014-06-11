@@ -184,12 +184,14 @@ var RANDO = RANDO || {};
 
             // POIs building
             for (var it in that._pois_data) {
-                that.pois.push(new RANDO.Poi(
-                    it,
-                    that._pois_data[it],
-                    that._offsets,
-                    that._scene
-                ));
+                if (RANDO.Utils.isInExtent(that._pois_data[it].coordinates, that._dem_data.extent)) {
+                    that.pois.push(new RANDO.Poi(
+                        it,
+                        that._pois_data[it],
+                        that._offsets,
+                        that._scene
+                    ));
+                }
             }
             RANDO.Poi.runMouseListener(that._canvas, that.pois, that._scene);
 
