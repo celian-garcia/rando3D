@@ -211,7 +211,6 @@ var RANDO = RANDO || {};
         var scene           = this._scene;
         var cameraID        = this._cameraID;
         var version         = this._version;
-        var trek            = this.trek;
 
         if (version == "1.2") {
             this.camContainer = new RANDO.CameraContainer(canvas, scene, true);
@@ -245,19 +244,7 @@ var RANDO = RANDO || {};
         //~ this._scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
         //~ this._scene.fogDensity = 0.00002;
         //~ this._scene.fogColor = new BABYLON.Color3(1, 1, 1);
-        
-        // SkyBox
-        //~ var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
-        //~ var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-        //~ skyboxMaterial.backFaceCulling = false;
-        //~ skybox.material = skyboxMaterial;
-        //~ 
-        //~ skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-        //~ skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-        //~ 
-        //~ skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("skybox/skybox", scene);
-        //~ skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-        
+
         // Color : transparent to see the html background
         this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
     };
@@ -317,10 +304,8 @@ var RANDO = RANDO || {};
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
         var scene           = this._scene;
-        var version         = this._version;
         var dem             = this.dem;
         var trek            = this.trek;
-        var pois            = this.pois;
         var camContainer    = this.camContainer;
 
         dem.applyTextures();
