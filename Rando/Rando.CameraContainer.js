@@ -190,9 +190,6 @@ var RANDO = RANDO || {};
 
         var scene = this._scene;
         var oldID = scene.activeCamera.id;
-        if (oldID == newID) {
-            return;
-        }
 
         // Controls
         if (this._controlsAttached) {
@@ -210,8 +207,11 @@ var RANDO = RANDO || {};
         // Interface changings
         $(".controls--" + newID).css("display", "block");
         $("#" + newID).css("background-color", "red");
-        $(".controls--" + oldID).css("display", "none");
-        $("#" + oldID).css("background-color", "black");
+        
+        if (newID != oldID) {
+            $(".controls--" + oldID).css("display", "none");
+            $("#" + oldID).css("background-color", "black");
+        }
     };
 
     function setAnimationPath (vertices) {
