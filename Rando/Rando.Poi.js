@@ -97,7 +97,7 @@ var RANDO = RANDO || {};
         );
         picto.id = id;
         picto.material = new BABYLON.StandardMaterial("POI - Picto - Material", scene);
-        picto.position.y = 100;
+        picto.renderingGroupId = 1;
         picto.parent = panel;
         
         

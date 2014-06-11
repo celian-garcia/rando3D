@@ -200,7 +200,7 @@ var RANDO = RANDO || {};
                 );
                 RANDO.Utils.mergeMeshes(mergedTrek, buffer);
                 mergedTrek.material = this.material;
-                
+                mergedTrek.renderingGroupId = 1;
                 this.mergedTreks.push(mergedTrek);
                 // ... and we push the current mesh in a new empty buffer
                 buffer = [];
