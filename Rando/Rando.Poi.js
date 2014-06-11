@@ -181,6 +181,14 @@ var RANDO = RANDO || {};
         var sphere      = this.sphere;
         var panel       = this.panel;
 
+        if (BABYLON.Vector3.Distance(position, scene.activeCamera.position) < 300) { 
+            panel.isVisible = false;
+            panel.getChildren()[0].isVisible = false;
+        }
+        else {
+            panel.isVisible = true;
+            panel.getChildren()[0].isVisible = true;
+        }
         lookAtCamera (scene.activeCamera);
 
         function lookAtCamera (camera) {

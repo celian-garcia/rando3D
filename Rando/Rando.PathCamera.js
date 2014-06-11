@@ -405,7 +405,7 @@ var RANDO = RANDO || {};
                     x: position.x, 
                     y: position.y + RANDO.SETTINGS.CAM_OFFSET, 
                     z: position.z, 
-                    ease: "Linear.easeNone"  
+                    ease: "Linear.easeNone" 
                 }) 
             );
         }
