@@ -206,11 +206,11 @@ var RANDO = RANDO || {};
 
         // Interface changings
         $(".controls--" + newID).css("display", "block");
-        $("#" + newID).css("background-color", "red");
+        $("#" + newID)[0].className = "camera camera--selected" ;
         
         if (newID != oldID) {
             $(".controls--" + oldID).css("display", "none");
-            $("#" + oldID).css("background-color", "black");
+            $("#" + oldID)[0].className = "camera" ;
         }
     };
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet/less" type="text/css" href="css/main.less" />
     <link rel="stylesheet/less" type="text/css" href="css/modules/poi_side.less" />
     <link rel="stylesheet/less" type="text/css" href="css/modules/interface.less" />
+    <link rel="stylesheet/less" type="text/css" href="css/modules/switcher.less" />
     <link rel="icon" type="image/png" href="/img/logo_geotrek.png" />
     
     <!-- Less-->
@@ -28,7 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/BezierPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/BezierPlugin.min.js"></script>
 
     
     <!-- Rando-->
@@ -99,13 +100,38 @@
             </span>
         </div>
         
-        <div class = "camera_switcher">
-            <div class = "camera" id = "demo_camera"></div>
-            <div class = "camera" id = "helico_camera"></div>
-            <div class = "camera" id = "map_camera"></div>
-            <div class = "camera" id = "free_camera"></div>
-            <div class = "camera" id = "path_camera"></div>
-        </div>
+        <ul class = "camera_switcher">
+            <li class = "camera" id = "demo_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Démo</span>
+            </li>
+            <li class = "camera" id = "helico_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Hélico</span>
+            </li>
+            <li class = "camera" id = "map_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Carto</span>
+            </li>
+            <li class = "camera" id = "free_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Libre</span>
+            </li>
+            <li class = "camera" id = "path_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Suivi</span>
+            </li>
+        </ul>
     </section>
     
     <canvas id = "canvas_renderer"></canvas>
