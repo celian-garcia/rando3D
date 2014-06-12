@@ -266,6 +266,7 @@ var RANDO = RANDO || {};
                 previousPosition = null;
                 that.cameraDirection = new BABYLON.Vector3(0, 0, 0);
                 that.cameraRotation = new BABYLON.Vector2(0, 0);
+                that.inertialRadiusOffset = 0;
             };
         }
 
