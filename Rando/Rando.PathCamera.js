@@ -214,7 +214,6 @@ var RANDO = RANDO || {};
                     }
                     that._oldState  = oldState;
                     that._state     = state;
-                    //~ console.log(oldState + " to " + state);
                 }
             };
 
