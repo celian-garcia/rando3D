@@ -1,9 +1,9 @@
 
 window.onload = function onload(){
-
-        RANDO.SETTINGS.DEM_URL      = "../../json/trek/903488/dem.json";
-        RANDO.SETTINGS.PROFILE_URL  = "../../json/trek/903488/profile.json";
-        RANDO.SETTINGS.POI_URL      = "../../json/trek/903488/pois.geojson";
+        var pk = 903488;
+        RANDO.SETTINGS.DEM_URL      = "../../json/trek/" + pk + "/dem.json";
+        RANDO.SETTINGS.PROFILE_URL  = "../../json/trek/" + pk + "/profile.json";
+        RANDO.SETTINGS.POI_URL      = "../../json/trek/" + pk + "/pois.geojson";
         RANDO.SETTINGS.TILE_TEX_URL = "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png"
         RANDO.SETTINGS.SIDE_TEX_URL = "../../img/side.jpg";
         RANDO.SETTINGS.FAKE_TEX_URL = "../../img/white.png";

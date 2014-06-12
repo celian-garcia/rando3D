@@ -395,6 +395,7 @@ var RANDO = RANDO || {};
 
         // Reinitialize timeline
         if (this._timeline) {
+            this._timeline.clear();
             this._timeline.kill();
             this._timeline = null;
         }
