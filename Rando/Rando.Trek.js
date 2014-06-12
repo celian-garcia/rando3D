@@ -24,19 +24,8 @@ var RANDO = RANDO || {};
         this.init();
     };
 
-    /* List of Methods */
-    RANDO.Trek.prototype = {
-        init:               init,
-        _offsets:           _offsets,
-        buildTrek:          buildTrek,
-        updateVertices:     updateVertices,
-        getTotalVertices:   getTotalVertices,
-        drape:              drape,
-        merge:              merge
-    };
-    
-    
-    function init () {
+    /* Methods */
+    RANDO.Trek.prototype.init = function () {
         this.material = new BABYLON.StandardMaterial("Trek Material", this._scene)
         this.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
 
@@ -48,7 +37,7 @@ var RANDO = RANDO || {};
      * 
      * return the array of vertices
      */
-    function _offsets (data, offsets) {
+    RANDO.Trek.prototype._offsets = function (data, offsets) {
         var vertices = _.clone(data);
         for (var it in vertices){
             vertices[it].x += offsets.x;
@@ -61,7 +50,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Trek.buildTrek() : builds the trek with spheres and cylinders
      */
-    function buildTrek () {
+    RANDO.Trek.prototype.buildTrek = function () {
         // Trek building ...
         console.log("Trek building... " + (Date.now() - RANDO.START_TIME) );
         var vertices    = this._vertices;
@@ -130,9 +119,9 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Trek.drape() : drape the trek over the ground 
      *      - ground : Mesh in which we drape spheres
-     *      - onComplete : callback called at the end of the function 
+     *      - onComplete : callback called at the end of the RANDO.Trek.prototype.
      */
-    function drape (ground, onComplete) {
+    RANDO.Trek.prototype.drape = function (ground, onComplete) {
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
         var trek_length = spheres.length;
@@ -176,7 +165,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Trek.merge() : merge all elements (spheres and cylinders) of the Trek
      */
-    function merge () {
+    RANDO.Trek.prototype.merge = function () {
         var scene       = this._scene;
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
@@ -224,7 +213,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Trek.updateVertices() : update this._vertices attribute
      */
-    function updateVertices () {
+    RANDO.Trek.prototype.updateVertices = function () {
         var vertices    = this._vertices;
         var spheres     = this.spheres.getChildren();
         console.assert(vertices.length == spheres.length);
@@ -235,7 +224,7 @@ var RANDO = RANDO || {};
         }
     };
     
-    function getTotalVertices () {
+    RANDO.Trek.prototype.getTotalVertices = function () {
         var spheresArray    = this.spheres.getChildren();
         var cylindersArray  = this.cylinders.getChildren();
         var meshes          = spheresArray.concat(cylindersArray);

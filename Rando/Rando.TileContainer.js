@@ -23,17 +23,8 @@ var RANDO = RANDO || {};
         this._init ();
     };
 
-    /* List of Methods */
-    RANDO.TileContainer.prototype = {
-        _init:                   _init,
-        _generateTiles:         _generateTiles,
-        _joinTiles:             _joinTiles,
-        _computeSize:           _computeSize,
-        _computeUvs:            _computeUvs,
-        translate:              translate
-    };
-    
-    function _init () {
+    /* Methods */
+    RANDO.TileContainer.prototype._init = function () {
         this._generateTiles();
         this._joinTiles();
         this._computeSize();
@@ -41,11 +32,10 @@ var RANDO = RANDO || {};
         this.translate();
     };
     
-    
     /**
      * RANDO.TileContainer._generateTiles() : generates an array of tiles which are js objects
      */
-    function _generateTiles () {
+    RANDO.TileContainer.prototype._generateTiles = function () {
         var zoom = RANDO.SETTINGS.TILE_ZOOM;
         var tiles = this._tiles;
         
@@ -107,7 +97,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.TileContainer._joinTiles() : joins tiles data 
      */
-    function _joinTiles() {
+    RANDO.TileContainer.prototype._joinTiles = function () {
         var tiles = this._tiles;
         
         // Joins East and West sides of tiles  
@@ -177,7 +167,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.TileContainer._computeSize() : computes height and width of each tile and add it to the tiles data container
      */
-    function _computeSize() {
+    RANDO.TileContainer.prototype._computeSize = function () {
         var tiles = this._tiles;
         for (var it in tiles) {
             var tile = tiles[it];
@@ -194,7 +184,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.TileContainer._computeUvs() :  computes uv values of each tile and add it to the tiles data container
      */
-    function _computeUvs() {
+    RANDO.TileContainer.prototype._computeUvs = function () {
         var tiles = this._tiles;
         
         var max_width = _.max(tiles, function(tile) {
@@ -318,7 +308,7 @@ var RANDO = RANDO || {};
      * RANDO.TileContainer.translate() : translate the Tiles data of the offsets attribute or of 
      * the offsets given in parameters
      */
-    function translate(dx, dy, dz) {
+    RANDO.TileContainer.prototype.translate = function (dx, dy, dz) {
         var tiles = this._tiles;
         var offsets = {};
         
