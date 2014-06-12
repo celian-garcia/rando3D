@@ -310,10 +310,13 @@ var RANDO = RANDO || {};
         var dem             = this.dem;
         var trek            = this.trek;
         var camContainer    = this.camContainer;
+        var pois            = this.pois;
 
         dem.applyTextures();
         trek.drape(dem.ground, onDrapeComplete);
-
+        for (var it in pois) {
+            pois[it].drape(dem.ground);
+        }
         function onDrapeComplete () {
             // Updates trek vertices
             trek.updateVertices();
@@ -334,13 +337,20 @@ var RANDO = RANDO || {};
         var dem_data = this._dem_data,
             offsets  = this._offsets;
             
+        // Scales
+        data.altitudes = RANDO.Utils.scaleArray2(
+            data.altitudes, 
+            RANDO.SETTINGS.ALTITUDES_Z_SCALE
+        );
+
+        // Conversions
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
 
         // Record DEM data
         dem_data.o_extent = _.clone(m_extent);
         dem_data.extent = m_extent;
-        dem_data.altitudes = data.altitudes; // altitudes already in meters
+        dem_data.altitudes = data.altitudes;
         dem_data.resolution = data.resolution; // do not need conversion
         dem_data.o_center = {
             x: m_center.x,

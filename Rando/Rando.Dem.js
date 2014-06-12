@@ -37,7 +37,6 @@ var RANDO = RANDO || {};
         buildScaleViewer:   buildScaleViewer,
         _buildTile:         _buildTile,
         _buildSide:         _buildSide,
-        _initCamera:        _initCamera,
         _prepareTexture:    _prepareTexture
     };
 
@@ -47,11 +46,9 @@ var RANDO = RANDO || {};
             this._data.altitudes,
             this._offsets
         )._tiles;
-        //~ this._initCamera();
         this.buildGround();
         this.buildSides();
     };
-
 
     /**
      * RANDO.Dem.buildGround() : build the ground of the DEM 
@@ -304,23 +301,6 @@ var RANDO = RANDO || {};
         side.checkCollisions = true;
 
         return side;
-    };
-
-
-    /**
-     * RANDO.Dem._initCamera() : set the by default values of camera 
-     */
-    function _initCamera () {
-        var scene   = this._scene;
-        var center  = this._data.center;
-        var offsets = this._offsets
-        
-        scene.activeCamera.rotation = new BABYLON.Vector3(1, 1.2, 0);
-        scene.activeCamera.position = new BABYLON.Vector3(
-            center.x + offsets.x - 2500, 
-            center.y + offsets.y + 2500, 
-            center.z + offsets.z - 1000
-        );
     };
 
 })();

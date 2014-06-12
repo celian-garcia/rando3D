@@ -118,7 +118,6 @@ var RANDO = RANDO || {};
         // Load the pictogram on the pictogram container
         var img = new Image();
         img.onload = function () {
-            
             pictoContext.drawImage(img, 0, 0, picto_size.width*2, picto_size.height);
 
             // Update
@@ -276,7 +275,7 @@ var RANDO = RANDO || {};
                 pois[pickedMesh.id].onMouseOverHandler(evt);
             }
         });
-        
+
         $(".close_btn").on('click', function () {
             $(".poi_side").css('display', 'none');
             $('.interface').css('width', '100%');
@@ -287,7 +286,6 @@ var RANDO = RANDO || {};
         $(".close_btn").mouseout( function () {
             this.style.cursor = 'default';
         });
-        
     };
 
     /**

@@ -231,12 +231,34 @@ describe('Rando3D Utilitaries', function() {
                 done();
             });
         });
-    });
     
-    describe("Camera", function() {
-        
+        describe('Scale a 2-dimensions Array - scaleArray2()', function () {
+            var array2 = [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1]
+            ];
+            
+            var result = [
+                [2, 2, 2, 2],
+                [2, 2, 2, 2],
+                [2, 2, 2, 2],
+                [2, 2, 2, 2]
+            ];
+            
+            it("should return the same array", function(done) {
+                assert.deepEqual(RANDO.Utils.scaleArray2(array2, 1), array2);
+                done();
+            });
+            
+            it("should return an array of 2", function(done) {
+                assert.deepEqual(RANDO.Utils.scaleArray2(array2, 2), result);
+                done();
+            });
+        });
     });
-    
+  
     describe("Getters", function() {
         describe('Get an url of texture from coordinates z, x, y - "replaceUrlCoordinates()"', function () {
             it("should return the new url with '{z}', '{x}' and '{y}' replaced  ", function(done) {

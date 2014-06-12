@@ -708,6 +708,24 @@ RANDO.Utils.roundRect = function (context, x, y, w, h, radius) {
     context.fill()
 };
 
+/**tested
+ *  scaleArray2() : multiply all values of 2-dimensions array by a scale value
+ *      - array2 : original array
+ *      - scale : scale value
+ * 
+ * return a new array which contains all values of array2 multiplied
+ */
+RANDO.Utils.scaleArray2 = function (array2, scale) {
+    var result = [];
+    for (var row in array2) {
+        var line = [];
+        for (var col in array2[row]) {
+            line.push(array2[row][col] * scale);
+        }
+        result.push(line);
+    }
+    return result;
+};
 
 /****    GETTERS     ************************/
 /**tested
