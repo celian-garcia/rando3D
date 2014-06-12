@@ -4,7 +4,6 @@ describe('Geotrek 3D - Poi Object', function() {
     var data = {
         'coordinates': {
             'x': 100,
-            'y': -500,
             'z': 10000 
         },
         'properties': {
@@ -24,7 +23,6 @@ describe('Geotrek 3D - Poi Object', function() {
 
     var offsets = {
         'x': 100,
-        'y': 50,
         'z': -200
     };
     var id = 0;
@@ -34,11 +32,11 @@ describe('Geotrek 3D - Poi Object', function() {
             var poi = new RANDO.Poi(id, data, offsets, scene);
             var expected_position = {
                 'x': data.coordinates.x + offsets.x,
-                'y': data.coordinates.y,
                 'z': data.coordinates.z + offsets.z
             };
             
-            assert.deepEqual(poi._position, expected_position);
+            assert.equal(poi._position.x, expected_position.x);
+            assert.equal(poi._position.z, expected_position.z);
             done();
             poi.dispose();
         });

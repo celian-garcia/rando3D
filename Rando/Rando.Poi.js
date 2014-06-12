@@ -10,14 +10,18 @@
 var RANDO = RANDO || {};
 
 (function () {  "use strict" 
-    
+
     /* Constructor */
     RANDO.Poi = function (id, data, offsets, scene) {
         this._id            = id
-        this._position      = this.place(data.coordinates, offsets);
+        this._position      = {
+            'x' : data.coordinates.x + offsets.x,
+            'y' : 0,
+            'z' : data.coordinates.z + offsets.z
+        };
         this._name          = data.properties.name;
         this._type          = data.properties.type;
-        this._elevation     = data.coordinates.y;
+        this._elevation     = data.properties.elevation;
         this._description   = data.properties.description || RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE;
         this._scene         = scene;
         
@@ -27,19 +31,7 @@ var RANDO = RANDO || {};
         this.init();
     };
 
-    /* List of Methods */
-    RANDO.Poi.prototype = {
-        init:                           init,
-        _buildPanel:                    _buildPanel,
-        _buildSphere:                   _buildSphere,
-        _registerBeforeRender:          _registerBeforeRender,
-        place:                          place,
-        drape:                          drape,
-        onMouseDownHandler:             onMouseDownHandler,
-        onMouseOverHandler:             onMouseOverHandler
-    };
-
-    function init () {
+    RANDO.Poi.prototype.init = function () {
         this._buildPanel ();
         this._buildSphere ();
 
@@ -49,11 +41,10 @@ var RANDO = RANDO || {};
         });
     };
 
-
     /**
      * RANDO.Poi._buildPanel() : build a Panel with a picto which defines the type of POI
      */
-    function _buildPanel () {
+    RANDO.Poi.prototype._buildPanel = function () {
         var scene       = this._scene;
         var position    = this._position;
         var text        = this._name;
@@ -151,7 +142,7 @@ var RANDO = RANDO || {};
      * RANDO.Poi._buildSphere() : build a Sphere which will be on the real position 
      *  of the POI on the DEM.
      */
-    function _buildSphere() {
+    RANDO.Poi.prototype._buildSphere = function () {
         var scene       = this._scene;
         var position    = this._position;
 
@@ -174,7 +165,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Poi._registerBeforeRender() : function to call before each scene render
      */
-    function _registerBeforeRender () {
+    RANDO.Poi.prototype._registerBeforeRender = function () {
         var scene       = this._scene;
         var position    = this._position;
         var sphere      = this.sphere;
@@ -207,33 +198,45 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Poi.place() : place a POI
-     *      - position: position of POI
-     *      - offsets: offsets 
-     */
-    function place (position, offsets) {
-        if (typeof(offsets) === "undefined") {
-            var offsets = {
-                x: 0,
-                z: 0
-            };
-        }
-        var newPosition = _.clone(position);
-        newPosition.x += offsets.x;
-        newPosition.z += offsets.z;
-        return newPosition;
-    };
-
-    /**
      * RANDO.Poi.drape() : drape the POI over the DEM
      *      - ground : ground of the DEM 
      */
-    function drape(ground) {
+    RANDO.Poi.prototype.drape = function (ground) {
         RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
         RANDO.Utils.drapePoint(this.sphere.position, ground);
     };
 
     /**
+     * RANDO.Poi.onMouseDownHandler() : callback to run if the mouse is down over a picto
+     *      - evt: event informations
+     */
+    RANDO.Poi.prototype.onMouseDownHandler = function (evt) {
+        $('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
+        $('.poi--clicked').css('left', evt.clientX - 20 + 'px');
+        $('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
+        $('.poi--clicked').css('display', 'block');
+
+        $('.poi_side h2').html(this._name );
+        $('.poi_side .description').html(this._description);
+        $('.poi_side').css('display', 'block');
+
+        $('.interface').css('width', '80%');
+    };
+
+    /**
+     * RANDO.Poi.onMouseOverHandler() : callback to run if the mouse is over a picto
+     *      - evt: event informations
+     */
+    RANDO.Poi.prototype.onMouseOverHandler = function (evt) {
+        $('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
+        $('.poi--hover').css('left', evt.clientX - 20 + 'px');
+        $('.poi--hover').css('top',  evt.clientY - 40 + 'px');
+        $('.poi--hover').css('display', 'block');
+
+        $('#canvas_renderer')[0].style.cursor = 'pointer';
+    };
+
+    /** Static
      * RANDO.Poi.runMouseListener() : Static function which run all mouse 
      *  listeners linked to POIs, we give it a POI's array and it adds 
      *  mouse events over all its elements.
@@ -276,6 +279,7 @@ var RANDO = RANDO || {};
             }
         });
 
+        // Close button events of the POI side
         $(".close_btn").on('click', function () {
             $(".poi_side").css('display', 'none');
             $('.interface').css('width', '100%');
@@ -286,36 +290,6 @@ var RANDO = RANDO || {};
         $(".close_btn").mouseout( function () {
             this.style.cursor = 'default';
         });
-    };
-
-    /**
-     * RANDO.Poi.onMouseDownHandler() : callback to run if the mouse is down over a picto
-     *      - evt: event informations
-     */
-    function onMouseDownHandler (evt) {
-        $('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
-        $('.poi--clicked').css('left', evt.clientX - 20 + 'px');
-        $('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
-        $('.poi--clicked').css('display', 'block');
-
-        $('.poi_side h2').html(this._name );
-        $('.poi_side .description').html(this._description);
-        $('.poi_side').css('display', 'block');
-
-        $('.interface').css('width', '80%');
-    };
-
-    /**
-     * RANDO.Poi.onMouseOverHandler() : callback to run if the mouse is over a picto
-     *      - evt: event informations
-     */
-    function onMouseOverHandler (evt) {
-        $('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
-        $('.poi--hover').css('left', evt.clientX - 20 + 'px');
-        $('.poi--hover').css('top',  evt.clientY - 40 + 'px');
-        $('.poi--hover').css('display', 'block');
-
-        $('#canvas_renderer')[0].style.cursor = 'pointer';
     };
 
 })();

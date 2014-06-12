@@ -38,23 +38,9 @@ var RANDO = RANDO || {};
         this._offsets   = {};
     };
 
-    /* List of Methods */
-    RANDO.Scene.prototype = {
-        init:               init,
-        process_v10:        process_v10,
-        process:            process,
-        _buildCameras:      _buildCameras,
-        _buildLights:       _buildLights,
-        _buildEnvironment:  _buildEnvironment,
-        _buildCardinals:    _buildCardinals,
-        _executeWhenReady:  _executeWhenReady,
-        _parseDemJson:      _parseDemJson,
-        _parseTrekJson:     _parseTrekJson,
-        _parsePoiJson:      _parsePoiJson
-    };
 
-    
-    function init () {
+    /* Methods */
+    RANDO.Scene.prototype.init = function () {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
         var that = this;
@@ -92,7 +78,7 @@ var RANDO = RANDO || {};
      *          - the terrain 
      *          - the trek 
      */
-    function process_v10 () {
+    RANDO.Scene.prototype.process_v10 = function () {
         var that = this;
 
         $.getJSON(RANDO.SETTINGS.DEM_URL)
@@ -112,7 +98,8 @@ var RANDO = RANDO || {};
                 that._scene.render();
             }); 
             that.dem = new RANDO.Dem(
-                that._dem_data,
+                that._dem_data.extent,
+                that._dem_data.altitudes,
                 that._offsets,
                 that._scene
             );
@@ -142,7 +129,7 @@ var RANDO = RANDO || {};
      *          - Trek 
      *          - POIs
      */
-    function process () {
+    RANDO.Scene.prototype.process = function () {
         var that = this;
 
         $.getJSON(RANDO.SETTINGS.DEM_URL)
@@ -169,7 +156,8 @@ var RANDO = RANDO || {};
 
             // Tiled DEM mesh building
             that.dem = new RANDO.Dem(
-                that._dem_data,
+                that._dem_data.extent,
+                that._dem_data.altitudes,
                 that._offsets,
                 that._scene
             );
@@ -203,13 +191,12 @@ var RANDO = RANDO || {};
          })
     };
 
-
     /**
      * RANDO.Scene._buildCameras() : builds cameras of the scene
      * 
      *  If the camera ID is not available, it is changed to "demo_camera"
      */
-    function _buildCameras() {
+    RANDO.Scene.prototype._buildCameras = function () {
         var canvas          = this._canvas;
         var scene           = this._scene;
         var cameraID        = this._cameraID;
@@ -231,7 +218,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.Scene._buildLights() : builds the differents lights of the scene 
      */
-    function _buildLights() {
+    RANDO.Scene.prototype._buildLights = function () {
         var lights = this.lights;
         var scene = this._scene;
 
@@ -242,7 +229,7 @@ var RANDO = RANDO || {};
         lights.push(sun);
     };
 
-    function _buildEnvironment() {
+    RANDO.Scene.prototype._buildEnvironment = function () {
         // Fog
         //~ this._scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
         //~ this._scene.fogDensity = 0.00002;
@@ -251,12 +238,11 @@ var RANDO = RANDO || {};
         // Color : transparent to see the html background
         this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
     };
-    
-    
+
     /**
      * RANDO.Scene._buildCardinals() : builds the four cardinals points
      */
-    function _buildCardinals() {
+    RANDO.Scene.prototype._buildCardinals = function () {
         
         var tmp;
         var sph_diam = 20;
@@ -298,12 +284,11 @@ var RANDO = RANDO || {};
 
     };
 
-
     /**
      * RANDO.Scene._executeWhenReady() : function which is executed when the scene 
      *  is ready, in other words, when the scene have built all its elements.
      */
-    function _executeWhenReady () {
+    RANDO.Scene.prototype._executeWhenReady = function () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
         var scene           = this._scene;
@@ -328,99 +313,75 @@ var RANDO = RANDO || {};
         }
     };
 
-
     /**
      * RANDO.Scene._parseDemJson() : parse data from the DEM json 
      *      - data : data from DEM json
      */
-    function _parseDemJson (data) {
-        var dem_data = this._dem_data,
-            offsets  = this._offsets;
-            
-        // Scales
-        data.altitudes = RANDO.Utils.scaleArray2(
-            data.altitudes, 
-            RANDO.SETTINGS.ALTITUDES_Z_SCALE
-        );
-
+    RANDO.Scene.prototype._parseDemJson = function (data) {
         // Conversions
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.extent2meters (data.extent);
 
-        // Record DEM data
-        dem_data.o_extent = _.clone(m_extent);
-        dem_data.extent = m_extent;
-        dem_data.altitudes = data.altitudes;
-        dem_data.resolution = data.resolution; // do not need conversion
-        dem_data.o_center = {
-            x: m_center.x,
-            y: data.center.z,// altitude of center already in meters
-            z: m_center.y
-        }
-        dem_data.center = {
-            x: m_center.x,
-            y: data.center.z,// altitude of center already in meters
-            z: m_center.y
-        };
+        // Record DEM extent 
+        this._dem_data.extent = m_extent;
 
-        // Control if altitudes data coincide with resolution data
-        console.assert(dem_data.altitudes.length == dem_data.resolution.y);
-        console.assert(dem_data.altitudes[0].length == dem_data.resolution.x);
-        
-        // Records offsets
-        offsets.x = -dem_data.center.x;
-        offsets.y = dem_data.extent.altitudes.min;
-        offsets.z = -dem_data.center.z;
+        // Record DEM altitudes scaled
+        this._dem_data.altitudes = RANDO.Utils.scaleArray2(
+            data.altitudes, 
+            RANDO.SETTINGS.ALTITUDES_Z_SCALE
+        );
+
+        // Records scene offsets
+        this._offsets.x = -m_center.x;
+        this._offsets.y =  m_extent.altitudes.min;
+        this._offsets.z = -m_center.y;
     };
-
 
     /**
      * RANDO.Scene._parseTrekJson() : parse data from the Trek profile json 
      *      - data : data from Trek profile json
      */
-    function _parseTrekJson (data) {
-        var profile = data.profile;
-        var trek_data = this._trek_data;
-        
-        for (var it in profile){
+    RANDO.Scene.prototype._parseTrekJson = function (data) {
+
+        for (var it in data.profile){
             var tmp = {
-                'lat' : profile[it][2][1],
-                'lng' : profile[it][2][0]
+                'lng' : data.profile[it][2][0],
+                'lat' : data.profile[it][2][1]
             };
 
             tmp = RANDO.Utils.toMeters(tmp);
             tmp.z = tmp.y;
             tmp.y = 0;
 
-            trek_data.push(tmp);
+            // Record 
+            this._trek_data.push(tmp);
         }
     };
-    
-    
+
     /**
      * RANDO.Scene._parsePoiJson() : parse data from the POI json 
      *      - data : data from POI json
      */
-    function _parsePoiJson (data) {
-        var pois_data = this._pois_data;
-        
+    RANDO.Scene.prototype._parsePoiJson = function (data) {
+
         for (var it in data.features) {
             var feature = data.features[it];
             var coordinates = RANDO.Utils.toMeters({
-                'lat' : feature.geometry.coordinates[1],
-                'lng' : feature.geometry.coordinates[0]
+                'lng' : feature.geometry.coordinates[0],
+                'lat' : feature.geometry.coordinates[1]
+                
             });
 
-            pois_data.push ({
+            this._pois_data.push ({
                 'coordinates' : {
                     'x': coordinates.x,
-                    'y': feature.properties.elevation,
                     'z': coordinates.y
                 },
                 'properties' : feature.properties
             });
         }
     };
+
 })();
 
 
