@@ -272,6 +272,7 @@ var RANDO = RANDO || {};
                 that._keys = [];
                 that.inertialAlphaOffset = 0;
                 that.inertialBetaOffset = 0;
+                that.inertialRadiusOffset = 0;
                 previousPosition = null;
                 pointerId = null;
             };
