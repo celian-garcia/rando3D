@@ -247,11 +247,8 @@ var RANDO = RANDO || {};
 
         // Arcrotate type
         if (activeCam.id == "helico_camera" || activeCam.id == "demo_camera") {
-            console.log(this.initialPosition);
-            console.log(activeCam.position);
-            
-            
             activeCam.setPosition(this.initialPosition.clone());
+            activeCam.target = this.initialTarget.clone();
         }
         // Free type 
         else if (activeCam.id == "map_camera" || activeCam.id == "free_camera" ) {
@@ -271,7 +268,6 @@ var RANDO = RANDO || {};
             }
         }
         activeCam._reset ();
-        console.log(activeCam);
     };
 
     RANDO.CameraContainer.prototype._computeInitialParameters = function () {

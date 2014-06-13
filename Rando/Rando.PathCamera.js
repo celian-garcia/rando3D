@@ -41,6 +41,8 @@ var RANDO = RANDO || {};
         this._isMoving = false;
         this._lenghtOfBezier = 0;
         this._speed = RANDO.SETTINGS.CAM_SPEED_T;
+        this._position_transiton = null;
+        this._rotation_transiton = null;
 
         RANDO.PathCamera.prototype._initCache.call(this);
     };
@@ -263,6 +265,13 @@ var RANDO = RANDO || {};
                 }
                 that._oldState = null;
                 that._state = "stop";
+                
+                if (that._position_transition) {
+                    that._position_transition.kill();
+                }
+                if (that._rotation_transition) {
+                    that._rotation_transition.kill();
+                }
             };
         }
 
@@ -477,7 +486,7 @@ var RANDO = RANDO || {};
         var rotation_y = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
 
         // Translation
-        TweenLite.to(this.position, duration, { 
+        this._position_transition = TweenLite.to(this.position, duration, { 
             x: futurePosition.x, 
             y: futurePosition.y + RANDO.SETTINGS.CAM_OFFSET,
             z: futurePosition.z,
@@ -488,7 +497,7 @@ var RANDO = RANDO || {};
         });
 
         // Rotation
-        TweenLite.to(this.rotation, duration, { 
+        this._rotation_transition = TweenLite.to(this.rotation, duration, { 
             x: 0,
             y: rotation_y, 
             z: 0,
