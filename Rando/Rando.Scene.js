@@ -53,7 +53,6 @@ var RANDO = RANDO || {};
         }
 
         this._scene.collisionsEnabled = true;
-        this._buildCameras();
         this._buildLights();
         this._buildEnvironment();
         
@@ -135,6 +134,7 @@ var RANDO = RANDO || {};
         $.getJSON(RANDO.SETTINGS.DEM_URL)
          .done(function (data) {
             that._parseDemJson(data);
+            that._buildCameras();
          })
          .then(function () {
             return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
@@ -202,10 +202,17 @@ var RANDO = RANDO || {};
         var cameraID        = this._cameraID;
         var version         = this._version;
 
+        var params = {
+            'demCenter' : this._dem_data.center,
+            'offsets'   : this._offsets,
+            'switchEnabled' : true
+        };
+
         if (version == "1.2") {
-            this.camContainer = new RANDO.CameraContainer(canvas, scene, true);
+            this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
         } else {
-            this.camContainer = new RANDO.CameraContainer(canvas, scene, false);
+            params.switchEnabled = false;
+            this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
         }
 
         // Defines active camera
@@ -330,6 +337,12 @@ var RANDO = RANDO || {};
             data.altitudes, 
             RANDO.SETTINGS.ALTITUDES_Z_SCALE
         );
+        // Record DEM center
+        this._dem_data.center = {
+            'x' : m_center.x,
+            'y' : data.center.z,
+            'z' : m_center.y
+        };
 
         // Records scene offsets
         this._offsets.x = -m_center.x;

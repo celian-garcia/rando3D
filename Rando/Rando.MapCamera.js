@@ -426,6 +426,11 @@ var RANDO = RANDO || {};
         }
     };
 
+    
+    RANDO.MapCamera.prototype.getTarget = function () {
+        return this._currentTarget;
+    };
+
     RANDO.MapCamera.prototype._getViewMatrix = function () {
         BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
 

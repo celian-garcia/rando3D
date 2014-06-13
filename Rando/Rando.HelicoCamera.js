@@ -277,6 +277,7 @@ var RANDO = RANDO || {};
                 that.inertialAlphaOffset = 0;
                 that.inertialBetaOffset = 0;
                 that.inertialRadiusOffset = 0;
+                that.cameraDirection = new BABYLON.Vector3(0, 0, 0);
                 previousPosition = null;
                 pointerId = null;
             };
@@ -374,7 +375,7 @@ var RANDO = RANDO || {};
                         BABYLON.Matrix.RotationY(-Math.PI/2)
                     )
                 );
-            }else {
+            } else {
                 this.cameraDirection.addInPlace(this._transformedDirection);
             }
         }
