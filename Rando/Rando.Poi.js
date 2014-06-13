@@ -167,11 +167,11 @@ var RANDO = RANDO || {};
      */
     RANDO.Poi.prototype._registerBeforeRender = function () {
         var scene       = this._scene;
-        var position    = this._position;
         var sphere      = this.sphere;
         var panel       = this.panel;
 
-        if (BABYLON.Vector3.Distance(position, scene.activeCamera.position) < 300) { 
+        
+        if (BABYLON.Vector3.Distance(panel.position, scene.activeCamera.position) < 300) { 
             panel.isVisible = false;
             panel.getChildren()[0].isVisible = false;
         }
