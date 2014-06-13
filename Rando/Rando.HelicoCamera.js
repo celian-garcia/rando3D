@@ -60,6 +60,10 @@ var RANDO = RANDO || {};
     RANDO.HelicoCamera.prototype.upperBetaLimit = Math.PI;
     RANDO.HelicoCamera.prototype.lowerRadiusLimit = null;
     RANDO.HelicoCamera.prototype.upperRadiusLimit = null;
+    RANDO.HelicoCamera.prototype.lowerXLimit = null;
+    RANDO.HelicoCamera.prototype.upperXLimit = null;
+    RANDO.HelicoCamera.prototype.lowerZLimit = null;
+    RANDO.HelicoCamera.prototype.upperZLimit = null;
     RANDO.HelicoCamera.prototype.angularSensibility = 1000.0;
     RANDO.HelicoCamera.prototype.wheelPrecision = 3.0;
 
@@ -362,21 +366,15 @@ var RANDO = RANDO || {};
                 this._transformedDirection
             );
 
-            if (this.keysUp.indexOf(keyCode) !== -1) {
+            if (this.keysUp.indexOf(keyCode)   !== -1 || 
+                this.keysDown.indexOf(keyCode)  !== -1 ) {
                 this.cameraDirection.addInPlace(
                     BABYLON.Vector3.TransformNormal(
                         this._transformedDirection, 
                         BABYLON.Matrix.RotationY(-Math.PI/2)
                     )
                 );
-            } else if (this.keysDown.indexOf(keyCode) !== -1) {
-                this.cameraDirection.addInPlace(
-                    BABYLON.Vector3.TransformNormal(
-                        this._transformedDirection, 
-                        BABYLON.Matrix.RotationY(-Math.PI/2)
-                    )
-                );
-            } else {
+            }else {
                 this.cameraDirection.addInPlace(this._transformedDirection);
             }
         }
@@ -443,6 +441,18 @@ var RANDO = RANDO || {};
         }
         if (this.upperRadiusLimit && this.radius > this.upperRadiusLimit) {
             this.radius = this.upperRadiusLimit;
+        }
+        if (this.lowerXLimit && this.target.x < this.lowerXLimit) {
+            this.target.x = this.lowerXLimit;
+        }
+        if (this.upperXLimit && this.target.x > this.upperXLimit) {
+            this.target.x = this.upperXLimit;
+        }
+        if (this.lowerZLimit && this.target.z < this.lowerZLimit) {
+            this.target.z = this.lowerZLimit;
+        }
+        if (this.upperZLimit && this.target.z > this.upperZLimit) {
+            this.target.z = this.upperZLimit;
         }
     };
 

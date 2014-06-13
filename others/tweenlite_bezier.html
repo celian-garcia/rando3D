@@ -53,14 +53,14 @@
         
         
         var box = BABYLON.Mesh.CreateBox("box", 50, scene);
-        box.position.z = 500;
-        box.position.x = 200;
+        box.position.z = 0;
+        box.position.x = 0;
         
         var timeline = new TimelineLite();
         
         var quantity = 100;
-        var duration = 0.2;
-        //~ var path = vertices;
+        var duration = 2;
+
         var path = [{x:0, y:0, z: 0}, {x:50, y:100, z: 70}, {x:300, y:20, z: 140}, {x:400, y:200, z: 210}, {x:500, y:0, z: 255}];
         var position = {
             x: path[0].x,
@@ -70,39 +70,18 @@
 
         var tween = TweenLite.to(position, quantity, {bezier:path, ease:Linear.easeNone});
         console.log(path);
-        //~ timeline.add(tween);
+
         path.shift();
         for (var i = 0; i < quantity; i++) {
             tween.time(i); //jumps to the appropriate time in the tween, causing position.x and position.y to be updated accordingly.
             console.log(position);
                 
-            //~ timeline.set(camera.position, {
-                //~ x: position.x,
-                //~ y: position.y,
-                //~ z: position.z
-            //~ }, i * (duration / quantity));
-            
-            timeline.add(
-                TweenLite.to(camera.position, 0.2, {
-                    x: position.x, 
-                    y: position.y , 
-                    z: position.z, 
-                    ease: "Linear.easeNone"  
-                }) 
-            );
+            timeline.set(box.position, {
+                x: position.x,
+                y: position.y,
+                z: position.z
+            }, i * (duration / quantity));
         }
-        
-        timeline.pause(0);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function () {
@@ -114,7 +93,7 @@
  
  <script>
     function init_camera(scene){
-        var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, -50), scene);
+        var camera  = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, -500), scene);
         camera.checkCollisions = true;
         camera.maxZ = 10000;
         camera.speed = 5;
