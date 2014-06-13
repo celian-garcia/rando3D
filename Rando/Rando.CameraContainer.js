@@ -54,7 +54,7 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype._buildDemoCamera = function () {
         var demo_camera = new RANDO.ArcRotateCamera(
             "Demo Camera", 0, 0, 0,
-            BABYLON.Vector3.Zero(),
+            this.initialTarget,
             this._scene
         );
         demo_camera.id = "demo_camera";
@@ -102,11 +102,10 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype._buildHelicoCamera = function () {
         var helico_camera = new RANDO.HelicoCamera(
             "Helico Camera",0, 0, 0,
-            BABYLON.Vector3.Zero(),
+            this.initialTarget,
             this._scene
         );
         helico_camera.id = "helico_camera";
-        //~ helico_camera.setPosition(new BABYLON.Vector3(-3000, 5000, 3000));
         helico_camera.keysUp     = [90, 38]; // Touche Z and up
         helico_camera.keysDown   = [83, 40]; // Touche S and down
         helico_camera.keysLeft   = [81, 37]; // Touche Q and left
@@ -189,11 +188,11 @@ var RANDO = RANDO || {};
         if (oldID == "helico_camera" || oldID == "demo_camera") {
             
             this._positionBeforeSwitch = scene.activeCamera.getPosition();
-            this._targetBeforeSwitch = scene.activeCamera.target;
+            this._targetBeforeSwitch = scene.activeCamera.target.clone();
         } else if (oldID == "map_camera" || oldID == "free_camera" ||
                     oldID == "path_camera") {
                         
-            this._positionBeforeSwitch = scene.activeCamera.position;
+            this._positionBeforeSwitch = scene.activeCamera.position.clone();
             this._targetBeforeSwitch = scene.activeCamera.getTarget();
         }
 
@@ -249,17 +248,17 @@ var RANDO = RANDO || {};
 
         // Arcrotate type
         if (activeCam.id == "helico_camera" || activeCam.id == "demo_camera") {
-
-            activeCam.target = this.initialTarget.clone();
+            console.log(this.initialPosition);
+            console.log(activeCam.position);
+            
+            
             activeCam.setPosition(this.initialPosition.clone());
-            activeCam._reset ();
         }
         // Free type 
         else if (activeCam.id == "map_camera" || activeCam.id == "free_camera" ) {
 
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
-            activeCam._reset ();
         }
         // Path type
         else if (activeCam.id == "path_camera" ) {
@@ -271,8 +270,9 @@ var RANDO = RANDO || {};
                 activeCam.position = this.initialPosition.clone();
                 activeCam.setTarget (this.initialTarget.clone());
             }
-            activeCam._reset ();
         }
+        activeCam._reset ();
+        console.log(activeCam);
     };
 
     RANDO.CameraContainer.prototype._computeInitialParameters = function () {
