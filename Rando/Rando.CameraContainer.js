@@ -63,7 +63,6 @@ var RANDO = RANDO || {};
         demo_camera.keysLeft  = [68, 39]; // Touche Q and left
         demo_camera.keysRight = [81, 37]; // Touche D and right
         demo_camera.wheelPrecision      = 0.2;
-        demo_camera.upperBetaLimit      = Math.PI/3;
         demo_camera.lowerRadiusLimit    = 1000;
         //~ demo_camera.upperRadiusLimit    = 5000;
         demo_camera.checkCollisions     = true;
