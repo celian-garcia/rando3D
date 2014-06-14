@@ -186,7 +186,7 @@ var RANDO = RANDO || {};
         // Record the position of the old camera
         if (oldID == "helico_camera" || oldID == "demo_camera") {
             
-            this._positionBeforeSwitch = scene.activeCamera.getPosition();
+            this._positionBeforeSwitch = scene.activeCamera.position.clone();
             this._targetBeforeSwitch = scene.activeCamera.target.clone();
         } else if (oldID == "map_camera" || oldID == "free_camera" ||
                     oldID == "path_camera") {
