@@ -355,7 +355,13 @@ var RANDO = RANDO || {};
         var radiusv3 = position.subtract(this._getTargetPosition());
         this.radius = radiusv3.length();
 
-        this.alpha = Math.atan(radiusv3.z / radiusv3.x);
+        this.alpha = Math.acos(radiusv3.x / Math.sqrt(
+			Math.pow(radiusv3.x, 2) +
+			Math.pow(radiusv3.z, 2)
+        ));
+        if (radiusv3.z < 0) {
+			this.alpha = 2*Math.PI - this.alpha;
+		}
         this.beta = Math.acos(radiusv3.y / this.radius);
     };
 
