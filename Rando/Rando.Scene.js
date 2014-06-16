@@ -83,6 +83,7 @@ var RANDO = RANDO || {};
         $.getJSON(RANDO.SETTINGS.DEM_URL)
          .done(function (data) {
             that._parseDemJson(data);
+            that._buildCameras();
          })
          .then(function () {
             return $.getJSON(RANDO.SETTINGS.PROFILE_URL);

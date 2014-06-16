@@ -45,7 +45,7 @@ var RANDO = RANDO || {};
 
         RANDO.MapCamera.prototype._initCache.call(this);
 
-        //~ this._getViewMatrix();
+        //~ this.getViewMatrix();
     };
 
     RANDO.MapCamera.prototype = Object.create(BABYLON.Camera.prototype);

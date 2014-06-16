@@ -23,7 +23,7 @@ var RANDO = RANDO || {};
 
         RANDO.ArcRotateCamera.prototype._initCache.call(this);
 
-        //~ this._getViewMatrix();
+        //~ this.getViewMatrix();
     };
 
     RANDO.ArcRotateCamera.prototype = Object.create(BABYLON.Camera.prototype);

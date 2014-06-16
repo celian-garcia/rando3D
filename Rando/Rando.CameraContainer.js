@@ -181,9 +181,6 @@ var RANDO = RANDO || {};
         }
 
         var oldID = this._scene.activeCamera.id;
-        if (newID == oldID) {
-            return;
-        }
 
         // Record informations of the old camera
         this._recordInfoBeforeSwitch(oldID);
@@ -201,11 +198,10 @@ var RANDO = RANDO || {};
         this._camLight.parent = this.cameras[newID];
 
         // Interface changings
-        $(".controls--" + newID).css("display", "block");
-        $("#" + newID)[0].className = "camera camera--selected" ;
-
         $(".controls--" + oldID).css("display", "none");
         $("#" + oldID)[0].className = "camera" ;
+        $(".controls--" + newID).css("display", "block");
+        $("#" + newID)[0].className = "camera camera--selected" ;
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
