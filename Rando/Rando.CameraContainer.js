@@ -183,17 +183,8 @@ var RANDO = RANDO || {};
         var scene = this._scene;
         var oldID = scene.activeCamera.id;
 
-        // Record the position of the old camera
-        if (oldID == "helico_camera" || oldID == "demo_camera") {
-            
-            this._positionBeforeSwitch = scene.activeCamera.position.clone();
-            this._targetBeforeSwitch = scene.activeCamera.target.clone();
-        } else if (oldID == "map_camera" || oldID == "free_camera" ||
-                    oldID == "path_camera") {
-                        
-            this._positionBeforeSwitch = scene.activeCamera.position.clone();
-            this._targetBeforeSwitch = scene.activeCamera.getTarget();
-        }
+        // Record informations of the old camera
+        this._recordInfoBeforeSwitch(oldID);
 
         // Controls
         if (this._controlsAttached) {
@@ -218,6 +209,21 @@ var RANDO = RANDO || {};
         }
     };
 
+    RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
+        if (oldID == "helico_camera" || oldID == "demo_camera") {
+            
+            this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
+            this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
+            this._rotationBeforeSwitch  = null;
+        } else if (oldID == "map_camera" || oldID == "free_camera" ||
+                    oldID == "path_camera") {
+                        
+            this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
+            this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
+            this._targetBeforeSwitch    = null;
+        }
+    };
+    
     RANDO.CameraContainer.prototype.setAnimationPath = function (vertices) {
         this._animationPath = vertices;
 
@@ -250,23 +256,26 @@ var RANDO = RANDO || {};
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
+
         // Free type 
         else if (activeCam.id == "map_camera" || activeCam.id == "free_camera" ) {
-
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
+
         // Path type
         else if (activeCam.id == "path_camera" ) {
-
-            if (this._positionBeforeSwitch && this._targetBeforeSwitch) {
-                activeCam.position = this._positionBeforeSwitch.clone();
-                activeCam.setTarget (this._targetBeforeSwitch.clone());
-            } else {
-                activeCam.position = this.initialPosition.clone();
-                activeCam.setTarget (this.initialTarget.clone());
+            if (this._positionBeforeSwitch) {
+                activeCam.position = this._positionBeforeSwitch;
+            } 
+            if (this._rotationBeforeSwitch) {
+                activeCam.rotation = this._rotationBeforeSwitch;
+            }
+            if (this._targetBeforeSwitch) {
+                activeCam.setTarget(this._targetBeforeSwitch);
             }
         }
+
         activeCam._reset ();
     };
 
