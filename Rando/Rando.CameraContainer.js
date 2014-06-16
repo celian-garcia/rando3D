@@ -17,6 +17,7 @@ var RANDO = RANDO || {};
         this._scene     = scene;
         this._switchEnabled     = params.switchEnabled || false;
         this._demCenter         = params.demCenter || BABYLON.Vector3.Zero();
+        this._demExtent         = params.demExtent || BABYLON.Vector3.Zero();
         this._offsets           = params.offsets || BABYLON.Vector3.Zero();
 
         this.cameras    = {};

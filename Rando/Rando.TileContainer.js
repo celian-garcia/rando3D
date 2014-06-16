@@ -38,15 +38,15 @@ var RANDO = RANDO || {};
     RANDO.TileContainer.prototype._generateTiles = function () {
         var zoom = RANDO.SETTINGS.TILE_ZOOM;
         var tiles = this._tiles;
-        
+
         this._grid = RANDO.Utils.createElevationGrid(
-            this._extent.southwest, 
-            this._extent.southeast,
-            this._extent.northeast,
-            this._extent.northwest,
+            this._extent.x.min, 
+            this._extent.x.max,
+            this._extent.z.min,
+            this._extent.z.max,
             this._altitudes
         );
-        
+
         var grid = this._grid;
         
         var curr_index,  prev_index  = null,

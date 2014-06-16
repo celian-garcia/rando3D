@@ -206,6 +206,7 @@ var RANDO = RANDO || {};
         var params = {
             'demCenter' : this._dem_data.center,
             'offsets'   : this._offsets,
+            'demExtent' : this._dem_data.extent,
             'switchEnabled' : true
         };
 
@@ -248,51 +249,6 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene._buildCardinals() : builds the four cardinals points
-     */
-    RANDO.Scene.prototype._buildCardinals = function () {
-        
-        var tmp;
-        var sph_diam = 20;
-        var matA = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        var A = BABYLON.Mesh.CreateSphere("SphereA", 5, sph_diam, scene);
-        tmp = extent.northwest;
-        A.position.x = tmp.x;
-        A.position.y = 1500;
-        A.position.z = tmp.y;
-        matA.diffuseColor = new BABYLON.Color3(255,255,255);
-        A.material = matA;
-        
-        var matB = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        var B = BABYLON.Mesh.CreateSphere("SphereB", 5, sph_diam, scene);
-        tmp = extent.northeast;
-        B.position.x = tmp.x;
-        B.position.y = 1500;
-        B.position.z = tmp.y;
-        matB.diffuseColor = new BABYLON.Color3(255,0,0);
-        B.material = matB;
-        
-        var matC = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        var C = BABYLON.Mesh.CreateSphere("SphereC", 5, sph_diam, scene);
-        tmp = extent.southeast;
-        C.position.x = tmp.x;
-        C.position.y = 1500;
-        C.position.z = tmp.y;
-        matC.diffuseColor = new BABYLON.Color3(0,0,255);
-        C.material = matC;
-        
-        var matD = new BABYLON.StandardMaterial("SphereMaterial", scene);
-        var D = BABYLON.Mesh.CreateSphere("SphereD", 5, sph_diam, scene);
-        tmp = extent.southwest;
-        D.position.x = tmp.x;
-        D.position.y = 1500;
-        D.position.z = tmp.y;
-        matD.diffuseColor = new BABYLON.Color3(0,255,0);
-        D.material = matD;
-
-    };
-
-    /**
      * RANDO.Scene._executeWhenReady() : function which is executed when the scene 
      *  is ready, in other words, when the scene have built all its elements.
      */
@@ -328,7 +284,7 @@ var RANDO = RANDO || {};
     RANDO.Scene.prototype._parseDemJson = function (data) {
         // Conversions
         var m_center = RANDO.Utils.toMeters(data.center);
-        var m_extent = RANDO.Utils.extent2meters (data.extent);
+        var m_extent = RANDO.Utils.getMetersExtent (data.extent);
 
         // Record DEM extent 
         this._dem_data.extent = m_extent;
@@ -347,7 +303,7 @@ var RANDO = RANDO || {};
 
         // Records scene offsets
         this._offsets.x = -m_center.x;
-        this._offsets.y =  m_extent.altitudes.min;
+        this._offsets.y =  m_extent.y.min;
         this._offsets.z = -m_center.y;
     };
 

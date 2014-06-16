@@ -37,6 +37,7 @@ var RANDO = RANDO || {};
             this._altitudes,
             this._offsets
         )._tiles;
+
         this.buildGround();
         this.buildSides();
     };
@@ -68,7 +69,7 @@ var RANDO = RANDO || {};
         console.log("Sides building... " + (Date.now() - RANDO.START_TIME) );
 
         var frame = RANDO.Utils.getFrameFromTiles(this._tiles);
-        var alt_min = this._extent.altitudes.min - this._min_thickness;
+        var alt_min = this._extent.y.min - this._min_thickness;
 
         // Creates differents sides
         var e_side = this._buildSide("East Side",  frame.east,  alt_min, false);
@@ -96,7 +97,7 @@ var RANDO = RANDO || {};
         var scene   = this._scene;
         var engine  = scene.getEngine();
         var that    = this;
-        
+
         // Creates Tile
         var tile = RANDO.Utils.createGroundFromGrid(
             "Tile",
@@ -159,14 +160,15 @@ var RANDO = RANDO || {};
     };
 
     RANDO.Dem.prototype.buildScaleViewer = function () {
-        var corner = this._extent.southwest;
+        var xmin = this._extent.x.min;
+        var zmin = this._extent.z.min;
         var scene = this._scene;
 
         var width  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.width;
         var height  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.height;
         var A = {
-            'x': corner.x + this._offsets.x,
-            'y': corner.z + this._offsets.z
+            'x': xmin + this._offsets.x,
+            'y': zmin + this._offsets.z
         };
         var B = {
             'x': A.x + width,

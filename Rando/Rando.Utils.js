@@ -427,10 +427,10 @@ RANDO.Utils.getSize = function (mesh) {
 }
 
 RANDO.Utils.isInExtent = function (coordinates, extent) {
-    if (coordinates.x > extent.northwest.x 
-     && coordinates.x < extent.northeast.x 
-     && coordinates.z < extent.northeast.z
-     && coordinates.z > extent.southeast.z ) {
+    if (coordinates.x > extent.x.min
+     && coordinates.x < extent.x.max
+     && coordinates.z > extent.z.min
+     && coordinates.z < extent.z.max ) {
         return true;
     }
     return false;
@@ -524,14 +524,14 @@ RANDO.Utils.subdivide = function (n, A, B) {
  * 
  * 
  * Example of quadrilatere :
- * A *------------------* B
+ * D *------------------* C
  *   |                   \
  *   |                    \
  *   |                     \
  *   |                      \
  *   |                       \
  *   |                        \
- * D *-------------------------* C
+ * A *-------------------------* B
  * 
  */
 RANDO.Utils.createFlatGrid = function (A, B, C, D, n_horiz, n_verti) {
@@ -562,7 +562,24 @@ RANDO.Utils.createFlatGrid = function (A, B, C, D, n_horiz, n_verti) {
  *
  * 
  */
-RANDO.Utils.createElevationGrid = function (A, B, C, D, altitudes) {
+RANDO.Utils.createElevationGrid = function (xmin, xmax, ymin, ymax, altitudes) {
+    var A = {
+        'x' : xmin,
+        'y' : ymin
+    };
+    var B = {
+        'x' : xmax,
+        'y' : ymin
+    };
+    var C = {
+        'x' : xmax,
+        'y' : ymax
+    };
+    var D = {
+        'x' : xmin,
+        'y' : ymax
+    };
+
     // Creates grid from extent datas
     var grid = RANDO.Utils.createFlatGrid(
         A, B, C, D,
@@ -727,6 +744,7 @@ RANDO.Utils.scaleArray2 = function (array2, scale) {
     return result;
 };
 
+
 /****    GETTERS     ************************/
 /**tested
  * getUrlFromCoordinates(): get the url of a tile texture 
@@ -861,22 +879,26 @@ RANDO.Utils.toLatlng = function (point) {
 }
 
 /**
- * extent2meters() : convert the four corners of the DEM in meters 
+ * getMetersExtent() : get the extent of the DEM in meters
  *      - extent : extent of the DEM in latitudes/longitudes
  */
-RANDO.Utils.extent2meters = function (extent) {
-    var lngmin = Math.min(extent.northwest.lng, extent.southwest.lng);
-    var latmin = Math.min(extent.southwest.lat, extent.southeast.lat);
-    var lngmalng = Math.min(extent.southeast.lng, extent.northeast.lng);
-    var latmalng = Math.min(extent.northwest.lat, extent.northeast.lat);
+RANDO.Utils.getMetersExtent = function (extent) {
+    var nw = RANDO.Utils.toMeters(extent.northwest);
+    var ne = RANDO.Utils.toMeters(extent.northeast);
+    var sw = RANDO.Utils.toMeters(extent.southwest);
+    var se = RANDO.Utils.toMeters(extent.southeast);
 
     return {
-        'northwest' : RANDO.Utils.toMeters({lng: lngmin, lat: latmalng}),
-        'northeast' : RANDO.Utils.toMeters({lng: lngmalng, lat: latmalng}),
-        'southeast' : RANDO.Utils.toMeters({lng: lngmalng, lat: latmin}),
-        'southwest' : RANDO.Utils.toMeters({lng: lngmin, lat: latmin}),
-        'altitudes' : extent.altitudes
-    };
+        'x' : {
+            'min' : Math.min(nw.x, sw.x),
+            'max' : Math.min(ne.x, se.x)
+        },
+        'y' : extent.altitudes,
+        'z' : {
+            'min' : Math.min(sw.y, se.y),
+            'max' : Math.min(nw.y, ne.y)
+        },
+    }
 };
 
 /**
