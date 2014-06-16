@@ -180,33 +180,32 @@ var RANDO = RANDO || {};
             return;
         }
 
-        var scene = this._scene;
-        var oldID = scene.activeCamera.id;
+        var oldID = this._scene.activeCamera.id;
+        if (newID == oldID) {
+            return;
+        }
 
         // Record informations of the old camera
         this._recordInfoBeforeSwitch(oldID);
 
-        // Controls
+        // Attach & detach controls of cameras
         if (this._controlsAttached) {
-            scene.activeCamera.detachControl();
+            this.cameras[oldID].detachControl();
         }
-
-        // Set camera
-        scene.setActiveCameraByID (newID);
-        
-        scene.activeCamera.attachControl(this._canvas);
+        this.cameras[newID].attachControl(this._canvas);
         this._controlsAttached = true;
+
+        // Update camera
+        this._scene.setActiveCameraByID (newID);
         this._resetByDefault();
         this._camLight.parent = this.cameras[newID];
 
         // Interface changings
         $(".controls--" + newID).css("display", "block");
         $("#" + newID)[0].className = "camera camera--selected" ;
-        
-        if (newID != oldID) {
-            $(".controls--" + oldID).css("display", "none");
-            $("#" + oldID)[0].className = "camera" ;
-        }
+
+        $(".controls--" + oldID).css("display", "none");
+        $("#" + oldID)[0].className = "camera" ;
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
@@ -237,7 +236,8 @@ var RANDO = RANDO || {};
 
         if (!this._switchEnabled) {
             return;
-        }else {
+        }
+        else {
              $(".camera_switcher").css("display", "block");
         }
 
