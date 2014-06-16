@@ -40,7 +40,6 @@ var RANDO = RANDO || {};
         this._oldState = null;
         this._isMoving = false;
         this._lenghtOfBezier = 0;
-        this._speed = RANDO.SETTINGS.CAM_SPEED_T;
         this._position_transiton = null;
         this._rotation_transiton = null;
 
@@ -50,7 +49,8 @@ var RANDO = RANDO || {};
     RANDO.PathCamera.prototype = Object.create(BABYLON.Camera.prototype);
 
     // Members
-    RANDO.PathCamera.prototype.speed = 2.0;
+    RANDO.PathCamera.prototype.returnSpeed = RANDO.SETTINGS.PCAM_RETURN_SPEED;
+    RANDO.PathCamera.prototype.followSpeed = RANDO.SETTINGS.PCAM_FOLLOW_SPEED;
     RANDO.PathCamera.prototype.checkCollisions = false;
     RANDO.PathCamera.prototype.applyGravity = false;
     RANDO.PathCamera.prototype.noRotationConstraint = false;
@@ -106,11 +106,6 @@ var RANDO = RANDO || {};
 
         return (this._cache.lockedTarget ? this._cache.lockedTarget.equals(lockedTargetPosition) : !lockedTargetPosition)
             && this._cache.rotation.equals(this.rotation);
-    };
-
-    // Methods
-    RANDO.PathCamera.prototype._computeLocalCameraSpeed = function () {
-        return this.speed * ((BABYLON.Tools.GetDeltaTime() / (BABYLON.Tools.GetFps() * 10.0)));
     };
 
     // Target
@@ -359,7 +354,7 @@ var RANDO = RANDO || {};
                     this._isMoving = true;
                     this._timeline.pause();
                     var that = this;
-                    this.moveTo(this._path[0], this._path[1], 3, function(){
+                    this.moveTo(this._path[0], this._path[1], this.returnSpeed, function(){
                         that._timeline.pause(0);
                         that._isMoving = false;
                     });
@@ -429,7 +424,7 @@ var RANDO = RANDO || {};
             return;
         }
         if (!this._lengthOfBezier) {
-            this._lengthOfBezier = this._path.length*2;
+            this._lengthOfBezier = this._path.length * 2;
         }
 
         // Reinitialize timeline
@@ -445,7 +440,7 @@ var RANDO = RANDO || {};
 
         // Initials parameters of animation 
         var quantity = this._lengthOfBezier;
-        var duration = this._lengthOfBezier / this._speed;
+        var duration = this._lengthOfBezier / this.followSpeed;
         var position = {
             x: this._path[0].x,
             y: this._path[0].y,
@@ -482,9 +477,11 @@ var RANDO = RANDO || {};
         this._state = "stop";
     };
 
-    RANDO.PathCamera.prototype.moveTo = function (futurePosition, futureTarget, duration, onComplete) {
+    RANDO.PathCamera.prototype.moveTo = function (futurePosition, futureTarget, speed, onComplete) {
         var rotation_y = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
 
+        var distance = BABYLON.Vector3.Distance(this.position, futurePosition);
+        var duration = distance / speed;
         // Translation
         this._position_transition = TweenLite.to(this.position, duration, { 
             x: futurePosition.x, 

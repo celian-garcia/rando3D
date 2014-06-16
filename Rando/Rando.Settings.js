@@ -16,7 +16,8 @@ RANDO.SETTINGS.FAKE_TEX_URL; // Url of the fake texture
 // Camera 
 RANDO.SETTINGS.CAM_OFFSET = 200; // Camera's altitude offset (in meters)
 
-RANDO.SETTINGS.CAM_SPEED_T = 20; // Camera speed in Trek following mode 
+RANDO.SETTINGS.PCAM_FOLLOW_SPEED = 25; // PathCamera speed when it follows trek
+RANDO.SETTINGS.PCAM_RETURN_SPEED = 2500; // PathCamera speed when it comes back to default
 RANDO.SETTINGS.CAM_SPEED_F = 50;  // Camera speed in Flying mode(from 0 to infinity !) 
 ////////////////////////////////////////////////////////////////////////////////
 
