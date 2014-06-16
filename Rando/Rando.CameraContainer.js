@@ -96,35 +96,12 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraContainer._buildHelicoCamera() : build of the Helico camera
-     */
-    RANDO.CameraContainer.prototype._buildHelicoCamera = function () {
-        var helico_camera = new RANDO.HelicoCamera(
-            "Helico Camera",0, 0, 0,
-            this.initialTarget,
-            this._scene
-        );
-        helico_camera.id = "helico_camera";
-        helico_camera.keysUp     = [90, 38]; // Touche Z and up
-        helico_camera.keysDown   = [83, 40]; // Touche S and down
-        helico_camera.keysLeft   = [81, 37]; // Touche Q and left
-        helico_camera.keysRight  = [68, 39]; // Touche D and right
-
-        helico_camera.wheelPrecision = 0.1;
-        helico_camera.checkCollisions = true;
-        helico_camera.maxZ = 10000;
-        helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-
-        this.cameras.helico_camera = helico_camera;
-    };
-
-    /**
-     * RANDO.CameraContainer._buildMapCamera() : build of the Map camera
+     * RANDO.CameraContainer._buildMapCamera() : build of the Helico camera
      */
     RANDO.CameraContainer.prototype._buildMapCamera = function () {
         var map_camera = new RANDO.MapCamera(
-            "Map Camera", 
-            BABYLON.Vector3.Zero(),
+            "Map Camera",0, 0, 0,
+            this.initialTarget,
             this._scene
         );
         map_camera.id = "map_camera";
@@ -133,11 +110,34 @@ var RANDO = RANDO || {};
         map_camera.keysLeft   = [81, 37]; // Touche Q and left
         map_camera.keysRight  = [68, 39]; // Touche D and right
 
+        map_camera.wheelPrecision = 0.1;
         map_camera.checkCollisions = true;
         map_camera.maxZ = 10000;
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
         this.cameras.map_camera = map_camera;
+    };
+
+    /**
+     * RANDO.CameraContainer._buildHelicoCamera() : build of the Map camera
+     */
+    RANDO.CameraContainer.prototype._buildHelicoCamera = function () {
+        var helico_camera = new RANDO.HelicoCamera(
+            "Map Camera", 
+            BABYLON.Vector3.Zero(),
+            this._scene
+        );
+        helico_camera.id = "helico_camera";
+        helico_camera.keysUp     = [90, 38]; // Touche Z and up
+        helico_camera.keysDown   = [83, 40]; // Touche S and down
+        helico_camera.keysLeft   = [81, 37]; // Touche Q and left
+        helico_camera.keysRight  = [68, 39]; // Touche D and right
+
+        helico_camera.checkCollisions = true;
+        helico_camera.maxZ = 10000;
+        helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+
+        this.cameras.helico_camera = helico_camera;
     };
 
     /**
@@ -209,12 +209,12 @@ var RANDO = RANDO || {};
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
-        if (oldID == "helico_camera" || oldID == "demo_camera") {
+        if (oldID == "map_camera" || oldID == "demo_camera") {
             
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
-        } else if (oldID == "map_camera" || oldID == "free_camera" ||
+        } else if (oldID == "helico_camera" || oldID == "free_camera" ||
                     oldID == "path_camera") {
                         
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
@@ -252,13 +252,13 @@ var RANDO = RANDO || {};
         var activeCam = this._scene.activeCamera;
 
         // Arcrotate type
-        if (activeCam.id == "helico_camera" || activeCam.id == "demo_camera") {
+        if (activeCam.id == "map_camera" || activeCam.id == "demo_camera") {
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
 
         // Free type 
-        else if (activeCam.id == "map_camera" || activeCam.id == "free_camera" ) {
+        else if (activeCam.id == "helico_camera" || activeCam.id == "free_camera" ) {
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
