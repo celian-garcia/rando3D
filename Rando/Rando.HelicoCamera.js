@@ -45,7 +45,7 @@ var RANDO = RANDO || {};
 
         RANDO.HelicoCamera.prototype._initCache.call(this);
 
-        this.getViewMatrix();
+        //~ this._getViewMatrix();
     };
 
     RANDO.HelicoCamera.prototype = Object.create(BABYLON.Camera.prototype);
