@@ -355,12 +355,6 @@ var RANDO = RANDO || {};
         if (needToMove) {
             if (this.checkCollisions && this._scene.collisionsEnabled) {
                 this._collideWithWorld(this.cameraDirection);
-
-                if (this.applyGravity) {
-                    var oldPosition = this.position;
-                    this._collideWithWorld(this._scene.gravity);
-                    this._needMoveForGravity = (BABYLON.Vector3.DistanceSquared(oldPosition, this.position) != 0);
-                }
             } else {
                 this.position.addInPlace(this.cameraDirection);
             }
@@ -393,7 +387,12 @@ var RANDO = RANDO || {};
             );
 
             this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
-            this.position.addInPlace(this._positionAfterZoom);
+            
+            if (this.checkCollisions && this._scene.collisionsEnabled) {
+                this._collideWithWorld(this._positionAfterZoom);
+            } else {
+                this.position.addInPlace(this._positionAfterZoom);
+            }
         }
 
         // Inertia
