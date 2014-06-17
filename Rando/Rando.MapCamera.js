@@ -383,10 +383,18 @@ var RANDO = RANDO || {};
 
     RANDO.MapCamera.prototype._update = function () {
         this._checkInputs();
+
+        var needToMove = (
+            Math.abs(this.cameraDirection.x) > 0 ||
+            Math.abs(this.cameraDirection.y) > 0 ||
+            Math.abs(this.cameraDirection.z) > 0
+        );
         
-        var needToMove =    Math.abs(this.cameraDirection.x) > 0 || 
-                            Math.abs(this.cameraDirection.y) > 0 || 
-                            Math.abs(this.cameraDirection.z) > 0;
+        var needToRotateOrZoom = (
+            this.inertialAlphaOffset != 0 ||
+            this.inertialBetaOffset  != 0 ||
+            this.inertialRadiusOffset != 0
+        );
 
         // Inertia
         if (needToMove) {
@@ -404,14 +412,14 @@ var RANDO = RANDO || {};
                 this.cameraDirection.z = 0;
         }
 
-        if (this.inertialAlphaOffset != 0 || this.inertialBetaOffset != 0 || this.inertialRadiusOffset != 0) {
-            this.alpha += this.inertialAlphaOffset;
-            this.beta += this.inertialBetaOffset;
+        if (needToRotateOrZoom) {
+            this.alpha  += this.inertialAlphaOffset;
+            this.beta   += this.inertialBetaOffset;
             this.radius -= this.inertialRadiusOffset;
 
-            this.inertialAlphaOffset *= this.inertia;
-            this.inertialBetaOffset *= this.inertia;
-            this.inertialRadiusOffset *= this.inertia;
+            this.inertialAlphaOffset    *= this.inertia;
+            this.inertialBetaOffset     *= this.inertia;
+            this.inertialRadiusOffset   *= this.inertia;
 
             if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
                 this.inertialAlphaOffset = 0;
@@ -443,7 +451,6 @@ var RANDO = RANDO || {};
             this.radius = this.upperRadiusLimit;
         }
         if (this.lowerXLimit && this.target.x < this.lowerXLimit) {
-            console.log("Touch the left side ! ");
             this.target.x = this.lowerXLimit;
         }
         if (this.upperXLimit && this.target.x > this.upperXLimit) {
