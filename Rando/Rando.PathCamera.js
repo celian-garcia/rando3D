@@ -49,8 +49,8 @@ var RANDO = RANDO || {};
     RANDO.PathCamera.prototype = Object.create(BABYLON.Camera.prototype);
 
     // Members
-    RANDO.PathCamera.prototype.returnSpeed = RANDO.SETTINGS.PCAM_RETURN_SPEED;
-    RANDO.PathCamera.prototype.followSpeed = RANDO.SETTINGS.PCAM_FOLLOW_SPEED;
+    RANDO.PathCamera.prototype.returnSpeed = 2000;
+    RANDO.PathCamera.prototype.followSpeed = 20;
     RANDO.PathCamera.prototype.checkCollisions = false;
     RANDO.PathCamera.prototype.applyGravity = false;
     RANDO.PathCamera.prototype.noRotationConstraint = false;

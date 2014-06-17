@@ -22,7 +22,6 @@ var RANDO = RANDO || {};
 
         this.cameras    = {};
 
-        this._camLight  = null;
         this._animationPath = null;
         this._controlsAttached  = false;
         this._positionBeforeSwitch = null;
@@ -34,6 +33,8 @@ var RANDO = RANDO || {};
         this.lowerZLimit        = null;
         this.upperXLimit        = null;
         this.upperZLimit        = null;
+        this.lowerRadiusLimit   = null;
+        this.upperRadiusLimit   = null;
 
         this.init();
     };
@@ -49,7 +50,6 @@ var RANDO = RANDO || {};
         this._buildHelicoCamera ();
         this._buildMapCamera ();
         this._buildPathCamera ();
-        this._buildAttachedLight ();
         this._cameraSwitcher ();
     };
 
@@ -68,8 +68,8 @@ var RANDO = RANDO || {};
         demo_camera.keysLeft  = [68, 39]; // Touche Q and left
         demo_camera.keysRight = [81, 37]; // Touche D and right
         demo_camera.wheelPrecision      = 0.2;
-        demo_camera.lowerRadiusLimit    = 1000;
-        //~ demo_camera.upperRadiusLimit    = 5000;
+        demo_camera.lowerRadiusLimit    = this.lowerRadiusLimit;
+        demo_camera.upperRadiusLimit    = this.upperRadiusLimit;
         demo_camera.checkCollisions     = true;
         demo_camera.maxZ    = 10000;
         demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
@@ -121,7 +121,6 @@ var RANDO = RANDO || {};
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         
         map_camera.lowerXLimit = this.lowerXLimit;
-        console.log(map_camera.lowerXLimit)
         map_camera.lowerZLimit = this.lowerZLimit;
         map_camera.upperXLimit = this.upperXLimit;
         map_camera.upperZLimit = this.upperZLimit;
@@ -164,19 +163,12 @@ var RANDO = RANDO || {};
 
         path_camera.checkCollisions = true;
         path_camera.maxZ = 10000;
-        path_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+
+        path_camera.returnSpeed = RANDO.SETTINGS.PCAM_RETURN_SPEED;
+        path_camera.followSpeed = RANDO.SETTINGS.PCAM_FOLLOW_SPEED;
+        
 
         this.cameras.path_camera = path_camera;
-    };
-
-    /**
-     * RANDO.CameraContainer._buildAttachedLight() : build the attached light of camera
-     */
-    RANDO.CameraContainer.prototype._buildAttachedLight = function () {
-        var scene = this._scene;
-        this._camLight = new BABYLON.HemisphericLight("Camera Light", new BABYLON.Vector3(0,1000,0), scene)
-        this._camLight.intensity = 0.8;
-        this._camLight.specular = new BABYLON.Color4(0, 0, 0, 0);
     };
 
     /**
@@ -206,7 +198,7 @@ var RANDO = RANDO || {};
         // Update camera
         this._scene.setActiveCameraByID (newID);
         this._resetByDefault();
-        this._camLight.parent = this.cameras[newID];
+        //~ this._camLight.parent = this.cameras[newID];
 
         // Interface changings
         $(".controls--" + oldID).css("display", "none");
@@ -302,6 +294,9 @@ var RANDO = RANDO || {};
         this.upperXLimit = this._demExtent.x.max + this._offsets.x;
         this.lowerZLimit = this._demExtent.z.min + this._offsets.z;
         this.upperZLimit = this._demExtent.z.max + this._offsets.z;
+        
+        this.lowerRadiusLimit = RANDO.SETTINGS.MIN_THICKNESS + this._demCenter.y;
+        this.upperRadiusLimit = 8000;
     };
 
 })();

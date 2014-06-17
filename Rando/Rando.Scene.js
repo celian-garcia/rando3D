@@ -232,7 +232,12 @@ var RANDO = RANDO || {};
         var scene = this._scene;
 
         // Sun
-        var sun = new BABYLON.HemisphericLight("Sun", new BABYLON.Vector3(500, 2000, 0), scene);
+        var sun = new BABYLON.HemisphericLight(
+            "Sun", 
+            new BABYLON.Vector3(500, 2000, 0), 
+            scene
+        );
+        sun.intensity = 2;
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
 
         lights.push(sun);
