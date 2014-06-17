@@ -14,10 +14,6 @@ var RANDO = RANDO || {};
         this.keysPlayPause = [32];
         this.keysStop  = [13];
 
-        // Collisions
-        this._collider = new BABYLON.Collider();
-        this._needMoveForGravity = true;
-
         // Internals
         this._currentTarget = BABYLON.Vector3.Zero();
         this._viewMatrix = BABYLON.Matrix.Zero();
@@ -297,21 +293,6 @@ var RANDO = RANDO || {};
         this._attachedCanvas = null;
         if (this._reset) {
             this._reset();
-        }
-    };
-
-    RANDO.PathCamera.prototype._collideWithWorld = function (velocity) {
-        this.position.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPosition);
-        this._collider.radius = this.ellipsoid;
-
-        this._scene._getNewPosition(this._oldPosition, velocity, this._collider, 3, this._newPosition);
-        this._newPosition.subtractToRef(this._oldPosition, this._diffPosition);
-
-        if (this._diffPosition.length() > BABYLON.Engine.collisionsEpsilon) {
-            this.position.addInPlace(this._diffPosition);
-            if (this.onCollide) {
-                this.onCollide(this._collider.collidedMesh);
-            }
         }
     };
 
