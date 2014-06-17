@@ -323,20 +323,20 @@ var RANDO = RANDO || {};
         }
     };
 
-    //~ RANDO.MapCamera.prototype._collideWithWorld = function (velocity) {
-        //~ this.position.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPosition);
-        //~ this._collider.radius = this.ellipsoid;
-//~ 
-        //~ this._scene._getNewPosition(this._oldPosition, velocity, this._collider, 3, this._newPosition);
-        //~ this._newPosition.subtractToRef(this._oldPosition, this._diffPosition);
-//~ 
-        //~ if (this._diffPosition.length() > BABYLON.Engine.collisionsEpsilon) {
-            //~ this.position.addInPlace(this._diffPosition);
-            //~ if (this.onCollide) {
-                //~ this.onCollide(this._collider.collidedMesh);
-            //~ }
-        //~ }
-    //~ };
+    RANDO.MapCamera.prototype._collideWithWorld = function (velocity) {
+        this.position.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPosition);
+        this._collider.radius = this.ellipsoid;
+
+        this._scene._getNewPosition(this._oldPosition, velocity, this._collider, 3, this._newPosition);
+        this._newPosition.subtractToRef(this._oldPosition, this._diffPosition);
+
+        if (this._diffPosition.length() > BABYLON.Engine.collisionsEpsilon) {
+            this.position.addInPlace(this._diffPosition);
+            if (this.onCollide) {
+                this.onCollide(this._collider.collidedMesh);
+            }
+        }
+    };
 
     RANDO.MapCamera.prototype._checkInputs = function () {
         if (!this._localDirection) {
@@ -384,15 +384,16 @@ var RANDO = RANDO || {};
     RANDO.MapCamera.prototype._update = function () {
         this._checkInputs();
         
-        var needToMove = Math.abs(this.cameraDirection.x) > 0 || Math.abs(this.cameraDirection.y) > 0 || Math.abs(this.cameraDirection.z) > 0;
-    
-        // Move
-        if (needToMove) {
-            this.target.addInPlace(this.cameraDirection);
-        }
+        var needToMove =    Math.abs(this.cameraDirection.x) > 0 || 
+                            Math.abs(this.cameraDirection.y) > 0 || 
+                            Math.abs(this.cameraDirection.z) > 0;
 
         // Inertia
         if (needToMove) {
+            this.target.addInPlace(this.cameraDirection);
+
+            this.cameraDirection.scaleInPlace(this.inertia);
+
             if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
                 this.cameraDirection.x = 0;
 
@@ -401,8 +402,6 @@ var RANDO = RANDO || {};
 
             if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
                 this.cameraDirection.z = 0;
-
-            this.cameraDirection.scaleInPlace(this.inertia);
         }
 
         if (this.inertialAlphaOffset != 0 || this.inertialBetaOffset != 0 || this.inertialRadiusOffset != 0) {
@@ -444,6 +443,7 @@ var RANDO = RANDO || {};
             this.radius = this.upperRadiusLimit;
         }
         if (this.lowerXLimit && this.target.x < this.lowerXLimit) {
+            console.log("Touch the left side ! ");
             this.target.x = this.lowerXLimit;
         }
         if (this.upperXLimit && this.target.x > this.upperXLimit) {

@@ -16,8 +16,8 @@ var RANDO = RANDO || {};
         this._canvas    = canvas;
         this._scene     = scene;
         this._switchEnabled     = params.switchEnabled || false;
-        this._demCenter         = params.demCenter || BABYLON.Vector3.Zero();
-        this._demExtent         = params.demExtent || BABYLON.Vector3.Zero();
+        this._demCenter         = _.clone(params.demCenter) || BABYLON.Vector3.Zero();
+        this._demExtent         = _.clone(params.demExtent) || BABYLON.Vector3.Zero();
         this._offsets           = params.offsets || BABYLON.Vector3.Zero();
 
         this.cameras    = {};
@@ -30,6 +30,10 @@ var RANDO = RANDO || {};
 
         this.initialPosition    = BABYLON.Vector3.Zero();
         this.initialTarget      = BABYLON.Vector3.Zero();
+        this.lowerXLimit        = null;
+        this.lowerZLimit        = null;
+        this.upperXLimit        = null;
+        this.upperZLimit        = null;
 
         this.init();
     };
@@ -115,6 +119,12 @@ var RANDO = RANDO || {};
         map_camera.checkCollisions = true;
         map_camera.maxZ = 10000;
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        
+        map_camera.lowerXLimit = this.lowerXLimit;
+        console.log(map_camera.lowerXLimit)
+        map_camera.lowerZLimit = this.lowerZLimit;
+        map_camera.upperXLimit = this.upperXLimit;
+        map_camera.upperZLimit = this.upperZLimit;
 
         this.cameras.map_camera = map_camera;
     };
@@ -287,6 +297,11 @@ var RANDO = RANDO || {};
         this.initialTarget.x = this._demCenter.x;
         this.initialTarget.y = this._demCenter.y;
         this.initialTarget.z = this._demCenter.z;
+
+        this.lowerXLimit = this._demExtent.x.min + this._offsets.x;
+        this.upperXLimit = this._demExtent.x.max + this._offsets.x;
+        this.lowerZLimit = this._demExtent.z.min + this._offsets.z;
+        this.upperZLimit = this._demExtent.z.max + this._offsets.z;
     };
 
 })();
