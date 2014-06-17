@@ -284,9 +284,9 @@ var RANDO = RANDO || {};
         this._demCenter.x += this._offsets.x;
         this._demCenter.z += this._offsets.z;
 
-        this.initialPosition.x = this._demCenter.x - 3000;
+        this.initialPosition.x = this._demCenter.x + 3000;
         this.initialPosition.y = this._demCenter.y + 1000;
-        this.initialPosition.z = this._demCenter.z - 3000;
+        this.initialPosition.z = this._demCenter.z + 3000;
 
         this.initialTarget.x = this._demCenter.x;
         this.initialTarget.y = this._demExtent.y.min;
