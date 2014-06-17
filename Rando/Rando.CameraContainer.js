@@ -72,7 +72,6 @@ var RANDO = RANDO || {};
         demo_camera.upperRadiusLimit    = this.upperRadiusLimit;
         demo_camera.checkCollisions     = true;
         demo_camera.maxZ    = 10000;
-        demo_camera.speed   = RANDO.SETTINGS.CAM_SPEED_F ;
 
         this.cameras.demo_camera = demo_camera;
     };

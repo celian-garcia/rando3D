@@ -22,8 +22,6 @@ var RANDO = RANDO || {};
         this._viewMatrix = new BABYLON.Matrix();
 
         RANDO.ArcRotateCamera.prototype._initCache.call(this);
-
-        //~ this.getViewMatrix();
     };
 
     RANDO.ArcRotateCamera.prototype = Object.create(BABYLON.Camera.prototype);
@@ -47,7 +45,9 @@ var RANDO = RANDO || {};
 
     // Cache
     RANDO.ArcRotateCamera.prototype._initCache = function () {
-        this._cache.target = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+        this._cache.target = new BABYLON.Vector3(
+            Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE
+        );
         this._cache.alpha = undefined;
         this._cache.beta = undefined;
         this._cache.radius = undefined;
@@ -58,9 +58,9 @@ var RANDO = RANDO || {};
             BABYLON.Camera.prototype._updateCache.call(this);
 
         this._cache.target.copyFrom(this._getTargetPosition());
-        this._cache.alpha = this.alpha;
-        this._cache.beta = this.beta;
-        this._cache.radius = this.radius;
+        this._cache.alpha   = this.alpha;
+        this._cache.beta    = this.beta;
+        this._cache.radius  = this.radius;
     };
 
     // Synchronized
@@ -68,10 +68,12 @@ var RANDO = RANDO || {};
         if (!BABYLON.Camera.prototype._isSynchronizedViewMatrix.call(this))
             return false;
 
-        return this._cache.target.equals(this._getTargetPosition())
-            && this._cache.alpha === this.alpha
-            && this._cache.beta === this.beta
-            && this._cache.radius === this.radius;
+        return (
+            this._cache.target.equals(this._getTargetPosition()) &&
+            this._cache.alpha   === this.alpha &&
+            this._cache.beta    === this.beta &&
+            this._cache.radius  === this.radius
+        );
     };
 
     // Methods
@@ -145,8 +147,14 @@ var RANDO = RANDO || {};
                     return;
                 }
 
-                var offsetX = evt.movementX || evt.mozMovementX || evt.webkitMovementX || evt.msMovementX || 0;
-                var offsetY = evt.movementY || evt.mozMovementY || evt.webkitMovementY || evt.msMovementY || 0;
+                var offsetX = (
+                    evt.movementX || evt.mozMovementX || evt.webkitMovementX ||
+                    evt.msMovementX || 0
+                );
+                var offsetY = (
+                    evt.movementY || evt.mozMovementY || evt.webkitMovementY ||
+                    evt.msMovementY || 0 
+                );
 
                 that.inertialAlphaOffset -= offsetX / that.angularSensibility;
                 that.inertialBetaOffset -= offsetY / that.angularSensibility;
@@ -310,15 +318,16 @@ var RANDO = RANDO || {};
         }
 
         // Inertia
-        if (this.inertialAlphaOffset != 0 || this.inertialBetaOffset != 0 || this.inertialRadiusOffset != 0) {
+        if (this.inertialAlphaOffset != 0 || this.inertialBetaOffset != 0 || 
+            this.inertialRadiusOffset != 0) {
 
-            this.alpha += this.inertialAlphaOffset;
-            this.beta += this.inertialBetaOffset;
+            this.alpha  += this.inertialAlphaOffset;
+            this.beta   += this.inertialBetaOffset;
             this.radius -= this.inertialRadiusOffset;
 
-            this.inertialAlphaOffset *= this.inertia;
-            this.inertialBetaOffset *= this.inertia;
-            this.inertialRadiusOffset *= this.inertia;
+            this.inertialAlphaOffset    *= this.inertia;
+            this.inertialBetaOffset     *= this.inertia;
+            this.inertialRadiusOffset   *= this.inertia;
 
             if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
                 this.inertialAlphaOffset = 0;
@@ -382,8 +391,17 @@ var RANDO = RANDO || {};
 
         var target = this._getTargetPosition();
 
-        target.addToRef(new BABYLON.Vector3(this.radius * cosa * sinb, this.radius * cosb, this.radius * sina * sinb), this.position);
-        BABYLON.Matrix.LookAtLHToRef(this.position, target, this.upVector, this._viewMatrix);
+        target.addToRef(
+            new BABYLON.Vector3(
+                this.radius * cosa * sinb, 
+                this.radius * cosb, 
+                this.radius * sina * sinb
+            ),
+            this.position
+        );
+        BABYLON.Matrix.LookAtLHToRef(
+            this.position, target, this.upVector, this._viewMatrix
+        );
 
         return this._viewMatrix;
     };
