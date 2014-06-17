@@ -125,6 +125,7 @@ var RANDO = RANDO || {};
         map_camera.upperZLimit = this.upperZLimit;
         map_camera.upperRadiusLimit    = this.upperRadiusLimit;
         map_camera.upperBetaLimit = Math.PI/2;
+        map_camera.lowerRadiusLimit = 0.1;
 
         this.cameras.map_camera = map_camera;
     };
@@ -288,7 +289,7 @@ var RANDO = RANDO || {};
         this.initialPosition.z = this._demCenter.z - 3000;
 
         this.initialTarget.x = this._demCenter.x;
-        this.initialTarget.y = this._demCenter.y;
+        this.initialTarget.y = this._demExtent.y.min;
         this.initialTarget.z = this._demCenter.z;
 
         this.lowerXLimit = this._demExtent.x.min + this._offsets.x;
