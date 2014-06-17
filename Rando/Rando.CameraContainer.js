@@ -114,7 +114,7 @@ var RANDO = RANDO || {};
         map_camera.keysLeft   = [81, 37]; // Touche Q and left
         map_camera.keysRight  = [68, 39]; // Touche D and right
 
-        map_camera.wheelPrecision = 0.1;
+        map_camera.wheelPrecision = 0.2;
         map_camera.checkCollisions = true;
         map_camera.maxZ = 10000;
         map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
@@ -200,7 +200,6 @@ var RANDO = RANDO || {};
         // Update camera
         this._scene.setActiveCameraByID (newID);
         this._resetByDefault();
-        //~ this._camLight.parent = this.cameras[newID];
 
         // Interface changings
         $(".controls--" + oldID).css("display", "none");
