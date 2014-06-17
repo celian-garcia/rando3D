@@ -70,7 +70,7 @@ var RANDO = RANDO || {};
         demo_camera.wheelPrecision      = 0.2;
         demo_camera.lowerRadiusLimit    = this.lowerRadiusLimit;
         demo_camera.upperRadiusLimit    = this.upperRadiusLimit;
-        demo_camera.checkCollisions     = true;
+        demo_camera.upperBetaLimit = Math.PI/2;
         demo_camera.maxZ    = 10000;
 
         this.cameras.demo_camera = demo_camera;
@@ -123,6 +123,8 @@ var RANDO = RANDO || {};
         map_camera.lowerZLimit = this.lowerZLimit;
         map_camera.upperXLimit = this.upperXLimit;
         map_camera.upperZLimit = this.upperZLimit;
+        map_camera.upperRadiusLimit    = this.upperRadiusLimit;
+        map_camera.upperBetaLimit = Math.PI/2;
 
         this.cameras.map_camera = map_camera;
     };
@@ -178,7 +180,8 @@ var RANDO = RANDO || {};
      */
     RANDO.CameraContainer.prototype.setActiveCamera = function (newID) {
         if (RANDO.CameraIDs.indexOf(newID) == -1) {
-            console.error("RANDO.CameraContainer.setActiveCamera () : " + newID + " is not an available camera's ID");
+            console.error("RANDO.CameraContainer.setActiveCamera () : " + newID + 
+                            " is not an available camera's ID");
             return;
         }
 
