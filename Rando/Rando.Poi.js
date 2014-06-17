@@ -109,7 +109,7 @@ var RANDO = RANDO || {};
         // Load the pictogram on the pictogram container
         var img = new Image();
         img.onload = function () {
-            pictoContext.drawImage(img, 0, 0, picto_size.width*2, picto_size.height);
+            pictoContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
             // Update
             pictoContext.restore();
@@ -117,7 +117,7 @@ var RANDO = RANDO || {};
             picto.material.diffuseTexture = picto_tex;
             picto.material.emissiveTexture = picto_tex;
         };
-        img.src = RANDO.SETTINGS.PICTO_PREFIX + "/media/upload/theme-fauna@2x.png";// Image Test
+        img.src = RANDO.SETTINGS.PICTO_PREFIX + src;
 
         // Draws background of the pictogram on the panel
         panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";
