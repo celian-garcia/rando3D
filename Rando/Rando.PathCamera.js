@@ -430,20 +430,29 @@ var RANDO = RANDO || {};
 
         // Creates the Bezier curve
         var tween = TweenLite.to(position, quantity, {bezier: this._path, ease:Linear.easeNone});
+        var d = 20;
 
         // Load the Bezier curve on timeline
-        for (var i = 0; i < quantity; i++) {
+        for (var i = 0; i < quantity-d; i++) {
             tween.time(i); // Jumps to the appropriate time in the tween, causing 
                             // position variable to be updated accordingly.
+            var currentPosition = _.clone(position);
+            tween.time(i+d);
+            var currentTarget = _.clone(position);
+            var rotation_y = RANDO.Utils.angleFromAxis(currentPosition, currentTarget, BABYLON.Axis.Y);
 
-            this._timeline.add(
+            this._timeline.add([
                 TweenLite.to(this.position, (duration / quantity), {
-                    x: position.x, 
-                    y: position.y + RANDO.SETTINGS.CAM_OFFSET, 
-                    z: position.z, 
+                    x: currentPosition.x, 
+                    y: currentPosition.y + RANDO.SETTINGS.CAM_OFFSET, 
+                    z: currentPosition.z, 
                     ease: "Linear.easeNone" 
-                }) 
-            );
+                }),
+                TweenLite.to(this.rotation, (duration / quantity), { 
+                    y: rotation_y, 
+                    ease: 'ease-in'
+                })
+            ]);
         }
 
         // Animation paused by default
@@ -463,6 +472,7 @@ var RANDO = RANDO || {};
 
         var distance = BABYLON.Vector3.Distance(this.position, futurePosition);
         var duration = distance / speed;
+
         // Translation
         this._position_transition = TweenLite.to(this.position, duration, { 
             x: futurePosition.x, 
