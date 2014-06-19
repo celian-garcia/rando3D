@@ -7,7 +7,6 @@ window.onload = function onload(){
     RANDO.SETTINGS.SIDE_TEX_URL = "../../img/side.jpg";
     RANDO.SETTINGS.FAKE_TEX_URL = "../../img/white.png";
     RANDO.SETTINGS.CAM_SPEED_F  = 100;
-    RANDO.SETTINGS.PICTO_PREFIX = "/";
 
     RANDO.START_TIME = Date.now();
     
