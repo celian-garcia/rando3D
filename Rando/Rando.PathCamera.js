@@ -13,6 +13,8 @@ var RANDO = RANDO || {};
 
         this.keysPlayPause = [32];
         this.keysStop  = [13];
+        this.keysRewind = [40];
+        this.keysForward = [38];
 
         // Internals
         this._currentTarget = BABYLON.Vector3.Zero();
@@ -219,6 +221,27 @@ var RANDO = RANDO || {};
                 }
             };
 
+            this._onKeyDown = function (evt) {
+                var state = that._state;
+                var oldState = state;
+                if (that._path.length && !that._isMoving) {
+                    var keyCode = evt.keyCode;
+
+                    if (that.keysRewind.indexOf(keyCode) !== -1) {
+                        if (state == "pause") {
+                            state = "rewind";
+                        }
+                    }
+                    else if (that.keysForward.indexOf(keyCode) !== -1) {
+                        if (state == "pause" || state == "stop") {
+                            state = "forward";
+                        }
+                    }
+                    that._oldState  = oldState;
+                    that._state     = state;
+                }
+            };
+
             this._onKeyUp = function (evt) {
                 var state = that._state;
                 var oldState = state;
@@ -231,9 +254,23 @@ var RANDO = RANDO || {};
                         } else if (state == "play") {
                             state = "pause";
                         }
-                    } else if (that.keysStop.indexOf(keyCode) !== -1) {
+                    }
+                    else if (that.keysStop.indexOf(keyCode) !== -1) {
                         if (state == "play" || state == "pause" || !state) {
                             state = "stop";
+                        }
+                    }
+                    else if (that.keysRewind.indexOf(keyCode) !== -1) {
+                        if (state == "rewind" && that._timeline._time == 0) {
+                            state = "stop";
+                        } 
+                        else if (state == "rewind" && that._timeline._time != 0) {
+                            state = "pause";
+                        }
+                    }
+                    else if (that.keysForward.indexOf(keyCode) !== -1) {
+                        if (state == "forward") {
+                            state = "pause";
                         }
                     }
                     that._oldState  = oldState;
@@ -272,6 +309,7 @@ var RANDO = RANDO || {};
         canvas.addEventListener("mousemove", this._onMouseMove, false);
         window.addEventListener('mousewheel', this._onWheel, false);
         window.addEventListener('DOMMouseScroll', this._onWheel);
+        window.addEventListener("keydown", this._onKeyDown, false);
         window.addEventListener("keyup", this._onKeyUp, false);
         window.addEventListener("blur", this._onLostFocus, false);
     };
@@ -287,6 +325,7 @@ var RANDO = RANDO || {};
         canvas.removeEventListener("mousemove", this._onMouseMove);
         window.removeEventListener('mousewheel', this._onWheel);
         window.removeEventListener('DOMMouseScroll', this._onWheel);
+        window.removeEventListener("keydown", this._onKeyDown);
         window.removeEventListener("keyup", this._onKeyUp);
         window.removeEventListener("blur", this._onLostFocus);
 
@@ -343,8 +382,14 @@ var RANDO = RANDO || {};
                 case "play" :
                     this._timeline.play();
                 break;
-                case "pause" : 
+                case "pause" :
                     this._timeline.pause();
+                break;
+                case "rewind" :
+                    this._timeline.reverse();
+                break;
+                case "forward" :
+                    this._timeline.play();
             }
 
             this._oldState = this._state;
