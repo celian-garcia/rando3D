@@ -3,7 +3,7 @@
 var RANDO = RANDO || {};
 
 (function () {
-    RANDO.PathCamera = function (name, position, scene) {
+    RANDO.HikerCamera = function (name, position, scene) {
         BABYLON.Camera.call(this, name, position, scene);
 
         this.cameraDirection = new BABYLON.Vector3(0, 0, 0);
@@ -41,26 +41,26 @@ var RANDO = RANDO || {};
         this._position_transiton = null;
         this._rotation_transiton = null;
 
-        RANDO.PathCamera.prototype._initCache.call(this);
+        RANDO.HikerCamera.prototype._initCache.call(this);
     };
 
-    RANDO.PathCamera.prototype = Object.create(BABYLON.Camera.prototype);
+    RANDO.HikerCamera.prototype = Object.create(BABYLON.Camera.prototype);
 
     // Members
-    RANDO.PathCamera.prototype.returnSpeed = 2000;
-    RANDO.PathCamera.prototype.followSpeed = 20;
-    RANDO.PathCamera.prototype.checkCollisions = false;
-    RANDO.PathCamera.prototype.applyGravity = false;
-    RANDO.PathCamera.prototype.noRotationConstraint = false;
-    RANDO.PathCamera.prototype.angularSensibility = 2000.0;
-    RANDO.PathCamera.prototype.lockedTarget = null;
-    RANDO.PathCamera.prototype.onCollide = null;
-    RANDO.PathCamera.prototype.wheelPrecision = 0.3;
-    RANDO.PathCamera.prototype.inertialRadiusOffset = 0;
-    RANDO.PathCamera.prototype.lowerRadiusLimit = null;
-    RANDO.PathCamera.prototype.upperRadiusLimit = null;
+    RANDO.HikerCamera.prototype.returnSpeed = 2000;
+    RANDO.HikerCamera.prototype.followSpeed = 20;
+    RANDO.HikerCamera.prototype.checkCollisions = false;
+    RANDO.HikerCamera.prototype.applyGravity = false;
+    RANDO.HikerCamera.prototype.noRotationConstraint = false;
+    RANDO.HikerCamera.prototype.angularSensibility = 2000.0;
+    RANDO.HikerCamera.prototype.lockedTarget = null;
+    RANDO.HikerCamera.prototype.onCollide = null;
+    RANDO.HikerCamera.prototype.wheelPrecision = 0.3;
+    RANDO.HikerCamera.prototype.inertialRadiusOffset = 0;
+    RANDO.HikerCamera.prototype.lowerRadiusLimit = null;
+    RANDO.HikerCamera.prototype.upperRadiusLimit = null;
 
-    RANDO.PathCamera.prototype._getLockedTargetPosition = function () {
+    RANDO.HikerCamera.prototype._getLockedTargetPosition = function () {
         if (!this.lockedTarget) {
             return null;
         }
@@ -69,12 +69,12 @@ var RANDO = RANDO || {};
     };
 
     // Cache
-    RANDO.PathCamera.prototype._initCache = function () {
+    RANDO.HikerCamera.prototype._initCache = function () {
         this._cache.lockedTarget = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
         this._cache.rotation = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
     };
 
-    RANDO.PathCamera.prototype._updateCache = function (ignoreParentClass) {
+    RANDO.HikerCamera.prototype._updateCache = function (ignoreParentClass) {
         if (!ignoreParentClass)
             BABYLON.Camera.prototype._updateCache.call(this);
 
@@ -95,7 +95,7 @@ var RANDO = RANDO || {};
     };
 
     // Synchronized
-    RANDO.PathCamera.prototype._isSynchronizedViewMatrix = function () {
+    RANDO.HikerCamera.prototype._isSynchronizedViewMatrix = function () {
         if (!BABYLON.Camera.prototype._isSynchronizedViewMatrix.call(this)) {
             return false;
         }
@@ -107,7 +107,7 @@ var RANDO = RANDO || {};
     };
 
     // Target
-    RANDO.PathCamera.prototype.setTarget = function (target) {
+    RANDO.HikerCamera.prototype.setTarget = function (target) {
         this.upVector.normalize();
 
         BABYLON.Matrix.LookAtLHToRef(this.position, target, this.upVector, this._camMatrix);
@@ -138,7 +138,7 @@ var RANDO = RANDO || {};
         }
     };
     // Controls
-    RANDO.PathCamera.prototype.attachControl = function (canvas, noPreventDefault) {
+    RANDO.HikerCamera.prototype.attachControl = function (canvas, noPreventDefault) {
         var previousPosition;
         var that = this;
         var engine = this._scene.getEngine();
@@ -314,7 +314,7 @@ var RANDO = RANDO || {};
         window.addEventListener("blur", this._onLostFocus, false);
     };
 
-    RANDO.PathCamera.prototype.detachControl = function (canvas) {
+    RANDO.HikerCamera.prototype.detachControl = function (canvas) {
         if (this._attachedCanvas != canvas) {
             return;
         }
@@ -335,7 +335,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.PathCamera.prototype._update = function () {
+    RANDO.HikerCamera.prototype._update = function () {
 
         var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
         var stateHaveChanged = this._oldState != this._state;
@@ -396,7 +396,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.PathCamera.prototype._getViewMatrix = function () {
+    RANDO.HikerCamera.prototype._getViewMatrix = function () {
         BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
 
         if (!this.lockedTarget) {
@@ -424,7 +424,7 @@ var RANDO = RANDO || {};
         return this._viewMatrix;
     };
 
-    RANDO.PathCamera.prototype.setPath = function (vertices) {
+    RANDO.HikerCamera.prototype.setPath = function (vertices) {
         // Reinitialize the path
         var path = this._path;
         if (path.length) {
@@ -444,7 +444,7 @@ var RANDO = RANDO || {};
         this.loadPathOnTimeline ();
     };
     
-    RANDO.PathCamera.prototype.loadPathOnTimeline = function () {
+    RANDO.HikerCamera.prototype.loadPathOnTimeline = function () {
         // Verify if path and lengthOfBezier exist
         if (!this._path) {
             return;
@@ -504,15 +504,15 @@ var RANDO = RANDO || {};
         this._timeline.pause(0);
     };
 
-    RANDO.PathCamera.prototype.getTarget = function () {
+    RANDO.HikerCamera.prototype.getTarget = function () {
         return this._currentTarget;
     };
 
-    RANDO.PathCamera.prototype._onCompleteTimeline = function () {
+    RANDO.HikerCamera.prototype._onCompleteTimeline = function () {
         this._state = "stop";
     };
 
-    RANDO.PathCamera.prototype.moveTo = function (futurePosition, futureTarget, speed, onComplete) {
+    RANDO.HikerCamera.prototype.moveTo = function (futurePosition, futureTarget, speed, onComplete) {
         var rotation_y = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
 
         var distance = BABYLON.Vector3.Distance(this.position, futurePosition);

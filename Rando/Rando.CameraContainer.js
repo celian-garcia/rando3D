@@ -40,7 +40,7 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera", "path_camera"];
+    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera", "hiker_camera"];
 
     /* Methods */
     RANDO.CameraContainer.prototype.init = function () {
@@ -49,7 +49,7 @@ var RANDO = RANDO || {};
         this._buildFreeCamera ();
         this._buildHelicoCamera ();
         this._buildMapCamera ();
-        this._buildPathCamera ();
+        this._buildHikerCamera ();
         this._cameraSwitcher ();
     };
 
@@ -153,24 +153,24 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraContainer._buildPathCamera() : build of the Path camera
+     * RANDO.CameraContainer._buildHikerCamera() : build of the Hiker camera
      */
-    RANDO.CameraContainer.prototype._buildPathCamera = function () {
-        var path_camera = new RANDO.PathCamera(
-            "Path Camera", 
+    RANDO.CameraContainer.prototype._buildHikerCamera = function () {
+        var hiker_camera = new RANDO.HikerCamera(
+            "Hiker Camera", 
             BABYLON.Vector3.Zero(),
             this._scene
         );
-        path_camera.id = "path_camera";
+        hiker_camera.id = "hiker_camera";
 
-        path_camera.checkCollisions = true;
-        path_camera.maxZ = 10000;
+        hiker_camera.checkCollisions = true;
+        hiker_camera.maxZ = 10000;
 
-        path_camera.returnSpeed = RANDO.SETTINGS.PCAM_RETURN_SPEED;
-        path_camera.followSpeed = RANDO.SETTINGS.PCAM_FOLLOW_SPEED;
+        hiker_camera.returnSpeed = RANDO.SETTINGS.HCAM_RETURN_SPEED;
+        hiker_camera.followSpeed = RANDO.SETTINGS.HCAM_FOLLOW_SPEED;
         
 
-        this.cameras.path_camera = path_camera;
+        this.cameras.hiker_camera = hiker_camera;
     };
 
     /**
@@ -216,7 +216,7 @@ var RANDO = RANDO || {};
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
         } else if (oldID == "helico_camera" || oldID == "free_camera" ||
-                    oldID == "path_camera") {
+                    oldID == "hiker_camera") {
                         
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
@@ -227,8 +227,8 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype.setAnimationPath = function (vertices) {
         this._animationPath = vertices;
 
-        var path_camera = this.cameras.path_camera;
-        path_camera.setPath(vertices);
+        var hiker_camera = this.cameras.hiker_camera;
+        hiker_camera.setPath(vertices);
     };
 
     RANDO.CameraContainer.prototype._cameraSwitcher = function () {
@@ -264,8 +264,8 @@ var RANDO = RANDO || {};
             activeCam.setTarget(this.initialTarget.clone());
         }
 
-        // Path type
-        else if (activeCam.id == "path_camera" ) {
+        // Hiker type
+        else if (activeCam.id == "hiker_camera" ) {
             if (this._positionBeforeSwitch) {
                 activeCam.position = this._positionBeforeSwitch;
             } 
