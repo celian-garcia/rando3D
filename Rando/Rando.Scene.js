@@ -343,7 +343,6 @@ var RANDO = RANDO || {};
             var coordinates = RANDO.Utils.toMeters({
                 'lng' : feature.geometry.coordinates[0],
                 'lat' : feature.geometry.coordinates[1]
-                
             });
 
             this._pois_data.push ({
