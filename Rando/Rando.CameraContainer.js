@@ -40,14 +40,14 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "free_camera", "examine_camera", "helico_camera", "hiker_camera"];
+    RANDO.CameraIDs = ["demo_camera", "free_camera", "examine_camera", "bird_camera", "hiker_camera"];
 
     /* Methods */
     RANDO.CameraContainer.prototype.init = function () {
         this._computeInitialParameters ();
         this._buildDemoCamera ();
         this._buildFreeCamera ();
-        this._buildHelicoCamera ();
+        this._buildBirdCamera ();
         this._buildExamineCamera ();
         this._buildHikerCamera ();
         this._cameraSwitcher ();
@@ -131,25 +131,25 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraContainer._buildHelicoCamera() : build of the Helico camera
+     * RANDO.CameraContainer._buildBirdCamera() : build of the Bird camera
      */
-    RANDO.CameraContainer.prototype._buildHelicoCamera = function () {
-        var helico_camera = new RANDO.HelicoCamera(
-            "Helico Camera", 
+    RANDO.CameraContainer.prototype._buildBirdCamera = function () {
+        var bird_camera = new RANDO.BirdCamera(
+            "Bird Camera", 
             BABYLON.Vector3.Zero(),
             this._scene
         );
-        helico_camera.id = "helico_camera";
-        helico_camera.keysUp     = [90, 38]; // Touche Z and up
-        helico_camera.keysDown   = [83, 40]; // Touche S and down
-        helico_camera.keysLeft   = [81, 37]; // Touche Q and left
-        helico_camera.keysRight  = [68, 39]; // Touche D and right
+        bird_camera.id = "bird_camera";
+        bird_camera.keysUp     = [90, 38]; // Touche Z and up
+        bird_camera.keysDown   = [83, 40]; // Touche S and down
+        bird_camera.keysLeft   = [81, 37]; // Touche Q and left
+        bird_camera.keysRight  = [68, 39]; // Touche D and right
 
-        helico_camera.checkCollisions = true;
-        helico_camera.maxZ = 10000;
-        helico_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        bird_camera.checkCollisions = true;
+        bird_camera.maxZ = 10000;
+        bird_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
-        this.cameras.helico_camera = helico_camera;
+        this.cameras.bird_camera = bird_camera;
     };
 
     /**
@@ -215,7 +215,7 @@ var RANDO = RANDO || {};
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
-        } else if (oldID == "helico_camera" || oldID == "free_camera" ||
+        } else if (oldID == "bird_camera" || oldID == "free_camera" ||
                     oldID == "hiker_camera") {
                         
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
@@ -259,7 +259,7 @@ var RANDO = RANDO || {};
         }
 
         // Free type 
-        else if (activeCam.id == "helico_camera" || activeCam.id == "free_camera" ) {
+        else if (activeCam.id == "bird_camera" || activeCam.id == "free_camera" ) {
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
