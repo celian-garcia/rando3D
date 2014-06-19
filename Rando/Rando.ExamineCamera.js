@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Rando.ExamineCamera.js
+ * 
+ * ExamineCamera class : 
+ *  It is a camera which look like the ArcRotateCamera of BabylonJS.
+ *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
+ * 
+ *  But we can also translate it over world axis X and Z.
+ * 
+ * @author: Célian GARCIA
+ ******************************************************************************/
+
 "use strict";
 
 var RANDO = RANDO || {};
@@ -29,23 +41,13 @@ var RANDO = RANDO || {};
         this.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
         // Internals
-        this._currentTarget = BABYLON.Vector3.Zero();
         this._viewMatrix = BABYLON.Matrix.Zero();
-        this._camMatrix = BABYLON.Matrix.Zero();
         this._cameraTransformMatrix = BABYLON.Matrix.Zero();
-        this._cameraRotationMatrix = BABYLON.Matrix.Zero();
-        this._referencePoint = BABYLON.Vector3.Zero();
-        this._transformedReferencePoint = BABYLON.Vector3.Zero();
         this._oldPosition = BABYLON.Vector3.Zero();
         this._diffPosition = BABYLON.Vector3.Zero();
         this._newPosition = BABYLON.Vector3.Zero();
-        this._lookAtTemp = BABYLON.Matrix.Zero();
-        this._tempMatrix = BABYLON.Matrix.Zero();
-        this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         RANDO.ExamineCamera.prototype._initCache.call(this);
-
-        //~ this.getViewMatrix();
     };
 
     RANDO.ExamineCamera.prototype = Object.create(BABYLON.Camera.prototype);
@@ -104,7 +106,6 @@ var RANDO = RANDO || {};
         return this.speed * ((BABYLON.Tools.GetDeltaTime() / (BABYLON.Tools.GetFps() * 10.0)));
     };
 
-    // Methods
     RANDO.ExamineCamera.prototype.attachControl = function (canvas, noPreventDefault) {
         var previousPosition;
         var that = this;
@@ -384,7 +385,7 @@ var RANDO = RANDO || {};
     RANDO.ExamineCamera.prototype._update = function () {
         this._checkInputs();
 
-        var needToMove = (
+        var needToMoveTarget = (
             Math.abs(this.cameraDirection.x) > 0 ||
             Math.abs(this.cameraDirection.y) > 0 ||
             Math.abs(this.cameraDirection.z) > 0
@@ -396,10 +397,11 @@ var RANDO = RANDO || {};
             this.inertialRadiusOffset != 0
         );
 
-        // Inertia
-        if (needToMove) {
+        // Update target
+        if (needToMoveTarget) {
             this.target.addInPlace(this.cameraDirection);
 
+            // Inertia
             this.cameraDirection.scaleInPlace(this.inertia);
 
             if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
@@ -412,11 +414,13 @@ var RANDO = RANDO || {};
                 this.cameraDirection.z = 0;
         }
 
+        // Update Alpha Beta Radius
         if (needToRotateOrZoom) {
             this.alpha  += this.inertialAlphaOffset;
             this.beta   += this.inertialBetaOffset;
             this.radius -= this.inertialRadiusOffset;
 
+            // Inertia
             this.inertialAlphaOffset    *= this.inertia;
             this.inertialBetaOffset     *= this.inertia;
             this.inertialRadiusOffset   *= this.inertia;
@@ -476,14 +480,6 @@ var RANDO = RANDO || {};
             this.alpha = 2*Math.PI - this.alpha;
         }
         this.beta = Math.acos(radiusv3.y / this.radius);
-    };
-
-    RANDO.ExamineCamera.prototype.getPosition = function () {
-        return new BABYLON.Vector3(
-            this.radius * Math.cos(this.alpha) * Math.sin(this.beta),
-            this.radius * Math.cos(this.alpha),
-            this.radius * Math.sin(this.alpha) * Math.sin(this.beta)
-        );
     };
 
     RANDO.ExamineCamera.prototype._getViewMatrix = function () {

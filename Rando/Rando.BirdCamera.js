@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * Rando.BirdCamera.js
+ * 
+ * BirdCamera class : 
+ *  It is a camera which look like the FreeCamera of BabylonJS.
+ *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
+ * 
+ *  The differences are : 
+ *      - permites to translate it of world's X and Z axis instead of 
+ *  locale's one. 
+ *      - there is a wheel zoom. 
+ * 
+ *  It gives the impression of flying. That's why it is called BirdCamera
+ *  
+ * @author: Célian GARCIA
+ ******************************************************************************/
+
 "use strict";
 
 var RANDO = RANDO || {};
@@ -6,8 +23,9 @@ var RANDO = RANDO || {};
     RANDO.BirdCamera = function (name, position, scene) {
         BABYLON.Camera.call(this, name, position, scene);
 
-        this.cameraDirection = new BABYLON.Vector3(0, 0, 0);
-        this.cameraRotation = new BABYLON.Vector2(0, 0);
+        this.moveDirection = new BABYLON.Vector3(0, 0, 0);
+        this.rotationDirection = new BABYLON.Vector2(0, 0);
+        this.zoomDirection = new BABYLON.Vector3(0, 0, 0);
         this.rotation = new BABYLON.Vector3(0, 0, 0);
         this.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
@@ -195,8 +213,8 @@ var RANDO = RANDO || {};
                     offsetY = evt.movementY || evt.mozMovementY || evt.webkitMovementY || evt.msMovementY || 0;
                 }
 
-                that.cameraRotation.y += offsetX / that.angularSensibility;
-                that.cameraRotation.x += offsetY / that.angularSensibility;
+                that.rotationDirection.y += offsetX / that.angularSensibility;
+                that.rotationDirection.x += offsetY / that.angularSensibility;
 
                 previousPosition = {
                     x: evt.clientX,
@@ -264,9 +282,9 @@ var RANDO = RANDO || {};
             this._reset = function () {
                 that._keys = [];
                 previousPosition = null;
-                that.cameraDirection = new BABYLON.Vector3(0, 0, 0);
-                that.cameraRotation = new BABYLON.Vector2(0, 0);
-                that.inertialRadiusOffset = 0;
+                that.moveDirection = new BABYLON.Vector3(0, 0, 0);
+                that.rotationDirection = new BABYLON.Vector2(0, 0);
+                that.zoomDirection = new BABYLON.Vector3(0, 0, 0);
             };
         }
 
@@ -323,7 +341,7 @@ var RANDO = RANDO || {};
             this._transformedDirection = BABYLON.Vector3.Zero();
         }
 
-        // Keyboard
+        // Moves with the keyboard
         for (var index = 0; index < this._keys.length; index++) {
             var keyCode = this._keys[index];
             var speed = this._computeLocalCameraSpeed();
@@ -339,31 +357,53 @@ var RANDO = RANDO || {};
             }
 
             this._cameraTransformMatrix = BABYLON.Matrix.RotationY(this.rotation.y);
-            BABYLON.Vector3.TransformNormalToRef(this._localDirection, this._cameraTransformMatrix, this._transformedDirection);
-            this.cameraDirection.addInPlace(this._transformedDirection);
+            BABYLON.Vector3.TransformNormalToRef(
+                this._localDirection, 
+                this._cameraTransformMatrix, 
+                this._transformedDirection
+            );
+            this.moveDirection.addInPlace(this._transformedDirection);
+        }
+
+        // Mouse wheel zoom
+        if (this.inertialRadiusOffset) {
+            BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
+
+            this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
+            BABYLON.Vector3.TransformNormalToRef(
+                this._referencePoint,
+                this._cameraTransformMatrix,
+                this.zoomDirection
+            );
+
+            this.zoomDirection.scaleInPlace(this.inertialRadiusOffset);
         }
     };
 
     RANDO.BirdCamera.prototype._update = function () {
         this._checkInputs();
 
-        var needToMove = this._needMoveForGravity || Math.abs(this.cameraDirection.x) > 0 || Math.abs(this.cameraDirection.y) > 0 || Math.abs(this.cameraDirection.z) > 0;
-        var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
-        var needToZoom = !!this.inertialRadiusOffset;
-
-        // Move
-        if (needToMove) {
-            if (this.checkCollisions && this._scene.collisionsEnabled) {
-                this._collideWithWorld(this.cameraDirection);
-            } else {
-                this.position.addInPlace(this.cameraDirection);
-            }
-        }
+        var needToMove = (
+            this._needMoveForGravity ||
+            Math.abs(this.moveDirection.x) > 0 ||
+            Math.abs(this.moveDirection.y) > 0 ||
+            Math.abs(this.moveDirection.z) > 0
+        );
+        var needToRotate = (
+            Math.abs(this.rotationDirection.x) > 0 ||
+            Math.abs(this.rotationDirection.y) > 0
+        );
+        var needToZoom = (
+            Math.abs(this.zoomDirection.x) > 0 ||
+            Math.abs(this.zoomDirection.y) > 0 ||
+            Math.abs(this.zoomDirection.z) > 0
+        );
+        var needCollisions = this.checkCollisions && this._scene.collisionsEnabled;
 
         // Rotate
         if (needToRotate) {
-            this.rotation.x += this.cameraRotation.x;
-            this.rotation.y += this.cameraRotation.y;
+            this.rotation.x += this.rotationDirection.x;
+            this.rotation.y += this.rotationDirection.y;
 
             if (!this.noRotationConstraint) {
                 var limit = (Math.PI / 2) * 0.95;
@@ -375,52 +415,53 @@ var RANDO = RANDO || {};
             }
         }
 
-        // Zoom
-        if (needToZoom) {
-            BABYLON.Vector3.FromFloatsToRef(0, 0, 1, this._referencePoint);
-
-            this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
-            BABYLON.Vector3.TransformNormalToRef(
-                this._referencePoint, 
-                this._cameraTransformMatrix, 
-                this._positionAfterZoom
-            );
-
-            this._positionAfterZoom.scaleInPlace(this.inertialRadiusOffset);
-            
-            if (this.checkCollisions && this._scene.collisionsEnabled) {
-                this._collideWithWorld(this._positionAfterZoom);
+        // Move and collisions
+        if (needToZoom && needToMove) {
+            if (needCollisions) {
+                this._collideWithWorld(this.zoomDirection.add(this.moveDirection));
             } else {
-                this.position.addInPlace(this._positionAfterZoom);
+                this.position.addInPlace(this.zoomDirection.add(this.moveDirection));
+            }
+        } else if (needToZoom) {
+            if (needCollisions) {
+                this._collideWithWorld(this.zoomDirection);
+            } else {
+                this.position.addInPlace(this.zoomDirection);
+            }
+        } else if (needToMove) {
+            if (needCollisions) {
+                this._collideWithWorld(this.moveDirection);
+            } else {
+                this.position.addInPlace(this.moveDirection);
             }
         }
 
         // Inertia
         if (needToMove) {
-            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
-                this.cameraDirection.x = 0;
+            if (Math.abs(this.moveDirection.x) < BABYLON.Engine.epsilon)
+                this.moveDirection.x = 0;
 
-            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
-                this.cameraDirection.y = 0;
+            if (Math.abs(this.moveDirection.y) < BABYLON.Engine.epsilon)
+                this.moveDirection.y = 0;
 
-            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
-                this.cameraDirection.z = 0;
+            if (Math.abs(this.moveDirection.z) < BABYLON.Engine.epsilon)
+                this.moveDirection.z = 0;
 
-            this.cameraDirection.scaleInPlace(this.inertia);
+            this.moveDirection.scaleInPlace(this.inertia);
         }
         if (needToRotate) {
-            if (Math.abs(this.cameraRotation.x) < BABYLON.Engine.epsilon)
-                this.cameraRotation.x = 0;
+            if (Math.abs(this.rotationDirection.x) < BABYLON.Engine.epsilon)
+                this.rotationDirection.x = 0;
 
-            if (Math.abs(this.cameraRotation.y) < BABYLON.Engine.epsilon)
-                this.cameraRotation.y = 0;
+            if (Math.abs(this.rotationDirection.y) < BABYLON.Engine.epsilon)
+                this.rotationDirection.y = 0;
 
-            this.cameraRotation.scaleInPlace(this.inertia);
+            this.rotationDirection.scaleInPlace(this.inertia);
         }
         if (needToZoom) {
             if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
                 this.inertialRadiusOffset = 0;
-            
+
             this.inertialRadiusOffset *= this.inertia;
         }
     };
@@ -458,4 +499,3 @@ var RANDO = RANDO || {};
         return this._viewMatrix;
     };
 })();
-

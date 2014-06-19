@@ -259,10 +259,8 @@ var RANDO = RANDO || {};
             var id = this.cameras[it].id;
             $(".controls--" + id + " .description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
-            console.log($("#" + id + " .description"));
             $("#" + id + " .description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
-            console.log($("#" + id + " .description"));
         }
     };
 
