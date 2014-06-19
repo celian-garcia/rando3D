@@ -117,7 +117,7 @@ var RANDO = RANDO || {};
             picto.material.diffuseTexture = picto_tex;
             picto.material.emissiveTexture = picto_tex;
         };
-        img.src = RANDO.SETTINGS.PICTO_PREFIX + src;
+        img.src = src;
 
         // Draws background of the pictogram on the panel
         panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";
