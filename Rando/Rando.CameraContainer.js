@@ -48,6 +48,7 @@ var RANDO = RANDO || {};
         this._buildBirdCamera ();
         this._buildExamineCamera ();
         this._buildHikerCamera ();
+        this._initInterface();
         this._cameraSwitcher ();
     };
 
@@ -250,6 +251,19 @@ var RANDO = RANDO || {};
         
         this.lowerRadiusLimit = RANDO.SETTINGS.MIN_THICKNESS + this._demCenter.y;
         this.upperRadiusLimit = 8000;
+    };
+
+    RANDO.CameraContainer.prototype._initInterface = function () {
+        
+        for (var it in this.cameras) {
+            var id = this.cameras[it].id;
+            $(".controls--" + id + " .description")
+                .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
+            console.log($("#" + id + " .description"));
+            $("#" + id + " .description")
+                .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
+            console.log($("#" + id + " .description"));
+        }
     };
 
 })();
