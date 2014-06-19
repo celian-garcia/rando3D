@@ -40,7 +40,7 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "free_camera", "map_camera", "helico_camera", "hiker_camera"];
+    RANDO.CameraIDs = ["demo_camera", "free_camera", "examine_camera", "helico_camera", "hiker_camera"];
 
     /* Methods */
     RANDO.CameraContainer.prototype.init = function () {
@@ -48,7 +48,7 @@ var RANDO = RANDO || {};
         this._buildDemoCamera ();
         this._buildFreeCamera ();
         this._buildHelicoCamera ();
-        this._buildMapCamera ();
+        this._buildExamineCamera ();
         this._buildHikerCamera ();
         this._cameraSwitcher ();
     };
@@ -100,42 +100,42 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraContainer._buildMapCamera() : build of the Helico camera
+     * RANDO.CameraContainer._buildExamineCamera() : build of the Examine camera
      */
-    RANDO.CameraContainer.prototype._buildMapCamera = function () {
-        var map_camera = new RANDO.MapCamera(
-            "Map Camera",0, 0, 0,
+    RANDO.CameraContainer.prototype._buildExamineCamera = function () {
+        var examine_camera = new RANDO.ExamineCamera(
+            "Examine Camera",0, 0, 0,
             this.initialTarget,
             this._scene
         );
-        map_camera.id = "map_camera";
-        map_camera.keysUp     = [90, 38]; // Touche Z and up
-        map_camera.keysDown   = [83, 40]; // Touche S and down
-        map_camera.keysLeft   = [81, 37]; // Touche Q and left
-        map_camera.keysRight  = [68, 39]; // Touche D and right
+        examine_camera.id = "examine_camera";
+        examine_camera.keysUp     = [90, 38]; // Touche Z and up
+        examine_camera.keysDown   = [83, 40]; // Touche S and down
+        examine_camera.keysLeft   = [81, 37]; // Touche Q and left
+        examine_camera.keysRight  = [68, 39]; // Touche D and right
 
-        map_camera.wheelPrecision = 0.2;
-        map_camera.checkCollisions = true;
-        map_camera.maxZ = 10000;
-        map_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
+        examine_camera.wheelPrecision = 0.2;
+        examine_camera.checkCollisions = true;
+        examine_camera.maxZ = 10000;
+        examine_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         
-        map_camera.lowerXLimit = this.lowerXLimit;
-        map_camera.lowerZLimit = this.lowerZLimit;
-        map_camera.upperXLimit = this.upperXLimit;
-        map_camera.upperZLimit = this.upperZLimit;
-        map_camera.upperRadiusLimit    = this.upperRadiusLimit;
-        map_camera.upperBetaLimit = Math.PI/2;
-        map_camera.lowerRadiusLimit = 0.1;
+        examine_camera.lowerXLimit = this.lowerXLimit;
+        examine_camera.lowerZLimit = this.lowerZLimit;
+        examine_camera.upperXLimit = this.upperXLimit;
+        examine_camera.upperZLimit = this.upperZLimit;
+        examine_camera.upperRadiusLimit    = this.upperRadiusLimit;
+        examine_camera.upperBetaLimit = Math.PI/2;
+        examine_camera.lowerRadiusLimit = 0.1;
 
-        this.cameras.map_camera = map_camera;
+        this.cameras.examine_camera = examine_camera;
     };
 
     /**
-     * RANDO.CameraContainer._buildHelicoCamera() : build of the Map camera
+     * RANDO.CameraContainer._buildHelicoCamera() : build of the Helico camera
      */
     RANDO.CameraContainer.prototype._buildHelicoCamera = function () {
         var helico_camera = new RANDO.HelicoCamera(
-            "Map Camera", 
+            "Helico Camera", 
             BABYLON.Vector3.Zero(),
             this._scene
         );
@@ -210,7 +210,7 @@ var RANDO = RANDO || {};
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
-        if (oldID == "map_camera" || oldID == "demo_camera") {
+        if (oldID == "examine_camera" || oldID == "demo_camera") {
             
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
@@ -253,7 +253,7 @@ var RANDO = RANDO || {};
         var activeCam = this._scene.activeCamera;
 
         // Arcrotate type
-        if (activeCam.id == "map_camera" || activeCam.id == "demo_camera") {
+        if (activeCam.id == "examine_camera" || activeCam.id == "demo_camera") {
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }

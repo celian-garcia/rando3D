@@ -42,7 +42,7 @@
     <script src="Rando/Rando.Trek.js"></script>
     <script src="Rando/Rando.Poi.js"></script>
     <script src="Rando/Rando.CameraContainer.js"></script>
-    <script src="Rando/Rando.MapCamera.js"></script>
+    <script src="Rando/Rando.ExamineCamera.js"></script>
     <script src="Rando/Rando.HelicoCamera.js"></script>
     <script src="Rando/Rando.HikerCamera.js"></script>
     <script src="Rando/Rando.ArcRotateCamera.js"></script>
@@ -74,8 +74,8 @@
             <span> Se déplacer : <img src = "img/icon_783__.png"/></span>
         </div>
         
-        <div class = "controls controls--map_camera" >
-            <h3>Caméra Cartographie</h3>
+        <div class = "controls controls--examine_camera" >
+            <h3>Caméra Examine</h3>
             <span> Zoom : <b>Molette souris</b></span>
             <span> Inclinaison/Rotation : <b>Clic Gauche</b></span>
             <span> Se déplacer : <img src = "img/icon_783__.png"/></span>
@@ -89,7 +89,7 @@
         </div>
 
         <div class = "controls controls--hiker_camera" >
-            <h3>Caméra suiveuse</h3>
+            <h3>Caméra Randonneur</h3>
             <span> Tourner regard : <b>Clic Gauche</b></span>
             <span> Play/Pause : <b>Espace</b></span>
             <span> Stop : <b>Entrée</b></span>
@@ -114,11 +114,11 @@
                 </span>
                 <span class = "camera-title"> Hélico</span>
             </li>
-            <li class = "camera" id = "map_camera">
+            <li class = "camera" id = "examine_camera">
                 <span class = "camera-icon">
                     <img src = "img/media/upload/poi-panorama.png"></img>
                 </span>
-                <span class = "camera-title"> Carto</span>
+                <span class = "camera-title"> Exam</span>
             </li>
             <li class = "camera" id = "free_camera">
                 <span class = "camera-icon">

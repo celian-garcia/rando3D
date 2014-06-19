@@ -5,7 +5,7 @@ var RANDO = RANDO || {};
 (function () {
     var eventPrefix = BABYLON.Tools.GetPointerPrefix();
 
-    RANDO.MapCamera = function (name, alpha, beta, radius, target, scene) {
+    RANDO.ExamineCamera = function (name, alpha, beta, radius, target, scene) {
         BABYLON.Camera.call(this, name, BABYLON.Vector3.Zero(), scene);
 
         this.alpha = alpha;
@@ -43,43 +43,43 @@ var RANDO = RANDO || {};
         this._tempMatrix = BABYLON.Matrix.Zero();
         this._positionAfterZoom = BABYLON.Vector3.Zero();
 
-        RANDO.MapCamera.prototype._initCache.call(this);
+        RANDO.ExamineCamera.prototype._initCache.call(this);
 
         //~ this.getViewMatrix();
     };
 
-    RANDO.MapCamera.prototype = Object.create(BABYLON.Camera.prototype);
+    RANDO.ExamineCamera.prototype = Object.create(BABYLON.Camera.prototype);
 
     // Members
-    RANDO.MapCamera.prototype.inertialAlphaOffset = 0;
-    RANDO.MapCamera.prototype.inertialBetaOffset = 0;
-    RANDO.MapCamera.prototype.inertialRadiusOffset = 0;
-    RANDO.MapCamera.prototype.lowerAlphaLimit = null;
-    RANDO.MapCamera.prototype.upperAlphaLimit = null;
-    RANDO.MapCamera.prototype.lowerBetaLimit = 0.01;
-    RANDO.MapCamera.prototype.upperBetaLimit = Math.PI;
-    RANDO.MapCamera.prototype.lowerRadiusLimit = null;
-    RANDO.MapCamera.prototype.upperRadiusLimit = null;
-    RANDO.MapCamera.prototype.lowerXLimit = null;
-    RANDO.MapCamera.prototype.upperXLimit = null;
-    RANDO.MapCamera.prototype.lowerZLimit = null;
-    RANDO.MapCamera.prototype.upperZLimit = null;
-    RANDO.MapCamera.prototype.angularSensibility = 1000.0;
-    RANDO.MapCamera.prototype.wheelPrecision = 3.0;
+    RANDO.ExamineCamera.prototype.inertialAlphaOffset = 0;
+    RANDO.ExamineCamera.prototype.inertialBetaOffset = 0;
+    RANDO.ExamineCamera.prototype.inertialRadiusOffset = 0;
+    RANDO.ExamineCamera.prototype.lowerAlphaLimit = null;
+    RANDO.ExamineCamera.prototype.upperAlphaLimit = null;
+    RANDO.ExamineCamera.prototype.lowerBetaLimit = 0.01;
+    RANDO.ExamineCamera.prototype.upperBetaLimit = Math.PI;
+    RANDO.ExamineCamera.prototype.lowerRadiusLimit = null;
+    RANDO.ExamineCamera.prototype.upperRadiusLimit = null;
+    RANDO.ExamineCamera.prototype.lowerXLimit = null;
+    RANDO.ExamineCamera.prototype.upperXLimit = null;
+    RANDO.ExamineCamera.prototype.lowerZLimit = null;
+    RANDO.ExamineCamera.prototype.upperZLimit = null;
+    RANDO.ExamineCamera.prototype.angularSensibility = 1000.0;
+    RANDO.ExamineCamera.prototype.wheelPrecision = 3.0;
 
-    RANDO.MapCamera.prototype._getTargetPosition = function () {
+    RANDO.ExamineCamera.prototype._getTargetPosition = function () {
         return this.target.position || this.target;
     };
 
     // Cache
-    RANDO.MapCamera.prototype._initCache = function () {
+    RANDO.ExamineCamera.prototype._initCache = function () {
         this._cache.target = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
         this._cache.alpha = undefined;
         this._cache.beta = undefined;
         this._cache.radius = undefined;
     };
 
-    RANDO.MapCamera.prototype._updateCache = function (ignoreParentClass) {
+    RANDO.ExamineCamera.prototype._updateCache = function (ignoreParentClass) {
         if (!ignoreParentClass)
             BABYLON.Camera.prototype._updateCache.call(this);
 
@@ -90,7 +90,7 @@ var RANDO = RANDO || {};
     };
 
     // Synchronized
-    RANDO.MapCamera.prototype._isSynchronizedViewMatrix = function () {
+    RANDO.ExamineCamera.prototype._isSynchronizedViewMatrix = function () {
         if (!BABYLON.Camera.prototype._isSynchronizedViewMatrix.call(this))
             return false;
 
@@ -100,12 +100,12 @@ var RANDO = RANDO || {};
             && this._cache.radius === this.radius;
     };
 
-    RANDO.MapCamera.prototype._computeLocalCameraSpeed = function () {
+    RANDO.ExamineCamera.prototype._computeLocalCameraSpeed = function () {
         return this.speed * ((BABYLON.Tools.GetDeltaTime() / (BABYLON.Tools.GetFps() * 10.0)));
     };
 
     // Methods
-    RANDO.MapCamera.prototype.attachControl = function (canvas, noPreventDefault) {
+    RANDO.ExamineCamera.prototype.attachControl = function (canvas, noPreventDefault) {
         var previousPosition;
         var that = this;
         var pointerId;
@@ -297,7 +297,7 @@ var RANDO = RANDO || {};
         window.addEventListener("blur", this._onLostFocus, false);
     };
 
-    RANDO.MapCamera.prototype.detachControl = function (canvas) {
+    RANDO.ExamineCamera.prototype.detachControl = function (canvas) {
         if (this._attachedCanvas != canvas) {
             return;
         }
@@ -323,7 +323,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.MapCamera.prototype._collideWithWorld = function (velocity) {
+    RANDO.ExamineCamera.prototype._collideWithWorld = function (velocity) {
         this.position.subtractFromFloatsToRef(0, this.ellipsoid.y, 0, this._oldPosition);
         this._collider.radius = this.ellipsoid;
 
@@ -338,7 +338,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.MapCamera.prototype._checkInputs = function () {
+    RANDO.ExamineCamera.prototype._checkInputs = function () {
         if (!this._localDirection) {
             this._localDirection = BABYLON.Vector3.Zero();
             this._transformedDirection = BABYLON.Vector3.Zero();
@@ -381,7 +381,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.MapCamera.prototype._update = function () {
+    RANDO.ExamineCamera.prototype._update = function () {
         this._checkInputs();
 
         var needToMove = (
@@ -464,7 +464,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.MapCamera.prototype.setPosition = function (position) {
+    RANDO.ExamineCamera.prototype.setPosition = function (position) {
         var radiusv3 = position.subtract(this._getTargetPosition());
         this.radius = radiusv3.length();
 
@@ -478,7 +478,7 @@ var RANDO = RANDO || {};
         this.beta = Math.acos(radiusv3.y / this.radius);
     };
 
-    RANDO.MapCamera.prototype.getPosition = function () {
+    RANDO.ExamineCamera.prototype.getPosition = function () {
         return new BABYLON.Vector3(
             this.radius * Math.cos(this.alpha) * Math.sin(this.beta),
             this.radius * Math.cos(this.alpha),
@@ -486,7 +486,7 @@ var RANDO = RANDO || {};
         );
     };
 
-    RANDO.MapCamera.prototype._getViewMatrix = function () {
+    RANDO.ExamineCamera.prototype._getViewMatrix = function () {
         // Compute
         var cosa = Math.cos(this.alpha);
         var sina = Math.sin(this.alpha);
@@ -501,19 +501,19 @@ var RANDO = RANDO || {};
         return this._viewMatrix;
     };
 
-    RANDO.MapCamera.ZOOM_ON_FACTOR = 1;
-    RANDO.MapCamera.prototype.zoomOn = function (meshes) {
+    RANDO.ExamineCamera.ZOOM_ON_FACTOR = 1;
+    RANDO.ExamineCamera.prototype.zoomOn = function (meshes) {
         meshes = meshes || this._scene.meshes;
 
         var minMaxVector = BABYLON.Mesh.MinMax(meshes);
         var distance = BABYLON.Vector3.Distance(minMaxVector.min, minMaxVector.max);
 
-        this.radius = distance * RANDO.MapCamera.ZOOM_ON_FACTOR;
+        this.radius = distance * RANDO.ExamineCamera.ZOOM_ON_FACTOR;
 
         this.focusOn({min: minMaxVector.min, max: minMaxVector.max, distance: distance});
     };
 
-    RANDO.MapCamera.prototype.focusOn = function (meshesOrMinMaxVectorAndDistance) {
+    RANDO.ExamineCamera.prototype.focusOn = function (meshesOrMinMaxVectorAndDistance) {
         var meshesOrMinMaxVector;
         var distance;
 
