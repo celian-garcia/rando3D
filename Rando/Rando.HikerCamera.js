@@ -1,3 +1,30 @@
+/*******************************************************************************
+ * Rando.HikerCamera.js
+ * 
+ * HikerCamera class : 
+ *  It is a camera which look like the FreeCamera of BabylonJS.
+ *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
+ * 
+ *  The major differences is than all moves have been replaced by some 
+ *  animation controls. In effect this camera was done to follow a path.
+ * 
+ *  After instantiate the camera, set the commands and set the path with 
+ *  setPath() function, we can play, pause, stop, rewind and move forward the 
+ *  camera along this path as we want.
+ * 
+ * 
+ *  Beware ! this camera will need to have imported these libraries : 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/BezierPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/DirectionalRotationPlugin.min.js"></script>
+ 
+ *  
+ * @author: Célian GARCIA
+ ******************************************************************************/
+
 "use strict";
 
 var RANDO = RANDO || {};
@@ -6,10 +33,8 @@ var RANDO = RANDO || {};
     RANDO.HikerCamera = function (name, position, scene) {
         BABYLON.Camera.call(this, name, position, scene);
 
-        this.cameraDirection = new BABYLON.Vector3(0, 0, 0);
         this.cameraRotation = new BABYLON.Vector2(0, 0);
         this.rotation = new BABYLON.Vector3(0, 0, 0);
-        this.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
         this.keysPlayPause = [32];
         this.keysStop  = [13];
@@ -20,16 +45,11 @@ var RANDO = RANDO || {};
         this._currentTarget = BABYLON.Vector3.Zero();
         this._viewMatrix = BABYLON.Matrix.Zero();
         this._camMatrix = BABYLON.Matrix.Zero();
-        this._cameraTransformMatrix = BABYLON.Matrix.Zero();
         this._cameraRotationMatrix = BABYLON.Matrix.Zero();
         this._referencePoint = BABYLON.Vector3.Zero();
         this._transformedReferencePoint = BABYLON.Vector3.Zero();
-        this._oldPosition = BABYLON.Vector3.Zero();
-        this._diffPosition = BABYLON.Vector3.Zero();
-        this._newPosition = BABYLON.Vector3.Zero();
         this._lookAtTemp = BABYLON.Matrix.Zero();
         this._tempMatrix = BABYLON.Matrix.Zero();
-        this._positionAfterZoom = BABYLON.Vector3.Zero();
 
         // Animation
         this._timeline = null
@@ -38,8 +58,8 @@ var RANDO = RANDO || {};
         this._oldState = null;
         this._isMoving = false;
         this._lenghtOfBezier = 0;
-        this._position_transiton = null;
-        this._rotation_transiton = null;
+        this._positionTween = null;
+        this._rotationTween = null;
 
         RANDO.HikerCamera.prototype._initCache.call(this);
     };
@@ -285,7 +305,6 @@ var RANDO = RANDO || {};
             this._reset = function () {
                 that._keys = [];
                 previousPosition = null;
-                that.cameraDirection = new BABYLON.Vector3(0, 0, 0);
                 that.cameraRotation = new BABYLON.Vector2(0, 0);
 
                 if (that._path.length) {
@@ -337,8 +356,11 @@ var RANDO = RANDO || {};
 
     RANDO.HikerCamera.prototype._update = function () {
 
-        var needToRotate = Math.abs(this.cameraRotation.x) > 0 || Math.abs(this.cameraRotation.y) > 0;
-        var stateHaveChanged = this._oldState != this._state;
+        var needToRotate = (
+            Math.abs(this.cameraRotation.x) > 0 || 
+            Math.abs(this.cameraRotation.y) > 0
+        );
+        var stateHaveChanged = (this._oldState != this._state);
 
         // Rotate
         if (needToRotate) {
@@ -443,7 +465,7 @@ var RANDO = RANDO || {};
         this._lengthOfBezier = vertices.length;
         this.loadPathOnTimeline ();
     };
-    
+
     RANDO.HikerCamera.prototype.loadPathOnTimeline = function () {
         // Verify if path and lengthOfBezier exist
         if (!this._path) {
@@ -475,10 +497,10 @@ var RANDO = RANDO || {};
 
         // Creates the Bezier curve
         var tween = TweenLite.to(position, quantity, {bezier: this._path, ease:Linear.easeNone});
-        var d = 20;
+        var i, d = 20;
 
         // Load the Bezier curve on timeline
-        for (var i = 0; i < quantity-d; i++) {
+        for (i = 0; i < quantity-d; i++) {
             tween.time(i); // Jumps to the appropriate time in the tween, causing 
                             // position variable to be updated accordingly.
             var currentPosition = _.clone(position);
@@ -495,9 +517,20 @@ var RANDO = RANDO || {};
                 }),
                 TweenLite.to(this.rotation, (duration / quantity), { 
                     directionalRotation :{ y: (rotation_y +"_short"), useRadians:true} ,
-                    ease: 'ease-in'
+                    ease: "Linear.easeNone"
                 })
             ]);
+        }
+        while (i < quantity) {
+            tween.time(i++);
+            this._timeline.add(
+                TweenLite.to(this.position, (duration / quantity), {
+                    x: currentPosition.x, 
+                    y: currentPosition.y + RANDO.SETTINGS.CAM_OFFSET, 
+                    z: currentPosition.z, 
+                    ease: "Linear.easeNone" 
+                })
+            );
         }
 
         // Animation paused by default
@@ -513,13 +546,13 @@ var RANDO = RANDO || {};
     };
 
     RANDO.HikerCamera.prototype.moveTo = function (futurePosition, futureTarget, speed, onComplete) {
-        var rotation_y = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
+        var y_rotation = RANDO.Utils.angleFromAxis(futurePosition, futureTarget, BABYLON.Axis.Y);
 
         var distance = BABYLON.Vector3.Distance(this.position, futurePosition);
         var duration = distance / speed;
 
         // Translation
-        this._position_transition = TweenLite.to(this.position, duration, { 
+        this._positionTween = TweenLite.to(this.position, duration, { 
             x: futurePosition.x, 
             y: futurePosition.y + RANDO.SETTINGS.CAM_OFFSET,
             z: futurePosition.z,
@@ -530,9 +563,9 @@ var RANDO = RANDO || {};
         });
 
         // Rotation
-        this._rotation_transition = TweenLite.to(this.rotation, duration, { 
+        this._rotationTween = TweenLite.to(this.rotation, duration, { 
             x: 0,
-            y: rotation_y, 
+            y: y_rotation, 
             z: 0,
             ease: 'ease-in'
         });
