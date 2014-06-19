@@ -40,63 +40,15 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["demo_camera", "free_camera", "examine_camera", "bird_camera", "hiker_camera"];
+    RANDO.CameraIDs = ["examine_camera", "bird_camera", "hiker_camera"];
 
     /* Methods */
     RANDO.CameraContainer.prototype.init = function () {
         this._computeInitialParameters ();
-        this._buildDemoCamera ();
-        this._buildFreeCamera ();
         this._buildBirdCamera ();
         this._buildExamineCamera ();
         this._buildHikerCamera ();
         this._cameraSwitcher ();
-    };
-
-    /**
-     * RANDO.CameraContainer._buildDemoCamera() : build of the demo camera
-     */
-    RANDO.CameraContainer.prototype._buildDemoCamera = function () {
-        var demo_camera = new RANDO.ArcRotateCamera(
-            "Demo Camera", 0, 0, 0,
-            this.initialTarget,
-            this._scene
-        );
-        demo_camera.id = "demo_camera";
-        demo_camera.keysUp    = [83, 40]; // Touche Z and up
-        demo_camera.keysDown  = [90, 38]; // Touche S and down
-        demo_camera.keysLeft  = [68, 39]; // Touche Q and left
-        demo_camera.keysRight = [81, 37]; // Touche D and right
-        demo_camera.wheelPrecision      = 0.2;
-        demo_camera.lowerRadiusLimit    = this.lowerRadiusLimit;
-        demo_camera.upperRadiusLimit    = this.upperRadiusLimit;
-        demo_camera.upperBetaLimit = Math.PI/2;
-        demo_camera.maxZ    = 10000;
-
-        this.cameras.demo_camera = demo_camera;
-    };
-
-    /**
-     * RANDO.CameraContainer._buildFreeCamera() : build of the Free camera
-     */
-    RANDO.CameraContainer.prototype._buildFreeCamera = function () {
-        var free_camera = new BABYLON.FreeCamera(
-            "Flying Camera", 
-            BABYLON.Vector3.Zero(),
-            this._scene
-        );
-
-        free_camera.id = "free_camera";
-        free_camera.keysUp     = [90, 38]; // Touche Z and up
-        free_camera.keysDown   = [83, 40]; // Touche S and down
-        free_camera.keysLeft   = [81, 37]; // Touche Q and left
-        free_camera.keysRight  = [68, 39]; // Touche D and right
-
-        free_camera.checkCollisions = true;
-        free_camera.maxZ = 10000;
-        free_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-
-        this.cameras.free_camera = free_camera;
     };
 
     /**
@@ -210,13 +162,12 @@ var RANDO = RANDO || {};
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
-        if (oldID == "examine_camera" || oldID == "demo_camera") {
+        if (oldID == "examine_camera") {
             
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
-        } else if (oldID == "bird_camera" || oldID == "free_camera" ||
-                    oldID == "hiker_camera") {
+        } else if (oldID == "bird_camera" || oldID == "hiker_camera") {
                         
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
@@ -252,19 +203,19 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype._resetByDefault = function () {
         var activeCam = this._scene.activeCamera;
 
-        // Arcrotate type
-        if (activeCam.id == "examine_camera" || activeCam.id == "demo_camera") {
+        // Examine Camera
+        if (activeCam.id == "examine_camera") {
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
 
-        // Free type 
-        else if (activeCam.id == "bird_camera" || activeCam.id == "free_camera" ) {
+        // Bird Camera
+        else if (activeCam.id == "bird_camera") {
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
 
-        // Hiker type
+        // Hiker Camera
         else if (activeCam.id == "hiker_camera" ) {
             if (this._positionBeforeSwitch) {
                 activeCam.position = this._positionBeforeSwitch;

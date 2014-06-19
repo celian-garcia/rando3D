@@ -218,7 +218,7 @@ var RANDO = RANDO || {};
 
         // Defines active camera
         if (!$.inArray(cameraID, RANDO.CameraIDs))
-            cameraID = "demo_camera";
+            cameraID = "examine_camera";
 
         this.camContainer.setActiveCamera (cameraID);
     };
