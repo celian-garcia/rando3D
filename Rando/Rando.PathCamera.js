@@ -449,7 +449,7 @@ var RANDO = RANDO || {};
                     ease: "Linear.easeNone" 
                 }),
                 TweenLite.to(this.rotation, (duration / quantity), { 
-                    y: rotation_y, 
+                    directionalRotation :{ y: (rotation_y +"_short"), useRadians:true} ,
                     ease: 'ease-in'
                 })
             ]);
