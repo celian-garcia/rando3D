@@ -454,6 +454,7 @@ var RANDO = RANDO || {};
 
             this.cameraDirection.scaleInPlace(this.inertia);
         }
+
         if (needToRotateOrZoom) {
             if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
                 this.inertialAlphaOffset = 0;
