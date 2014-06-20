@@ -531,6 +531,19 @@ var RANDO = RANDO || {};
         this.maxZ = distance * 2;
     };
 
+    RANDO.ExamineCamera.sphericToCartesian = function (alpha, beta, radius, center) {
+        var cosa = Math.cos(alpha);
+        var sina = Math.sin(alpha);
+        var cosb = Math.cos(beta);
+        var sinb = Math.sin(beta);
+
+        center = center || BABYLON.Vector3.Zero();
+        return center.add(new BABYLON.Vector3(
+            radius * cosa * sinb,
+            radius * cosb,
+            radius * sina * sinb
+        ));
+    };
 })();
 
 

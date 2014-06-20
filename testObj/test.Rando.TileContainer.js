@@ -2,29 +2,17 @@ var assert = chai.assert;
 
 describe('Geotrek 3D - TileContainer Object', function() {
     var extent = {
-        altitudes: {
+        x: {
             max: 100,
             min: 50
         },
-        northeast: {
-            x: 100,
-            y: 50,
-            z: 100
+        y: {
+            max: 100,
+            min: 50
         },
-        northwest: {
-            x: 0,
-            y: 90,
-            z: 100
-        },
-        southeast: {
-            x: 100,
-            y: 80,
-            z: 0
-        },
-        southwest: {
-            x: 0,
-            y: 100,
-            z: 0
+        z: {
+            max: 100,
+            min: 20
         }
     };
     
