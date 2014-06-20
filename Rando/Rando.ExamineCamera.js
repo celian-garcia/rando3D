@@ -18,7 +18,14 @@ var RANDO = RANDO || {};
     var eventPrefix = BABYLON.Tools.GetPointerPrefix();
 
     RANDO.ExamineCamera = function (name, alpha, beta, radius, target, scene) {
-        BABYLON.Camera.call(this, name, BABYLON.Vector3.Zero(), scene);
+        BABYLON.Camera.call(
+            this, name, RANDO.ExamineCamera.sphericToCartesian(
+                this.alpha,
+                this.beta,
+                this.radius,
+                this.target
+            ), scene
+        );
 
         this.alpha = alpha;
         this.beta = beta;
@@ -390,12 +397,14 @@ var RANDO = RANDO || {};
             Math.abs(this.cameraDirection.y) > 0 ||
             Math.abs(this.cameraDirection.z) > 0
         );
-        
+
         var needToRotateOrZoom = (
             this.inertialAlphaOffset != 0 ||
             this.inertialBetaOffset  != 0 ||
             this.inertialRadiusOffset != 0
         );
+
+        var needCollisions = this.checkCollisions && this._scene.collisionsEnabled;
 
         // Update target
         if (needToMoveTarget) {
@@ -439,6 +448,75 @@ var RANDO = RANDO || {};
         }
         if (this.upperZLimit && this.target.z > this.upperZLimit) {
             this.target.z = this.upperZLimit;
+        }
+
+        // Moves and Collisions
+        if (needToRotateOrZoom && needToMoveTarget) {
+            if (needCollisions) {
+                this._collideWithWorld(
+                    RANDO.ExamineCamera.sphericToCartesian(
+                        this.alpha,
+                        this.beta,
+                        this.radius,
+                        this.target
+                    )
+                    .subtract(this.position)
+                    .add(this.cameraDirection)
+                );
+            } 
+            else {
+                this.position.addInPlace(
+                    RANDO.ExamineCamera.sphericToCartesian(
+                        this.alpha,
+                        this.beta,
+                        this.radius,
+                        this.target
+                    )
+                    .subtract(this.position)
+                    .add(this.cameraDirection)
+                );
+            }
+        }
+        else if (needToRotateOrZoom) {
+            if (needCollisions) {
+                this._collideWithWorld(
+                    RANDO.ExamineCamera.sphericToCartesian(
+                        this.alpha,
+                        this.beta,
+                        this.radius,
+                        this.target
+                    )
+                    .subtract(this.position)
+                );
+            } else {
+                this.position.addInPlace(
+                    RANDO.ExamineCamera.sphericToCartesian(
+                        this.alpha,
+                        this.beta,
+                        this.radius,
+                        this.target
+                    )
+                    .subtract(this.position)
+                );
+            }
+        }
+        else if (needToMoveTarget) {
+            if (needCollisions) {
+                this._collideWithWorld(this.cameraDirection);
+            } else {
+                this.position.addInPlace(this.cameraDirection);
+            }
+        }
+
+        if (needToRotateOrZoom) {
+            this._collideWithWorld(RANDO.ExamineCamera.sphericToCartesian(
+                this.alpha,
+                this.beta,
+                this.radius,
+                this.target
+            ).subtract(this.position));
+            
+            this.setPosition(this.position);
         }
 
         // Inertia
@@ -486,17 +564,12 @@ var RANDO = RANDO || {};
     };
 
     RANDO.ExamineCamera.prototype._getViewMatrix = function () {
-        // Compute
-        this.position = RANDO.ExamineCamera.sphericToCartesian(
-            this.alpha,
-            this.beta,
-            this.radius,
-            this._getTargetPosition()
-        );
+        console.log(this.position);
+        console.log(this.target);
 
         BABYLON.Matrix.LookAtLHToRef(
             this.position,
-            this._getTargetPosition(),
+            this.target,
             this.upVector,
             this._viewMatrix
         );
@@ -535,6 +608,7 @@ var RANDO = RANDO || {};
         this.maxZ = distance * 2;
     };
 
+    // Static
     RANDO.ExamineCamera.sphericToCartesian = function (alpha, beta, radius, center) {
         var cosa = Math.cos(alpha);
         var sina = Math.sin(alpha);

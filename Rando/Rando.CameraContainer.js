@@ -78,7 +78,6 @@ var RANDO = RANDO || {};
         examine_camera.upperZLimit = this.upperZLimit;
         examine_camera.upperRadiusLimit    = this.upperRadiusLimit;
         examine_camera.upperBetaLimit = Math.PI/2;
-        examine_camera.lowerRadiusLimit = 0.1;
 
         this.cameras.examine_camera = examine_camera;
     };
@@ -206,7 +205,7 @@ var RANDO = RANDO || {};
 
         // Examine Camera
         if (activeCam.id == "examine_camera") {
-            activeCam.setPosition(this.initialPosition.clone());
+            activeCam.position = this.initialPosition.clone();
             activeCam.target = this.initialTarget.clone();
         }
 
