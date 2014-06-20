@@ -487,15 +487,19 @@ var RANDO = RANDO || {};
 
     RANDO.ExamineCamera.prototype._getViewMatrix = function () {
         // Compute
-        var cosa = Math.cos(this.alpha);
-        var sina = Math.sin(this.alpha);
-        var cosb = Math.cos(this.beta);
-        var sinb = Math.sin(this.beta);
+        this.position = RANDO.ExamineCamera.sphericToCartesian(
+            this.alpha,
+            this.beta,
+            this.radius,
+            this._getTargetPosition()
+        );
 
-        var target = this._getTargetPosition();
-
-        target.addToRef(new BABYLON.Vector3(this.radius * cosa * sinb, this.radius * cosb, this.radius * sina * sinb), this.position);
-        BABYLON.Matrix.LookAtLHToRef(this.position, target, this.upVector, this._viewMatrix);
+        BABYLON.Matrix.LookAtLHToRef(
+            this.position,
+            this._getTargetPosition(),
+            this.upVector,
+            this._viewMatrix
+        );
 
         return this._viewMatrix;
     };
@@ -525,9 +529,9 @@ var RANDO = RANDO || {};
             meshesOrMinMaxVector = meshesOrMinMaxVectorAndDistance;
             distance = meshesOrMinMaxVectorAndDistance.distance;
         }
-        
+
         this.target = BABYLON.Mesh.Center(meshesOrMinMaxVector);
-        
+
         this.maxZ = distance * 2;
     };
 
