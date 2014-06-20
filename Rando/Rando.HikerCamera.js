@@ -525,9 +525,9 @@ var RANDO = RANDO || {};
             tween.time(i++);
             this._timeline.add(
                 TweenLite.to(this.position, (duration / quantity), {
-                    x: currentPosition.x, 
-                    y: currentPosition.y + RANDO.SETTINGS.CAM_OFFSET, 
-                    z: currentPosition.z, 
+                    x: position.x, 
+                    y: position.y + RANDO.SETTINGS.CAM_OFFSET, 
+                    z: position.z, 
                     ease: "Linear.easeNone" 
                 })
             );
