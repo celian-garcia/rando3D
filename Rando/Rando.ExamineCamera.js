@@ -345,7 +345,7 @@ var RANDO = RANDO || {};
             this._transformedDirection = BABYLON.Vector3.Zero();
         }
 
-        // Keyboard
+        // Moves with the Keyboard
         for (var index = 0; index < this._keys.length; index++) {
             var keyCode = this._keys[index];
             var speed = this._computeLocalCameraSpeed();
@@ -400,18 +400,6 @@ var RANDO = RANDO || {};
         // Update target
         if (needToMoveTarget) {
             this.target.addInPlace(this.cameraDirection);
-
-            // Inertia
-            this.cameraDirection.scaleInPlace(this.inertia);
-
-            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
-                this.cameraDirection.x = 0;
-
-            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
-                this.cameraDirection.y = 0;
-
-            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
-                this.cameraDirection.z = 0;
         }
 
         // Update Alpha Beta Radius
@@ -419,20 +407,6 @@ var RANDO = RANDO || {};
             this.alpha  += this.inertialAlphaOffset;
             this.beta   += this.inertialBetaOffset;
             this.radius -= this.inertialRadiusOffset;
-
-            // Inertia
-            this.inertialAlphaOffset    *= this.inertia;
-            this.inertialBetaOffset     *= this.inertia;
-            this.inertialRadiusOffset   *= this.inertia;
-
-            if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
-                this.inertialAlphaOffset = 0;
-
-            if (Math.abs(this.inertialBetaOffset) < BABYLON.Engine.epsilon)
-                this.inertialBetaOffset = 0;
-
-            if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
-                this.inertialRadiusOffset = 0;
         }
 
         // Limits
@@ -465,6 +439,34 @@ var RANDO = RANDO || {};
         }
         if (this.upperZLimit && this.target.z > this.upperZLimit) {
             this.target.z = this.upperZLimit;
+        }
+
+        // Inertia
+        if (needToMoveTarget) {
+            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
+                this.cameraDirection.x = 0;
+
+            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
+                this.cameraDirection.y = 0;
+
+            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
+                this.cameraDirection.z = 0;
+
+            this.cameraDirection.scaleInPlace(this.inertia);
+        }
+        if (needToRotateOrZoom) {
+            if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
+                this.inertialAlphaOffset = 0;
+
+            if (Math.abs(this.inertialBetaOffset) < BABYLON.Engine.epsilon)
+                this.inertialBetaOffset = 0;
+
+            if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
+                this.inertialRadiusOffset = 0;
+
+            this.inertialAlphaOffset    *= this.inertia;
+            this.inertialBetaOffset     *= this.inertia;
+            this.inertialRadiusOffset   *= this.inertia;
         }
     };
 

@@ -415,7 +415,7 @@ var RANDO = RANDO || {};
             }
         }
 
-        // Move and collisions
+        // Moves and collisions
         if (needToZoom && needToMove) {
             if (needCollisions) {
                 this._collideWithWorld(this.zoomDirection.add(this.moveDirection));
