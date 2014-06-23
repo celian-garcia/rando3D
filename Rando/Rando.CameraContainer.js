@@ -165,12 +165,12 @@ var RANDO = RANDO || {};
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
         if (oldID == "examine_camera") {
-            
+
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
         } else if (oldID == "bird_camera" || oldID == "hiker_camera") {
-                        
+
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
             this._targetBeforeSwitch    = null;

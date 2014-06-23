@@ -41,7 +41,7 @@ var RANDO = RANDO || {};
         // Collisions
         this._collider = new BABYLON.Collider();
         this._needMoveForGravity = true;
-        
+
         this.cameraDirection = new BABYLON.Vector3(0, 0, 0);
         this.cameraRotation = new BABYLON.Vector2(0, 0);
         this.rotation = new BABYLON.Vector3(0, 0, 0);
@@ -340,9 +340,7 @@ var RANDO = RANDO || {};
 
         if (this._diffPosition.length() > BABYLON.Engine.collisionsEpsilon) {
             this.position.addInPlace(this._diffPosition);
-            if (this.onCollide) {
-                this.onCollide(this._collider.collidedMesh);
-            }
+            this.setPosition(this.position);
         }
     };
 
@@ -421,33 +419,43 @@ var RANDO = RANDO || {};
         // Limits
         if (this.lowerAlphaLimit && this.alpha < this.lowerAlphaLimit) {
             this.alpha = this.lowerAlphaLimit;
+            this.inertialAlphaOffset = 0;
         }
         if (this.upperAlphaLimit && this.alpha > this.upperAlphaLimit) {
             this.alpha = this.upperAlphaLimit;
+            this.inertialAlphaOffset = 0;
         }
         if (this.lowerBetaLimit && this.beta < this.lowerBetaLimit) {
             this.beta = this.lowerBetaLimit;
+            this.inertialBetaOffset = 0;
         }
         if (this.upperBetaLimit && this.beta > this.upperBetaLimit) {
             this.beta = this.upperBetaLimit;
+            this.inertialBetaOffset = 0;
         }
         if (this.lowerRadiusLimit && this.radius < this.lowerRadiusLimit) {
             this.radius = this.lowerRadiusLimit;
+            this.inertialRadiusOffset = 0;
         }
         if (this.upperRadiusLimit && this.radius > this.upperRadiusLimit) {
             this.radius = this.upperRadiusLimit;
+            this.inertialRadiusOffset = 0;
         }
         if (this.lowerXLimit && this.target.x < this.lowerXLimit) {
             this.target.x = this.lowerXLimit;
+            this.cameraDirection.x = 0;
         }
         if (this.upperXLimit && this.target.x > this.upperXLimit) {
             this.target.x = this.upperXLimit;
+            this.cameraDirection.x = 0;
         }
         if (this.lowerZLimit && this.target.z < this.lowerZLimit) {
             this.target.z = this.lowerZLimit;
+            this.cameraDirection.z = 0;
         }
         if (this.upperZLimit && this.target.z > this.upperZLimit) {
             this.target.z = this.upperZLimit;
+            this.cameraDirection.z = 0;
         }
 
         // Moves and Collisions
@@ -548,7 +556,7 @@ var RANDO = RANDO || {};
             Math.pow(radiusv3.z, 2)
         ));
         if (radiusv3.z < 0) {
-            this.alpha = 2*Math.PI - this.alpha;
+            this.alpha = 2 * Math.PI - this.alpha;
         }
         this.beta = Math.acos(radiusv3.y / this.radius);
     };
@@ -608,6 +616,25 @@ var RANDO = RANDO || {};
             radius * cosb,
             radius * sina * sinb
         ));
+    };
+
+    RANDO.ExamineCamera.cartesianToSpheric = function (position, center) {
+        var radiusv3 = position.subtract(center);
+        var radius = radiusv3.length();
+
+        var alpha = Math.acos(radiusv3.x / Math.sqrt(
+            Math.pow(radiusv3.x, 2) +
+            Math.pow(radiusv3.z, 2)
+        ));
+        if (radiusv3.z < 0) {
+            var alpha = 2*Math.PI - this.alpha;
+        }
+        var beta = Math.acos(radiusv3.y / this.radius);
+        return {
+            'alpha': alpha,
+            'beta': beta,
+            'radius': radius
+        };
     };
 })();
 
