@@ -19,6 +19,7 @@ RANDO.SETTINGS.CAM_OFFSET = 200; // Camera's altitude offset (in meters)
 RANDO.SETTINGS.HCAM_FOLLOW_SPEED = 15; // HikerCamera speed when it follows trek
 RANDO.SETTINGS.HCAM_RETURN_SPEED = 1500; // HikerCamera speed when it comes back to default
 RANDO.SETTINGS.CAM_SPEED_F = 50;  // Camera speed in Flying mode(from 0 to infinity !) 
+RANDO.SETTINGS.COLLISIONS_OFFSET = 150;
 ////////////////////////////////////////////////////////////////////////////////
 
 

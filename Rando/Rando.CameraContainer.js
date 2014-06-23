@@ -69,6 +69,7 @@ var RANDO = RANDO || {};
 
         examine_camera.wheelPrecision = 0.2;
         examine_camera.checkCollisions = true;
+        examine_camera.ellipsoid.y = RANDO.SETTINGS.COLLISIONS_OFFSET;
         examine_camera.maxZ = 10000;
         examine_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
         
@@ -98,6 +99,7 @@ var RANDO = RANDO || {};
         bird_camera.keysRight  = [68, 39]; // Touche D and right
 
         bird_camera.checkCollisions = true;
+        bird_camera.ellipsoid.y = RANDO.SETTINGS.COLLISIONS_OFFSET;
         bird_camera.maxZ = 10000;
         bird_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
