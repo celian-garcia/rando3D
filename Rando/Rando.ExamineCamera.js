@@ -20,10 +20,10 @@ var RANDO = RANDO || {};
     RANDO.ExamineCamera = function (name, alpha, beta, radius, target, scene) {
         BABYLON.Camera.call(
             this, name, RANDO.ExamineCamera.sphericToCartesian(
-                this.alpha,
-                this.beta,
-                this.radius,
-                this.target
+                alpha,
+                beta,
+                radius,
+                target
             ), scene
         );
 
@@ -508,17 +508,6 @@ var RANDO = RANDO || {};
             }
         }
 
-        if (needToRotateOrZoom) {
-            this._collideWithWorld(RANDO.ExamineCamera.sphericToCartesian(
-                this.alpha,
-                this.beta,
-                this.radius,
-                this.target
-            ).subtract(this.position));
-            
-            this.setPosition(this.position);
-        }
-
         // Inertia
         if (needToMoveTarget) {
             if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
@@ -550,6 +539,7 @@ var RANDO = RANDO || {};
     };
 
     RANDO.ExamineCamera.prototype.setPosition = function (position) {
+        this.position = position;
         var radiusv3 = position.subtract(this._getTargetPosition());
         this.radius = radiusv3.length();
 
@@ -564,9 +554,6 @@ var RANDO = RANDO || {};
     };
 
     RANDO.ExamineCamera.prototype._getViewMatrix = function () {
-        console.log(this.position);
-        console.log(this.target);
-
         BABYLON.Matrix.LookAtLHToRef(
             this.position,
             this.target,

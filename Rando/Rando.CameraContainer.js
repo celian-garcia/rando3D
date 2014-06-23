@@ -205,7 +205,7 @@ var RANDO = RANDO || {};
 
         // Examine Camera
         if (activeCam.id == "examine_camera") {
-            activeCam.position = this.initialPosition.clone();
+            activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
 
