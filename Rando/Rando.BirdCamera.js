@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Rando.BirdCamera.js
- * 
- * BirdCamera class : 
+ *
+ * BirdCamera class :
  *  It is a camera which look like the FreeCamera of BabylonJS.
  *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
- * 
- *  The differences are : 
- *      - permites to translate it of world's X and Z axis instead of 
- *  locale's one. 
- *      - there is a wheel zoom. 
- * 
+ *
+ *  The differences are :
+ *      - permites to translate it of world's X and Z axis instead of
+ *  locale's one.
+ *      - there is a wheel zoom.
+ *
  *  It gives the impression of flying. That's why it is called BirdCamera
- *  
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
@@ -358,8 +358,8 @@ var RANDO = RANDO || {};
 
             this._cameraTransformMatrix = BABYLON.Matrix.RotationY(this.rotation.y);
             BABYLON.Vector3.TransformNormalToRef(
-                this._localDirection, 
-                this._cameraTransformMatrix, 
+                this._localDirection,
+                this._cameraTransformMatrix,
                 this._transformedDirection
             );
             this.moveDirection.addInPlace(this._transformedDirection);
@@ -466,7 +466,7 @@ var RANDO = RANDO || {};
         }
     };
 
-    
+
     RANDO.BirdCamera.prototype.getTarget = function () {
         return this._currentTarget;
     };

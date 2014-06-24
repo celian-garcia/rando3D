@@ -1,27 +1,27 @@
 /*******************************************************************************
  * Rando.HikerCamera.js
- * 
- * HikerCamera class : 
+ *
+ * HikerCamera class :
  *  It is a camera which look like the FreeCamera of BabylonJS.
  *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
- * 
- *  The major differences is than all moves have been replaced by some 
+ *
+ *  The major differences is than all moves have been replaced by some
  *  animation controls. In effect this camera was done to follow a path.
- * 
- *  After instantiate the camera, set the commands and set the path with 
- *  setPath() function, we can play, pause, stop, rewind and move forward the 
+ *
+ *  After instantiate the camera, set the commands and set the path with
+ *  setPath() function, we can play, pause, stop, rewind and move forward the
  *  camera along this path as we want.
- * 
- * 
- *  Beware ! this camera will need to have imported these libraries : 
+ *
+ *
+ *  Beware ! this camera will need to have imported these libraries :
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/BezierPlugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/DirectionalRotationPlugin.min.js"></script>
- 
- *  
+
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
@@ -283,7 +283,7 @@ var RANDO = RANDO || {};
                     else if (that.keysRewind.indexOf(keyCode) !== -1) {
                         if (state == "rewind" && that._timeline._time == 0) {
                             state = "stop";
-                        } 
+                        }
                         else if (state == "rewind" && that._timeline._time != 0) {
                             state = "pause";
                         }
@@ -312,7 +312,7 @@ var RANDO = RANDO || {};
                 }
                 that._oldState = null;
                 that._state = "stop";
-                
+
                 if (that._position_transition) {
                     that._position_transition.kill();
                 }
@@ -357,7 +357,7 @@ var RANDO = RANDO || {};
     RANDO.HikerCamera.prototype._update = function () {
 
         var needToRotate = (
-            Math.abs(this.cameraRotation.x) > 0 || 
+            Math.abs(this.cameraRotation.x) > 0 ||
             Math.abs(this.cameraRotation.y) > 0
         );
         var stateHaveChanged = (this._oldState != this._state);
@@ -386,13 +386,13 @@ var RANDO = RANDO || {};
             this.cameraRotation.scaleInPlace(this.inertia);
         }
 
-        // State 
+        // State
         if (stateHaveChanged) {
             console.log(this._oldState + " to " + this._state);
             var newState = this._state;
 
             switch (newState) {
-                case "stop" : 
+                case "stop" :
                     this._isMoving = true;
                     this._timeline.pause();
                     var that = this;
@@ -486,7 +486,7 @@ var RANDO = RANDO || {};
             that._onCompleteTimeline();
         }});
 
-        // Initials parameters of animation 
+        // Initials parameters of animation
         var quantity = this._lengthOfBezier;
         var duration = this._lengthOfBezier / this.followSpeed;
         var position = {
@@ -501,7 +501,7 @@ var RANDO = RANDO || {};
 
         // Load the Bezier curve on timeline
         for (i = 0; i < quantity-d; i++) {
-            tween.time(i); // Jumps to the appropriate time in the tween, causing 
+            tween.time(i); // Jumps to the appropriate time in the tween, causing
                             // position variable to be updated accordingly.
             var currentPosition = _.clone(position);
             tween.time(i+d);
@@ -510,12 +510,12 @@ var RANDO = RANDO || {};
 
             this._timeline.add([
                 TweenLite.to(this.position, (duration / quantity), {
-                    x: currentPosition.x, 
-                    y: currentPosition.y + RANDO.SETTINGS.CAM_OFFSET, 
-                    z: currentPosition.z, 
-                    ease: "Linear.easeNone" 
+                    x: currentPosition.x,
+                    y: currentPosition.y + RANDO.SETTINGS.CAM_OFFSET,
+                    z: currentPosition.z,
+                    ease: "Linear.easeNone"
                 }),
-                TweenLite.to(this.rotation, (duration / quantity), { 
+                TweenLite.to(this.rotation, (duration / quantity), {
                     directionalRotation :{ y: (rotation_y +"_short"), useRadians:true} ,
                     ease: "Linear.easeNone"
                 })
@@ -525,10 +525,10 @@ var RANDO = RANDO || {};
             tween.time(i++);
             this._timeline.add(
                 TweenLite.to(this.position, (duration / quantity), {
-                    x: position.x, 
-                    y: position.y + RANDO.SETTINGS.CAM_OFFSET, 
-                    z: position.z, 
-                    ease: "Linear.easeNone" 
+                    x: position.x,
+                    y: position.y + RANDO.SETTINGS.CAM_OFFSET,
+                    z: position.z,
+                    ease: "Linear.easeNone"
                 })
             );
         }
@@ -552,8 +552,8 @@ var RANDO = RANDO || {};
         var duration = distance / speed;
 
         // Translation
-        this._positionTween = TweenLite.to(this.position, duration, { 
-            x: futurePosition.x, 
+        this._positionTween = TweenLite.to(this.position, duration, {
+            x: futurePosition.x,
             y: futurePosition.y + RANDO.SETTINGS.CAM_OFFSET,
             z: futurePosition.z,
             ease: 'ease-in',
@@ -563,9 +563,9 @@ var RANDO = RANDO || {};
         });
 
         // Rotation
-        this._rotationTween = TweenLite.to(this.rotation, duration, { 
+        this._rotationTween = TweenLite.to(this.rotation, duration, {
             x: 0,
-            y: y_rotation, 
+            y: y_rotation,
             z: 0,
             ease: 'ease-in'
         });

@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Rando.CameraContainer.js
- * 
- * CameraContainer class : 
+ *
+ * CameraContainer class :
  *  A container which will contains all cameras of the scene
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
-    
+(function () {  "use strict"
+
     /* Constructor */
     RANDO.CameraContainer = function (canvas, scene, params) {
         this._canvas    = canvas;
@@ -72,7 +72,7 @@ var RANDO = RANDO || {};
         examine_camera.ellipsoid.y = RANDO.SETTINGS.COLLISIONS_OFFSET;
         examine_camera.maxZ = 10000;
         examine_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
-        
+
         examine_camera.lowerXLimit = this.lowerXLimit;
         examine_camera.lowerZLimit = this.lowerZLimit;
         examine_camera.upperXLimit = this.upperXLimit;
@@ -88,7 +88,7 @@ var RANDO = RANDO || {};
      */
     RANDO.CameraContainer.prototype._buildBirdCamera = function () {
         var bird_camera = new RANDO.BirdCamera(
-            "Bird Camera", 
+            "Bird Camera",
             BABYLON.Vector3.Zero(),
             this._scene
         );
@@ -111,7 +111,7 @@ var RANDO = RANDO || {};
      */
     RANDO.CameraContainer.prototype._buildHikerCamera = function () {
         var hiker_camera = new RANDO.HikerCamera(
-            "Hiker Camera", 
+            "Hiker Camera",
             BABYLON.Vector3.Zero(),
             this._scene
         );
@@ -122,7 +122,7 @@ var RANDO = RANDO || {};
 
         hiker_camera.returnSpeed = RANDO.SETTINGS.HCAM_RETURN_SPEED;
         hiker_camera.followSpeed = RANDO.SETTINGS.HCAM_FOLLOW_SPEED;
-        
+
 
         this.cameras.hiker_camera = hiker_camera;
     };
@@ -130,12 +130,12 @@ var RANDO = RANDO || {};
     /**
      * RANDO.CameraContainer.setActiveCamera() : set the active camera of the scene
      *      - newID: ID of the camera we want to set as active
-     * 
+     *
      * NB : newID should be in the static array RANDO.cameraIDs
      */
     RANDO.CameraContainer.prototype.setActiveCamera = function (newID) {
         if (RANDO.CameraIDs.indexOf(newID) == -1) {
-            console.error("RANDO.CameraContainer.setActiveCamera () : " + newID + 
+            console.error("RANDO.CameraContainer.setActiveCamera () : " + newID +
                             " is not an available camera's ID");
             return;
         }
@@ -176,7 +176,7 @@ var RANDO = RANDO || {};
             this._targetBeforeSwitch    = null;
         }
     };
-    
+
     RANDO.CameraContainer.prototype.setAnimationPath = function (vertices) {
         this._animationPath = vertices;
 
@@ -221,7 +221,7 @@ var RANDO = RANDO || {};
         else if (activeCam.id == "hiker_camera" ) {
             if (this._positionBeforeSwitch) {
                 activeCam.position = this._positionBeforeSwitch;
-            } 
+            }
             if (this._rotationBeforeSwitch) {
                 activeCam.rotation = this._rotationBeforeSwitch;
             }
@@ -249,13 +249,13 @@ var RANDO = RANDO || {};
         this.upperXLimit = this._demExtent.x.max + this._offsets.x;
         this.lowerZLimit = this._demExtent.z.min + this._offsets.z;
         this.upperZLimit = this._demExtent.z.max + this._offsets.z;
-        
+
         this.lowerRadiusLimit = RANDO.SETTINGS.MIN_THICKNESS + this._demCenter.y;
         this.upperRadiusLimit = 8000;
     };
 
     RANDO.CameraContainer.prototype._initInterface = function () {
-        
+
         for (var it in this.cameras) {
             var id = this.cameras[it].id;
             $(".controls--" + id + " .description")

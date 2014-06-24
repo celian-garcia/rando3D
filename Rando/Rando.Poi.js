@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Rando.Poi.js
- * 
- * Poi class : 
+ *
+ * Poi class :
  *  Permites the build of a Point of Interest in 3D
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
+(function () {  "use strict"
 
     /* Constructor */
     RANDO.Poi = function (id, data, offsets, scene) {
@@ -24,7 +24,7 @@ var RANDO = RANDO || {};
         this._elevation     = data.properties.elevation;
         this._description   = data.properties.description || RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE;
         this._scene         = scene;
-        
+
         this.panel          = null;
         this.sphere         = null;
         this._attachedLight = null;
@@ -66,32 +66,32 @@ var RANDO = RANDO || {};
 
         // Building panel
         var panel = BABYLON.Mesh.CreateGround(
-            "POI - Panel", 
-            pan_size.m.width, 
-            pan_size.m.height, 
+            "POI - Panel",
+            pan_size.m.width,
+            pan_size.m.height,
             2, scene
         );
         panel.id = id;
-        panel.rotate (BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL); 
+        panel.rotate (BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL);
         panel.position.x = position.x;
         panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         this.panel = panel;
-        
+
         // Building pictogram Container
         var picto = BABYLON.Mesh.CreateGround(
             "POI - Panel",
-            pan_size.m.width, 
-            pan_size.m.height, 
+            pan_size.m.width,
+            pan_size.m.height,
             2, scene
         );
         picto.id = id;
         picto.material = new BABYLON.StandardMaterial("POI - Picto - Material", scene);
         picto.renderingGroupId = 1;
         picto.parent = panel;
-        
-        
+
+
         // Computes the size of the pictogram (in pixels)
         var picto_size = {
             width : pan_size.px.width,
@@ -139,7 +139,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Poi._buildSphere() : build a Sphere which will be on the real position 
+     * RANDO.Poi._buildSphere() : build a Sphere which will be on the real position
      *  of the POI on the DEM.
      */
     RANDO.Poi.prototype._buildSphere = function () {
@@ -170,8 +170,8 @@ var RANDO = RANDO || {};
         var sphere      = this.sphere;
         var panel       = this.panel;
 
-        
-        if (BABYLON.Vector3.Distance(panel.position, scene.activeCamera.position) < 300) { 
+
+        if (BABYLON.Vector3.Distance(panel.position, scene.activeCamera.position) < 300) {
             panel.isVisible = false;
             panel.getChildren()[0].isVisible = false;
         }
@@ -199,7 +199,7 @@ var RANDO = RANDO || {};
 
     /**
      * RANDO.Poi.drape() : drape the POI over the DEM
-     *      - ground : ground of the DEM 
+     *      - ground : ground of the DEM
      */
     RANDO.Poi.prototype.drape = function (ground) {
         RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
@@ -237,13 +237,13 @@ var RANDO = RANDO || {};
     };
 
     /** Static
-     * RANDO.Poi.runMouseListener() : Static function which run all mouse 
-     *  listeners linked to POIs, we give it a POI's array and it adds 
+     * RANDO.Poi.runMouseListener() : Static function which run all mouse
+     *  listeners linked to POIs, we give it a POI's array and it adds
      *  mouse events over all its elements.
-     * 
+     *
      *      - canvas : canvas where the scene is
      *      - pois : array of POIs
-     *      - scene : scene 
+     *      - scene : scene
      */
     RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
         var clickedID;
