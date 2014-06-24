@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Rando.Dem.js
- * 
- * Dem class : 
- *  Permites the creation of a Digital Elevation Model in 3D  
- * 
+ *
+ * Dem class :
+ *  Permites the creation of a Digital Elevation Model in 3D
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
+(function () {  "use strict"
 
     /* Constructor */
     RANDO.Dem = function (extent, altitudes, offsets, scene) {
@@ -21,7 +21,7 @@ var RANDO = RANDO || {};
         this._tiles = null;
         this._textures = [];
         this._min_thickness = RANDO.SETTINGS.MIN_THICKNESS;
-        
+
         this.ground = new BABYLON.Mesh("Digital Elevation Model", scene);
         this.sides  = new BABYLON.Mesh("Sides", scene);
         this.scaleViewer = null;
@@ -33,7 +33,7 @@ var RANDO = RANDO || {};
     /* Methods */
     RANDO.Dem.prototype.init = function () {
         this._tiles = new RANDO.TileContainer(
-            this._extent, 
+            this._extent,
             this._altitudes,
             this._offsets
         )._tiles;
@@ -43,7 +43,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Dem.buildGround() : build the ground of the DEM 
+     * RANDO.Dem.buildGround() : build the ground of the DEM
      */
     RANDO.Dem.prototype.buildGround = function () {
         // Ground building...
@@ -51,13 +51,13 @@ var RANDO = RANDO || {};
 
         var tiles   = this._tiles;
 
-        // Creates all tiles 
+        // Creates all tiles
         for (var it in tiles) {
             var meshTile = this._buildTile(tiles[it]);
             meshTile.parent = this.ground;
         }
 
-        // Ground built ! 
+        // Ground built !
         console.log("Ground built ! " + (Date.now() - RANDO.START_TIME) );
     };
 
@@ -83,14 +83,14 @@ var RANDO = RANDO || {};
         n_side.parent = this.sides;
         s_side.parent = this.sides;
 
-        // Sides built ! 
+        // Sides built !
         console.log("Sides built ! " + (Date.now() - RANDO.START_TIME) );
     };
 
     /**
      * RANDO.Dem._buildTile() : build a tile of the DEM
-     *      - data : data of a tile 
-     *  
+     *      - data : data of a tile
+     *
      *  return the tile mesh
      */
     RANDO.Dem.prototype._buildTile = function (data) {
@@ -108,13 +108,13 @@ var RANDO = RANDO || {};
         // Recomputes normals for lights and shadows
         RANDO.Utils.computeMeshNormals(tile)
 
-        // Set Uvs data of the tile 
+        // Set Uvs data of the tile
         RANDO.Utils.setMeshUvs(tile, data.uv);
 
         // Enables collisions
         tile.checkCollisions = true;
-        
-        // Material 
+
+        // Material
         var material = new BABYLON.StandardMaterial("DEM - Material", scene);
         var fakeTexture = new BABYLON.Texture(
             RANDO.SETTINGS.FAKE_TEX_URL,
@@ -129,12 +129,12 @@ var RANDO = RANDO || {};
 
     /**
      * RANDO.Dem._buildSide() : build a side of the DEM
-     *      - name: name of the side 
+     *      - name: name of the side
      *      - line: Array of point corresponding to a border of the DEM
      *      - alt_min: altitude minimale of the DEM
      *      - reverse: Boolean, if true reverse the line
-     * 
-     *  return the side mesh 
+     *
+     *  return the side mesh
      */
     RANDO.Dem.prototype._buildSide = function (name, line, alt_min, reverse) {
         var scene = this._scene;
@@ -194,9 +194,9 @@ var RANDO = RANDO || {};
         scaleViewer.material.diffuseColor = BABYLON.Color3.FromInts(96, 41, 108);
         scaleViewer.material.backFaceCulling = false;
         drapeScaleViewer (this.ground);
-        
+
         this.scaleViewer = scaleViewer;
-        
+
         function drapeScaleViewer (ground) {
             var vertices = scaleViewer.getVerticesData(BABYLON.VertexBuffer.PositionKind);
             var new_vertices = [];
@@ -218,12 +218,12 @@ var RANDO = RANDO || {};
 
     /**
      * RANDO.Dem.applyTextures() : Load tile's textures over the DEM
-     */ 
+     */
     RANDO.Dem.prototype.applyTextures = function () {
         console.log("Textures application ... " + (Date.now() - RANDO.START_TIME) );
         var tiles = this._tiles;
 
-        // Prepare all textures 
+        // Prepare all textures
         for (var it in tiles) {
             this._prepareTexture(tiles[it].coordinates);
         }
@@ -271,15 +271,15 @@ var RANDO = RANDO || {};
      * RANDO.Dem._prepareTexture() : Prepare a tile of textures for the DEM and add
      *  it to the textures Array.
      *      - coordinates : coordinates of a tile
-     *  
+     *
      */
     RANDO.Dem.prototype._prepareTexture = function (coordinates) {
         var scene = this._scene;
         var engine = scene.getEngine();
         var url = RANDO.Utils.replaceUrlCoordinates(
             RANDO.SETTINGS.TILE_TEX_URL,
-            coordinates.z, 
-            coordinates.x, 
+            coordinates.z,
+            coordinates.x,
             coordinates.y
         );
         this._textures.push(new BABYLON.Texture(url, scene));

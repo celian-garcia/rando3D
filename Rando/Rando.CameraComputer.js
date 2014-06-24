@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Rando.CameraComputer.js
- * 
- * CameraComputer class : 
+ *
+ * CameraComputer class :
  *  Used to separate calculations from the CameraContainer
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
-    
+(function () {  "use strict"
+
     /* Constructor */
     RANDO.CameraComputer = function () {
         this._altitudes = null;
