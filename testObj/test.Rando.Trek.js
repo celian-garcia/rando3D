@@ -92,7 +92,6 @@ describe('Geotrek 3D - Trek Object', function() {
                 trek.merge();
                 var result = trek.mergedTreks;
                 for (var it in result) {
-                    console.log(result[it].getTotalVertices());
                     assert(result[it].getTotalVertices() < nMax, 
                         "one or several mergedTrek(s) have too many vertices "
                     );
