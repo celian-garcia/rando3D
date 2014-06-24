@@ -18,9 +18,12 @@ var RANDO = RANDO || {};
         this._switchEnabled     = params.switchEnabled || false;
         this._demCenter         = _.clone(params.demCenter) || BABYLON.Vector3.Zero();
         this._demExtent         = _.clone(params.demExtent) || BABYLON.Vector3.Zero();
+        this._demAltitudes      = _.clone(params.demAltitudes) || [];
         this._offsets           = params.offsets || BABYLON.Vector3.Zero();
 
-        this.cameras    = {};
+        this._computer = new RANDO.CameraComputer ();
+
+        this.cameras = {};
 
         this._animationPath = null;
         this._controlsAttached  = false;
@@ -241,6 +244,12 @@ var RANDO = RANDO || {};
         this.initialPosition.y = this._demCenter.y + 1000;
         this.initialPosition.z = this._demCenter.z + 3000;
 
+        this._computer.computeInitialPositionToRef(
+            this._demExtent,
+            this._demAltitudes,
+            this.initialPosition
+        );
+
         this.initialTarget.x = this._demCenter.x;
         this.initialTarget.y = this._demExtent.y.min;
         this.initialTarget.z = this._demCenter.z;
@@ -255,7 +264,6 @@ var RANDO = RANDO || {};
     };
 
     RANDO.CameraContainer.prototype._initInterface = function () {
-        
         for (var it in this.cameras) {
             var id = this.cameras[it].id;
             $(".controls--" + id + " .description")
@@ -264,5 +272,4 @@ var RANDO = RANDO || {};
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
         }
     };
-
 })();

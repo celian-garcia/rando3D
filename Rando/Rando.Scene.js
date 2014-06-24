@@ -206,6 +206,7 @@ var RANDO = RANDO || {};
             'demCenter' : this._dem_data.center,
             'offsets'   : this._offsets,
             'demExtent' : this._dem_data.extent,
+            'demAltitudes': this._dem_data.altitudes,
             'switchEnabled' : true
         };
 
