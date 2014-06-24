@@ -16,12 +16,13 @@ var RANDO = RANDO || {};
         this._canvas    = canvas;
         this._scene     = scene;
         this._switchEnabled     = params.switchEnabled || false;
-        this._demCenter         = _.clone(params.demCenter) || BABYLON.Vector3.Zero();
-        this._demExtent         = _.clone(params.demExtent) || BABYLON.Vector3.Zero();
-        this._demAltitudes      = _.clone(params.demAltitudes) || [];
-        this._offsets           = params.offsets || BABYLON.Vector3.Zero();
 
-        this._computer = new RANDO.CameraComputer ();
+        this._computer = new RANDO.CameraComputer (
+            params.demCenter,
+            params.demExtent,
+            params.demAltitudes,
+            params.offsets || BABYLON.Vector3.Zero()
+        );
 
         this.cameras = {};
 
@@ -32,12 +33,14 @@ var RANDO = RANDO || {};
 
         this.initialPosition    = BABYLON.Vector3.Zero();
         this.initialTarget      = BABYLON.Vector3.Zero();
-        this.lowerXLimit        = null;
-        this.lowerZLimit        = null;
-        this.upperXLimit        = null;
-        this.upperZLimit        = null;
-        this.lowerRadiusLimit   = null;
-        this.upperRadiusLimit   = null;
+        this.limits             = {
+            'lowerX'        : null,
+            'upperX'        : null,
+            'lowerZ'        : null,
+            'upperZ'        : null,
+            'lowerRadius'   : null,
+            'upperRadius'   : null
+        };
 
         this.init();
     };
@@ -76,11 +79,11 @@ var RANDO = RANDO || {};
         examine_camera.maxZ = 10000;
         examine_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
-        examine_camera.lowerXLimit = this.lowerXLimit;
-        examine_camera.lowerZLimit = this.lowerZLimit;
-        examine_camera.upperXLimit = this.upperXLimit;
-        examine_camera.upperZLimit = this.upperZLimit;
-        examine_camera.upperRadiusLimit    = this.upperRadiusLimit;
+        examine_camera.lowerXLimit = this.limits.lowerX;
+        examine_camera.lowerZLimit = this.limits.lowerZ;
+        examine_camera.upperXLimit = this.limits.upperX;
+        examine_camera.upperZLimit = this.limits.upperZ;
+        examine_camera.upperRadiusLimit    = this.limits.upperRadius;
         examine_camera.upperBetaLimit = Math.PI/2;
 
         this.cameras.examine_camera = examine_camera;
@@ -237,30 +240,11 @@ var RANDO = RANDO || {};
     };
 
     RANDO.CameraContainer.prototype._computeInitialParameters = function () {
-        this._demCenter.x += this._offsets.x;
-        this._demCenter.z += this._offsets.z;
+        this._computer.computeInitialPositionToRef (this.initialPosition);
 
-        this.initialPosition.x = this._demCenter.x + 3000;
-        this.initialPosition.y = this._demCenter.y + 1000;
-        this.initialPosition.z = this._demCenter.z + 3000;
+        this._computer.computeInitialTargetToRef (this.initialTarget);
 
-        this._computer.computeInitialPositionToRef(
-            this._demExtent,
-            this._demAltitudes,
-            this.initialPosition
-        );
-
-        this.initialTarget.x = this._demCenter.x;
-        this.initialTarget.y = this._demExtent.y.min;
-        this.initialTarget.z = this._demCenter.z;
-
-        this.lowerXLimit = this._demExtent.x.min + this._offsets.x;
-        this.upperXLimit = this._demExtent.x.max + this._offsets.x;
-        this.lowerZLimit = this._demExtent.z.min + this._offsets.z;
-        this.upperZLimit = this._demExtent.z.max + this._offsets.z;
-
-        this.lowerRadiusLimit = RANDO.SETTINGS.MIN_THICKNESS + this._demCenter.y;
-        this.upperRadiusLimit = 8000;
+        this._computer.computeLimitsToRef (this.limits);
     };
 
     RANDO.CameraContainer.prototype._initInterface = function () {
