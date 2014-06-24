@@ -156,11 +156,11 @@ var RANDO = RANDO || {};
         this._scene.setActiveCameraByID (newID);
         this._resetByDefault();
 
-        // Interface changings
+        // Interface changes
         $(".controls--" + oldID).css("display", "none");
-        $("#" + oldID)[0].className = "camera" ;
+        $("#" + oldID).removeClass("camera--selected");
         $(".controls--" + newID).css("display", "block");
-        $("#" + newID)[0].className = "camera camera--selected" ;
+        $("#" + newID).addClass("camera--selected");
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
