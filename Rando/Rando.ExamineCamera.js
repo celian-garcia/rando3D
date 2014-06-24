@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Rando.ExamineCamera.js
- * 
- * ExamineCamera class : 
+ *
+ * ExamineCamera class :
  *  It is a camera which look like the ArcRotateCamera of BabylonJS.
  *      https://github.com/BabylonJS/Babylon.js/wiki/05-Cameras.
- * 
+ *
  *  But we can also translate it over world axis X and Z.
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
@@ -368,16 +368,16 @@ var RANDO = RANDO || {};
             this.getViewMatrix().invertToRef(this._cameraTransformMatrix);
 
             BABYLON.Vector3.TransformNormalToRef(
-                this._localDirection, 
+                this._localDirection,
                 this._cameraTransformMatrix,
                 this._transformedDirection
             );
 
-            if (this.keysUp.indexOf(keyCode)   !== -1 || 
+            if (this.keysUp.indexOf(keyCode)   !== -1 ||
                 this.keysDown.indexOf(keyCode)  !== -1 ) {
                 this.cameraDirection.addInPlace(
                     BABYLON.Vector3.TransformNormal(
-                        this._transformedDirection, 
+                        this._transformedDirection,
                         BABYLON.Matrix.RotationY(-Math.PI/2)
                     )
                 );
@@ -471,7 +471,7 @@ var RANDO = RANDO || {};
                     .subtract(this.position)
                     .add(this.cameraDirection)
                 );
-            } 
+            }
             else {
                 this.position.addInPlace(
                     RANDO.ExamineCamera.sphericToCartesian(
