@@ -299,6 +299,10 @@ var RANDO = RANDO || {};
             data.altitudes,
             RANDO.SETTINGS.ALTITUDES_Z_SCALE
         );
+
+        this._dem_data.extent.y.min *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
+        this._dem_data.extent.y.max *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
+
         // Record DEM center
         this._dem_data.center = {
             'x' : m_center.x,

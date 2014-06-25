@@ -34,9 +34,6 @@ var RANDO = RANDO || {};
         };
         this._altitudes = altitudes;
         this._squares   = [];
-        console.log(this._totalExtent);
-        console.log(offsets);
-        console.log(this._altitudes);
     };
 
     /* Methods */
@@ -67,26 +64,24 @@ var RANDO = RANDO || {};
     RANDO.CameraComputer.prototype._generateSquares = function () {
         this._fillExtents();
         this._fillIndices();
-        console.log(this._squares);
-        //~ console.log(this._altitudes);
     };
 
     RANDO.CameraComputer.prototype._fillExtents = function () {
         var A = {
             'x' : this._totalExtent.x.min,
-            'y' : this._totalExtent.y.min
+            'y' : this._totalExtent.z.min
         };
         var B = {
             'x' : this._totalExtent.x.max,
-            'y' : this._totalExtent.y.min
+            'y' : this._totalExtent.z.min
         };
         var C = {
             'x' : this._totalExtent.x.max,
-            'y' : this._totalExtent.y.max
+            'y' : this._totalExtent.z.max
         };
         var D = {
             'x' : this._totalExtent.x.min,
-            'y' : this._totalExtent.y.max
+            'y' : this._totalExtent.z.max
         };
 
         var grid = RANDO.Utils.createFlatGrid(
@@ -120,28 +115,26 @@ var RANDO = RANDO || {};
         var grid = RANDO.Utils.createElevationGrid(
             this._totalExtent.x.min,
             this._totalExtent.x.max,
-            this._totalExtent.y.min,
-            this._totalExtent.y.max,
+            this._totalExtent.z.min,
+            this._totalExtent.z.max,
             this._altitudes
         );
 
         for (var row = 0; row < grid.length; row++) {
             for (var col = 0; col < grid[row].length; col++) {
                 this._addToSquares(grid[row][col]);
-            };
-        };
+            }
+        }
 
         for (var it in this._squares) {
             var square = this._squares[it];
             square.index = square.index / square.nb_alt;
-            //~ square.index -= this._totalExtent.y.min;
             square.index = square.index * 10 / (this._totalExtent.y.max  - this._totalExtent.y.min);
         }
     };
 
 
     RANDO.CameraComputer.prototype._addToSquares = function (position) {
-
         for (var it in this._squares) {
             var square = this._squares[it];
             if (RANDO.Utils.isInExtent(position, square.extent)) {
