@@ -18,7 +18,7 @@ var RANDO = RANDO || {};
         this._altitudes = altitudes
         this._offsets = offsets;
         this._scene = scene;
-        this._tiles = null;
+        this._tileContainer = null;
         this._textures = [];
         this._min_thickness = RANDO.SETTINGS.MIN_THICKNESS;
 
@@ -32,11 +32,11 @@ var RANDO = RANDO || {};
 
     /* Methods */
     RANDO.Dem.prototype.init = function () {
-        this._tiles = new RANDO.TileContainer(
+        this._tileContainer = new RANDO.TileContainer(
             this._extent,
             this._altitudes,
             this._offsets
-        )._tiles;
+        );
 
         this.buildGround();
         this.buildSides();
@@ -49,7 +49,7 @@ var RANDO = RANDO || {};
         // Ground building...
         console.log("Ground building... " + (Date.now() - RANDO.START_TIME) );
 
-        var tiles   = this._tiles;
+        var tiles   = this._tileContainer._tiles;
 
         // Creates all tiles
         for (var it in tiles) {
@@ -68,7 +68,8 @@ var RANDO = RANDO || {};
         // Sides building...
         console.log("Sides building... " + (Date.now() - RANDO.START_TIME) );
 
-        var frame = RANDO.Utils.getFrameFromTiles(this._tiles);
+        //~ var frame = RANDO.Utils.getFrameFromTiles(this._tileContainer._tiles);
+        var frame = this._tileContainer.getFrame();
         var alt_min = this._extent.y.min - this._min_thickness;
 
         // Creates differents sides
@@ -221,7 +222,7 @@ var RANDO = RANDO || {};
      */
     RANDO.Dem.prototype.applyTextures = function () {
         console.log("Textures application ... " + (Date.now() - RANDO.START_TIME) );
-        var tiles = this._tiles;
+        var tiles = this._tileContainer._tiles;
 
         // Prepare all textures
         for (var it in tiles) {

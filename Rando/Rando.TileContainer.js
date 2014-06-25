@@ -343,5 +343,70 @@ var RANDO = RANDO || {};
         }
     };
 
+    RANDO.TileContainer.prototype.getFrame = function () {
+        var frame = {};
+        frame.east  = [];
+        frame.west  = [];
+        frame.north = [];
+        frame.south = [];
+        var tiles = this._tiles;
+        
+        var extent = this.getExtentInTilesCoordinates();
 
+        for (var it in tiles) {
+            var tile = tiles[it];
+            if ( tile.coordinates.x == extent.x.max ) {
+                var last_col = tile.grid[0].length -1;
+                for (row in tile.grid) {
+                    frame.east.push(tile.grid[row][last_col]);
+                }
+            }
+            if ( tile.coordinates.x == extent.x.min ) {
+                var first_col = 0;
+                for (row in tile.grid) {
+                    frame.west.push(tile.grid[row][first_col]);
+                }
+            }
+            if ( tile.coordinates.y == extent.y.min ) {
+                var last_row = tile.grid.length-1;
+                for (col in tile.grid[last_row]){
+                    frame.south.push(tile.grid[last_row][col]);
+                }
+            }
+            if ( tile.coordinates.y == extent.y.max ) {
+                var first_row = 0;
+                for (col in tile.grid[first_row]){
+                    frame.north.push(tile.grid[first_row][col]);
+                }
+            }
+        }
+
+        return frame;
+    };
+
+    RANDO.TileContainer.prototype.getExtentInTilesCoordinates = function () {
+        var tileExtent = {};
+        tileExtent.x = {};
+        tileExtent.y = {};
+        var tiles = this._tiles;
+
+        // X extent
+        tileExtent.x.min = _.min(tiles, function (tile) {
+            return tile.coordinates.x;
+        }).coordinates.x;
+
+        tileExtent.x.max = _.max(tiles, function (tile) {
+            return tile.coordinates.x;
+        }).coordinates.x;
+
+        // Y extent
+        tileExtent.y.min = _.min(tiles, function (tile) {
+            return tile.coordinates.y;
+        }).coordinates.y;
+        tileExtent.y.max = _.max(tiles, function (tile) {
+            return tile.coordinates.y;
+        }).coordinates.y;
+
+        return tileExtent;
+    };
 })();

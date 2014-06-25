@@ -271,53 +271,7 @@ describe('Rando3D Utilitaries', function() {
                 done();
             });
         });
-        
-        describe('Get the extent of an array of tiles - "getTileExtent()"', function () {
-            it("should return x.min = 0, x.max = 10, y.min = 5, y.max = 15", function(done) {
-                var result = {
-                    'x': {
-                        'min': 0,
-                        'max': 10 
-                    },
-                    'y': {
-                        'min': 5,
-                        'max': 15
-                    }
-                };
-                
-                var tiles = {
-                    'tile1': {
-                        'coordinates': {
-                            'x': 5,
-                            'y': 15
-                        }
-                    },
-                    'tile2': {
-                        'coordinates': {
-                            'x': 0,
-                            'y': 10
-                        }
-                    },
-                    'tile3': {
-                        'coordinates': {
-                            'x': 10,
-                            'y': 5
-                        }
-                    },
-                    'tile4': {
-                        'coordinates': {
-                            'x': 8,
-                            'y': 8
-                        }
-                    }
-                };
-                
-                assert.deepEqual(RANDO.Utils.getTileExtent(tiles), result);
-                done();
-            });
-        });
-    });
-    
+
     describe('Conversions', function() {
         describe('latitude/longitude to meters x/y - "toMeters()"', function () {
             it("should return {x: 0 ,y: 0} .", function(done) {
