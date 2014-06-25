@@ -271,6 +271,7 @@ describe('Rando3D Utilitaries', function() {
                 done();
             });
         });
+    });
 
     describe('Conversions', function() {
         describe('latitude/longitude to meters x/y - "toMeters()"', function () {
