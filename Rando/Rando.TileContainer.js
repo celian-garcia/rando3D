@@ -195,7 +195,7 @@ var RANDO = RANDO || {};
                 return tile.size.height;
         }).size.height;
 
-        var extent = RANDO.Utils.getTileExtent(tiles);
+        var extent = this.getExtentInTilesCoordinates();
 
         // Fill the uv data of tiles
         for (var it in tiles) {
