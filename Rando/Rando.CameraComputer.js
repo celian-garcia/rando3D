@@ -12,7 +12,7 @@ var RANDO = RANDO || {};
 (function () {  "use strict"
 
     /* Constructor */
-    RANDO.CameraComputer = function (center, extent, altitudes, offsets) {
+    RANDO.CameraComputer = function (center, extent, altitudes, offsets, scene, number) {
         this._center        = {
             'x' : center.x + offsets.x,
             'y' : center.y,
@@ -32,21 +32,25 @@ var RANDO = RANDO || {};
                 'max' : extent.z.max + offsets.z
             }
         };
+        this._scene = scene;
         this._altitudes = altitudes;
         this._squares   = [];
+        this._alphaSquare = null;
+        this._number = number || 5;
     };
 
     /* Methods */
     RANDO.CameraComputer.prototype.computeInitialPositionToRef = function (initialPosition) {
-        initialPosition.x = this._center.x + 3000;
-        initialPosition.y = this._center.y + 1000;
-        initialPosition.z = this._center.z + 3000;
         this._generateSquares ();
+        this._findAlphaSquare ();
+        this._setPositionToRef (initialPosition);
+        //~ console.log(initialPosition);
+        this._buildSquareViewer();
     };
 
     RANDO.CameraComputer.prototype.computeInitialTargetToRef = function (initialTarget) {
         initialTarget.x = this._center.x;
-        initialTarget.y = this._totalExtent.y.min;
+        initialTarget.y = this._center.y;
         initialTarget.z = this._center.z;
     };
 
@@ -60,36 +64,46 @@ var RANDO = RANDO || {};
         limits.upperRadius = 8000;
     };
 
-    RANDO.CameraComputer.SQUARES_NUMBER = 5;
+
     RANDO.CameraComputer.prototype._generateSquares = function () {
-        this._fillExtents();
-        this._fillIndices();
+        // Fill square's extents (needed to determine indices)
+        var squareGrid = RANDO.Utils.createFlatGrid(
+            {
+                'x' : this._totalExtent.x.min,
+                'y' : this._totalExtent.z.min
+            },
+            {
+                'x' : this._totalExtent.x.max,
+                'y' : this._totalExtent.z.min
+            },
+            {
+                'x' : this._totalExtent.x.max,
+                'y' : this._totalExtent.z.max
+            },
+            {
+                'x' : this._totalExtent.x.min,
+                'y' : this._totalExtent.z.max
+            },
+            this._number+1,
+            this._number+1
+        );
+        this._fillExtents(squareGrid);
+
+        // Fill square's indices
+        var elevatedPoints = RANDO.Utils.createElevationGrid(
+            this._totalExtent.x.min,
+            this._totalExtent.x.max,
+            this._totalExtent.z.min,
+            this._totalExtent.z.max,
+            this._altitudes
+        );
+        this._fillIndices(elevatedPoints);
+
+        // Fill square's types
+        this._fillTypes();
     };
 
-    RANDO.CameraComputer.prototype._fillExtents = function () {
-        var A = {
-            'x' : this._totalExtent.x.min,
-            'y' : this._totalExtent.z.min
-        };
-        var B = {
-            'x' : this._totalExtent.x.max,
-            'y' : this._totalExtent.z.min
-        };
-        var C = {
-            'x' : this._totalExtent.x.max,
-            'y' : this._totalExtent.z.max
-        };
-        var D = {
-            'x' : this._totalExtent.x.min,
-            'y' : this._totalExtent.z.max
-        };
-
-        var grid = RANDO.Utils.createFlatGrid(
-            A, B, C, D,
-            RANDO.CameraComputer.SQUARES_NUMBER,
-            RANDO.CameraComputer.SQUARES_NUMBER
-        );
-
+    RANDO.CameraComputer.prototype._fillExtents = function (grid) {
         for (var row = 0 ; row < grid.length-1 ; row++) {
             for (var col = 0 ; col < grid[row].length-1 ; col++) {
                 this._squares.push ({
@@ -108,24 +122,28 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.CameraComputer.prototype._fillIndices = function () {
-        var nb_alt_x = this._altitudes[0].length;
-        var nb_alt_y = this._altitudes.length;
-
-        var grid = RANDO.Utils.createElevationGrid(
-            this._totalExtent.x.min,
-            this._totalExtent.x.max,
-            this._totalExtent.z.min,
-            this._totalExtent.z.max,
-            this._altitudes
-        );
-
-        for (var row = 0; row < grid.length; row++) {
-            for (var col = 0; col < grid[row].length; col++) {
-                this._addToSquares(grid[row][col]);
+    RANDO.CameraComputer.prototype._fillIndices = function (elevatedPoints) {
+        // Increment indices of squares with elevated points which are inside
+        for (var row = 0; row < elevatedPoints.length; row++) {
+            for (var col = 0; col < elevatedPoints[row].length; col++) {
+                var position = elevatedPoints[row][col];
+                for (var it in this._squares) {
+                    var square = this._squares[it];
+                    if (RANDO.Utils.isInExtent(position, square.extent)) {
+                        if (square.index) {
+                            square.index += position.y;
+                            square.nb_alt++;
+                        } else {
+                            square.index = position.y;
+                            square.nb_alt = 1;
+                        }
+                        break;
+                    }
+                }
             }
         }
 
+        // Create an index between 0 and 10 which represents the elevation's average of a square
         for (var it in this._squares) {
             var square = this._squares[it];
             square.index = square.index / square.nb_alt;
@@ -133,20 +151,109 @@ var RANDO = RANDO || {};
         }
     };
 
+    RANDO.CameraComputer.prototype._fillTypes = function () {
+        // CORNER types
+        this._squares[0].type = "CORNER"; // left-down corner
+        this._squares[this._number - 1].type = "CORNER"; // right-down corner
+        this._squares[(this._number - 1) * this._number].type = "CORNER"; // left-up corner
+        this._squares[(this._number * this._number) - 1].type = "CORNER"; // right-up corner
 
-    RANDO.CameraComputer.prototype._addToSquares = function (position) {
+        // Extern BORDER types
+        for (var i = 1; i < this._number - 1; i++) {
+            this._squares[i].type = "EXTBORDER"; // down border
+            this._squares[(this._number - 1) * this._number + i].type = "EXTBORDER"; // top border
+            this._squares[this._number * i].type = "EXTBORDER"; // left border
+            this._squares[this._number * i + this._number -1].type = "EXTBORDER";// right border
+        }
+
+        // Intern BORDER types
+        for (var i = 1; i < this._number - 1; i++) {
+            this._squares[i + this._number].type = "INTBORDER";// down internal border
+            this._squares[i + this._number + (this._number-3) * this._number].type = "INTBORDER";
+            this._squares[i * this._number + 1].type = "INTBORDER";
+            this._squares[i * this._number + 1 + (this._number-3)].type = "INTBORDER";
+        };
+
+        // BLACK type
         for (var it in this._squares) {
-            var square = this._squares[it];
-            if (RANDO.Utils.isInExtent(position, square.extent)) {
-                if (square.index) {
-                    square.index += position.y;
-                    square.nb_alt++;
-                } else {
-                    square.index = position.y;
-                    square.nb_alt = 1;
-                }
-                break;
+            if (!this._squares[it].type) this._squares[it].type = "BLACK";
+        }
+    };
+
+    /** in progress
+     * RANDO.CameraComputer._findAlphaSquare() :
+     *  The alpha square is the square which have the neighborhood with the lowest indices values
+     */
+    RANDO.CameraComputer.prototype._findAlphaSquare = function () {
+        this._alphaSquare = this._squares[0];
+    };
+
+    /**
+     * RANDO.CameraComputer._setPositionToRef() : set the position given in parameter
+     *  according to the alpha square position
+     * 
+     *  - result : reference to the position to change
+     */
+    RANDO.CameraComputer.prototype._setPositionToRef = function (result) {
+        var alphaPosition = {
+            'x' : (this._alphaSquare.extent.x.max + this._alphaSquare.extent.x.min) /2,
+            'z' : (this._alphaSquare.extent.z.max + this._alphaSquare.extent.z.min) /2
+        };
+
+        var dx = (this._alphaSquare.extent.x.max - this._alphaSquare.extent.x.min) * 1.5;
+        var dy = (this._totalExtent.y.max - this._totalExtent.y.min);
+        var dz = (this._alphaSquare.extent.z.max - this._alphaSquare.extent.z.min) * 1.5;
+
+        dx = ((alphaPosition.x > 0) ? dx : -dx);
+        dz = ((alphaPosition.z > 0) ? dz : -dz);
+
+        result.x = alphaPosition.x + dx;
+        result.y = this._center.y + dy;
+        result.z = alphaPosition.z + dz;
+    };
+
+    /**
+     * RANDO.CameraComputer._buildSquareViewer() : build a viewer which materialize
+     *  differents squares in spheres of color
+     * 
+     *  CORNER squares are green
+     *  Extern BORDER squares are blue
+     *  Intern BORDER squares are orange
+     *  Intern squares are black
+     *  Alpha Square is red
+     */
+    RANDO.CameraComputer.prototype._buildSquareViewer = function () {
+        for (var it in this._squares) {
+            var sphere = BABYLON.Mesh.CreateSphere(
+                "Square " + it,
+                10, 100,
+                this._scene
+            );
+
+            sphere.position.x = (this._squares[it].extent.x.min + this._squares[it].extent.x.max) /2;
+            sphere.position.y = this._totalExtent.y.max;
+            sphere.position.z = (this._squares[it].extent.z.min + this._squares[it].extent.z.max) /2;
+            sphere.material = new BABYLON.StandardMaterial("Square " + it + " - Material", this._scene);
+            if (this._alphaSquare == this._squares[it]) {
+                sphere.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            }
+            else if (this._squares[it].type == "CORNER") {
+                sphere.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            }
+            else if (this._squares[it].type == "EXTBORDER") {
+                sphere.material.diffuseColor = new BABYLON.Color3(0, 1, 1);
+            }
+            else if (this._squares[it].type == "INTBORDER") {
+                sphere.material.diffuseColor = new BABYLON.Color3(1, 0.5, 0);
+            }
+            else if (this._squares[it].type == "BLACK") {
+                sphere.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
             }
         }
+
+        var sphere = BABYLON.Mesh.CreateSphere("Center", 10, 100, this._scene);
+        sphere.position.x = this._center.x;
+        sphere.position.y = this._totalExtent.y.max;
+        sphere.position.z = this._center.z;
     };
 })();

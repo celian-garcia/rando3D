@@ -21,7 +21,9 @@ var RANDO = RANDO || {};
             params.demCenter,
             params.demExtent,
             params.demAltitudes,
-            params.offsets || BABYLON.Vector3.Zero()
+            params.offsets || BABYLON.Vector3.Zero(),
+            scene,
+            6
         );
 
         this.cameras = {};
@@ -76,14 +78,13 @@ var RANDO = RANDO || {};
         examine_camera.wheelPrecision = 0.2;
         examine_camera.checkCollisions = true;
         examine_camera.ellipsoid.y = RANDO.SETTINGS.COLLISIONS_OFFSET;
-        examine_camera.maxZ = 10000;
+        examine_camera.maxZ = 50000;
         examine_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
         examine_camera.lowerXLimit = this.limits.lowerX;
         examine_camera.lowerZLimit = this.limits.lowerZ;
         examine_camera.upperXLimit = this.limits.upperX;
         examine_camera.upperZLimit = this.limits.upperZ;
-        examine_camera.upperRadiusLimit    = this.limits.upperRadius;
         examine_camera.upperBetaLimit = Math.PI/2;
 
         this.cameras.examine_camera = examine_camera;
@@ -106,7 +107,7 @@ var RANDO = RANDO || {};
 
         bird_camera.checkCollisions = true;
         bird_camera.ellipsoid.y = RANDO.SETTINGS.COLLISIONS_OFFSET;
-        bird_camera.maxZ = 10000;
+        bird_camera.maxZ = 50000;
         bird_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
         this.cameras.bird_camera = bird_camera;
@@ -124,7 +125,7 @@ var RANDO = RANDO || {};
         hiker_camera.id = "hiker_camera";
 
         hiker_camera.checkCollisions = true;
-        hiker_camera.maxZ = 10000;
+        hiker_camera.maxZ = 50000;
 
         hiker_camera.returnSpeed = RANDO.SETTINGS.HCAM_RETURN_SPEED;
         hiker_camera.followSpeed = RANDO.SETTINGS.HCAM_FOLLOW_SPEED;
