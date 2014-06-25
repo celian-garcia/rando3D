@@ -32,9 +32,10 @@ var RANDO = RANDO || {};
                 'max' : extent.z.max + offsets.z
             }
         };
-        this._altitudes     = altitudes;
-        this._squares         = [];
+        this._altitudes = altitudes;
+        this._squares   = [];
         console.log(this._totalExtent);
+        console.log(offsets);
         console.log(this._altitudes);
     };
 
@@ -123,6 +124,7 @@ var RANDO = RANDO || {};
             this._totalExtent.y.max,
             this._altitudes
         );
+
         for (var row = 0; row < grid.length; row++) {
             for (var col = 0; col < grid[row].length; col++) {
                 this._addToSquares(grid[row][col]);
@@ -133,7 +135,7 @@ var RANDO = RANDO || {};
             var square = this._squares[it];
             square.index = square.index / square.nb_alt;
             //~ square.index -= this._totalExtent.y.min;
-            //~ square.index = square.index * 10 / (this._totalExtent.y.max  - this._totalExtent.y.min);
+            square.index = square.index * 10 / (this._totalExtent.y.max  - this._totalExtent.y.min);
         }
     };
 

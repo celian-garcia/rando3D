@@ -68,7 +68,6 @@ var RANDO = RANDO || {};
         // Sides building...
         console.log("Sides building... " + (Date.now() - RANDO.START_TIME) );
 
-        //~ var frame = RANDO.Utils.getFrameFromTiles(this._tileContainer._tiles);
         var frame = this._tileContainer.getFrame();
         var alt_min = this._extent.y.min - this._min_thickness;
 

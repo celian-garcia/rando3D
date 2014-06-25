@@ -338,7 +338,6 @@ var RANDO = RANDO || {};
      *      - data : data from POI json
      */
     RANDO.Scene.prototype._parsePoiJson = function (data) {
-
         for (var it in data.features) {
             var feature = data.features[it];
             var coordinates = RANDO.Utils.toMeters({
