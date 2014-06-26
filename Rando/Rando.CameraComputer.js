@@ -44,8 +44,7 @@ var RANDO = RANDO || {};
         this._generateSquares ();
         this._findAlphaSquare ();
         this._setPositionToRef (initialPosition);
-        //~ console.log(initialPosition);
-        this._buildSquareViewer();
+        //~ this._buildSquareViewer();
     };
 
     RANDO.CameraComputer.prototype.computeInitialTargetToRef = function (initialTarget) {
@@ -276,12 +275,22 @@ var RANDO = RANDO || {};
         }
     };
 
-    /** in progress
+    /**
      * RANDO.CameraComputer._findAlphaSquare() : Find the Alpha Square 
      *  The alpha square is the square which have the neighborhood with the lowest indices values
      */
     RANDO.CameraComputer.prototype._findAlphaSquare = function () {
-        this._alphaSquare = this._squares[0];
+        var that = this;
+        this._alphaSquare = _.min(this._squares, function (square) {
+            var result = 0;
+            if (!square.neighborhood.length) {
+                return Infinity;
+            }
+            for (var it in square.neighborhood) {
+                result += that._squares[square.neighborhood[it]].index;
+            }
+            return result;
+        });
     };
 
     /**
@@ -296,9 +305,9 @@ var RANDO = RANDO || {};
             'z' : (this._alphaSquare.extent.z.max + this._alphaSquare.extent.z.min) /2
         };
 
-        var dx = (this._alphaSquare.extent.x.max - this._alphaSquare.extent.x.min) * 1.5;
-        var dy = (this._totalExtent.y.max - this._totalExtent.y.min);
-        var dz = (this._alphaSquare.extent.z.max - this._alphaSquare.extent.z.min) * 1.5;
+        var dx = (this._alphaSquare.extent.x.max - this._alphaSquare.extent.x.min) * 4;
+        var dy = (this._totalExtent.y.max - this._totalExtent.y.min) * 1.5;
+        var dz = (this._alphaSquare.extent.z.max - this._alphaSquare.extent.z.min) * 4;
 
         dx = ((alphaPosition.x > 0) ? dx : -dx);
         dz = ((alphaPosition.z > 0) ? dz : -dz);
