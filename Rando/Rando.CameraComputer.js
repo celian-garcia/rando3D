@@ -89,6 +89,9 @@ var RANDO = RANDO || {};
         );
         this._fillExtents(squareGrid);
 
+        // Fill square's types
+        this._fillTypes ();
+
         // Fill square's indices
         var elevatedPoints = RANDO.Utils.createElevationGrid(
             this._totalExtent.x.min,
@@ -98,9 +101,6 @@ var RANDO = RANDO || {};
             this._altitudes
         );
         this._fillIndices (elevatedPoints);
-
-        // Fill square's types
-        this._fillTypes ();
 
         // Fill square's neighborhood
         this._fillNeighborhood ();
@@ -126,41 +126,6 @@ var RANDO = RANDO || {};
                     }
                 });
             }
-        }
-    };
-
-    /**
-     * RANDO.CameraComputer._fillIndices() : Fill the index property of all squares
-     *  - elevatedPoints : a two-array of all elevated points of the DEM
-     * 
-     * NB : It needs to have already computed the extent of each square
-     */
-    RANDO.CameraComputer.prototype._fillIndices = function (elevatedPoints) {
-        // Increment indices of squares with elevated points which are inside
-        for (var row = 0; row < elevatedPoints.length; row++) {
-            for (var col = 0; col < elevatedPoints[row].length; col++) {
-                var position = elevatedPoints[row][col];
-                for (var it in this._squares) {
-                    var square = this._squares[it];
-                    if (RANDO.Utils.isInExtent(position, square.extent)) {
-                        if (square.index) {
-                            square.index += position.y;
-                            square.nb_alt++;
-                        } else {
-                            square.index = position.y;
-                            square.nb_alt = 1;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Create an index between 0 and 10 which represents the elevation's average of a square
-        for (var it in this._squares) {
-            var square = this._squares[it];
-            square.index = square.index / square.nb_alt;
-            square.index = square.index * 10 / (this._totalExtent.y.max  - this._totalExtent.y.min);
         }
     };
 
@@ -196,7 +161,44 @@ var RANDO = RANDO || {};
         }
     };
 
-    /** in progress
+    /**
+     * RANDO.CameraComputer._fillIndices() : Fill the index property of all squares
+     *  - elevatedPoints : a two-array of all 3D points of the DEM
+     * 
+     * NB : It needs to have already computed the extent and the type of each square
+     */
+    RANDO.CameraComputer.prototype._fillIndices = function (elevatedPoints) {
+        // Increment indices of squares with elevated points which are inside
+        for (var row = 0; row < elevatedPoints.length; row++) {
+            for (var col = 0; col < elevatedPoints[row].length; col++) {
+                var position = elevatedPoints[row][col];
+                for (var it in this._squares) {
+                    var square = this._squares[it];
+                    if (square.type != "BLACK" && RANDO.Utils.isInExtent(position, square.extent)) {
+                        if (square.index) {
+                            square.index += position.y;
+                            square.nb_alt++;
+                        } else {
+                            square.index = position.y;
+                            square.nb_alt = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create an index between 0 and 10 which represents the elevation's average of a square
+        for (var it in this._squares) {
+            var square = this._squares[it];
+            square.index = square.index / square.nb_alt;
+            square.index = square.index * 10 / (this._totalExtent.y.max  - this._totalExtent.y.min);
+            if (square.type == "BLACK") {
+                square.index = -1;
+            }
+        }
+    };
+
+    /** 
      * RANDO.CameraComputer._fillNeighborhood() : Fill the neighborhood property of squares
      * which are of CORNER or EXTBORDER types
      * 
@@ -222,8 +224,55 @@ var RANDO = RANDO || {};
      *      - It needs to have already computed the index of each square
      */
     RANDO.CameraComputer.prototype._fillNeighborhood = function () {
-        for (var it in this._squares) {
-            var square = this._squares
+        var dx, dy, t_dx, t_dy = [-this._number, this._number];
+
+        for (var curr = 0; curr < this._squares.length; curr++) {
+            var square = this._squares[curr];
+            
+            if (square.type == "CORNER") {
+                square.neighborhood = [];
+                if (curr%this._number == 0) {
+                    dx = 1;
+                }
+                else {
+                    dx = -1;
+                }
+                if (this._squares[curr + this._number]) {
+                    dy = this._number;
+                }
+                else {
+                    dy = -this._number;
+                }
+                square.neighborhood.push(curr);
+                square.neighborhood.push(curr + dx);
+                square.neighborhood.push(curr + 2 * dx);
+                square.neighborhood.push(curr + dy);
+                square.neighborhood.push(curr + 2 * dy);
+                square.neighborhood.push(curr + dx + dy);
+            }
+            else if (square.type == "EXTBORDER") {
+                square.neighborhood = [];
+                if (curr%this._number == 0) {
+                    t_dx = [0, 1];
+                }
+                else if (curr%this._number == this._number -1) {
+                    t_dx = [-1, 0];
+                }
+                else {
+                    t_dx = [-1, 0, 1];
+                }
+                for (var i in t_dx) {
+                    square.neighborhood.push (curr + t_dx[i]);
+                    for (var j in t_dy) {
+                        if (this._squares[curr + t_dy[j]]) {
+                            square.neighborhood.push (curr + t_dx[i] + t_dy[j]);
+                        }
+                    }
+                }
+            }
+            else {
+                square.neighborhood = [];
+            }
         }
     };
 
