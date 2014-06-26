@@ -97,12 +97,19 @@ var RANDO = RANDO || {};
             this._totalExtent.z.max,
             this._altitudes
         );
-        this._fillIndices(elevatedPoints);
+        this._fillIndices (elevatedPoints);
 
         // Fill square's types
-        this._fillTypes();
+        this._fillTypes ();
+
+        // Fill square's neighborhood
+        this._fillNeighborhood ();
     };
 
+    /**
+     * RANDO.CameraComputer._fillExtents() : Fill the extent property of all squares
+     *  - grid : a flat grid containing points of squares
+     */
     RANDO.CameraComputer.prototype._fillExtents = function (grid) {
         for (var row = 0 ; row < grid.length-1 ; row++) {
             for (var col = 0 ; col < grid[row].length-1 ; col++) {
@@ -122,6 +129,12 @@ var RANDO = RANDO || {};
         }
     };
 
+    /**
+     * RANDO.CameraComputer._fillIndices() : Fill the index property of all squares
+     *  - elevatedPoints : a two-array of all elevated points of the DEM
+     * 
+     * NB : It needs to have already computed the extent of each square
+     */
     RANDO.CameraComputer.prototype._fillIndices = function (elevatedPoints) {
         // Increment indices of squares with elevated points which are inside
         for (var row = 0; row < elevatedPoints.length; row++) {
@@ -151,6 +164,9 @@ var RANDO = RANDO || {};
         }
     };
 
+    /**
+     * RANDO.CameraComputer._fillTypes() : Fill the type property of all squares 
+     */
     RANDO.CameraComputer.prototype._fillTypes = function () {
         // CORNER types
         this._squares[0].type = "CORNER"; // left-down corner
@@ -174,14 +190,45 @@ var RANDO = RANDO || {};
             this._squares[i * this._number + 1 + (this._number-3)].type = "INTBORDER";
         };
 
-        // BLACK type
+        // BLACK types
         for (var it in this._squares) {
             if (!this._squares[it].type) this._squares[it].type = "BLACK";
         }
     };
 
     /** in progress
-     * RANDO.CameraComputer._findAlphaSquare() :
+     * RANDO.CameraComputer._fillNeighborhood() : Fill the neighborhood property of squares
+     * which are of CORNER or EXTBORDER types
+     * 
+     * ****************************************
+     * The neighborhood contains all neighbours of a square following this schedule :
+     * 
+     *          CORNER : 
+     *      |
+     *      n
+     *      n n
+     *      s n n _
+     * 
+     *          EXTBORDER :
+     *      n n n
+     *    _ n s n _
+     * 
+     * With 
+     *  s = square we want to get its neighbours
+     *  n = neighbours of the square
+     * 
+     * ****************************************
+     * NB : - The square will be counted in its neighborhood
+     *      - It needs to have already computed the index of each square
+     */
+    RANDO.CameraComputer.prototype._fillNeighborhood = function () {
+        for (var it in this._squares) {
+            var square = this._squares
+        }
+    };
+
+    /** in progress
+     * RANDO.CameraComputer._findAlphaSquare() : Find the Alpha Square 
      *  The alpha square is the square which have the neighborhood with the lowest indices values
      */
     RANDO.CameraComputer.prototype._findAlphaSquare = function () {
