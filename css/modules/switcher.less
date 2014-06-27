@@ -2,13 +2,22 @@
 
 
 @item_size : 50px;
+@switcher_top : 300px;
+@switcher_bottom : auto;
+@switcher_left : auto;
+@switcher_right : 0px;
+@lines-to-show : 3;
+@description_width: 200px;
+
 .camera_switcher {
     display: none;
     background-color: @bg_color;
     border-radius: 0.35em 0 0 0.35em;
     position:absolute;
-    top: 150px;
-    right: 0px;
+    top: @switcher_top;
+    bottom: @switcher_bottom;
+    left: @switcher_left;
+    right: @switcher_right;
     width: @item_size;
     height: auto;
     padding:2px;
@@ -49,6 +58,10 @@
         .camera-title {
             display:block;
         }
+        .description {
+            display:block;
+            display: -webkit-box;
+        }
     }
     
     .camera--selected {
@@ -71,4 +84,50 @@
         display: none;
         font-size: 12px;
     };
+    
+    .description {
+        text-align: left;
+        font-size: 14px;
+        display: none;
+        width : @description_width;
+        height: @item_size;
+        position: absolute;
+        margin-left: -@description_width - 30;
+        margin-top: -@item_size;
+        -webkit-line-clamp: @lines-to-show;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+
+.controls {
+    background-color: @bg_color;
+    border-radius: 0 0 0.35em 0.35em;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: auto;
+    width : 300px;;
+    padding : 5px;
+    display: none;
+    float:right;
+    
+    span{
+        float: left;
+        width: 100%;
+        margin: 5px;
+    }
+    
+    img {
+        vertical-align: sub;
+    }
+    
+    h2, h3, h4 {
+        margin:0px;
+        padding: 0px;
+        margin-bottom: 10px;
+        text-align:center;
+    }
 }

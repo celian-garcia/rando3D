@@ -1,26 +1,26 @@
 /*******************************************************************************
  * Rando.Trek.js
- * 
- * Trek class : 
+ *
+ * Trek class :
  *  Permites the build of a Trek in 3D
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
+(function () {  "use strict"
 
     /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {
         this._vertices = this._offsets(data, offsets);
         this._scene = scene;
-        
+
         this.spheres     = null;
         this.cylinders   = null;
         this.material    = null;
         this.mergedTreks = [];
-        
+
         this.init();
     };
 
@@ -33,8 +33,8 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Trek._offsets() : translate the Trek data of the offsets attribute 
-     * 
+     * RANDO.Trek._offsets() : translate the Trek data of the offsets attribute
+     *
      * return the array of vertices
      */
     RANDO.Trek.prototype._offsets = function (data, offsets) {
@@ -59,13 +59,13 @@ var RANDO = RANDO || {};
         var spheres     = new BABYLON.Mesh("TREK - Spheres", scene);
         var cylinders   = new BABYLON.Mesh("TREK - Cylinders", scene);
         var n_sph = 0, n_cyl = 0;
-        
+
         function createSphere(vertex) {
             n_sph++;
             var sphere = BABYLON.Mesh.CreateSphere(
-                "Sphere " + n_sph, 
-                RANDO.SETTINGS.TREK_SPH_TESSEL, 
-                RANDO.SETTINGS.TREK_WIDTH, 
+                "Sphere " + n_sph,
+                RANDO.SETTINGS.TREK_SPH_TESSEL,
+                RANDO.SETTINGS.TREK_WIDTH,
                 scene
             );
             sphere.isVisible = false;
@@ -89,7 +89,7 @@ var RANDO = RANDO || {};
             cylinder.material   = material;
             cylinder.parent     = cylinders;
 
-            // Height is not a variable from BABYLON mesh, 
+            // Height is not a variable from BABYLON mesh,
             //  it is my own variable I put on the cylinder to use it later
             cylinder.height = cyl_height;
         };
@@ -111,13 +111,13 @@ var RANDO = RANDO || {};
 
         // Trek built !
         console.log("Trek built ! " + (Date.now() - RANDO.START_TIME) );
-        
+
         this.spheres = spheres;
         this.cylinders = cylinders;
     };
 
     /**
-     * RANDO.Trek.drape() : drape the trek over the ground 
+     * RANDO.Trek.drape() : drape the trek over the ground
      *      - ground : Mesh in which we drape spheres
      *      - onComplete : callback called at the end of the RANDO.Trek.prototype.
      */
@@ -128,10 +128,10 @@ var RANDO = RANDO || {};
         var index       = 0;
         var chunk       = 100; // By chunks of 100 points
         var that        = this;
-        
+
         console.log("Trek adjustments ... " + (Date.now() - RANDO.START_TIME) );
         drapeChunk();
-        
+
         // Step 1 : drape the spheres over the ground
         function drapeChunk () {
             var cnt = chunk;
@@ -143,20 +143,20 @@ var RANDO = RANDO || {};
                 setTimeout(drapeChunk, 1);
             }else {
                 // At the end of draping we place cylinders
-                setTimeout(placeCylinders, 1); 
+                setTimeout(placeCylinders, 1);
             }
         };
 
-        // Step 2 : Place all cylinders between each pairs of spheres 
+        // Step 2 : Place all cylinders between each pairs of spheres
         function placeCylinders () {
             for (var i = 0; i < trek_length-1; i++) {
                 RANDO.Utils.placeCylinder(
-                    cylinders[i], 
-                    spheres[i].position, 
+                    cylinders[i],
+                    spheres[i].position,
                     spheres[i+1].position
                 );
             }
-            
+
             onComplete();
             console.log("Trek adjusted ! " + (Date.now() - RANDO.START_TIME) );
         };
@@ -171,7 +171,7 @@ var RANDO = RANDO || {};
         var cylinders   = this.cylinders.getChildren();
         var meshes      = spheres.concat(cylinders);
         var limit       = RANDO.SETTINGS.LIMIT_VERT_BY_MESH;
-        
+
         var count = 0;
         var nMergedTrek = 0;
         var buffer = [];
@@ -180,7 +180,7 @@ var RANDO = RANDO || {};
             // The number of vertices in the buffer is acceptable
             if (count < limit) {
                 buffer.push(meshes[i]);
-            } 
+            }
             // The number of vertices in the buffer will not be acceptable
             else {
                 //... so we merge all meshes of buffer
@@ -222,7 +222,7 @@ var RANDO = RANDO || {};
             vertices[it].z = spheres[it].position.z;
         }
     };
-    
+
     RANDO.Trek.prototype.getTotalVertices = function () {
         var spheresArray    = this.spheres.getChildren();
         var cylindersArray  = this.cylinders.getChildren();

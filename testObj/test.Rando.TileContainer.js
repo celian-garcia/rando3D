@@ -2,29 +2,17 @@ var assert = chai.assert;
 
 describe('Geotrek 3D - TileContainer Object', function() {
     var extent = {
-        altitudes: {
+        x: {
             max: 100,
             min: 50
         },
-        northeast: {
-            x: 100,
-            y: 50,
-            z: 100
+        y: {
+            max: 100,
+            min: 50
         },
-        northwest: {
-            x: 0,
-            y: 90,
-            z: 100
-        },
-        southeast: {
-            x: 100,
-            y: 80,
-            z: 0
-        },
-        southwest: {
-            x: 0,
-            y: 100,
-            z: 0
+        z: {
+            max: 100,
+            min: 20
         }
     };
     
@@ -70,7 +58,6 @@ describe('Geotrek 3D - TileContainer Object', function() {
         describe('Tiles generation - this._generateTiles()', function () {
             it("should store all points (test the number of points).", function(done) {
                 var tilC = new RANDO.TileContainer(extent, altitudes, offsets);
-                //~ tilC._generateTiles();
 
                 var tiles = tilC._tiles;
                 var count = 0;
@@ -88,114 +75,50 @@ describe('Geotrek 3D - TileContainer Object', function() {
             });
         });
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        //~ describe('translate - this.translate()', function () {
-            //~ it("should translates all tiles grids of offsets attribute if no arguments.", function(done) {
-                //~ var tilC = new RANDO.TileContainer(extent, altitudes, offsets);
-                //~ var tiles_tr = _.clone(tilC._tiles);
-                //~ for (var it in tiles_tr) {
-                    //~ var grid = tiles_tr[it].grid;
-                    //~ for (row in grid) {
-                        //~ for (col in grid[row]) {
-                            //~ grid[row][col].x += offsets.x;
-                            //~ grid[row][col].y += offsets.y;
-                            //~ grid[row][col].z += offsets.z;
-                        //~ }
-                    //~ }
-                //~ }
-                //~ 
-                //~ tilC.translate();
-                //~ 
-                //~ assert.deepEqual(tilC._data, trek_data_tr);
-                //~ done();
-                //~ trek.dispose();
-            //~ });
-            
-            
-            //~ it("should translates of arguments values if arguments.", function(done) {
-                //~ var trek = new RANDO.Trek(data, offsets, scene);
-                //~ var trek_data_tr = _.clone(trek._data);
-                //~ var dx = 10, dy = 5, dz = -5;
-                //~ 
-                //~ for (var it in trek_data_tr) {
-                    //~ trek_data_tr[it].x += dx;
-                    //~ trek_data_tr[it].y += dy;
-                    //~ trek_data_tr[it].z += dz;
-                //~ }
-                //~ 
-                //~ trek.translate(dx, dy, dz);
-                //~ 
-                //~ assert.deepEqual(trek._data, trek_data_tr);
-                //~ done();
-                //~ trek.dispose();
-            //~ });
-        //~ });
-    
-    
+        describe('Get the extent in tiles coordinates - "this.getExtentInTilesCoordinates()"', function () {
+            it("should return x.min = 0, x.max = 10, y.min = 5, y.max = 15", function(done) {
+                var result = {
+                    'x': {
+                        'min': 0,
+                        'max': 10 
+                    },
+                    'y': {
+                        'min': 5,
+                        'max': 15
+                    }
+                };
+                
+                var tiles = {
+                    'tile1': {
+                        'coordinates': {
+                            'x': 5,
+                            'y': 15
+                        }
+                    },
+                    'tile2': {
+                        'coordinates': {
+                            'x': 0,
+                            'y': 10
+                        }
+                    },
+                    'tile3': {
+                        'coordinates': {
+                            'x': 10,
+                            'y': 5
+                        }
+                    },
+                    'tile4': {
+                        'coordinates': {
+                            'x': 8,
+                            'y': 8
+                        }
+                    }
+                };
+                var tilC = new RANDO.TileContainer(extent, altitudes, offsets);
+                tilC._tiles = tiles;
+                assert.deepEqual(tilC.getExtentInTilesCoordinates(), result);
+                done();
+            });
+        });
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-//WIP
-
-//~ describe('Subdivide grid in tiles - "subdivideGrid()"', function() {
-            //~ var tiles = {};
-            //~ var A = { x : -10, y : 20 };
-            //~ var B = { x : 30, y : 30 };
-            //~ var C = { x : 30, y : 0 };
-            //~ var D = { x : 0, y : -10 };
-            //~ var altitudes = [
-                //~ [10, 10, 10, 10],
-                //~ [10, 10, 10, 10],
-                //~ [10, 10, 10, 10],
-                //~ [10, 10, 10, 10],
-                //~ [10, 10, 10, 10],
-                //~ [10, 10, 10, 10]
-            //~ ];
-            //~ var grid_trapeze = RANDO.Utils.createElevationGrid(
-                //~ A, B, C, D, 
-                //~ altitudes
-            //~ );
-            //~ 
-            //~ it("each grid of tiles array should have a number of columns stable ", function(done) {
-                //~ RANDO.Utils.subdivideGrid(tiles, grid_trapeze, 18);
-                //~ console.log(tiles);
-                //~ 
-                //~ for (it in tiles) {
-                    //~ var grid = tiles[it].grid
-                    //~ var res = grid[0].length;
-                    //~ for (row in grid) {
-                        //~ assert.equal(grid[row].length, res);
-                    //~ }
-                //~ }
-//~ 
-                //~ done();
-            //~ });
-        //~ });

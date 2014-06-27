@@ -1,29 +1,29 @@
 /*******************************************************************************
  * Rando.Scene.js
- * 
- * Scene class : 
+ *
+ * Scene class :
  *  Permites the creation and manipulation of a scene 3D containing (or not) :
  *      - a Digital Elevation Model
- *      - a Trek which is draped over the DEM 
+ *      - a Trek which is draped over the DEM
  *      - a set of Points Of Interest draped over the DEM too
  *      - a set of Cameras
  *      - a set of lights
- * 
+ *
  * @author: Célian GARCIA
  ******************************************************************************/
 
 var RANDO = RANDO || {};
 
-(function () {  "use strict" 
+(function () {  "use strict"
 
     /* Constructor */
     RANDO.Scene = function (canvas, cameraID, version, settings) {
-        // Attributes declaration 
+        // Attributes declaration
         this._canvas    = canvas;
         this._cameraID  = cameraID;
         this._version   = version;
         this._settings  = settings;
-        
+
         this._engine    = null;
         this._scene     = null;
         this.camContainer    = null;
@@ -47,7 +47,7 @@ var RANDO = RANDO || {};
         RANDO.Events.addEvent(window, "resize", function(){
             that._engine.resize();
         });
-        
+
         if (typeof(this._settings) !== 'undefined') {
             RANDO.SETTINGS.parse(this._settings);
         }
@@ -55,27 +55,27 @@ var RANDO = RANDO || {};
         this._scene.collisionsEnabled = true;
         this._buildLights();
         this._buildEnvironment();
-        
+
         switch (this._version) {
-            case "1.0" : 
+            case "1.0" :
                 console.log("Launch of version 1.0 ! ")
                 this.process_v10();
             break;
-            case "1.1" : 
+            case "1.1" :
                 console.log("Launch of version 1.1 ! ")
                 this.process();
             break;
-            case "1.2" : 
+            case "1.2" :
                 console.log("Launch of version 1.2 ! ")
                 this.process();
         }
     };
 
     /**
-     * RANDO.Scene.process_v10() : launch the building process of the scene 
-     *  It displays : 
-     *          - the terrain 
-     *          - the trek 
+     * RANDO.Scene.process_v10() : launch the building process of the scene
+     *  It displays :
+     *          - the terrain
+     *          - the trek
      */
     RANDO.Scene.prototype.process_v10 = function () {
         var that = this;
@@ -96,7 +96,7 @@ var RANDO = RANDO || {};
          .then(function () {
             that._engine.runRenderLoop(function() {
                 that._scene.render();
-            }); 
+            });
             that.dem = new RANDO.Dem(
                 that._dem_data.extent,
                 that._dem_data.altitudes,
@@ -123,10 +123,10 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene.process() : launch the building process of the scene 
-     *  It displays : 
-     *          - Terrain 
-     *          - Trek 
+     * RANDO.Scene.process() : launch the building process of the scene
+     *  It displays :
+     *          - Terrain
+     *          - Trek
      *          - POIs
      */
     RANDO.Scene.prototype.process = function () {
@@ -153,7 +153,7 @@ var RANDO = RANDO || {};
             // Run renderloop
             that._engine.runRenderLoop(function() {
                 that._scene.render();
-            }); 
+            });
 
             // Tiled DEM mesh building
             that.dem = new RANDO.Dem(
@@ -193,7 +193,7 @@ var RANDO = RANDO || {};
 
     /**
      * RANDO.Scene._buildCameras() : builds cameras of the scene
-     * 
+     *
      *  If the camera ID is not available, it is changed to "demo_camera"
      */
     RANDO.Scene.prototype._buildCameras = function () {
@@ -206,6 +206,7 @@ var RANDO = RANDO || {};
             'demCenter' : this._dem_data.center,
             'offsets'   : this._offsets,
             'demExtent' : this._dem_data.extent,
+            'demAltitudes': this._dem_data.altitudes,
             'switchEnabled' : true
         };
 
@@ -224,7 +225,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene._buildLights() : builds the differents lights of the scene 
+     * RANDO.Scene._buildLights() : builds the differents lights of the scene
      */
     RANDO.Scene.prototype._buildLights = function () {
         var lights = this.lights;
@@ -232,8 +233,8 @@ var RANDO = RANDO || {};
 
         // Sun
         var sun = new BABYLON.HemisphericLight(
-            "Sun", 
-            new BABYLON.Vector3(500, 2000, 0), 
+            "Sun",
+            new BABYLON.Vector3(500, 2000, 0),
             scene
         );
         sun.intensity = 2;
@@ -253,7 +254,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene._executeWhenReady() : function which is executed when the scene 
+     * RANDO.Scene._executeWhenReady() : function which is executed when the scene
      *  is ready, in other words, when the scene have built all its elements.
      */
     RANDO.Scene.prototype._executeWhenReady = function () {
@@ -282,7 +283,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene._parseDemJson() : parse data from the DEM json 
+     * RANDO.Scene._parseDemJson() : parse data from the DEM json
      *      - data : data from DEM json
      */
     RANDO.Scene.prototype._parseDemJson = function (data) {
@@ -290,14 +291,18 @@ var RANDO = RANDO || {};
         var m_center = RANDO.Utils.toMeters(data.center);
         var m_extent = RANDO.Utils.getMetersExtent (data.extent);
 
-        // Record DEM extent 
+        // Record DEM extent
         this._dem_data.extent = m_extent;
 
         // Record DEM altitudes scaled
         this._dem_data.altitudes = RANDO.Utils.scaleArray2(
-            data.altitudes, 
+            data.altitudes,
             RANDO.SETTINGS.ALTITUDES_Z_SCALE
         );
+
+        this._dem_data.extent.y.min *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
+        this._dem_data.extent.y.max *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
+
         // Record DEM center
         this._dem_data.center = {
             'x' : m_center.x,
@@ -312,7 +317,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene._parseTrekJson() : parse data from the Trek profile json 
+     * RANDO.Scene._parseTrekJson() : parse data from the Trek profile json
      *      - data : data from Trek profile json
      */
     RANDO.Scene.prototype._parseTrekJson = function (data) {
@@ -327,17 +332,16 @@ var RANDO = RANDO || {};
             tmp.z = tmp.y;
             tmp.y = 0;
 
-            // Record 
+            // Record
             this._trek_data.push(tmp);
         }
     };
 
     /**
-     * RANDO.Scene._parsePoiJson() : parse data from the POI json 
+     * RANDO.Scene._parsePoiJson() : parse data from the POI json
      *      - data : data from POI json
      */
     RANDO.Scene.prototype._parsePoiJson = function (data) {
-
         for (var it in data.features) {
             var feature = data.features[it];
             var coordinates = RANDO.Utils.toMeters({

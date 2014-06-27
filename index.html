@@ -42,6 +42,7 @@
     <script src="Rando/Rando.Trek.js"></script>
     <script src="Rando/Rando.Poi.js"></script>
     <script src="Rando/Rando.CameraContainer.js"></script>
+    <script src="Rando/Rando.CameraComputer.js"></script>
     <script src="Rando/Rando.ExamineCamera.js"></script>
     <script src="Rando/Rando.BirdCamera.js"></script>
     <script src="Rando/Rando.HikerCamera.js"></script>
@@ -62,21 +63,24 @@
         </h1>
 
         <div class = "controls controls--examine_camera" >
-            <h3>Caméra Examine</h3>
+            <h3>Mode Examine</h3>
+            <span class = "description"></span>
             <span> Zoom : <b>Molette souris</b></span>
             <span> Inclinaison/Rotation : <b>Clic Gauche</b></span>
             <span> Se déplacer : <img src = "img/icon_783__.png"/></span>
         </div>
         
         <div class = "controls controls--bird_camera" >
-            <h3>Caméra Oiseau</h3>
+            <h3>Mode Oiseau</h3>
+            <span class = "description"></span>
             <span> Zoom : <b>Molette souris</b></span>
             <span> Tourner regard : <b>Clic Gauche</b></span>
             <span> Se déplacer : <img src = "img/icon_783__.png"/></span>
         </div>
 
         <div class = "controls controls--hiker_camera" >
-            <h3>Caméra Randonneur</h3>
+            <h3>Mode Randonneur</h3>
+            <span class = "description"></span>
             <span> Tourner regard : <b>Clic Gauche</b></span>
             <span> Play/Pause : <b>Espace</b></span>
             <span> Stop : <b>Entrée</b></span>
@@ -89,23 +93,26 @@
         </div>
         
         <ul class = "camera_switcher">
-            <li class = "camera" id = "bird_camera">
-                <span class = "camera-icon">
-                    <img src = "img/media/upload/poi-panorama.png"></img>
-                </span>
-                <span class = "camera-title"> Oiseau</span>
-            </li>
             <li class = "camera" id = "examine_camera">
                 <span class = "camera-icon">
                     <img src = "img/media/upload/poi-panorama.png"></img>
                 </span>
                 <span class = "camera-title"> Exam</span>
+                <span class = "description"></span>
+            </li>
+            <li class = "camera" id = "bird_camera">
+                <span class = "camera-icon">
+                    <img src = "img/media/upload/poi-panorama.png"></img>
+                </span>
+                <span class = "camera-title"> Oiseau</span>
+                <span class = "description"></span>
             </li>
             <li class = "camera" id = "hiker_camera">
                 <span class = "camera-icon">
                     <img src = "img/media/upload/poi-panorama.png"></img>
                 </span>
                 <span class = "camera-title"> Rando</span>
+                <span class = "description"></span>
             </li>
         </ul>
     </section>
