@@ -14,7 +14,7 @@ window.onload = function onload(){
 
     var canvas = document.getElementById('canvas_renderer');
     var cameraID = "examine_camera";
-    var scene = new RANDO.Scene(canvas, cameraID, "1.2" );
+    var scene = new RANDO.Scene(canvas, cameraID);
     scene.init();
 };
 
