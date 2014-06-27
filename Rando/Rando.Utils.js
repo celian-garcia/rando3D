@@ -754,6 +754,11 @@ RANDO.Utils.scaleArray2 = function (array2, scale) {
  *
  */
 RANDO.Utils.replaceUrlCoordinates = function (url, z, x, y) {
+    var subdomains = RANDO.SETTINGS.TILE_TEX_URL_SUBDOMAINS,
+        index = Math.abs(x + y) % subdomains.length,
+        subdomain = subdomains[index];
+
+    url = url.replace("{s}", subdomain);
     url = url.replace("{z}", z);
     url = url.replace("{x}", x);
     url = url.replace("{y}", y);
