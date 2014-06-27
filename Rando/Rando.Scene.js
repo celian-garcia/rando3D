@@ -17,11 +17,10 @@ var RANDO = RANDO || {};
 (function () {  "use strict"
 
     /* Constructor */
-    RANDO.Scene = function (canvas, cameraID, version, settings) {
+    RANDO.Scene = function (canvas, cameraID, settings) {
         // Attributes declaration
         this._canvas    = canvas;
         this._cameraID  = cameraID;
-        this._version   = version;
         this._settings  = settings;
 
         this._engine    = null;
@@ -55,20 +54,7 @@ var RANDO = RANDO || {};
         this._scene.collisionsEnabled = true;
         this._buildLights();
         this._buildEnvironment();
-
-        switch (this._version) {
-            case "1.0" :
-                console.log("Launch of version 1.0 ! ")
-                this.process_v10();
-            break;
-            case "1.1" :
-                console.log("Launch of version 1.1 ! ")
-                this.process();
-            break;
-            case "1.2" :
-                console.log("Launch of version 1.2 ! ")
-                this.process();
-        }
+        this.process();
     };
 
     /**
@@ -148,6 +134,7 @@ var RANDO = RANDO || {};
          })
          .done(function (data) {
             that._parsePoiJson(data);
+            
          })
          .then(function () {
             // Run renderloop
@@ -162,6 +149,7 @@ var RANDO = RANDO || {};
                 that._offsets,
                 that._scene
             );
+            
 
             // Trek building
             that.trek = new RANDO.Trek  (
@@ -200,7 +188,6 @@ var RANDO = RANDO || {};
         var canvas          = this._canvas;
         var scene           = this._scene;
         var cameraID        = this._cameraID;
-        var version         = this._version;
 
         var params = {
             'demCenter' : this._dem_data.center,
@@ -210,12 +197,7 @@ var RANDO = RANDO || {};
             'switchEnabled' : true
         };
 
-        if (version == "1.2") {
-            this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
-        } else {
-            params.switchEnabled = false;
-            this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
-        }
+        this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
 
         // Defines active camera
         if (!$.inArray(cameraID, RANDO.CameraIDs))
