@@ -48,7 +48,7 @@ var RANDO = RANDO || {};
         var scene       = this._scene;
         var position    = this._position;
         var text        = this._name;
-        var src         = this._type.pictogram;
+        var src         = RANDO.SETTINGS.PICTO_PREFIX + this._type.pictogram;
         var id          = this._id;
         var elevation   = this._elevation;
 
