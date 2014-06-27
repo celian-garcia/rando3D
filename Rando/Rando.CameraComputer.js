@@ -300,21 +300,28 @@ var RANDO = RANDO || {};
      *  - result : reference to the position to change
      */
     RANDO.CameraComputer.prototype._setPositionToRef = function (result) {
-        var alphaPosition = {
-            'x' : (this._alphaSquare.extent.x.max + this._alphaSquare.extent.x.min) /2,
-            'z' : (this._alphaSquare.extent.z.max + this._alphaSquare.extent.z.min) /2
-        };
+        // Alpha position : elevation do not matter
+        var A = new BABYLON.Vector3(
+            (this._alphaSquare.extent.x.max + this._alphaSquare.extent.x.min) /2,
+            0,
+            (this._alphaSquare.extent.z.max + this._alphaSquare.extent.z.min) /2
+        );
 
-        var dx = (this._alphaSquare.extent.x.max - this._alphaSquare.extent.x.min) * 4;
-        var dy = (this._totalExtent.y.max - this._totalExtent.y.min) * 1.5;
-        var dz = (this._alphaSquare.extent.z.max - this._alphaSquare.extent.z.min) * 4;
+        // Center position
+        var O = new BABYLON.Vector3(
+            this._center.x,
+            this._center.y,
+            this._center.z
+        );
 
-        dx = ((alphaPosition.x > 0) ? dx : -dx);
-        dz = ((alphaPosition.z > 0) ? dz : -dz);
+        var scale = 2.5;
+        var OC = A.subtract(O).scale(scale);
 
-        result.x = alphaPosition.x + dx;
-        result.y = this._center.y + dy;
-        result.z = alphaPosition.z + dz;
+        // Camera position
+        var C = OC.add(O);
+        result.x = C.x;
+        result.y = this._center.y + (this._totalExtent.y.max - this._totalExtent.y.min);
+        result.z = C.z;
     };
 
     /**
