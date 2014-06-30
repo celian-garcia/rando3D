@@ -20,7 +20,7 @@ RANDO.Utils = {};
  *
  ****************************************************************/
 RANDO.Utils.createGroundFromExtent = function (name, A, B, C, D, w_subdivisions, h_subdivisions, scene, updatable) {
-    var ground = new BABYLON.Mesh(name, scene);
+    var ground = new BABYLON.GroundMesh(name, scene);
 
     var indices = [];
     var positions = [];
@@ -52,9 +52,9 @@ RANDO.Utils.createGroundFromExtent = function (name, A, B, C, D, w_subdivisions,
         }
     }
 
-    ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
-    ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
-    ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.NormalKind, normals, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.UVKind, uvs, updatable);
     ground.setIndices(indices);
 
     return ground;
@@ -69,7 +69,7 @@ RANDO.Utils.createGroundFromExtent = function (name, A, B, C, D, w_subdivisions,
  *
  ****************************************************************/
 RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
-    var ground = new BABYLON.Mesh(name, scene);
+    var ground = new BABYLON.GroundMesh(name, scene);
 
     var indices = [];
     var positions = [];
@@ -105,9 +105,9 @@ RANDO.Utils.createGroundFromGrid = function (name, grid, scene, updatable) {
         }
     }
 
-    ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
-    ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
-    ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.NormalKind, normals, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.UVKind, uvs, updatable);
     ground.setIndices(indices);
 
     return ground;
@@ -128,7 +128,7 @@ RANDO.Utils.createGroundFromVertices = function( name, vertices, w_subdivisions,
     console.assert((vertices.length/3) == w_subdivisions*h_subdivisions,
     (vertices.length/3) + "!=" + w_subdivisions + "*" + h_subdivisions);
 
-    var ground = new BABYLON.Mesh(name, scene);
+    var ground = BABYLON.GroundMesh(name, scene);
 
     var indices = [];
     var positions = [];
@@ -160,9 +160,9 @@ RANDO.Utils.createGroundFromVertices = function( name, vertices, w_subdivisions,
         }
     }
 
-    ground.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
-    ground.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
-    ground.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.NormalKind, normals, updatable);
+    ground.setVerticesData(BABYLON.VertexBuffer.UVKind, uvs, updatable);
     ground.setIndices(indices);
 
     return ground;
@@ -178,7 +178,7 @@ RANDO.Utils.createGroundFromVertices = function( name, vertices, w_subdivisions,
  *
  */
 RANDO.Utils.createSideFromLine = function (name, line, base, scene, updatable) {
-    var side = new BABYLON.Mesh(name, scene);
+    var side = new BABYLON.GroundMesh(name, scene);
 
     var indices = [];
     var positions = [];
@@ -219,9 +219,9 @@ RANDO.Utils.createSideFromLine = function (name, line, base, scene, updatable) {
         }
     }
 
-    side.setVerticesData(positions, BABYLON.VertexBuffer.PositionKind, updatable);
-    side.setVerticesData(normals, BABYLON.VertexBuffer.NormalKind, updatable);
-    side.setVerticesData(uvs, BABYLON.VertexBuffer.UVKind, updatable);
+    side.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, updatable);
+    side.setVerticesData(BABYLON.VertexBuffer.NormalKind, normals, updatable);
+    side.setVerticesData(BABYLON.VertexBuffer.UVKind, uvs, updatable);
     side.setIndices(indices);
 
     return side;
@@ -303,7 +303,7 @@ RANDO.Utils.setMeshUvs = function (mesh, uv) {
         "setMeshUvs() : uvs in parameter are not well sized"
     );
 
-    mesh.setVerticesData(uv_array, BABYLON.VertexBuffer.UVKind);
+    mesh.setVerticesData(BABYLON.VertexBuffer.UVKind, uv_array);
 };
 
 /**
@@ -394,18 +394,18 @@ RANDO.Utils.mergeMeshes = function (newMesh, arrayObj) {
         arrayObj[i].dispose(false);
     }
 
-    newMesh.setVerticesData(savedPosition, BABYLON.VertexBuffer.PositionKind, false);
-    newMesh.setVerticesData(savedNormal, BABYLON.VertexBuffer.NormalKind, false);
+    newMesh.setVerticesData(BABYLON.VertexBuffer.PositionKind, savedPosition, false);
+    newMesh.setVerticesData(BABYLON.VertexBuffer.NormalKind, savedNormal, false);
     if (arrayUv.length > 0)
-        newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.UVKind, false);
+        newMesh.setVerticesData(BABYLON.VertexBuffer.UVKind, arrayUv, false);
     if (arrayUv2.length > 0)
-        newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.UV2Kind, false);
+        newMesh.setVerticesData(BABYLON.VertexBuffer.UV2Kind, arrayUv2, false);
     if (arrayColor.length > 0)
-        newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.ColorKind, false);
+        newMesh.setVerticesData(BABYLON.VertexBuffer.ColorKind, arrayColor, false);
     if (arrayMatricesIndices.length > 0)
-        newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.MatricesIndicesKind, false);
+        newMesh.setVerticesData(BABYLON.VertexBuffer.MatricesIndicesKind, arrayMatricesIndices, false);
     if (arrayMatricesWeights.length > 0)
-        newMesh.setVerticesData(arrayUv, BABYLON.VertexBuffer.MatricesWeightsKind, false);
+        newMesh.setVerticesData(BABYLON.VertexBuffer.MatricesWeightsKind, arrayMatricesWeights, false);
 
     newMesh.setIndices(arrayIndice);
 };
