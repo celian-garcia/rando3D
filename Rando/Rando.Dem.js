@@ -116,11 +116,6 @@ var RANDO = RANDO || {};
 
         // Material
         var material = new BABYLON.StandardMaterial("DEM - Material", scene);
-        var fakeTexture = new BABYLON.Texture(
-            RANDO.SETTINGS.FAKE_TEX_URL,
-            scene
-        );
-        material.diffuseTexture = fakeTexture;
         material.wireframe = true;
         material.backFaceCulling = false;
         tile.material = material;
