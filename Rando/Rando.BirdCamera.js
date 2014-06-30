@@ -160,15 +160,15 @@ var RANDO = RANDO || {};
     };
 
     // Controls
-    RANDO.BirdCamera.prototype.attachControl = function (canvas, noPreventDefault) {
+    RANDO.BirdCamera.prototype.attachControl = function (element, noPreventDefault) {
         var previousPosition;
         var that = this;
         var engine = this._scene.getEngine();
 
-        if (this._attachedCanvas) {
+        if (this._attachedElement) {
             return;
         }
-        this._attachedCanvas = canvas;
+        this._attachedElement = element;
 
         if (this._onMouseDown === undefined) {
             this._onMouseDown = function (evt) {
@@ -288,33 +288,41 @@ var RANDO = RANDO || {};
             };
         }
 
-        canvas.addEventListener("mousedown", this._onMouseDown, false);
-        canvas.addEventListener("mouseup", this._onMouseUp, false);
-        canvas.addEventListener("mouseout", this._onMouseOut, false);
-        canvas.addEventListener("mousemove", this._onMouseMove, false);
-        window.addEventListener('mousewheel', this._onWheel, false);
-        window.addEventListener('DOMMouseScroll', this._onWheel);
-        window.addEventListener("keydown", this._onKeyDown, false);
-        window.addEventListener("keyup", this._onKeyUp, false);
-        window.addEventListener("blur", this._onLostFocus, false);
+        element.addEventListener("mousedown", this._onMouseDown, false);
+        element.addEventListener("mouseup", this._onMouseUp, false);
+        element.addEventListener("mouseout", this._onMouseOut, false);
+        element.addEventListener("mousemove", this._onMouseMove, false);
+        element.addEventListener("mousemove", this._onMouseMove, false);
+        element.addEventListener('mousewheel', this._onWheel, false);
+        element.addEventListener('DOMMouseScroll', this._onWheel, false);
+
+        BABYLON.Tools.RegisterTopRootEvents([
+            { name: "keydown", handler: this._onKeyDown },
+            { name: "keyup", handler: this._onKeyUp },
+            { name: "blur", handler: this._onLostFocus }
+        ]);
     };
 
-    RANDO.BirdCamera.prototype.detachControl = function (canvas) {
-        if (this._attachedCanvas != canvas) {
+    RANDO.BirdCamera.prototype.detachControl = function (element) {
+        if (this._attachedElement != element) {
             return;
         }
 
-        canvas.removeEventListener("mousedown", this._onMouseDown);
-        canvas.removeEventListener("mouseup", this._onMouseUp);
-        canvas.removeEventListener("mouseout", this._onMouseOut);
-        canvas.removeEventListener("mousemove", this._onMouseMove);
-        window.removeEventListener('mousewheel', this._onWheel);
-        window.removeEventListener('DOMMouseScroll', this._onWheel);
-        window.removeEventListener("keydown", this._onKeyDown);
-        window.removeEventListener("keyup", this._onKeyUp);
-        window.removeEventListener("blur", this._onLostFocus);
+        element.removeEventListener("mousedown", this._onMouseDown);
+        element.removeEventListener("mouseup", this._onMouseUp);
+        element.removeEventListener("mouseout", this._onMouseOut);
+        element.removeEventListener("mousemove", this._onMouseMove);
+        element.removeEventListener("mousemove", this._onMouseMove);
+        element.removeEventListener('mousewheel', this._onWheel);
+        element.removeEventListener('DOMMouseScroll', this._onWheel);
 
-        this._attachedCanvas = null;
+        BABYLON.Tools.UnregisterTopRootEvents([
+            { name: "keydown", handler: this._onKeyDown },
+            { name: "keyup", handler: this._onKeyUp },
+            { name: "blur", handler: this._onLostFocus }
+        ]);
+
+        this._attachedElement = null;
         if (this._reset) {
             this._reset();
         }
