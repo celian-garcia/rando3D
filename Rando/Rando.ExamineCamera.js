@@ -53,8 +53,6 @@ var RANDO = RANDO || {};
         this._oldPosition = BABYLON.Vector3.Zero();
         this._diffPosition = BABYLON.Vector3.Zero();
         this._newPosition = BABYLON.Vector3.Zero();
-
-        RANDO.ExamineCamera.prototype._initCache.call(this);
     };
 
     RANDO.ExamineCamera.prototype = Object.create(BABYLON.Camera.prototype);
@@ -82,6 +80,8 @@ var RANDO = RANDO || {};
 
     // Cache
     RANDO.ExamineCamera.prototype._initCache = function () {
+        BABYLON.Camera.prototype._initCache.call(this);
+
         this._cache.target = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
         this._cache.alpha = undefined;
         this._cache.beta = undefined;

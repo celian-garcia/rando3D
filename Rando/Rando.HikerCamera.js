@@ -60,8 +60,6 @@ var RANDO = RANDO || {};
         this._lenghtOfBezier = 0;
         this._positionTween = null;
         this._rotationTween = null;
-
-        RANDO.HikerCamera.prototype._initCache.call(this);
     };
 
     RANDO.HikerCamera.prototype = Object.create(BABYLON.Camera.prototype);
@@ -90,6 +88,8 @@ var RANDO = RANDO || {};
 
     // Cache
     RANDO.HikerCamera.prototype._initCache = function () {
+        BABYLON.Camera.prototype._initCache.call(this);
+
         this._cache.lockedTarget = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
         this._cache.rotation = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
     };

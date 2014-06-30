@@ -53,8 +53,6 @@ var RANDO = RANDO || {};
         this._lookAtTemp = BABYLON.Matrix.Zero();
         this._tempMatrix = BABYLON.Matrix.Zero();
         this._positionAfterZoom = BABYLON.Vector3.Zero();
-
-        RANDO.BirdCamera.prototype._initCache.call(this);
     };
 
     RANDO.BirdCamera.prototype = Object.create(BABYLON.Camera.prototype);
@@ -82,6 +80,8 @@ var RANDO = RANDO || {};
 
     // Cache
     RANDO.BirdCamera.prototype._initCache = function () {
+        BABYLON.Camera.prototype._initCache.call(this);
+
         this._cache.lockedTarget = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
         this._cache.rotation = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
     };
