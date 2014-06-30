@@ -500,6 +500,7 @@ var RANDO = RANDO || {};
                     .subtract(this.position)
                     .add(this.cameraDirection)
                 );
+                this.setPosition (this.position);
             }
         }
         else if (needToRotateOrZoom) {
@@ -523,6 +524,7 @@ var RANDO = RANDO || {};
                     )
                     .subtract(this.position)
                 );
+                this.setPosition (this.position);
             }
         }
         else if (needToMoveTarget) {
@@ -530,6 +532,7 @@ var RANDO = RANDO || {};
                 this._collideWithWorld(this.cameraDirection);
             } else {
                 this.position.addInPlace(this.cameraDirection);
+                this.setPosition (this.position);
             }
         }
 
