@@ -158,15 +158,15 @@ var RANDO = RANDO || {};
         }
     };
     // Controls
-    RANDO.HikerCamera.prototype.attachControl = function (canvas, noPreventDefault) {
+    RANDO.HikerCamera.prototype.attachControl = function (element, noPreventDefault) {
         var previousPosition;
         var that = this;
         var engine = this._scene.getEngine();
 
-        if (this._attachedCanvas) {
+        if (this._attachedElement) {
             return;
         }
-        this._attachedCanvas = canvas;
+        this._attachedElement = element;
 
         if (this._onMouseDown === undefined) {
             this._onMouseDown = function (evt) {
@@ -220,24 +220,6 @@ var RANDO = RANDO || {};
                 };
                 if (!noPreventDefault) {
                     evt.preventDefault();
-                }
-            };
-
-            this._onWheel = function (event) {
-                var delta = 0;
-                if (event.wheelDelta) {
-                    delta = event.wheelDelta / (that.wheelPrecision * 40);
-                } else if (event.detail) {
-                    delta = -event.detail / that.wheelPrecision;
-                }
-
-                if (delta)
-                    that.inertialRadiusOffset += delta;
-
-                if (event.preventDefault) {
-                    if (!noPreventDefault) {
-                        event.preventDefault();
-                    }
                 }
             };
 
@@ -322,33 +304,35 @@ var RANDO = RANDO || {};
             };
         }
 
-        canvas.addEventListener("mousedown", this._onMouseDown, false);
-        canvas.addEventListener("mouseup", this._onMouseUp, false);
-        canvas.addEventListener("mouseout", this._onMouseOut, false);
-        canvas.addEventListener("mousemove", this._onMouseMove, false);
-        window.addEventListener('mousewheel', this._onWheel, false);
-        window.addEventListener('DOMMouseScroll', this._onWheel);
-        window.addEventListener("keydown", this._onKeyDown, false);
-        window.addEventListener("keyup", this._onKeyUp, false);
-        window.addEventListener("blur", this._onLostFocus, false);
+        element.addEventListener("mousedown", this._onMouseDown, false);
+        element.addEventListener("mouseup", this._onMouseUp, false);
+        element.addEventListener("mouseout", this._onMouseOut, false);
+        element.addEventListener("mousemove", this._onMouseMove, false);
+
+        BABYLON.Tools.RegisterTopRootEvents([
+            { name: "keydown", handler: this._onKeyDown },
+            { name: "keyup", handler: this._onKeyUp },
+            { name: "blur", handler: this._onLostFocus }
+        ]);
     };
 
-    RANDO.HikerCamera.prototype.detachControl = function (canvas) {
-        if (this._attachedCanvas != canvas) {
+    RANDO.HikerCamera.prototype.detachControl = function (element) {
+        if (this._attachedElement != element) {
             return;
         }
 
-        canvas.removeEventListener("mousedown", this._onMouseDown);
-        canvas.removeEventListener("mouseup", this._onMouseUp);
-        canvas.removeEventListener("mouseout", this._onMouseOut);
-        canvas.removeEventListener("mousemove", this._onMouseMove);
-        window.removeEventListener('mousewheel', this._onWheel);
-        window.removeEventListener('DOMMouseScroll', this._onWheel);
-        window.removeEventListener("keydown", this._onKeyDown);
-        window.removeEventListener("keyup", this._onKeyUp);
-        window.removeEventListener("blur", this._onLostFocus);
+        element.removeEventListener("mousedown", this._onMouseDown);
+        element.removeEventListener("mouseup", this._onMouseUp);
+        element.removeEventListener("mouseout", this._onMouseOut);
+        element.removeEventListener("mousemove", this._onMouseMove);
 
-        this._attachedCanvas = null;
+        BABYLON.Tools.UnregisterTopRootEvents([
+            { name: "keydown", handler: this._onKeyDown },
+            { name: "keyup", handler: this._onKeyUp },
+            { name: "blur", handler: this._onLostFocus }
+        ]);
+
+        this._attachedElement = null;
         if (this._reset) {
             this._reset();
         }
