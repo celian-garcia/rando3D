@@ -141,6 +141,34 @@ var RANDO = RANDO || {};
         // Creates side
         var side = RANDO.Utils.createSideFromLine(name, line, alt_min, scene);
 
+        ////////////////////////////////////////////////////////////////////////
+        // UV side computing module -- to refac/////////////////////////////////
+        var cType;
+        if (line[line.length-1].z - line[0].z == 0) {
+            cType = 'x';
+        } else {
+            cType = 'z';
+        }
+        var u = [];
+        for (var it in line) {
+            u.push(Math.abs(line[it][cType] - line[0][cType]));
+        }
+        for (var it in u) {
+            u[it] *= 1/(Math.abs(line[line.length-1][cType] - line[0][cType]));
+        }
+        var uv = [];
+        for (var it in u) {
+            uv.push(0);
+            uv.push(u[it]);
+        }
+        for (var it in u) {
+            uv.push(1);
+            uv.push(u[it]);
+        }
+
+        side.setVerticesData(BABYLON.VertexBuffer.UVKind, uv);
+        ////////////////////////////////////////////////////////////////////////
+
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
         side.material.diffuseTexture = new BABYLON.Texture(RANDO.SETTINGS.SIDE_TEX_URL, scene);
