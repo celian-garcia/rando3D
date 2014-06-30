@@ -427,13 +427,12 @@ RANDO.Utils.getSize = function (mesh) {
 }
 
 RANDO.Utils.isInExtent = function (coordinates, extent) {
-    if (coordinates.x >= extent.x.min
-     && coordinates.x <= extent.x.max
-     && coordinates.z >= extent.z.min
-     && coordinates.z <= extent.z.max ) {
-        return true;
-    }
-    return false;
+    return (
+        coordinates.x >= extent.x.min &&
+        coordinates.x <= extent.x.max &&
+        coordinates.z >= extent.z.min &&
+        coordinates.z <= extent.z.max
+     )? true: false;
 };
 
 
