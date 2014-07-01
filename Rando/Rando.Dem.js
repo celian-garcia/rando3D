@@ -289,7 +289,6 @@ var RANDO = RANDO || {};
         }
 
         var u = [];
-
         for (var it in line) {
             u.push(
                 Math.abs(line[it][cType] - line[0][cType]) *
