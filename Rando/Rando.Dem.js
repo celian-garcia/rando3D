@@ -141,33 +141,7 @@ var RANDO = RANDO || {};
         // Creates side
         var side = RANDO.Utils.createSideFromLine(name, line, alt_min, scene);
 
-        ////////////////////////////////////////////////////////////////////////
-        // UV side computing module -- to refac/////////////////////////////////
-        var cType;
-        if (line[line.length-1].z - line[0].z == 0) {
-            cType = 'x';
-        } else {
-            cType = 'z';
-        }
-        var u = [];
-        for (var it in line) {
-            u.push(Math.abs(line[it][cType] - line[0][cType]));
-        }
-        for (var it in u) {
-            u[it] *= 1/(Math.abs(line[line.length-1][cType] - line[0][cType]));
-        }
-        var uv = [];
-        for (var it in u) {
-            uv.push(0);
-            uv.push(u[it]);
-        }
-        for (var it in u) {
-            uv.push(1);
-            uv.push(u[it]);
-        }
-
-        side.setVerticesData(BABYLON.VertexBuffer.UVKind, uv);
-        ////////////////////////////////////////////////////////////////////////
+        this._computeSideUvs(side, line, alt_min);
 
         // Side material
         side.material = new BABYLON.StandardMaterial(name + "Material", scene);
@@ -308,5 +282,31 @@ var RANDO = RANDO || {};
         this._textures.push(new BABYLON.Texture(url, scene));
     };
 
+    RANDO.Dem.prototype._computeSideUvs = function (side, line, alt_min) {
+        var cType = 'z';
+        if (line[line.length-1].z - line[0].z == 0) {
+            cType = 'x';
+        }
 
+        var u = [];
+
+        for (var it in line) {
+            u.push(
+                Math.abs(line[it][cType] - line[0][cType]) *
+                1 / (Math.abs(line[line.length-1][cType] - line[0][cType]))
+            );
+        }
+
+        var uv = [];
+        for (var it in u) {
+            uv.push((line[it].y - alt_min)/(this._extent.y.max - alt_min));
+            uv.push(u[it]);
+        }
+        for (var it in u) {
+            uv.push(0);
+            uv.push(u[it]);
+        }
+
+        side.setVerticesData(BABYLON.VertexBuffer.UVKind, uv);
+    };
 })();
