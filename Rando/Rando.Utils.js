@@ -904,3 +904,4 @@ RANDO.Utils.drapePoint = function (point, dem, offset) {
         }
     }
 }
+
