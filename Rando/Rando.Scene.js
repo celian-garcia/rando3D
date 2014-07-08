@@ -183,7 +183,7 @@ var RANDO = RANDO || {};
         sideLight1.specular = new BABYLON.Color4(0, 0, 0, 0);
 
         var sideLight2 = new BABYLON.DirectionalLight(
-            "Side Light 1",
+            "Side Light 2",
             new BABYLON.Vector3(-1, 0, -0.8),
             this._scene
         );

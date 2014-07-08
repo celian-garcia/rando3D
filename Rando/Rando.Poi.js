@@ -74,7 +74,7 @@ var RANDO = RANDO || {};
         panel.id = id;
         panel.rotate (BABYLON.Axis.X, -Math.PI/2, BABYLON.Space.LOCAL);
         panel.position.x = position.x;
-        panel.position.y = position.y + RANDO.SETTINGS.POI_OFFSET;
+        panel.position.y = -1000;
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         this.panel = panel;
@@ -90,7 +90,6 @@ var RANDO = RANDO || {};
         picto.material = new BABYLON.StandardMaterial("POI - Picto - Material", scene);
         picto.renderingGroupId = 1;
         picto.parent = panel;
-
 
         // Computes the size of the pictogram (in pixels)
         var picto_size = {
@@ -202,8 +201,8 @@ var RANDO = RANDO || {};
      *      - ground : ground of the DEM
      */
     RANDO.Poi.prototype.drape = function (ground) {
-        RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
         RANDO.Utils.drapePoint(this.sphere.position, ground);
+        RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
     };
 
     /**
