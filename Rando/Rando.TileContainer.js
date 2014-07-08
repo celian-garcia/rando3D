@@ -336,7 +336,7 @@ var RANDO = RANDO || {};
             for (row in grid) {
                 for (col in grid[row]) {
                     grid[row][col].x += offsets.x;
-                    grid[row][col].y += offsets.y;
+                    //~ grid[row][col].y += offsets.y;
                     grid[row][col].z += offsets.z;
                 }
             }

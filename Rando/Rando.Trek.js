@@ -13,7 +13,7 @@ var RANDO = RANDO || {};
 
     /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {
-        this._vertices = this._offsets(data, offsets);
+        this._vertices = this._prepareVertices(data, offsets);
         this._scene = scene;
 
         this.spheres     = null;
@@ -33,15 +33,15 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Trek._offsets() : translate the Trek data of the offsets attribute
+     * RANDO.Trek._prepareVertices() : translate the Trek data of the offsets attribute
      *
      * return the array of vertices
      */
-    RANDO.Trek.prototype._offsets = function (data, offsets) {
+    RANDO.Trek.prototype._prepareVertices = function (data, offsets) {
         var vertices = _.clone(data);
         for (var it in vertices){
             vertices[it].x += offsets.x;
-            vertices[it].y += offsets.y;
+            vertices[it].y = 0;
             vertices[it].z += offsets.z;
         }
         return vertices;

@@ -49,7 +49,7 @@ var RANDO = RANDO || {};
 
     RANDO.CameraComputer.prototype.computeInitialTargetToRef = function (initialTarget) {
         initialTarget.x = this._center.x;
-        initialTarget.y = this._center.y;
+        initialTarget.y = 0;
         initialTarget.z = this._center.z;
     };
 

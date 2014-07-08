@@ -58,57 +58,6 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Scene.process_v10() : launch the building process of the scene
-     *  It displays :
-     *          - the terrain
-     *          - the trek
-     */
-    RANDO.Scene.prototype.process_v10 = function () {
-        var that = this;
-
-        $.getJSON(RANDO.SETTINGS.DEM_URL)
-         .done(function (data) {
-            that._parseDemJson(data);
-            that._buildCameras();
-         })
-         .then(function () {
-            return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
-         })
-         .done(function (data) {
-            that._parseTrekJson(data);
-         })
-
-         // Tiled DEM mesh building
-         .then(function () {
-            that._engine.runRenderLoop(function() {
-                that._scene.render();
-            });
-            that.dem = new RANDO.Dem(
-                that._dem_data.extent,
-                that._dem_data.altitudes,
-                that._offsets,
-                that._scene
-            );
-         })
-
-         // Trek building
-         .then(function () {
-            that.trek = new RANDO.Trek  (
-                that._trek_data,
-                that._offsets,
-                that._scene
-            )
-            that.trek.init();
-         })
-
-         .then(function () {
-            that._scene.executeWhenReady(function () {
-                that._executeWhenReady ();
-            });
-         });
-    };
-
-    /**
      * RANDO.Scene.process() : launch the building process of the scene
      *  It displays :
      *          - Terrain
@@ -161,7 +110,7 @@ var RANDO = RANDO || {};
             // POIs building
             var id = 0;
             for (var it in that._pois_data) {
-                if (RANDO.Utils.isInExtent(that._pois_data[it].coordinates, that._dem_data.extent)) {
+                if (RANDO.Utils.isInExtent(that._pois_data[it].coordinates, that.dem.getRealExtent())) {
                     that.pois.push(new RANDO.Poi(
                         id++,
                         that._pois_data[it],
@@ -275,6 +224,8 @@ var RANDO = RANDO || {};
 
         // Record DEM extent
         this._dem_data.extent = m_extent;
+        this._dem_data.extent.y.min *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
+        this._dem_data.extent.y.max *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
 
         // Record DEM altitudes scaled
         this._dem_data.altitudes = RANDO.Utils.scaleArray2(
@@ -282,19 +233,15 @@ var RANDO = RANDO || {};
             RANDO.SETTINGS.ALTITUDES_Z_SCALE
         );
 
-        this._dem_data.extent.y.min *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
-        this._dem_data.extent.y.max *= RANDO.SETTINGS.ALTITUDES_Z_SCALE;
-
         // Record DEM center
         this._dem_data.center = {
             'x' : m_center.x,
-            'y' : data.center.z,
+            'y' : this._dem_data.extent.y.max - this._dem_data.extent.y.min,
             'z' : m_center.y
         };
 
         // Records scene offsets
         this._offsets.x = -m_center.x;
-        this._offsets.y =  m_extent.y.min;
         this._offsets.z = -m_center.y;
     };
 
@@ -312,7 +259,7 @@ var RANDO = RANDO || {};
 
             tmp = RANDO.Utils.toMeters(tmp);
             tmp.z = tmp.y;
-            tmp.y = 0;
+            delete tmp["y"];
 
             // Record
             this._trek_data.push(tmp);
