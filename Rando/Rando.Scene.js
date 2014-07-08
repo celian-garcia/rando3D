@@ -83,7 +83,7 @@ var RANDO = RANDO || {};
          })
          .done(function (data) {
             that._parsePoiJson(data);
-            
+
          })
          .then(function () {
             // Run renderloop
@@ -98,7 +98,7 @@ var RANDO = RANDO || {};
                 that._offsets,
                 that._scene
             );
-            
+
 
             // Trek building
             that.trek = new RANDO.Trek  (

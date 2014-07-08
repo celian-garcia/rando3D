@@ -86,13 +86,13 @@ var RANDO = RANDO || {};
             this._number+1,
             this._number+1
         );
-        this._fillExtents(squareGrid);
+        this._fillExtents (squareGrid);
 
         // Fill square's types
         this._fillTypes ();
 
         // Fill square's indices
-        var elevatedPoints = RANDO.Utils.createElevationGrid(
+        var elevatedPoints = RANDO.Utils.createElevationGrid (
             this._totalExtent.x.min,
             this._totalExtent.x.max,
             this._totalExtent.z.min,
@@ -129,7 +129,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraComputer._fillTypes() : Fill the type property of all squares 
+     * RANDO.CameraComputer._fillTypes() : Fill the type property of all squares
      */
     RANDO.CameraComputer.prototype._fillTypes = function () {
         // CORNER types
@@ -163,7 +163,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.CameraComputer._fillIndices() : Fill the index property of all squares
      *  - elevatedPoints : a two-array of all 3D points of the DEM
-     * 
+     *
      * NB : It needs to have already computed the extent and the type of each square
      */
     RANDO.CameraComputer.prototype._fillIndices = function (elevatedPoints) {
@@ -197,27 +197,27 @@ var RANDO = RANDO || {};
         }
     };
 
-    /** 
+    /**
      * RANDO.CameraComputer._fillNeighborhood() : Fill the neighborhood property of squares
      * which are of CORNER or EXTBORDER types
-     * 
+     *
      * ****************************************
      * The neighborhood contains all neighbours of a square following this schedule :
-     * 
-     *          CORNER : 
+     *
+     *          CORNER :
      *      |
      *      n
      *      n n
      *      s n n _
-     * 
+     *
      *          EXTBORDER :
      *      n n n
      *    _ n s n _
-     * 
-     * With 
+     *
+     * With
      *  s = square we want to get its neighbours
      *  n = neighbours of the square
-     * 
+     *
      * ****************************************
      * NB : - The square will be counted in its neighborhood
      *      - It needs to have already computed the index of each square
@@ -227,7 +227,7 @@ var RANDO = RANDO || {};
 
         for (var curr = 0; curr < this._squares.length; curr++) {
             var square = this._squares[curr];
-            
+
             if (square.type == "CORNER") {
                 square.neighborhood = [];
                 if (curr%this._number == 0) {
@@ -276,7 +276,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.CameraComputer._findAlphaSquare() : Find the Alpha Square 
+     * RANDO.CameraComputer._findAlphaSquare() : Find the Alpha Square
      *  The alpha square is the square which have the neighborhood with the lowest indices values
      */
     RANDO.CameraComputer.prototype._findAlphaSquare = function () {
@@ -296,7 +296,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.CameraComputer._setPositionToRef() : set the position given in parameter
      *  according to the alpha square position
-     * 
+     *
      *  - result : reference to the position to change
      */
     RANDO.CameraComputer.prototype._setPositionToRef = function (result) {
@@ -327,7 +327,7 @@ var RANDO = RANDO || {};
     /**
      * RANDO.CameraComputer._buildSquareViewer() : build a viewer which materialize
      *  differents squares in spheres of color
-     * 
+     *
      *  CORNER squares are green
      *  Extern BORDER squares are blue
      *  Intern BORDER squares are orange

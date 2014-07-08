@@ -350,7 +350,7 @@ var RANDO = RANDO || {};
         frame.north = [];
         frame.south = [];
         var tiles = this._tiles;
-        
+
         var extent = this.getExtentInTilesCoordinates();
 
         for (var it in tiles) {
