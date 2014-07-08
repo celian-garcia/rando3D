@@ -28,6 +28,7 @@ var RANDO = RANDO || {};
     RANDO.Trek.prototype.init = function () {
         this.material = new BABYLON.StandardMaterial("Trek Material", this._scene)
         this.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
+        this.material.emissiveColor = RANDO.SETTINGS.TREK_COLOR;
 
         this.buildTrek ();
     };

@@ -26,7 +26,7 @@ var RANDO = RANDO || {};
         this._engine    = null;
         this._scene     = null;
         this.camContainer    = null;
-        this.lights     = [];
+        this.lights     = {};
         this.dem        = null;
         this.trek       = null;
         this.pois       = [];
@@ -163,15 +163,36 @@ var RANDO = RANDO || {};
         var scene = this._scene;
 
         // Sun
-        var sun = new BABYLON.HemisphericLight(
+        var sunPosition = new BABYLON.Vector3(500, 10000, 0);
+        var sunTarget = new BABYLON.Vector3(0, 0, 0);
+        var sun = new BABYLON.DirectionalLight(
             "Sun",
-            new BABYLON.Vector3(500, 2000, 0),
+            sunTarget.subtract(sunPosition),
             scene
         );
-        sun.intensity = 2;
+        sun.intensity = 1;
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
 
-        lights.push(sun);
+        // Side Lights
+        var sideLight1 = new BABYLON.DirectionalLight(
+            "Side Light 1",
+            new BABYLON.Vector3(1, 0, 0.8),
+            this._scene
+        );
+        sideLight1.intensity = 1.2;
+        sideLight1.specular = new BABYLON.Color4(0, 0, 0, 0);
+
+        var sideLight2 = new BABYLON.DirectionalLight(
+            "Side Light 1",
+            new BABYLON.Vector3(-1, 0, -0.8),
+            this._scene
+        );
+        sideLight2.intensity = 1.2;
+        sideLight2.specular = new BABYLON.Color4(0, 0, 0, 0);
+
+        lights.sun = sun;
+        lights.sideLight1 = sideLight1;
+        lights.sideLight2 = sideLight2;
     };
 
     RANDO.Scene.prototype._buildEnvironment = function () {
