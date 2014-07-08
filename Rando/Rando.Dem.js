@@ -33,6 +33,7 @@ var RANDO = RANDO || {};
 
     /* Methods */
     RANDO.Dem.prototype.init = function () {
+        this._adjustZoom ();
         var tileContainer = new RANDO.TileContainer(
             this.getRealExtent(),
             this._altitudes,
@@ -52,6 +53,12 @@ var RANDO = RANDO || {};
         extent.z.min += offsets.z;
         extent.z.max += offsets.z;
         return extent;
+    };
+
+    RANDO.Dem.prototype._adjustZoom = function () {
+        while (RANDO.Utils.getNumberOfTiles(RANDO.SETTINGS.TILE_ZOOM, this.getRealExtent()) > RANDO.SETTINGS.TILE_NUMBER_LIMIT) {
+            RANDO.SETTINGS.TILE_ZOOM -= 1;
+        }
     };
 
     /**

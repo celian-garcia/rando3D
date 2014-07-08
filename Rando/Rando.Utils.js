@@ -435,6 +435,14 @@ RANDO.Utils.isInExtent = function (coordinates, extent) {
      )? true: false;
 };
 
+// to refac
+RANDO.Utils.getNumberOfTiles = function (zoom, extent) {
+    var xTileMin = RANDO.Utils.meters2num (extent.x.min, extent.z.min, zoom).xtile;
+    var xTileMax = RANDO.Utils.meters2num (extent.x.max, extent.z.max, zoom).xtile;
+    var yTileMin = RANDO.Utils.meters2num (extent.x.min, extent.z.min, zoom).ytile;
+    var yTileMax = RANDO.Utils.meters2num (extent.x.max, extent.z.max, zoom).ytile;
+    return (xTileMax - xTileMin +1) * (yTileMin - yTileMax +1);
+};
 
 /****    GEOMETRY     ************************/
 /**tested
