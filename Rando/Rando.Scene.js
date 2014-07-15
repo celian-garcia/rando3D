@@ -51,9 +51,9 @@ var RANDO = RANDO || {};
             RANDO.SETTINGS.parse(this._settings);
         }
 
+        this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
         this._scene.collisionsEnabled = true;
         this._buildLights();
-        this._buildEnvironment();
         this.process();
     };
 
@@ -195,16 +195,6 @@ var RANDO = RANDO || {};
         lights.sideLight2 = sideLight2;
     };
 
-    RANDO.Scene.prototype._buildEnvironment = function () {
-        // Fog
-        //~ this._scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
-        //~ this._scene.fogDensity = 0.00002;
-        //~ this._scene.fogColor = new BABYLON.Color3(1, 1, 1);
-
-        // Color : transparent to see the html background
-        this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
-    };
-
     /**
      * RANDO.Scene._executeWhenReady() : function which is executed when the scene
      *  is ready, in other words, when the scene have built all its elements.
@@ -308,7 +298,6 @@ var RANDO = RANDO || {};
             });
         }
     };
-
 })();
 
 
