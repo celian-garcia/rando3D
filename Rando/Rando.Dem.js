@@ -64,8 +64,8 @@ var RANDO = RANDO || {};
     /*
      * RANDO.Dem._adjustZoom() : adjust the tile's zoom according the extent of the DEM
      *  More the DEM is large, more the zoom decreased and so tiles are bigger.
-     * 
-     * NB : It take in count the RANDO.SETTINGS.TILE_NUMBER_LIMIT which correspond to the 
+     *
+     * NB : It take in count the RANDO.SETTINGS.TILE_NUMBER_LIMIT which correspond to the
      * limit number of tiles. This number can be changed in convenience before launch the scene.
      */
     RANDO.Dem.prototype._adjustZoom = function () {
@@ -291,8 +291,8 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Dem._computeSideUvs() : Computes uvs values of a side 
-     *      - side : side mesh 
+     * RANDO.Dem._computeSideUvs() : Computes uvs values of a side
+     *      - side : side mesh
      *      - line : line of altitudes
      *      - alt_min : it is the minimum altitude of the DEM
      */
@@ -324,7 +324,7 @@ var RANDO = RANDO || {};
     };
 
     /**
-     * RANDO.Dem.getRealExtent() : Give the real extent of the DEM, it means the 
+     * RANDO.Dem.getRealExtent() : Give the real extent of the DEM, it means the
      *  extent in meters in the original projection.
      */
     RANDO.Dem.prototype.getRealExtent = function () {

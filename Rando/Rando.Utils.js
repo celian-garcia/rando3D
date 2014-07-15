@@ -427,7 +427,7 @@ RANDO.Utils.getSize = function (mesh) {
 }
 
 /**
- * RANDO.Utils.isInExtent() : 
+ * RANDO.Utils.isInExtent() :
  *  return true if the given coordinates are in the given extent
  */
 RANDO.Utils.isInExtent = function (coordinates, extent) {
@@ -440,7 +440,7 @@ RANDO.Utils.isInExtent = function (coordinates, extent) {
 };
 
 /**
- * RANDO.Utils.getNumberOfTiles() : return the number of tiles according a zoom level and 
+ * RANDO.Utils.getNumberOfTiles() : return the number of tiles according a zoom level and
  * a meters extent.
  */
 RANDO.Utils.getNumberOfTiles = function (zoom, extent) {

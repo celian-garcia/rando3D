@@ -84,7 +84,7 @@ var RANDO = RANDO || {};
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         this.panel = panel;
-        
+
         // Panel Texture
         var panel_tex = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
         panel_tex.hasAlpha = true;
