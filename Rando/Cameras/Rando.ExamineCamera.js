@@ -414,8 +414,8 @@ var RANDO = RANDO || {};
         );
 
         var needToRotateOrZoom = (
-            this.inertialAlphaOffset != 0 ||
-            this.inertialBetaOffset  != 0 ||
+            this.inertialAlphaOffset  != 0 ||
+            this.inertialBetaOffset   != 0 ||
             this.inertialRadiusOffset != 0
         );
 
@@ -538,26 +538,26 @@ var RANDO = RANDO || {};
 
         // Inertia
         if (needToMoveTarget) {
-            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.cameraDirection.x) < BABYLON.Engine.Epsilon)
                 this.cameraDirection.x = 0;
 
-            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.cameraDirection.y) < BABYLON.Engine.Epsilon)
                 this.cameraDirection.y = 0;
 
-            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.cameraDirection.z) < BABYLON.Engine.Epsilon)
                 this.cameraDirection.z = 0;
 
             this.cameraDirection.scaleInPlace(this.inertia);
         }
 
         if (needToRotateOrZoom) {
-            if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.inertialAlphaOffset) < BABYLON.Engine.Epsilon)
                 this.inertialAlphaOffset = 0;
 
-            if (Math.abs(this.inertialBetaOffset) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.inertialBetaOffset) < BABYLON.Engine.Epsilon)
                 this.inertialBetaOffset = 0;
 
-            if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.epsilon)
+            if (Math.abs(this.inertialRadiusOffset) < BABYLON.Engine.Epsilon)
                 this.inertialRadiusOffset = 0;
 
             this.inertialAlphaOffset    *= this.inertia;
