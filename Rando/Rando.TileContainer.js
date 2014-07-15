@@ -342,6 +342,10 @@ var RANDO = RANDO || {};
         }
     };
 
+    /**
+     * RANDO.TileContainer.getFrame() : get the frame of the DEM composed by 4 lines
+     *  east, west, north, and south.
+     */
     RANDO.TileContainer.prototype.getFrame = function () {
         var frame = {};
         frame.east  = [];
@@ -383,6 +387,10 @@ var RANDO = RANDO || {};
         return frame;
     };
 
+    /**
+     * RANDO.TileContainer.getExtentInTilesCoordinates() : get the x and y extent in tile's
+     * coordinates
+     */
     RANDO.TileContainer.prototype.getExtentInTilesCoordinates = function () {
         var tileExtent = {};
         tileExtent.x = {};
