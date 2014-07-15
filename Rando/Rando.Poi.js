@@ -26,6 +26,7 @@ var RANDO = RANDO || {};
         this._scene         = scene;
 
         this.panel          = null;
+        this.picto          = null;
         this.sphere         = null;
         this._attachedLight = null;
         this.init();
@@ -63,8 +64,13 @@ var RANDO = RANDO || {};
                 height : RANDO.SETTINGS.PICTO_SIZE + 30
             }
         };
+        // Size of the pictogram (in pixels)
+        var picto_size = {
+            width : pan_size.px.width,
+            height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
+        };
 
-        // Building panel
+        // Building panel Mesh
         var panel = BABYLON.Mesh.CreateGround(
             "POI - Panel",
             pan_size.m.width,
@@ -78,6 +84,11 @@ var RANDO = RANDO || {};
         panel.position.z = position.z;
         panel.material = new BABYLON.StandardMaterial("POI - Panel - Material", scene);
         this.panel = panel;
+        
+        // Panel Texture
+        var panel_tex = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
+        panel_tex.hasAlpha = true;
+        fillPanelTexture();
 
         // Building pictogram Container
         var picto = BABYLON.Mesh.CreateGround(
@@ -89,52 +100,52 @@ var RANDO = RANDO || {};
         picto.id = id;
         picto.material = new BABYLON.StandardMaterial("POI - Picto - Material", scene);
         picto.renderingGroupId = 1;
+        this.picto = picto;
         picto.parent = panel;
 
-        // Computes the size of the pictogram (in pixels)
-        var picto_size = {
-            width : pan_size.px.width,
-            height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
+        // Pictogram Texture
+        var picto_tex = new BABYLON.DynamicTexture("POI - Picto - Texture", pan_size.px.width, scene, true);
+        picto_tex.hasAlpha = true;
+        fillPictoTexture();
+
+        function fillPictoTexture () {
+            var pictoContext = picto_tex.getContext();
+
+            // Load the pictogram on the pictogram container
+            var img = new Image();
+            img.onload = function () {
+                pictoContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
+
+                // Update
+                pictoContext.restore();
+                picto_tex.update();
+                picto.material.diffuseTexture = picto_tex;
+                picto.material.emissiveTexture = picto_tex;
+            };
+            img.src = src;
         };
 
-        // Texture
-        var picto_tex = new BABYLON.DynamicTexture("POI - Picto - Texture", pan_size.px.width, scene, true);
-        var panel_tex = new BABYLON.DynamicTexture("POI - Panel - Texture", pan_size.px.width, scene, true);
-        picto_tex.hasAlpha = true;
-        panel_tex.hasAlpha = true;
-        var pictoContext = picto_tex.getContext();
-        var panelContext = panel_tex.getContext();
+        function fillPanelTexture () {
+            var panelContext = panel_tex.getContext();
 
-        // Load the pictogram on the pictogram container
-        var img = new Image();
-        img.onload = function () {
-            pictoContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
+            // Draws background of the pictogram on the panel
+            panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";
+            RANDO.Utils.roundRect(panelContext, 0, 0, picto_size.width, picto_size.height, pan_size.px.width/10);
+
+            // Set & draw the text on the panel
+            var text = elevation + "m";
+            var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
+            panelContext.font = "bolder " + fontSize + "pt Arial";
+            panelContext.fillStyle = "#fff";
+            panelContext.textAlign = "center";
+            panelContext.fillText(text, pan_size.px.width/2, pan_size.px.height);
 
             // Update
-            pictoContext.restore();
-            picto_tex.update();
-            picto.material.diffuseTexture = picto_tex;
-            picto.material.emissiveTexture = picto_tex;
+            panelContext.restore();
+            panel_tex.update();
+            panel.material.opacityTexture   = panel_tex;
+            panel.material.emissiveTexture  = panel_tex;
         };
-        img.src = src;
-
-        // Draws background of the pictogram on the panel
-        panelContext.fillStyle = "rgba(255, 255, 255, 0.5)";
-        RANDO.Utils.roundRect(panelContext, 0, 0, picto_size.width, picto_size.height, pan_size.px.width/10);
-
-        // Set & draw the text on the panel
-        var text = elevation + "m";
-        var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
-        panelContext.font = "bolder " + fontSize + "pt Arial";
-        panelContext.fillStyle = "#fff";
-        panelContext.textAlign = "center";
-        panelContext.fillText(text, pan_size.px.width/2, pan_size.px.height);
-
-        // Update
-        panelContext.restore();
-        panel_tex.update();
-        panel.material.opacityTexture   = panel_tex;
-        panel.material.emissiveTexture  = panel_tex;
     };
 
     /**
@@ -147,11 +158,6 @@ var RANDO = RANDO || {};
 
         var sphere = BABYLON.Mesh.CreateSphere(
             "POI - Sphere", 10, RANDO.SETTINGS.POI_SIZE, scene
-        );
-        sphere.position = new BABYLON.Vector3(
-            position.x,
-            position.y,
-            position.z
         );
         sphere.material = new BABYLON.StandardMaterial(
             "POI - Sphere - Material", scene
@@ -166,34 +172,21 @@ var RANDO = RANDO || {};
      */
     RANDO.Poi.prototype._registerBeforeRender = function () {
         var scene       = this._scene;
-        var sphere      = this.sphere;
         var panel       = this.panel;
+        var picto       = this.picto;
 
-
+        // Controls visibility according the Distance from camera
         if (BABYLON.Vector3.Distance(panel.position, scene.activeCamera.position) < 300) {
             panel.isVisible = false;
-            panel.getChildren()[0].isVisible = false;
+            picto.isVisible = false;
         }
         else {
             panel.isVisible = true;
-            panel.getChildren()[0].isVisible = true;
+            picto.isVisible = true;
         }
-        lookAtCamera (scene.activeCamera);
 
-        function lookAtCamera (camera) {
-            if (camera.id == "Fly camera") {
-                var camTarget   = scene.activeCamera.getTarget();
-                var camPosition = scene.activeCamera.position;
-                var panelTarget = new BABYLON.Vector3 (
-                    2 * camPosition.x - camTarget.x,
-                    2 * camPosition.y - camTarget.y,
-                    2 * camPosition.z - camTarget.z
-                );
-                panel.lookAt(panelTarget, 0, -Math.PI/2, 0);
-            } else {
-                panel.lookAt(camera.position, 0, -Math.PI/2, 0);
-            }
-        };
+        // Controls panel orientation
+        panel.lookAt(scene.activeCamera.position, 0, -Math.PI/2, 0);
     };
 
     /**
@@ -201,8 +194,9 @@ var RANDO = RANDO || {};
      *      - ground : ground of the DEM
      */
     RANDO.Poi.prototype.drape = function (ground) {
-        RANDO.Utils.drapePoint(this.sphere.position, ground);
         RANDO.Utils.drapePoint(this.panel.position, ground, RANDO.SETTINGS.POI_OFFSET);
+        this.sphere.position = this.panel.position.clone();
+        this.sphere.position.y -= RANDO.SETTINGS.POI_OFFSET;
     };
 
     /**
