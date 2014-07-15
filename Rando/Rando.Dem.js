@@ -34,6 +34,7 @@ var RANDO = RANDO || {};
     /* Methods */
     RANDO.Dem.prototype.init = function () {
         this._adjustZoom ();
+
         var tileContainer = new RANDO.TileContainer(
             this.getRealExtent(),
             this._altitudes,
@@ -47,6 +48,11 @@ var RANDO = RANDO || {};
         this.buildBasement();
     };
 
+    /*
+     * RANDO.Dem._prepareExtent() : translate extent of the offsets in parameters
+     *  - extent : extent to translate
+     *  - offsets : values of the translation
+     */
     RANDO.Dem.prototype._prepareExtent = function (extent, offsets) {
         extent.x.min += offsets.x;
         extent.x.max += offsets.x;
@@ -55,6 +61,13 @@ var RANDO = RANDO || {};
         return extent;
     };
 
+    /*
+     * RANDO.Dem._adjustZoom() : adjust the tile's zoom according the extent of the DEM
+     *  More the DEM is large, more the zoom decreased and so tiles are bigger.
+     * 
+     * NB : It take in count the RANDO.SETTINGS.TILE_NUMBER_LIMIT which correspond to the 
+     * limit number of tiles. This number can be changed in convenience before launch the scene.
+     */
     RANDO.Dem.prototype._adjustZoom = function () {
         while (RANDO.Utils.getNumberOfTiles(RANDO.SETTINGS.TILE_ZOOM, this.getRealExtent()) > RANDO.SETTINGS.TILE_NUMBER_LIMIT) {
             RANDO.SETTINGS.TILE_ZOOM -= 1;
@@ -209,63 +222,6 @@ var RANDO = RANDO || {};
         return side;
     };
 
-    RANDO.Dem.prototype.buildScaleViewer = function () {
-        var xmin = this._extent.x.min;
-        var zmin = this._extent.z.min;
-        var scene = this._scene;
-
-        var width  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.width;
-        var height  = RANDO.SETTINGS.SCALE_VIEWER_SIZE.height;
-        var A = {
-            'x': xmin + this._offsets.x,
-            'y': zmin + this._offsets.z
-        };
-        var B = {
-            'x': A.x + width,
-            'y': A.y
-        };
-        var C = {
-            'x': A.x + width,
-            'y': A.y + height
-        };
-        var D = {
-            'x': A.x,
-            'y': A.y + height
-        };
-
-        var scaleViewer = RANDO.Utils.createGroundFromExtent(
-            "DEM - ScaleViewer", A, B, C, D,
-            RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION.x,
-            RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION.y,
-            scene
-        );
-        scaleViewer.material = new BABYLON.StandardMaterial("material", scene);
-        scaleViewer.material.alpha = 0.5;
-        scaleViewer.material.diffuseColor = BABYLON.Color3.FromInts(96, 41, 108);
-        scaleViewer.material.backFaceCulling = false;
-        drapeScaleViewer (this.ground);
-
-        this.scaleViewer = scaleViewer;
-
-        function drapeScaleViewer (ground) {
-            var vertices = scaleViewer.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-            var new_vertices = [];
-            var result
-            for (var i = 0; i < vertices.length; i+=3) {
-                var position = new BABYLON.Vector3(
-                    vertices[i],
-                    vertices[i+1],
-                    vertices[i+2]
-                );
-                RANDO.Utils.drapePoint(position, ground, RANDO.SETTINGS.SCALE_VIEWER_OFFSET);
-                new_vertices.push(position.x);
-                new_vertices.push(position.y);
-                new_vertices.push(position.z);
-            }
-            scaleViewer.setVerticesData(new_vertices, BABYLON.VertexBuffer.PositionKind);
-        };
-    };
-
     /**
      * RANDO.Dem.applyTextures() : Load tile's textures over the DEM
      */
@@ -334,6 +290,12 @@ var RANDO = RANDO || {};
         this._textures.push(new BABYLON.Texture(url, scene));
     };
 
+    /**
+     * RANDO.Dem._computeSideUvs() : Computes uvs values of a side 
+     *      - side : side mesh 
+     *      - line : line of altitudes
+     *      - alt_min : it is the minimum altitude of the DEM
+     */
     RANDO.Dem.prototype._computeSideUvs = function (side, line, alt_min) {
         var cType = 'z';
         if (line[line.length-1].z - line[0].z == 0) {
@@ -350,17 +312,21 @@ var RANDO = RANDO || {};
 
         var uv = [];
         for (var it in u) {
-            uv.push((line[it].y - alt_min)/(this._extent.y.max - alt_min));
-            uv.push(u[it]);
+            uv.push(u[it]); // u value
+            uv.push((line[it].y - alt_min)/(this._extent.y.max - alt_min)); // v value
         }
         for (var it in u) {
-            uv.push(0);
-            uv.push(u[it]);
+            uv.push(u[it]); // u value
+            uv.push(0); // v value
         }
 
         side.setVerticesData(BABYLON.VertexBuffer.UVKind, uv);
     };
 
+    /**
+     * RANDO.Dem.getRealExtent() : Give the real extent of the DEM, it means the 
+     *  extent in meters in the original projection.
+     */
     RANDO.Dem.prototype.getRealExtent = function () {
         var extent = {};
         extent.x = {};

@@ -224,6 +224,9 @@ var RANDO = RANDO || {};
         }
     };
 
+    /**
+     * RANDO.Trek.getTotalVertices() : get the total number of vertices in the trek.
+     */
     RANDO.Trek.prototype.getTotalVertices = function () {
         var spheresArray    = this.spheres.getChildren();
         var cylindersArray  = this.cylinders.getChildren();
