@@ -426,6 +426,10 @@ RANDO.Utils.getSize = function (mesh) {
     };
 }
 
+/**
+ * RANDO.Utils.isInExtent() : 
+ *  return true if the given coordinates are in the given extent
+ */
 RANDO.Utils.isInExtent = function (coordinates, extent) {
     return (
         coordinates.x >= extent.x.min &&
@@ -435,13 +439,16 @@ RANDO.Utils.isInExtent = function (coordinates, extent) {
      )? true: false;
 };
 
-// to refac
+/**
+ * RANDO.Utils.getNumberOfTiles() : return the number of tiles according a zoom level and 
+ * a meters extent.
+ */
 RANDO.Utils.getNumberOfTiles = function (zoom, extent) {
     var xTileMin = RANDO.Utils.meters2num (extent.x.min, extent.z.min, zoom).xtile;
     var xTileMax = RANDO.Utils.meters2num (extent.x.max, extent.z.max, zoom).xtile;
     var yTileMin = RANDO.Utils.meters2num (extent.x.min, extent.z.min, zoom).ytile;
     var yTileMax = RANDO.Utils.meters2num (extent.x.max, extent.z.max, zoom).ytile;
-    return (xTileMax - xTileMin +1) * (yTileMin - yTileMax +1);
+    return (xTileMax - xTileMin + 1) * (yTileMin - yTileMax + 1);
 };
 
 /****    GEOMETRY     ************************/
