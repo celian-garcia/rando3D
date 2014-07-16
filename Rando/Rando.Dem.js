@@ -256,6 +256,8 @@ var RANDO = RANDO || {};
                         // Set the texture when it's loaded
                         var material = meshes[it].material;
                         material.diffuseTexture = finalTextures[it];
+                        material.diffuseTexture.wrapU = BABYLON.Texture.CLAMP_ADDRESSMODE;
+                        material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE;
                         material.wireframe = false;
                         count--;
                     }
