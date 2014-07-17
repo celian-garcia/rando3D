@@ -200,10 +200,28 @@ var RANDO = RANDO || {};
         }
 
         for (var it in idArray) {
+            // The hiker camera must not be active until his path has not been set
+            if (idArray[it] != "hiker") {
+                $(".camera--" + idArray[it]).removeClass("camera--disabled");
+                $(".camera--" + idArray[it] + " img").attr("src", "img/camera.png");
+            }
+
+            // Click event
             $(".camera--" + idArray[it]).click({id : idArray[it]}, function (e) {
-                that.setActiveCamera (e.data.id);
+
+                if($(this).hasClass('camera--disabled')) {
+                    return;
+                }
+                else {
+                    that.setActiveCamera (e.data.id);
+                }
             });
         }
+    };
+
+    RANDO.CameraContainer.prototype.enableHikerCamera = function () {
+        $(".camera--hiker").removeClass("camera--disabled");
+        $(".camera--hiker img").attr("src", "img/camera.png");
     };
 
     RANDO.CameraContainer.prototype._resetByDefault = function () {
