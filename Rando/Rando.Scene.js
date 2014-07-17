@@ -138,6 +138,7 @@ var RANDO = RANDO || {};
         var scene           = this._scene;
         var cameraID        = this._cameraID;
 
+        // Parameters for the Camera Container
         var params = {
             'demCenter' : this._dem_data.center,
             'offsets'   : this._offsets,
@@ -146,12 +147,14 @@ var RANDO = RANDO || {};
             'switchEnabled' : true
         };
 
+        // Instantiate the container
         this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
 
-        // Defines active camera
+        // Control camera ID entered (examine_camera by default)...
         if (!$.inArray(cameraID, RANDO.CameraIDs))
             cameraID = "examine_camera";
 
+        // ...and set it as active
         this.camContainer.setActiveCamera (cameraID);
     };
 
@@ -187,6 +190,7 @@ var RANDO = RANDO || {};
         sideLight2.intensity = 1.2;
         sideLight2.specular = new BABYLON.Color4(0, 0, 0, 0);
 
+        // Record
         this.lights.sun = sun;
         this.lights.sideLight1 = sideLight1;
         this.lights.sideLight2 = sideLight2;
@@ -269,7 +273,10 @@ var RANDO = RANDO || {};
                 'lat' : data.profile[it][2][1]
             };
 
+            // We take only x and z values (not the altitudes)
             tmp = RANDO.Utils.toMeters(tmp);
+            
+            // toMeters() give x-y-coordinates and babylon take x-z-coordinates
             tmp.z = tmp.y;
             delete tmp["y"];
 
@@ -285,11 +292,14 @@ var RANDO = RANDO || {};
     RANDO.Scene.prototype._parsePoiJson = function (data) {
         for (var it in data.features) {
             var feature = data.features[it];
+
+            // Conversion
             var coordinates = RANDO.Utils.toMeters({
                 'lng' : feature.geometry.coordinates[0],
                 'lat' : feature.geometry.coordinates[1]
             });
 
+            // Record
             this._pois_data.push ({
                 'coordinates' : {
                     'x': coordinates.x,
