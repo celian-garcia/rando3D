@@ -161,23 +161,17 @@ var RANDO = RANDO || {};
 
         // Sun
         this.lights.sun = light (
-            "Sun",
-            new BABYLON.Vector3(-500, -10000, 0),
-            1.2
+            "Sun", new BABYLON.Vector3(-500, -10000, 0), 1.2
         );
 
         // Side Light 1
         this.lights.sideLight1 = light (
-            "Side Light 1",
-            new BABYLON.Vector3(1, 0, 0.8),
-            1.2
+            "Side Light 1", new BABYLON.Vector3(1, 0, 0.8), 1.2
         );
 
         // Side Light 2
         this.lights.sideLight2 = light (
-            "Side Light 2",
-            new BABYLON.Vector3(-1, 0, -0.8),
-            1.2
+            "Side Light 2", new BABYLON.Vector3(-1, 0, -0.8), 1.2
         );
 
         // light() : return a directional light
