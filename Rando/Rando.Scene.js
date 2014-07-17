@@ -248,7 +248,7 @@ var RANDO = RANDO || {};
         // Record DEM center
         this._dem_data.center = {
             'x' : m_center.x,
-            'y' : this._dem_data.extent.y.max - this._dem_data.extent.y.min,
+            'y' : (this._dem_data.extent.y.min + this._dem_data.extent.y.max) / 2,
             'z' : m_center.y
         };
 
