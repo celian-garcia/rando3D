@@ -85,6 +85,9 @@ var RANDO = RANDO || {};
         for (var it in this._tiles) {
             var meshTile = this._buildTile(this._tiles[it]);
             meshTile.parent = this.ground;
+
+            // Prepare the future tile's texture
+            this._prepareTexture(this._tiles[it].coordinates);
         }
 
         // Ground built !
@@ -228,10 +231,10 @@ var RANDO = RANDO || {};
     RANDO.Dem.prototype.applyTextures = function () {
         console.log("Textures application ... " + (Date.now() - RANDO.START_TIME) );
 
-        // Prepare all textures
-        for (var it in this._tiles) {
-            this._prepareTexture(this._tiles[it].coordinates);
-        }
+        //~ // Prepare all textures
+        //~ for (var it in this._tiles) {
+            //~ this._prepareTexture(this._tiles[it].coordinates);
+        //~ }
 
         var scene = this._scene;
         var meshes = this.ground.getChildren ();

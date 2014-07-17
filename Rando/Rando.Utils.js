@@ -245,8 +245,7 @@ RANDO.Utils.placeCylinder = function (cylinder, A, B) {
 
     // Adjust scale of cylinder
     var new_height = BABYLON.Vector3.Distance(A, B);
-    var scale_y  = (cylinder.scaling.y * new_height) / cylinder.height;
-    cylinder.scaling.y = scale_y;
+    cylinder.scaling.y = new_height;
 
     // First rotation
     var angle1 = RANDO.Utils.angleFromAxis(A, B, BABYLON.Axis.X);

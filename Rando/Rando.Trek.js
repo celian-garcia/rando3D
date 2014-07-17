@@ -69,7 +69,7 @@ var RANDO = RANDO || {};
                 RANDO.SETTINGS.TREK_WIDTH,
                 scene
             );
-            sphere.isVisible = false;
+
             sphere.position  = vertex;
             sphere.material  = material;
             sphere.parent    = spheres;
@@ -80,19 +80,15 @@ var RANDO = RANDO || {};
             var cyl_height = BABYLON.Vector3.Distance(vertexA, vertexB);
             var cylinder = BABYLON.Mesh.CreateCylinder(
                 "Cylinder " + n_cyl,
-                cyl_height,
+                1,
                 RANDO.SETTINGS.TREK_WIDTH,
                 RANDO.SETTINGS.TREK_WIDTH,
                 RANDO.SETTINGS.TREK_CYL_TESSEL,
                 scene
             );
-            cylinder.isVisible  = false;
+
             cylinder.material   = material;
             cylinder.parent     = cylinders;
-
-            // Height is not a variable from BABYLON mesh,
-            //  it is my own variable I put on the cylinder to use it later
-            cylinder.height = cyl_height;
         };
 
         var prev, curr = null;
@@ -167,6 +163,7 @@ var RANDO = RANDO || {};
      * RANDO.Trek.merge() : merge all elements (spheres and cylinders) of the Trek
      */
     RANDO.Trek.prototype.merge = function () {
+        console.log("Trek merging ... " + (Date.now() - RANDO.START_TIME) );
         var scene       = this._scene;
         var spheres     = this.spheres.getChildren();
         var cylinders   = this.cylinders.getChildren();
@@ -180,6 +177,7 @@ var RANDO = RANDO || {};
             count += meshes[i].getTotalVertices();
             // The number of vertices in the buffer is acceptable
             if (count < limit) {
+                meshes[i].isVisible = false;
                 buffer.push(meshes[i]);
             }
             // The number of vertices in the buffer will not be acceptable
@@ -208,6 +206,7 @@ var RANDO = RANDO || {};
 
             this.mergedTreks.push(mergedTrek);
         }
+        console.log("Trek merged ! " + (Date.now() - RANDO.START_TIME) );
     };
 
     /**
