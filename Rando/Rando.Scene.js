@@ -164,7 +164,7 @@ var RANDO = RANDO || {};
         this.lights.sun = light (
             "Sun",
             new BABYLON.Vector3(-500, -10000, 0),
-            1
+            1.2
         );
         
         // Side Light 1
