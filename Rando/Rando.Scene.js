@@ -134,10 +134,6 @@ var RANDO = RANDO || {};
      *  If the camera ID is not available, it is changed to "demo_camera"
      */
     RANDO.Scene.prototype._buildCameras = function () {
-        var canvas          = this._canvas;
-        var scene           = this._scene;
-        var cameraID        = this._cameraID;
-
         // Parameters for the Camera Container
         var params = {
             'demCenter' : this._dem_data.center,
@@ -148,52 +144,54 @@ var RANDO = RANDO || {};
         };
 
         // Instantiate the container
-        this.camContainer = new RANDO.CameraContainer(canvas, scene, params);
+        this.camContainer = new RANDO.CameraContainer(this._canvas, this._scene, params);
 
         // Control camera ID entered (examine_camera by default)...
-        if (!$.inArray(cameraID, RANDO.CameraIDs))
-            cameraID = "examine_camera";
+        if (!$.inArray(this._cameraID, RANDO.CameraIDs))
+            this._cameraID = "examine_camera";
 
         // ...and set it as active
-        this.camContainer.setActiveCamera (cameraID);
+        this.camContainer.setActiveCamera (this._cameraID);
     };
 
     /**
      * RANDO.Scene._buildLights() : builds the differents lights of the scene
      */
     RANDO.Scene.prototype._buildLights = function () {
-        // Sun
-        var sunPosition = new BABYLON.Vector3(500, 10000, 0);
-        var sunTarget = new BABYLON.Vector3(0, 0, 0);
-        var sun = new BABYLON.DirectionalLight(
-            "Sun",
-            sunTarget.subtract(sunPosition),
-            this._scene
-        );
-        sun.intensity = 1;
-        sun.specular = new BABYLON.Color4(0, 0, 0, 0);
+        var scene = this._scene;
 
-        // Side Lights
-        var sideLight1 = new BABYLON.DirectionalLight(
+        // Sun
+        this.lights.sun = light (
+            "Sun",
+            new BABYLON.Vector3(-500, -10000, 0),
+            1
+        );
+        
+        // Side Light 1
+        this.lights.sideLight1 = light (
             "Side Light 1",
             new BABYLON.Vector3(1, 0, 0.8),
-            this._scene
+            1.2
         );
-        sideLight1.intensity = 1.2;
-        sideLight1.specular = new BABYLON.Color4(0, 0, 0, 0);
 
-        var sideLight2 = new BABYLON.DirectionalLight(
+        // Side Light 2
+        this.lights.sideLight2 = light (
             "Side Light 2",
             new BABYLON.Vector3(-1, 0, -0.8),
-            this._scene
+            1.2
         );
-        sideLight2.intensity = 1.2;
-        sideLight2.specular = new BABYLON.Color4(0, 0, 0, 0);
 
-        // Record
-        this.lights.sun = sun;
-        this.lights.sideLight1 = sideLight1;
-        this.lights.sideLight2 = sideLight2;
+        // light() : return a directional light
+        function light (name, direction, intensity) {
+            var light = new BABYLON.DirectionalLight(
+                name,
+                direction,
+                scene
+            );
+            light.intensity = intensity;
+            light.specular = new BABYLON.Color4(0, 0, 0, 0);
+            return light;
+        }
     };
 
     /**
