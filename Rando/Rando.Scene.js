@@ -147,7 +147,7 @@ var RANDO = RANDO || {};
 
         // Control camera ID entered (examine_camera by default)...
         if (!$.inArray(this._cameraID, RANDO.CameraIDs))
-            this._cameraID = "examine_camera";
+            this._cameraID = "examine";
 
         // ...and set it as active
         this.camContainer.setActiveCamera (this._cameraID);

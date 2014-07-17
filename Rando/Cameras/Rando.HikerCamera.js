@@ -548,9 +548,12 @@ var RANDO = RANDO || {};
 
         // Rotation
         this._rotationTween = TweenLite.to(this.rotation, duration, {
-            x: 0,
-            y: y_rotation,
-            z: 0,
+            directionalRotation : {
+                x: "0_short",
+                y: (y_rotation + "_short"),
+                z: "0_short",
+                useRadians : true
+            },
             ease: 'ease-in'
         });
     };

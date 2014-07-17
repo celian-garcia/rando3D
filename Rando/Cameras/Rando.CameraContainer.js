@@ -48,7 +48,7 @@ var RANDO = RANDO || {};
     };
 
     // Static Array defining possibles cameras IDs
-    RANDO.CameraIDs = ["examine_camera", "bird_camera", "hiker_camera"];
+    RANDO.CameraIDs = ["examine", "bird", "hiker"];
 
     /* Methods */
     RANDO.CameraContainer.prototype.init = function () {
@@ -69,7 +69,7 @@ var RANDO = RANDO || {};
             this.initialTarget,
             this._scene
         );
-        examine_camera.id = "examine_camera";
+        examine_camera.id = "examine";
         examine_camera.keysUp     = [90, 38]; // Touche Z and up
         examine_camera.keysDown   = [83, 40]; // Touche S and down
         examine_camera.keysLeft   = [81, 37]; // Touche Q and left
@@ -87,7 +87,7 @@ var RANDO = RANDO || {};
         examine_camera.upperZLimit = this.limits.upperZ;
         examine_camera.upperBetaLimit = Math.PI/2;
 
-        this.cameras.examine_camera = examine_camera;
+        this.cameras.examine = examine_camera;
     };
 
     /**
@@ -99,7 +99,7 @@ var RANDO = RANDO || {};
             BABYLON.Vector3.Zero(),
             this._scene
         );
-        bird_camera.id = "bird_camera";
+        bird_camera.id = "bird";
         bird_camera.keysUp     = [90, 38]; // Touche Z and up
         bird_camera.keysDown   = [83, 40]; // Touche S and down
         bird_camera.keysLeft   = [81, 37]; // Touche Q and left
@@ -110,7 +110,7 @@ var RANDO = RANDO || {};
         bird_camera.maxZ = 50000;
         bird_camera.speed = RANDO.SETTINGS.CAM_SPEED_F ;
 
-        this.cameras.bird_camera = bird_camera;
+        this.cameras.bird = bird_camera;
     };
 
     /**
@@ -122,7 +122,7 @@ var RANDO = RANDO || {};
             BABYLON.Vector3.Zero(),
             this._scene
         );
-        hiker_camera.id = "hiker_camera";
+        hiker_camera.id = "hiker";
 
         hiker_camera.checkCollisions = true;
         hiker_camera.maxZ = 50000;
@@ -131,7 +131,7 @@ var RANDO = RANDO || {};
         hiker_camera.followSpeed = RANDO.SETTINGS.HCAM_FOLLOW_SPEED;
 
 
-        this.cameras.hiker_camera = hiker_camera;
+        this.cameras.hiker = hiker_camera;
     };
 
     /**
@@ -165,19 +165,18 @@ var RANDO = RANDO || {};
 
         // Interface changes
         $(".controls--" + oldID).css("display", "none");
-        $("#" + oldID).removeClass("camera--selected");
+        $(".camera--"   + oldID).removeClass("camera--selected");
         $(".controls--" + newID).css("display", "block");
-        $("#" + newID).addClass("camera--selected");
+        $(".camera--"   + newID).addClass("camera--selected");
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
-        if (oldID == "examine_camera") {
-
+        if (oldID == "examine") {
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
-        } else if (oldID == "bird_camera" || oldID == "hiker_camera") {
-
+        } 
+        else if (oldID == "bird" || oldID == "hiker") {
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
             this._targetBeforeSwitch    = null;
@@ -186,9 +185,7 @@ var RANDO = RANDO || {};
 
     RANDO.CameraContainer.prototype.setAnimationPath = function (vertices) {
         this._animationPath = vertices;
-
-        var hiker_camera = this.cameras.hiker_camera;
-        hiker_camera.setPath(vertices);
+        this.cameras.hiker.setPath(vertices);
     };
 
     RANDO.CameraContainer.prototype._cameraSwitcher = function () {
@@ -203,8 +200,8 @@ var RANDO = RANDO || {};
         }
 
         for (var it in idArray) {
-            $("#" + idArray[it]).on("click", function () {
-                that.setActiveCamera (this.id);
+            $(".camera--" + idArray[it]).click({id : idArray[it]}, function (e) {
+                that.setActiveCamera (e.data.id);
             });
         }
     };
@@ -213,19 +210,19 @@ var RANDO = RANDO || {};
         var activeCam = this._scene.activeCamera;
 
         // Examine Camera
-        if (activeCam.id == "examine_camera") {
+        if (activeCam.id == "examine") {
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
 
         // Bird Camera
-        else if (activeCam.id == "bird_camera") {
+        else if (activeCam.id == "bird") {
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
 
         // Hiker Camera
-        else if (activeCam.id == "hiker_camera" ) {
+        else if (activeCam.id == "hiker" ) {
             if (this._positionBeforeSwitch) {
                 activeCam.position = this._positionBeforeSwitch;
             }
@@ -251,9 +248,9 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype._initInterface = function () {
         for (var it in this.cameras) {
             var id = this.cameras[it].id;
-            $(".controls--" + id + " .description")
+            $(".controls--" + id + " .controls-description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
-            $("#" + id + " .description")
+            $(".camera--"   + id + " .camera-description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
         }
     };
