@@ -99,7 +99,6 @@ var RANDO = RANDO || {};
                 that._scene
             );
 
-
             // Trek building
             that.trek = new RANDO.Trek  (
                 that._trek_data,
@@ -166,7 +165,7 @@ var RANDO = RANDO || {};
             new BABYLON.Vector3(-500, -10000, 0),
             1.2
         );
-        
+
         // Side Light 1
         this.lights.sideLight1 = light (
             "Side Light 1",
@@ -221,7 +220,7 @@ var RANDO = RANDO || {};
             // Updates trek vertices ...
             trek.updateVertices();
 
-            // ... to give them to the camera container (for hiker camera) 
+            // ... to give them to the camera container (for hiker camera)
             camContainer.setAnimationPath(trek._vertices);
 
             // Merges the trek to increase performances
@@ -279,7 +278,7 @@ var RANDO = RANDO || {};
 
             // We take only x and z values (not the altitudes)
             tmp = RANDO.Utils.toMeters(tmp);
-            
+
             // toMeters() give x-y-coordinates and babylon take x-z-coordinates
             tmp.z = tmp.y;
             delete tmp["y"];
