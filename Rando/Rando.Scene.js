@@ -203,6 +203,8 @@ var RANDO = RANDO || {};
 
         var trek            = this.trek;
         var camContainer    = this.camContainer;
+        var lights          = this.lights;
+        var meshTiles       = this.dem.ground.getChildren();
 
         // Apply DEM textures
         this.dem.applyTextures();
@@ -224,6 +226,10 @@ var RANDO = RANDO || {};
 
             // Merges the trek to increase performances
             trek.merge();
+
+            // Set excluded meshes of lights
+            lights.sideLight1.excludedMeshes = meshTiles.concat(trek.mergedTreks);
+            lights.sideLight2.excludedMeshes = meshTiles.concat(trek.mergedTreks);
         }
     };
 
