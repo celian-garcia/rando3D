@@ -159,16 +159,13 @@ var RANDO = RANDO || {};
      * RANDO.Scene._buildLights() : builds the differents lights of the scene
      */
     RANDO.Scene.prototype._buildLights = function () {
-        var lights = this.lights;
-        var scene = this._scene;
-
         // Sun
         var sunPosition = new BABYLON.Vector3(500, 10000, 0);
         var sunTarget = new BABYLON.Vector3(0, 0, 0);
         var sun = new BABYLON.DirectionalLight(
             "Sun",
             sunTarget.subtract(sunPosition),
-            scene
+            this._scene
         );
         sun.intensity = 1;
         sun.specular = new BABYLON.Color4(0, 0, 0, 0);
@@ -190,9 +187,9 @@ var RANDO = RANDO || {};
         sideLight2.intensity = 1.2;
         sideLight2.specular = new BABYLON.Color4(0, 0, 0, 0);
 
-        lights.sun = sun;
-        lights.sideLight1 = sideLight1;
-        lights.sideLight2 = sideLight2;
+        this.lights.sun = sun;
+        this.lights.sideLight1 = sideLight1;
+        this.lights.sideLight2 = sideLight2;
     };
 
     /**
@@ -202,21 +199,25 @@ var RANDO = RANDO || {};
     RANDO.Scene.prototype._executeWhenReady = function () {
         console.log("Scene is ready ! " + (Date.now() - RANDO.START_TIME) );
 
-        var scene           = this._scene;
-        var dem             = this.dem;
         var trek            = this.trek;
         var camContainer    = this.camContainer;
-        var pois            = this.pois;
 
-        dem.applyTextures();
-        trek.drape(dem.ground, onDrapeComplete);
-        for (var it in pois) {
-            pois[it].drape(dem.ground);
+        // Apply DEM textures
+        this.dem.applyTextures();
+
+        // Drape the trek with an onComplete callback
+        trek.drape(this.dem.ground, onDrapeComplete);
+
+        // Drape POIS
+        for (var it in this.pois) {
+            this.pois[it].drape(this.dem.ground);
         }
+
         function onDrapeComplete () {
-            // Updates trek vertices
+            // Updates trek vertices ...
             trek.updateVertices();
 
+            // ... to give them to the camera container (for hiker camera) 
             camContainer.setAnimationPath(trek._vertices);
 
             // Merges the trek to increase performances
