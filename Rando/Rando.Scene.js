@@ -197,7 +197,10 @@ var RANDO = RANDO || {};
         var trek            = this.trek;
         var camContainer    = this.camContainer;
         var lights          = this.lights;
-        var meshTiles       = this.dem.ground.getChildren();
+
+        // Init sidelights excluded meshes arrays with the tiles
+        lights.sideLight1.excludedMeshes = this.dem.ground.getChildren();
+        lights.sideLight2.excludedMeshes = this.dem.ground.getChildren();
 
         // Apply DEM textures
         this.dem.applyTextures();
@@ -221,9 +224,9 @@ var RANDO = RANDO || {};
             // Merges the trek to increase performances
             trek.merge();
 
-            // Set excluded meshes of lights
-            lights.sideLight1.excludedMeshes = meshTiles.concat(trek.mergedTreks);
-            lights.sideLight2.excludedMeshes = meshTiles.concat(trek.mergedTreks);
+            // Update excluded meshes of lights
+            $.merge(lights.sideLight1.excludedMeshes, trek.mergedTreks);
+            $.merge(lights.sideLight2.excludedMeshes, trek.mergedTreks);
         }
     };
 
