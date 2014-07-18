@@ -219,7 +219,6 @@ var RANDO = RANDO || {};
 
             // ... to give them to the camera container (for hiker camera)
             camContainer.setAnimationPath(trek._vertices);
-            camContainer.enableHikerCamera();
 
             // Merges the trek to increase performances
             trek.merge();

@@ -186,6 +186,7 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype.setAnimationPath = function (vertices) {
         this._animationPath = vertices;
         this.cameras.hiker.setPath(vertices);
+        this.enableCamera ("hiker");
     };
 
     RANDO.CameraContainer.prototype._cameraSwitcher = function () {
@@ -202,8 +203,7 @@ var RANDO = RANDO || {};
         for (var it in idArray) {
             // The hiker camera must not be active until his path has not been set
             if (idArray[it] != "hiker") {
-                $(".camera--" + idArray[it]).removeClass("camera--disabled");
-                $(".camera--" + idArray[it] + " img").attr("src", "img/camera.png");
+                this.enableCamera(idArray[it]);
             }
 
             // Click event
@@ -219,9 +219,10 @@ var RANDO = RANDO || {};
         }
     };
 
-    RANDO.CameraContainer.prototype.enableHikerCamera = function () {
-        $(".camera--hiker").removeClass("camera--disabled");
-        $(".camera--hiker img").attr("src", "img/camera.png");
+    RANDO.CameraContainer.prototype.enableCamera = function (id) {
+        $(".camera--" + id ).removeClass("camera--disabled");
+        $(".camera--" + id ).addClass("camera--enabled");
+        $(".camera--" + id + " img").attr("src", "img/camera.png");
     };
 
     RANDO.CameraContainer.prototype._resetByDefault = function () {

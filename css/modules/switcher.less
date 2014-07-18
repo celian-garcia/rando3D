@@ -47,35 +47,37 @@
     .camera:last-child {
         border-bottom: none; 
     }
-    
-    .camera:hover {
-        .camera-icon {
-            img {
-                width: auto;
-                height: auto;
-            }
-        }
-        .camera-title {
-            display:block;
-        }
-        .camera-description {
-            display:block;
-            display: -webkit-box;
-        }
-    }
-    
-    .camera--selected {
-        cursor: auto;
 
-        .camera-icon {
-            img {
-                width: auto;
-                height: auto;
+    .camera--enabled {
+        .camera:hover {
+            .camera-icon {
+                img {
+                    width: auto;
+                    height: auto;
+                }
             }
-            
+            .camera-title {
+                display:block;
+            }
+            .camera-description {
+                display:block;
+                display: -webkit-box;
+            }
         }
-        .camera-title {
-            display:block;
+
+        .camera--selected {
+            cursor: auto;
+
+            .camera-icon {
+                img {
+                    width: auto;
+                    height: auto;
+                }
+                
+            }
+            .camera-title {
+                display:block;
+            }
         }
     }
     .camera--disabled {
