@@ -49,7 +49,7 @@
     }
 
     .camera--enabled {
-        .camera:hover {
+        &:hover {
             .camera-icon {
                 img {
                     width: auto;
@@ -64,32 +64,31 @@
                 display: -webkit-box;
             }
         }
+    }
 
-        .camera--selected {
-            cursor: auto;
+    .camera--selected {
+        cursor: auto;
 
-            .camera-icon {
-                img {
-                    width: auto;
-                    height: auto;
-                }
-                
-            }
-            .camera-title {
-                display:block;
+        .camera-icon {
+            img {
+                width: auto;
+                height: auto;
             }
         }
+        .camera-title {
+            display:block;
+        }
     }
+
     .camera--disabled {
-    
+        cursor: default;
     }
-    
-    
+
     .camera-title {
         display: none;
         font-size: 12px;
     };
-    
+
     .camera-description {
         text-align: left;
         font-size: 14px;
@@ -105,7 +104,6 @@
         text-overflow: ellipsis;
     }
 }
-
 
 .controls {
     background-color: @bg_color;
