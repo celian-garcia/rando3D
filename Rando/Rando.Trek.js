@@ -39,7 +39,8 @@ var RANDO = RANDO || {};
      * return the array of vertices
      */
     RANDO.Trek.prototype._prepareVertices = function (data, offsets) {
-        var vertices = _.clone(data);
+        var vertices = _.map(data, _.clone);
+
         for (var it in vertices){
             vertices[it].x += offsets.x;
             vertices[it].y = 0;

@@ -14,23 +14,23 @@ describe('Geotrek 3D - Trek Object', function() {
 
     var offsets = {
         x: 5,
-        y: 7,
         z: -5
     };
 
     describe('Attributes', function () {
-        it("_vertices attribute should be equal to data parameter translated by offsets.", function(done) {
+        it("_vertices attribute should be equal to data parameter translated by offsets. (with all y = 0)", function(done) {
             var vertices = [
-                {x:  0, y:  9, z: -5},
-                {x:  3, y:  7, z: -4},
-                {x:  6, y:  5, z: -3},
-                {x:  9, y:  7, z: -2},
-                {x:  6, y:  9, z: -3},
-                {x:  3, y:  7, z: -4},
-                {x:  0, y:  5, z: -5}
+                {x:  0, y:  0, z: -5},
+                {x:  3, y:  0, z: -4},
+                {x:  6, y:  0, z: -3},
+                {x:  9, y:  0, z: -2},
+                {x:  6, y:  0, z: -3},
+                {x:  3, y:  0, z: -4},
+                {x:  0, y:  0, z: -5}
             ];
             
             var trek = new RANDO.Trek(data, offsets, scene);
+            console.log(trek._vertices, vertices);
             assert.deepEqual(trek._vertices, vertices);
             done();
             trek.dispose();
