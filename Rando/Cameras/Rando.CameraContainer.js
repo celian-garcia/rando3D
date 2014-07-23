@@ -222,7 +222,7 @@ var RANDO = RANDO || {};
     RANDO.CameraContainer.prototype.enableCamera = function (id) {
         $(".camera--" + id ).removeClass("camera--disabled");
         $(".camera--" + id ).addClass("camera--enabled");
-        $(".camera--" + id + " img").attr("src", "img/camera.png");
+        $(".camera--" + id + " img").attr("src", "img/"+ id +"_camera.png");
     };
 
     RANDO.CameraContainer.prototype._resetByDefault = function () {
