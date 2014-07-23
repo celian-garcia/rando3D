@@ -17,11 +17,10 @@ var RANDO = RANDO || {};
 (function () {  "use strict"
 
     /* Constructor */
-    RANDO.Scene = function (canvas, cameraID, settings) {
+    RANDO.Scene = function (canvas, cameraID) {
         // Attributes declaration
         this._canvas    = canvas;
         this._cameraID  = cameraID;
-        this._settings  = settings;
 
         this._engine    = null;
         this._scene     = null;
@@ -40,16 +39,13 @@ var RANDO = RANDO || {};
 
     /* Methods */
     RANDO.Scene.prototype.init = function () {
+        RANDO.START_TIME = Date.now();
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
         var that = this;
         RANDO.Events.addEvent(window, "resize", function(){
             that._engine.resize();
         });
-
-        if (typeof(this._settings) !== 'undefined') {
-            RANDO.SETTINGS.parse(this._settings);
-        }
 
         this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
         this._scene.collisionsEnabled = true;

@@ -39,7 +39,7 @@ RANDO.SETTINGS.TREK_COLOR = new BABYLON.Color3(0.1,0.6,0.2); // Trek color (gree
 RANDO.SETTINGS.TREK_WIDTH = 10; // Trek width (in meters)
 
 RANDO.SETTINGS.TILE_ZOOM = 17;
-RANDO.SETTINGS.TILE_NUMBER_LIMIT = 800;
+RANDO.SETTINGS.TILE_NUMBER_LIMIT = 200;
 
 RANDO.SETTINGS.POI_OFFSET = 100;
 RANDO.SETTINGS.POI_FORM1 = {
@@ -59,20 +59,5 @@ RANDO.SETTINGS.CAMERA_MESSAGES = {
     'hiker' : "Ici on est dans la peau d'un randonneur, on suit sans effort l'avancement de l'itinéraire, en profitant de la vue."
 };
 
-RANDO.SETTINGS.SCALE_VIEWER_SIZE = {
-    'width' : 200,
-    'height' : 200
-};
-RANDO.SETTINGS.SCALE_VIEWER_RESOLUTION = {
-    'x' : 50,
-    'y' : 50
-};
-RANDO.SETTINGS.SCALE_VIEWER_OFFSET = 20;
 ////////////////////////////////////////////////////////////////////////////////
-
-RANDO.SETTINGS.parse = function (settings) {
-    if ('test' in settings) {
-    }
-
-};
 

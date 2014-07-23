@@ -74,6 +74,7 @@ var RANDO = RANDO || {};
             sphere.position  = vertex;
             sphere.material  = material;
             sphere.parent    = spheres;
+            sphere.isVisible = false;
         };
 
         function createCylinder(vertexA, vertexB) {
@@ -90,6 +91,7 @@ var RANDO = RANDO || {};
 
             cylinder.material   = material;
             cylinder.parent     = cylinders;
+            cylinder.isVisible  = false;
         };
 
         var prev, curr = null;
