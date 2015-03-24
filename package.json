@@ -1,0 +1,19 @@
+{
+  "name": "rando3D",
+  "version": "1.3.0",
+  "description": "Geotrek rando 3D visualisation",
+  "author": "Makina Corpus",
+  "dependencies": {
+    "babylonjs": "^1.13.3",
+    "gsap": "^1.16.1",
+    "jquery": "~1.x.x",
+    "underscore": "latest"
+  },
+  "devDependencies": {
+    "mocha": "~2.X.X",
+    "chai": "~2.X.X",
+    "mocha-phantomjs": "~3.X.X"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {}
+}

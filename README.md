@@ -28,7 +28,7 @@ sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/l
 
 ### Repository ###
 
-npm install mocha chai mocha-phantomjs
+npm install
 
 
 Run tests 
