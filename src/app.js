@@ -3,13 +3,6 @@
 
     function Rando3D() {
 
-        var BABYLON = require('babylonjs');
-        require('EasePack');
-        require('TweenLite');
-        require('TimelineLite');
-        require('BezierPlugin');
-        require('DirectionalRotationPlugin');
-
         var RANDO = RANDO || {};
 
         require('./modules/settings')(RANDO, BABYLON);
