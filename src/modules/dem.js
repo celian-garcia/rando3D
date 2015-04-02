@@ -246,14 +246,11 @@ module.exports = function(RANDO, BABYLON) {
             checked.push(false);
         }
 
-        loop();
         function loop (){
             var it = 0;
             var chunk = 50;
-            apply();
             function apply () {
-                var cnt = chunk,
-                    it;
+                var cnt = chunk;
                 while (cnt-- && it < finalTextures.length) {
                     if (!checked[it] && finalTextures[it]._texture.isReady) {
                         checked[it] = true;
@@ -276,7 +273,9 @@ module.exports = function(RANDO, BABYLON) {
                     console.log("Textures applied ! " + (Date.now() - RANDO.START_TIME) );
                 }
             };
+            apply();
         }
+        loop();
     };
 
     /**

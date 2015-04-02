@@ -7,7 +7,7 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function(RANDO) {
+module.exports = function (RANDO) {
     'use strict';
 
     var RANDO = RANDO || {};
@@ -21,7 +21,7 @@ module.exports = function(RANDO) {
         this._grid = null;
         this._tiles = {};
 
-        this._init ();
+        this._init();
     };
 
     /* Methods */
@@ -63,8 +63,8 @@ module.exports = function(RANDO) {
                 curr_point = grid[row][col];
 
                 // Get current tile number corresponding to the current point
-                curr_tile_n = RANDO.Utils.meters2num( curr_point.x, curr_point.z, zoom );
-                curr_index = "" + zoom + "/" + curr_tile_n.xtile + "/" + curr_tile_n.ytile + "";
+                curr_tile_n = RANDO.Utils.meters2num(curr_point.x, curr_point.z, zoom);
+                curr_index = "" + zoom + "/" + curr_tile_n.xtile + "/" + curr_tile_n.ytile;
 
                 // tiles["z/x/y"] exists or not
                 tiles[curr_index] = tiles[curr_index] || {};
@@ -101,10 +101,10 @@ module.exports = function(RANDO) {
      */
     RANDO.TileContainer.prototype._joinTiles = function () {
         var tiles = this._tiles;
-        var col, row;
+        var col, row, it;
 
         // Joins East and West sides of tiles
-        for (var it in tiles) {
+        for (it in tiles) {
             var current_tile = tiles[it];
             var next_coord = {
                 z: current_tile.coordinates.z,

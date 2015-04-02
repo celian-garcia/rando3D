@@ -9,7 +9,7 @@ window.onload = function onload() {
         TILE_TEX_URL: "https://a.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png",
         SIDE_TEX_URL: "img/side.jpg",
         CAM_SPEED_F: 100,
-        PICTO_PREFIX: ""
+        PICTO_PREFIX: "./"
     };
 
     var canvas = document.getElementById('canvas_renderer');
