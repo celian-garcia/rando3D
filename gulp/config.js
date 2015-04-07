@@ -1,5 +1,5 @@
 var watchMode = (process.argv.slice(2).indexOf('--watch') >= 0);
-var dest = './dist',
+var dest = './',
     src = './src';
 
 
