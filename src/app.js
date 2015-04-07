@@ -1,6 +1,13 @@
 (function () {
     'use strict';
 
+    var BABYLON = require('babylonjs');
+    require('EasePack');
+    require('TweenLite');
+    require('TimelineLite');
+    require('BezierPlugin');
+    require('DirectionalRotationPlugin');
+
     function Rando3D() {
 
         var RANDO = RANDO || {};

@@ -7,7 +7,7 @@
     "babylonjs": "^1.13.3",
     "gsap": "^1.16.1",
     "jquery": "~1.x.x",
-    "lodash": "latest"
+    "lodash": "~3.x.x"
   },
   "browser": {
     "lodash": "./node_modules/lodash",
