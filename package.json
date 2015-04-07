@@ -2,6 +2,10 @@
   "name": "rando3D",
   "version": "1.3.0",
   "description": "Geotrek rando 3D visualisation",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/makinacorpus/rando3D.git"
+  },
   "author": "Makina Corpus",
   "dependencies": {
     "babylonjs": "~1.13.3",
@@ -49,7 +53,7 @@
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.2.1"
   },
-  "main": "rando3D.js",
+  "main": "./dist/rando3D.js",
   "readmeFilename": "README.md",
   "bugs": {}
 }
