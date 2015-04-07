@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 
-module.exports = function(RANDO, BABYLON, $) {
+module.exports = function(RANDO, BABYLON) {
     'use strict';
 
     var RANDO = RANDO || {};
@@ -65,19 +65,19 @@ module.exports = function(RANDO, BABYLON, $) {
     RANDO.Scene.prototype.process = function () {
         var that = this;
 
-        $.getJSON(RANDO.SETTINGS.DEM_URL)
+        jQuery.getJSON(RANDO.SETTINGS.DEM_URL)
          .done(function (data) {
             that._parseDemJson(data);
             that._buildCameras();
          })
          .then(function () {
-            return $.getJSON(RANDO.SETTINGS.PROFILE_URL);
+            return jQuery.getJSON(RANDO.SETTINGS.PROFILE_URL);
          })
          .done(function (data) {
             that._parseTrekJson(data);
          })
          .then(function () {
-            return $.getJSON(RANDO.SETTINGS.POI_URL);
+            return jQuery.getJSON(RANDO.SETTINGS.POI_URL);
          })
          .done(function (data) {
             that._parsePoiJson(data);
@@ -144,7 +144,7 @@ module.exports = function(RANDO, BABYLON, $) {
         this.camContainer = new RANDO.CameraContainer(this._canvas, this._scene, params);
 
         // Control camera ID entered (examine_camera by default)...
-        if (!$.inArray(this._cameraID, RANDO.CameraIDs))
+        if (!jQuery.inArray(this._cameraID, RANDO.CameraIDs))
             this._cameraID = "examine";
 
         // ...and set it as active
@@ -222,8 +222,8 @@ module.exports = function(RANDO, BABYLON, $) {
             trek.merge();
 
             // Update excluded meshes of lights
-            $.merge(lights.sideLight1.excludedMeshes, trek.mergedTreks);
-            $.merge(lights.sideLight2.excludedMeshes, trek.mergedTreks);
+            jQuery.merge(lights.sideLight1.excludedMeshes, trek.mergedTreks);
+            jQuery.merge(lights.sideLight2.excludedMeshes, trek.mergedTreks);
         }
     };
 

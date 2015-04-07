@@ -1,4 +1,4 @@
-module.exports = function(RANDO, $) {
+module.exports = function(RANDO) {
 
     var RANDO = RANDO || {};
 

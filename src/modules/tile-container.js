@@ -7,7 +7,7 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function (RANDO, $) {
+module.exports = function (RANDO) {
     'use strict';
 
     var RANDO = RANDO || {};

@@ -1,7 +1,5 @@
-(function (jQuery) {
+(function () {
     'use strict';
-
-    var jQuery = jQuery || $;
 
     var BABYLON = require('babylonjs');
     require('EasePack');
@@ -14,23 +12,23 @@
 
         var RANDO = RANDO || {};
 
-        require('./modules/settings')(RANDO, BABYLON, jQuery);
-        require('./modules/dem')(RANDO, BABYLON, jQuery);
-        require('./modules/events')(RANDO, jQuery);
-        require('./modules/poi')(RANDO, BABYLON, jQuery);
-        require('./modules/scene')(RANDO, BABYLON, jQuery);
-        require('./modules/tile-container')(RANDO, jQuery);
-        require('./modules/trek')(RANDO, BABYLON, jQuery);
-        require('./modules/utils')(RANDO, BABYLON, jQuery);
-        require('./modules/cameras/camera-computer')(RANDO, BABYLON, jQuery);
-        require('./modules/cameras/camera-container')(RANDO, BABYLON, jQuery);
-        require('./modules/cameras/bird-camera')(RANDO, BABYLON, jQuery);
-        require('./modules/cameras/examine-camera')(RANDO, BABYLON, jQuery);
-        require('./modules/cameras/hiker-camera')(RANDO, BABYLON, jQuery);
+        require('./modules/settings')(RANDO, BABYLON);
+        require('./modules/dem')(RANDO, BABYLON);
+        require('./modules/events')(RANDO);
+        require('./modules/poi')(RANDO, BABYLON);
+        require('./modules/scene')(RANDO, BABYLON);
+        require('./modules/tile-container')(RANDO);
+        require('./modules/trek')(RANDO, BABYLON);
+        require('./modules/utils')(RANDO, BABYLON);
+        require('./modules/cameras/camera-computer')(RANDO, BABYLON);
+        require('./modules/cameras/camera-container')(RANDO, BABYLON);
+        require('./modules/cameras/bird-camera')(RANDO, BABYLON);
+        require('./modules/cameras/examine-camera')(RANDO, BABYLON);
+        require('./modules/cameras/hiker-camera')(RANDO, BABYLON);
 
         function init(customSettings, canvas, cameraID) {
 
-            $.each(customSettings, function (settingName, settingValue) {
+            jQuery.each(customSettings, function (settingName, settingValue) {
                 RANDO.SETTINGS[settingName] = settingValue;
             });
 
@@ -50,4 +48,4 @@
     if (window) {
         window.Rando3D = Rando3D;
     }
-})(jQuery);
+})();

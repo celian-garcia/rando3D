@@ -1,7 +1,7 @@
 // Rando.Utils.js
 // Rando utilities
 
-module.exports = function(RANDO, BABYLON, $) {
+module.exports = function(RANDO, BABYLON) {
     'use strict';
 
     var RANDO = RANDO || {};

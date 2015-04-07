@@ -7,7 +7,7 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function(RANDO, BABYLON, $) {
+module.exports = function(RANDO, BABYLON) {
     'use strict';
 
     var RANDO = RANDO || {};
@@ -205,16 +205,16 @@ module.exports = function(RANDO, BABYLON, $) {
      *      - evt: event informations
      */
     RANDO.Poi.prototype.onMouseDownHandler = function (evt) {
-        $('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
-        $('.poi--clicked').css('left', evt.clientX - 20 + 'px');
-        $('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
-        $('.poi--clicked').css('display', 'block');
+        jQuery('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
+        jQuery('.poi--clicked').css('left', evt.clientX - 20 + 'px');
+        jQuery('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
+        jQuery('.poi--clicked').css('display', 'block');
 
-        $('.poi_side h2').html(this._name );
-        $('.poi_side .description').html(this._description);
-        $('.poi_side').css('display', 'block');
+        jQuery('.poi_side h2').html(this._name );
+        jQuery('.poi_side .description').html(this._description);
+        jQuery('.poi_side').css('display', 'block');
 
-        $('.interface').css('width', '80%');
+        jQuery('.interface').css('width', '80%');
     };
 
     /**
@@ -222,12 +222,12 @@ module.exports = function(RANDO, BABYLON, $) {
      *      - evt: event informations
      */
     RANDO.Poi.prototype.onMouseOverHandler = function (evt) {
-        $('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
-        $('.poi--hover').css('left', evt.clientX - 20 + 'px');
-        $('.poi--hover').css('top',  evt.clientY - 40 + 'px');
-        $('.poi--hover').css('display', 'block');
+        jQuery('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
+        jQuery('.poi--hover').css('left', evt.clientX - 20 + 'px');
+        jQuery('.poi--hover').css('top',  evt.clientY - 40 + 'px');
+        jQuery('.poi--hover').css('display', 'block');
 
-        $('#canvas_renderer')[0].style.cursor = 'pointer';
+        jQuery('#canvas_renderer')[0].style.cursor = 'pointer';
     };
 
     /** Static
@@ -247,8 +247,8 @@ module.exports = function(RANDO, BABYLON, $) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
-            $('.poi--hover').css('display', 'none');
-            $('.poi--clicked').css('display', 'none');
+            jQuery('.poi--hover').css('display', 'none');
+            jQuery('.poi--clicked').css('display', 'none');
             clickedID = -1;
 
             // if the click hits a pictogram, we display informations of POI
@@ -263,8 +263,8 @@ module.exports = function(RANDO, BABYLON, $) {
             var pickResult = scene.pick (evt.clientX, evt.clientY);
             var pickedMesh = pickResult.pickedMesh;
 
-            $('.poi--hover').css('display', 'none');
-            $('#canvas_renderer')[0].style.cursor = 'default';
+            jQuery('.poi--hover').css('display', 'none');
+            jQuery('#canvas_renderer')[0].style.cursor = 'default';
 
             // if mouse is over a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel"
@@ -274,14 +274,14 @@ module.exports = function(RANDO, BABYLON, $) {
         });
 
         // Close button events of the POI side
-        $(".close_btn").on('click', function () {
-            $(".poi_side").css('display', 'none');
-            $('.interface').css('width', '100%');
+        jQuery(".close_btn").on('click', function () {
+            jQuery(".poi_side").css('display', 'none');
+            jQuery('.interface').css('width', '100%');
         });
-        $(".close_btn").mouseover( function () {
+        jQuery(".close_btn").mouseover( function () {
            this.style.cursor = 'pointer';
         });
-        $(".close_btn").mouseout( function () {
+        jQuery(".close_btn").mouseout( function () {
             this.style.cursor = 'default';
         });
     };

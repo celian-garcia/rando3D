@@ -7,7 +7,7 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function(RANDO, BABYLON, $) {
+module.exports = function(RANDO, BABYLON) {
     'use strict';
 
     var RANDO = RANDO || {};
@@ -165,10 +165,10 @@ module.exports = function(RANDO, BABYLON, $) {
         this._resetByDefault();
 
         // Interface changes
-        $(".controls--" + oldID).css("display", "none");
-        $(".camera--"   + oldID).removeClass("camera--selected");
-        $(".controls--" + newID).css("display", "block");
-        $(".camera--"   + newID).addClass("camera--selected");
+        jQuery(".controls--" + oldID).css("display", "none");
+        jQuery(".camera--"   + oldID).removeClass("camera--selected");
+        jQuery(".controls--" + newID).css("display", "block");
+        jQuery(".camera--"   + newID).addClass("camera--selected");
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
@@ -198,7 +198,7 @@ module.exports = function(RANDO, BABYLON, $) {
             return;
         }
         else {
-             $(".camera_switcher").css("display", "block");
+             jQuery(".camera_switcher").css("display", "block");
         }
 
         for (var it in idArray) {
@@ -208,9 +208,9 @@ module.exports = function(RANDO, BABYLON, $) {
             }
 
             // Click event
-            $(".camera--" + idArray[it]).click({id : idArray[it]}, function (e) {
+            jQuery(".camera--" + idArray[it]).click({id : idArray[it]}, function (e) {
 
-                if($(this).hasClass('camera--disabled')) {
+                if(jQuery(this).hasClass('camera--disabled')) {
                     return;
                 }
                 else {
@@ -221,9 +221,9 @@ module.exports = function(RANDO, BABYLON, $) {
     };
 
     RANDO.CameraContainer.prototype.enableCamera = function (id) {
-        $(".camera--" + id ).removeClass("camera--disabled");
-        $(".camera--" + id ).addClass("camera--enabled");
-        $(".camera--" + id + " img").attr("src", RANDO.SETTINGS.IMAGES_FOLDER + id + "_camera.png");
+        jQuery(".camera--" + id ).removeClass("camera--disabled");
+        jQuery(".camera--" + id ).addClass("camera--enabled");
+        jQuery(".camera--" + id + " img").attr("src", RANDO.SETTINGS.IMAGES_FOLDER + id + "_camera.png");
     };
 
     RANDO.CameraContainer.prototype._resetByDefault = function () {
@@ -268,9 +268,9 @@ module.exports = function(RANDO, BABYLON, $) {
     RANDO.CameraContainer.prototype._initInterface = function () {
         for (var it in this.cameras) {
             var id = this.cameras[it].id;
-            $(".controls--" + id + " .controls-description")
+            jQuery(".controls--" + id + " .controls-description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
-            $(".camera--"   + id + " .camera-description")
+            jQuery(".camera--"   + id + " .camera-description")
                 .text(RANDO.SETTINGS.CAMERA_MESSAGES[id]);
         }
     };
