@@ -4,8 +4,8 @@
   "description": "Geotrek rando 3D visualisation",
   "author": "Makina Corpus",
   "dependencies": {
-    "babylonjs": "^1.13.3",
-    "gsap": "^1.16.1",
+    "babylonjs": "~1.13.3",
+    "gsap": "~1.16.1",
     "jquery": "~1.x.x",
     "lodash": "~3.x.x"
   },
@@ -49,6 +49,7 @@
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.2.1"
   },
+  "main": "dist/rando3D.js",
   "readmeFilename": "README.md",
   "bugs": {}
 }
