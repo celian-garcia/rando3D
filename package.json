@@ -49,7 +49,6 @@
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.2.1"
   },
-  "main": "dist/rando3D.js",
   "readmeFilename": "README.md",
   "bugs": {}
 }
