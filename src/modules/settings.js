@@ -1,7 +1,7 @@
 // Rando.Settings.js
 // General settings
 
-module.exports = function(RANDO, BABYLON) {
+module.exports = function(RANDO, BABYLON, $) {
     var RANDO = RANDO || {};
     RANDO.SETTINGS = {};
 

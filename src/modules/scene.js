@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 
-module.exports = function(RANDO, BABYLON) {
+module.exports = function(RANDO, BABYLON, $) {
     'use strict';
 
     var RANDO = RANDO || {};
