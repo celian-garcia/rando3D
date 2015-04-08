@@ -22,7 +22,7 @@ module.exports = function(RANDO, BABYLON) {
         };
         this._name          = data.properties.name;
         this._type          = data.properties.type;
-        this._elevation     = data.properties.elevation;
+        this._elevation     = data.properties.elevation || data.properties.max_elevation;
         this._description   = data.properties.description || RANDO.SETTINGS.NO_DESCRIPTION_MESSAGE;
         this._scene         = scene;
 
@@ -57,18 +57,18 @@ module.exports = function(RANDO, BABYLON) {
         // Size of panel (in pixel and in meters)
         var pan_size = {
             px: {
-                width : 512,
-                height : 512
+                width : 256,
+                height : 256
             },
             m: {
-                width : RANDO.SETTINGS.PICTO_SIZE,
-                height : RANDO.SETTINGS.PICTO_SIZE + 30
+                width : RANDO.SETTINGS.PICTO_SIZE / 2,
+                height : RANDO.SETTINGS.PICTO_SIZE / 2 + 18
             }
         };
         // Size of the pictogram (in pixels)
         var picto_size = {
             width : pan_size.px.width,
-            height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / pan_size.m.height
+            height : pan_size.px.height * RANDO.SETTINGS.PICTO_SIZE / 2 / pan_size.m.height
         };
 
         // Building panel Mesh
@@ -136,7 +136,7 @@ module.exports = function(RANDO, BABYLON) {
 
             // Set & draw the text on the panel
             var text = elevation + "m";
-            var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE ;
+            var fontSize = (pan_size.px.height - picto_size.height) * RANDO.SETTINGS.POI_LABEL_SCALE / 1.2;
             panelContext.font = "bolder " + fontSize + "pt Arial";
             panelContext.fillStyle = "#fff";
             panelContext.textAlign = "center";
