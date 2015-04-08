@@ -242,10 +242,10 @@ module.exports = function(RANDO, BABYLON) {
      */
     RANDO.Poi.runMouseListener = function (canvas, pois, scene) {
         var clickedID;
-
+        var canvasOffset = jQuery(canvas).offset();
         // MouseDown Event : check if the mouse is over a Picto when Mouse left click is down
         RANDO.Events.addEvent(window, "mousedown", function (evt) {
-            var pickResult = scene.pick (evt.clientX, evt.clientY);
+            var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
             jQuery('.poi--hover').css('display', 'none');
@@ -261,7 +261,7 @@ module.exports = function(RANDO, BABYLON) {
 
         // MouseMove Event : always check if mouse is over a Picto
         RANDO.Events.addEvent(window, "mousemove", function (evt) {
-            var pickResult = scene.pick (evt.clientX, evt.clientY);
+            var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
             jQuery('.poi--hover').css('display', 'none');
