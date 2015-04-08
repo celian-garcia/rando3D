@@ -33,10 +33,15 @@ module.exports = function(RANDO, BABYLON) {
     RANDO.SETTINGS.MIN_THICKNESS = 200; // Minimum thickness of the DEM
     RANDO.SETTINGS.TREK_OFFSET = 2; // Trek's altitude offset (in meters)
 
-    RANDO.SETTINGS.TREK_COLOR = new BABYLON.Color3(0.1, 0.6, 0.2); // Trek color (green)
-                     // new BABYLON.Color3(0.1,0.6,0.2); // green
-                     // new BABYLON.Color3(0.8,0,0.2); // fuschia
-                     // new BABYLON.Color3(0.9,0.5,0); // orange
+    RANDO.SETTINGS.TREK_COLOR = {
+        R: 0.1,
+        V: 0.6,
+        B: 0.2
+    };
+
+    // (0.1,0.6,0.2); // green
+    // (0.8,0,0.2); // fuschia
+    // (0.9,0.5,0); // orange
 
     RANDO.SETTINGS.TREK_WIDTH = 10; // Trek width (in meters)
 

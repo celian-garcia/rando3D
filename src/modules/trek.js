@@ -27,9 +27,10 @@ module.exports = function(RANDO, BABYLON) {
 
     /* Methods */
     RANDO.Trek.prototype.init = function () {
-        this.material = new BABYLON.StandardMaterial("Trek Material", this._scene)
-        this.material.diffuseColor = RANDO.SETTINGS.TREK_COLOR;
-        this.material.emissiveColor = RANDO.SETTINGS.TREK_COLOR;
+        this.material = new BABYLON.StandardMaterial("Trek Material", this._scene);
+        var trekColor = new BABYLON.Color3(RANDO.SETTINGS.TREK_COLOR.R, RANDO.SETTINGS.TREK_COLOR.V, RANDO.SETTINGS.TREK_COLOR.B);
+        this.material.diffuseColor = trekColor;
+        this.material.emissiveColor = trekColor;
 
         this.buildTrek ();
     };

@@ -114,6 +114,7 @@ module.exports = function(RANDO, BABYLON) {
 
             // Load the pictogram on the pictogram container
             var img = new Image();
+            img.crossOrigin = 'anonymous';
             img.onload = function () {
                 pictoContext.drawImage(img, 0, 0, picto_size.width, picto_size.height);
 
