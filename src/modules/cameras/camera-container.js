@@ -223,7 +223,7 @@ module.exports = function(RANDO, BABYLON) {
     RANDO.CameraContainer.prototype.enableCamera = function (id) {
         jQuery(".camera--" + id ).removeClass("camera--disabled");
         jQuery(".camera--" + id ).addClass("camera--enabled");
-        jQuery(".camera--" + id + " img").attr("src", RANDO.SETTINGS.IMAGES_FOLDER + id + "_camera.png");
+        jQuery(".camera--" + id + " img").attr("src", RANDO.SETTINGS.IMAGES_FOLDER + "camera-" + id + ".svg");
     };
 
     RANDO.CameraContainer.prototype._resetByDefault = function () {
