@@ -246,7 +246,7 @@ module.exports = function(RANDO, BABYLON) {
             var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
-            if (jQuery(canvas)) {
+            if (jQuery('#canvas_renderer')[0]) {
                 jQuery('.poi--hover').css('display', 'none');
                 jQuery('.poi--clicked').css('display', 'none');
                 clickedID = -1;
@@ -264,7 +264,7 @@ module.exports = function(RANDO, BABYLON) {
             var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
-            if (jQuery(canvas)) {
+            if (jQuery('#canvas_renderer')[0]) {
                 jQuery('.poi--hover').css('display', 'none');
                 jQuery('#canvas_renderer')[0].style.cursor = 'default';
 
