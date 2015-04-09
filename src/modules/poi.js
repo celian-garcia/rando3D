@@ -205,27 +205,25 @@ module.exports = function(RANDO, BABYLON) {
      * RANDO.Poi.onMouseDownHandler() : callback to run if the mouse is down over a picto
      *      - evt: event informations
      */
-    RANDO.Poi.prototype.onMouseDownHandler = function (evt) {
+    RANDO.Poi.prototype.onMouseDownHandler = function (evt, canvasOffset) {
         jQuery('.poi--clicked').text(this._name + ' (' + this._elevation + 'm )');
-        jQuery('.poi--clicked').css('left', evt.clientX - 20 + 'px');
-        jQuery('.poi--clicked').css('top',  evt.clientY - 40 + 'px');
+        jQuery('.poi--clicked').css('left', evt.clientX - canvasOffset.left - 20 + 'px');
+        jQuery('.poi--clicked').css('top',  evt.clientY - canvasOffset.top - 40 + 'px');
         jQuery('.poi--clicked').css('display', 'block');
 
         jQuery('.poi_side h2').html(this._name );
         jQuery('.poi_side .description').html(this._description);
-        jQuery('.poi_side').css('display', 'block');
-
-        jQuery('.interface').css('width', '80%');
+        jQuery('.poi_side').addClass('opened');
     };
 
     /**
      * RANDO.Poi.onMouseOverHandler() : callback to run if the mouse is over a picto
      *      - evt: event informations
      */
-    RANDO.Poi.prototype.onMouseOverHandler = function (evt) {
+    RANDO.Poi.prototype.onMouseOverHandler = function (evt, canvasOffset) {
         jQuery('.poi--hover').text(this._name + ' (' + this._elevation + 'm )');
-        jQuery('.poi--hover').css('left', evt.clientX - 20 + 'px');
-        jQuery('.poi--hover').css('top',  evt.clientY - 40 + 'px');
+        jQuery('.poi--hover').css('left', evt.clientX - canvasOffset.left - 20 + 'px');
+        jQuery('.poi--hover').css('top',  evt.clientY - canvasOffset.top - 40 + 'px');
         jQuery('.poi--hover').css('display', 'block');
 
         jQuery('#canvas_renderer')[0].style.cursor = 'pointer';
@@ -254,7 +252,7 @@ module.exports = function(RANDO, BABYLON) {
 
             // if the click hits a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                pois[pickedMesh.id].onMouseDownHandler(evt);
+                pois[pickedMesh.id].onMouseDownHandler(evt, canvasOffset);
                 clickedID = pickedMesh.id;
             }
         });
@@ -270,20 +268,13 @@ module.exports = function(RANDO, BABYLON) {
             // if mouse is over a pictogram, we display informations of POI
             if (pickResult.hit && pickedMesh.name == "POI - Panel"
                 && clickedID != pickedMesh.id) {
-                pois[pickedMesh.id].onMouseOverHandler(evt);
+                pois[pickedMesh.id].onMouseOverHandler(evt, canvasOffset);
             }
         });
 
         // Close button events of the POI side
         jQuery(".close_btn").on('click', function () {
-            jQuery(".poi_side").css('display', 'none');
-            jQuery('.interface').css('width', '100%');
-        });
-        jQuery(".close_btn").mouseover( function () {
-           this.style.cursor = 'pointer';
-        });
-        jQuery(".close_btn").mouseout( function () {
-            this.style.cursor = 'default';
+            jQuery('.poi_side').removeClass('opened');
         });
     };
 
