@@ -246,14 +246,16 @@ module.exports = function(RANDO, BABYLON) {
             var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
-            jQuery('.poi--hover').css('display', 'none');
-            jQuery('.poi--clicked').css('display', 'none');
-            clickedID = -1;
+            if (jQuery(canvas)) {
+                jQuery('.poi--hover').css('display', 'none');
+                jQuery('.poi--clicked').css('display', 'none');
+                clickedID = -1;
 
-            // if the click hits a pictogram, we display informations of POI
-            if (pickResult.hit && pickedMesh.name == "POI - Panel") {
-                pois[pickedMesh.id].onMouseDownHandler(evt, canvasOffset);
-                clickedID = pickedMesh.id;
+                // if the click hits a pictogram, we display informations of POI
+                if (pickResult.hit && pickedMesh.name == "POI - Panel") {
+                    pois[pickedMesh.id].onMouseDownHandler(evt, canvasOffset);
+                    clickedID = pickedMesh.id;
+                }
             }
         });
 
@@ -262,13 +264,15 @@ module.exports = function(RANDO, BABYLON) {
             var pickResult = scene.pick (evt.clientX - canvasOffset.left, evt.clientY - canvasOffset.top);
             var pickedMesh = pickResult.pickedMesh;
 
-            jQuery('.poi--hover').css('display', 'none');
-            jQuery('#canvas_renderer')[0].style.cursor = 'default';
+            if (jQuery(canvas)) {
+                jQuery('.poi--hover').css('display', 'none');
+                jQuery('#canvas_renderer')[0].style.cursor = 'default';
 
-            // if mouse is over a pictogram, we display informations of POI
-            if (pickResult.hit && pickedMesh.name == "POI - Panel"
-                && clickedID != pickedMesh.id) {
-                pois[pickedMesh.id].onMouseOverHandler(evt, canvasOffset);
+                // if mouse is over a pictogram, we display informations of POI
+                if (pickResult.hit && pickedMesh.name == "POI - Panel"
+                    && clickedID != pickedMesh.id) {
+                    pois[pickedMesh.id].onMouseOverHandler(evt, canvasOffset);
+                }    
             }
         });
 
