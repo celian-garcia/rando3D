@@ -24,6 +24,8 @@ module.exports = function(RANDO, BABYLON) {
         this._canvas    = canvas;
         this._cameraID  = cameraID;
 
+        this.userCallback = null;
+
         this._engine    = null;
         this._scene     = null;
         this.camContainer    = null;
@@ -40,8 +42,11 @@ module.exports = function(RANDO, BABYLON) {
 
 
     /* Methods */
-    RANDO.Scene.prototype.init = function () {
+    RANDO.Scene.prototype.init = function (userCallback) {
         RANDO.START_TIME = Date.now();
+        if (userCallback) {
+            this.userCallback = userCallback;
+        }
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
         var that = this;
@@ -195,6 +200,9 @@ module.exports = function(RANDO, BABYLON) {
         var trek            = this.trek;
         var camContainer    = this.camContainer;
         var lights          = this.lights;
+        if (this.userCallback) {
+            var callback        = this.userCallback;
+        }
 
         // Init sidelights excluded meshes arrays with the tiles
         lights.sideLight1.excludedMeshes = this.dem.ground.getChildren();
@@ -220,7 +228,9 @@ module.exports = function(RANDO, BABYLON) {
 
             // Merges the trek to increase performances
             trek.merge();
-
+            if (callback) {
+                callback();
+            }
             // Update excluded meshes of lights
             jQuery.merge(lights.sideLight1.excludedMeshes, trek.mergedTreks);
             jQuery.merge(lights.sideLight2.excludedMeshes, trek.mergedTreks);
