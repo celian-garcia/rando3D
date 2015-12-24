@@ -5,6 +5,6 @@
 
 var gulp     = require('gulp');
 
-gulp.task('watch', ['watchify'], function () {
+gulp.task('watch', ['watchify', 'browserSync'], function () {
     // Watchify will watch and recompile our JS, so no need to gulp.watch it
 });
