@@ -14,7 +14,7 @@ module.exports = {
     browserSync: {
         server: {
             // Serve up our build folder
-            baseDir: dest
+            baseDir: "./demo/v1.3"
         }
     },
     /*translate: {
