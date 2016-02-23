@@ -1,0 +1,115 @@
+$switcher-top : 300px;
+$switcher-bottom : auto;
+$switcher-left : auto;
+$switcher-right : 0px;
+$lines-to-show : 3;
+$description-width: 200px;
+
+.camera_switcher {
+    display: none;
+    background-color: $bg-color;
+    border-radius: 0.35em 0 0 0.35em;
+    position:absolute;
+    top: $switcher-top;
+    bottom: $switcher-bottom;
+    left: $switcher-left;
+    right: $switcher-right;
+    height: auto;
+    width: 70px;
+    padding: 2px;
+    margin: 0px;
+
+    .camera {
+        text-align:center;
+        border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+        list-style-type: none;
+        float: left;
+        width: 100%;
+        padding: 0px;
+        margin: 0px;
+        cursor : pointer;
+
+        .camera-icon {
+            display: block;
+            text-align : center;
+            img {
+                width: 100%;
+                height:100%;
+            }
+        };
+
+        .camera-title {
+            display: block;
+        }
+    };
+    .camera:last-child {
+        border-bottom: none;
+    }
+
+    .camera--enabled {
+        &:hover {
+            .camera-description {
+                display: block;
+                display: -webkit-box;
+            }
+        }
+    }
+
+    .camera--selected {
+        cursor: auto;
+        border-left: 1px solid white;
+    }
+
+    .camera--disabled {
+        cursor: default;
+        opacity: 0.4;
+    }
+
+    .camera-title {
+        display: none;
+        font-size: 12px;
+    };
+
+    .camera-description {
+        text-align: left;
+        font-size: 14px;
+        display: none;
+        width : $description-width;
+        position: absolute;
+        margin-left: -$description-width - 30;
+        -webkit-line-clamp: $lines-to-show;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.controls {
+    background-color: $bg-color;
+    border-radius: 0 0 0.35em 0.35em;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: auto;
+    width : 300px;;
+    padding : 5px;
+    display: none;
+    float: right;
+
+    span{
+        float: left;
+        width: 100%;
+        margin: 5px;
+    }
+
+    img {
+        vertical-align: sub;
+    }
+
+    h2, h3, h4 {
+        margin:0px;
+        padding: 0px;
+        margin-bottom: 10px;
+        text-align:center;
+    }
+}
