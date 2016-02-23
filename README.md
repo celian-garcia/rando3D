@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kostar111/rando3D.svg?branch=master)](https://travis-ci.org/kostar111/rando3D)
+# Rando3D ![master](https://travis-ci.org/makinacorpus/rando3D.svg)
 
 
 Démos
@@ -35,10 +35,6 @@ npm run build
 Run tests
 ======
 
-### Browser ###
-
-file:///home/user/Geotrek_3D/rando3D/test/index.html
-
-### Command-line ###
-
-./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html
+```
+npm run test
+```

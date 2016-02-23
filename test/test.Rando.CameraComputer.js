@@ -1,6 +1,16 @@
 'use strict';
 
-var assert = require('chai');
+require('../src/app.js');
+var RANDO = RANDO || {};
+var BABYLON = require('babylonjs');
+
+var canvas = document.createElement("canvas");
+var engine = new BABYLON.Engine(canvas, true);
+var scene  = new BABYLON.Scene(engine);
+RANDO.START_TIME = Date.now();
+
+var chai = require('chai');
+var assert = chai.assert;
 
 describe('Geotrek 3D - CameraComputer Object', function() {
     var center = {

@@ -33,6 +33,7 @@
     "node-sass": "^3.4.2",
     "npm": "^3.7.3",
     "parallelshell": "^2.0.0",
+    "phantomjs": "^2.1.3",
     "watchify": "^2.2.1"
   },
   "main": "./src/app.js",
@@ -47,6 +48,6 @@
     "watch:css": "node-sass -w src/scss/rando3d.scss > dist/rando3D.css",
     "watch:js": "watchify src/**.js -o dist/rando3D.js",
     "watch": "parallelshell 'npm run serve' 'npm run watch:css' 'npm run watch:js'",
-    "test": "mochify"
+    "test": "mochify test/*.js --wd-file test/.min-wd --wd"
   }
 }
