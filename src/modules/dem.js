@@ -12,6 +12,8 @@ module.exports = function(RANDO, BABYLON) {
 
     var RANDO = RANDO || {};
 
+    console.log('Rando.Dem.js');
+
     /* Constructor */
     RANDO.Dem = function (extent, altitudes, offsets, scene) {
         /* Attributes declaration */

@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+
+    var _ = require('lodash');
+    console.log(_.VERSION);
+
     var BABYLON = require('babylonjs');
     require('EasePack');
     require('TweenLite');
@@ -17,14 +21,14 @@
         require('./modules/events')(RANDO);
         require('./modules/poi')(RANDO, BABYLON);
         require('./modules/scene')(RANDO, BABYLON);
-        require('./modules/tile-container')(RANDO);
-        require('./modules/trek')(RANDO, BABYLON);
+        require('./modules/tile-container')(RANDO, _);
+        require('./modules/trek')(RANDO, BABYLON, _);
         require('./modules/utils')(RANDO, BABYLON);
-        require('./modules/cameras/camera-computer')(RANDO, BABYLON);
+        require('./modules/cameras/camera-computer')(RANDO, BABYLON, _);
         require('./modules/cameras/camera-container')(RANDO, BABYLON);
         require('./modules/cameras/bird-camera')(RANDO, BABYLON);
         require('./modules/cameras/examine-camera')(RANDO, BABYLON);
-        require('./modules/cameras/hiker-camera')(RANDO, BABYLON);
+        require('./modules/cameras/hiker-camera')(RANDO, BABYLON, _);
 
         function init(customSettings, canvas, cameraID) {
 

@@ -7,10 +7,12 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function(RANDO, BABYLON) {
+module.exports = function(RANDO, BABYLON, _) {
     'use strict';
 
     var RANDO = RANDO || {};
+
+    console.log('Rando.Trek');
 
     /* Constructor */
     RANDO.Trek = function (data, offsets, scene) {

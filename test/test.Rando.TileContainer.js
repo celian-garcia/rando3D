@@ -1,3 +1,6 @@
+'use strict';
+
+var chai = require('chai');
 var assert = chai.assert;
 
 describe('Geotrek 3D - TileContainer Object', function() {
@@ -15,7 +18,7 @@ describe('Geotrek 3D - TileContainer Object', function() {
             min: 20
         }
     };
-    
+
     var altitudes = [
         [90, 73, 85, 98, 50],
         [90, 73, 85, 98, 50],
@@ -32,7 +35,7 @@ describe('Geotrek 3D - TileContainer Object', function() {
         y: 30,
         z: -50
     };
-    
+
     describe('Attributes', function() {
         it("_extent attribute should be equal to extent parameter.", function(done) {
             var tilC = new RANDO.TileContainer(extent, altitudes, offsets);
@@ -53,7 +56,7 @@ describe('Geotrek 3D - TileContainer Object', function() {
             tilC.dispose();
         });
     });
-    
+
     describe('Methods', function() {
         describe('Tiles generation - this._generateTiles()', function () {
             it("should store all points (test the number of points).", function(done) {
@@ -74,20 +77,20 @@ describe('Geotrek 3D - TileContainer Object', function() {
                 tilC.dispose();
             });
         });
-        
+
         describe('Get the extent in tiles coordinates - "this.getExtentInTilesCoordinates()"', function () {
             it("should return x.min = 0, x.max = 10, y.min = 5, y.max = 15", function(done) {
                 var result = {
                     'x': {
                         'min': 0,
-                        'max': 10 
+                        'max': 10
                     },
                     'y': {
                         'min': 5,
                         'max': 15
                     }
                 };
-                
+
                 var tiles = {
                     'tile1': {
                         'coordinates': {

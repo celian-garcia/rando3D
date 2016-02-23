@@ -1,4 +1,6 @@
-var assert = chai.assert;
+'use strict';
+
+var assert = require('chai');
 
 describe('Geotrek 3D - CameraComputer Object', function() {
     var center = {
@@ -35,8 +37,8 @@ describe('Geotrek 3D - CameraComputer Object', function() {
         'z' : 2
     };
 
-    var initialPosition = BABYLON.Vector3.Zero();
-    
+    // var initialPosition = BABYLON.Vector3.Zero();
+
     describe('Attributes', function () {
         var computer = new RANDO.CameraComputer(center, extent, altitudes, offsets, scene);
         it("_totalExtent attribute should be equal to the offseted extent value on parameter.", function(done) {

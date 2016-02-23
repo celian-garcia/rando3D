@@ -1,3 +1,5 @@
+'use strict';
+
 // Rando.Settings.js
 // General settings
 

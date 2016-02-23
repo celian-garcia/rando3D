@@ -18,6 +18,8 @@ module.exports = function(RANDO, BABYLON) {
 
     var RANDO = RANDO || {};
 
+    console.log('Rando.Scene');
+
     /* Constructor */
     RANDO.Scene = function (canvas, cameraID) {
         // Attributes declaration

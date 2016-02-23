@@ -1,6 +1,10 @@
+'use strict';
+
 module.exports = function(RANDO) {
 
     var RANDO = RANDO || {};
+
+    console.log('Rando.Events');
 
     RANDO.Events = {};
     /*

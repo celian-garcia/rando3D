@@ -1,3 +1,4 @@
+'use strict';
 
 window.onload = function onload() {
 
@@ -14,7 +15,7 @@ window.onload = function onload() {
             if (containerClasses.contains('isLoading')) {
                 containerClasses.remove('isLoading');
             }
-        }
+        };
     }
 
     var pk = 903280;

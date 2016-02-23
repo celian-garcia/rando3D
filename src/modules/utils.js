@@ -6,6 +6,8 @@ module.exports = function(RANDO, BABYLON) {
 
     var RANDO = RANDO || {};
 
+    console.log('Rando.Utils');
+    
     RANDO.Utils = {};
 
     /****    BABYLON extents     ************************/

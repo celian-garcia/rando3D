@@ -7,10 +7,12 @@
  * @author: Célian GARCIA
  ******************************************************************************/
 
-module.exports = function (RANDO) {
+module.exports = function (RANDO, _) {
     'use strict';
 
     var RANDO = RANDO || {};
+
+    console.log('Rando.TileContainer');
 
     /* Constructor */
     RANDO.TileContainer = function (extent, altitudes, offsets) {

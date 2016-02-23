@@ -12,6 +12,8 @@ module.exports = function(RANDO, BABYLON) {
 
     var RANDO = RANDO || {};
 
+    console.log('Rando.Poi');
+
     /* Constructor */
     RANDO.Poi = function (id, data, offsets, scene) {
         this._id            = id
@@ -272,7 +274,7 @@ module.exports = function(RANDO, BABYLON) {
                 if (pickResult.hit && pickedMesh.name == "POI - Panel"
                     && clickedID != pickedMesh.id) {
                     pois[pickedMesh.id].onMouseOverHandler(evt, canvasOffset);
-                }    
+                }
             }
         });
 

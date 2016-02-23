@@ -10,7 +10,7 @@ https://kostar111.github.io/rando3D/demo/v1/
 ####Version 1.1 : DEM, Trek and Point of Interest
 https://kostar111.github.io/rando3D/demo/v1.1/
 
-####Version 1.2 : Camera Switcher added 
+####Version 1.2 : Camera Switcher added
 https://kostar111.github.io/rando3D/demo/v1.2/
 
 
@@ -18,20 +18,21 @@ https://kostar111.github.io/rando3D/demo/v1.2/
 INSTALL
 ======
 
-### System ###
+### Development ###
 
-sudo add-apt-repository ppa:chris-lea/node.js   
-sudo apt-get update   
-sudo apt-get install nodejs   
-sudo apt-get autoremove   
-sudo ln -s /home/user/Download/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs  
-
-### Repository ###
-
+```
 npm install
+npm run watch
+```
+
+### Build ###
+
+```
+npm run build
+```
 
 
-Run tests 
+Run tests
 ======
 
 ### Browser ###
@@ -40,8 +41,4 @@ file:///home/user/Geotrek_3D/rando3D/test/index.html
 
 ### Command-line ###
 
-./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html 
-
-
-
-
+./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html
