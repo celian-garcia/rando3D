@@ -1,17 +1,10 @@
 # Rando3D ![master](https://travis-ci.org/makinacorpus/rando3D.svg)
 
 
-Démos
+Demo
 ======
 
-####Version 1 : Digital Elevation Model and Trek representations
-https://kostar111.github.io/rando3D/demo/v1/
-
-####Version 1.1 : DEM, Trek and Point of Interest
-https://kostar111.github.io/rando3D/demo/v1.1/
-
-####Version 1.2 : Camera Switcher added
-https://kostar111.github.io/rando3D/demo/v1.2/
+http://makinacorpus.github.io/rando3D/demo/
 
 
 
