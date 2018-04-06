@@ -15954,7 +15954,6 @@ var _gsScope = (typeof(module) !== "undefined" && module.exports && typeof(globa
 (function () {
     'use strict';
 
-
     var _ = require('lodash');
     console.log(_.VERSION);
 
@@ -19096,6 +19095,15 @@ module.exports = function(RANDO, BABYLON) {
  * @author: Célian GARCIA
  ******************************************************************************/
 
+/**
+ * Function to be called whenever the window gets resized.
+ *
+ * @param {Object} randoSceneObject
+ *   An instance of `RANDO.Scene`.
+ */
+function onResize () {
+    this._engine.resize();
+}
 
 module.exports = function(RANDO, BABYLON) {
     'use strict';
@@ -19124,6 +19132,10 @@ module.exports = function(RANDO, BABYLON) {
         this._trek_data = [];
         this._pois_data = [];
         this._offsets   = {};
+
+        // Declare the callback triggered when window gets resized and
+        // ensure its context is always `RANDO.Scene`.
+        this.onResize = onResize.bind(this);
     };
 
 
@@ -19135,15 +19147,30 @@ module.exports = function(RANDO, BABYLON) {
         }
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene  = new BABYLON.Scene(this._engine);
-        var that = this;
-        RANDO.Events.addEvent(window, "resize", function(){
-            that._engine.resize();
-        });
+
+        // Bind our onResize callback to window's resize event.
+        RANDO.Events.addEvent(window, "resize", this.onResize);
 
         this._scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
         this._scene.collisionsEnabled = true;
         this._buildLights();
         this.process();
+    };
+
+    /**
+     * Disposes and releases all associated resources.
+     */
+    RANDO.Scene.prototype.deinit = function () {
+        // Dispose of Babylon's scene object.
+        this._scene.dispose();
+        delete this._scene;
+
+        // Dispose of Babylon's engine object.
+        this._engine.dispose();
+        delete this._engine;
+
+        // Deregister our onResize callback from window's resize event.
+        RANDO.Events.removeEvent(window, 'resize', this.onResize);
     };
 
     /**
