@@ -212,7 +212,7 @@ module.exports = function(RANDO, BABYLON) {
                 scene
             );
             light.intensity = intensity;
-            light.specular = new BABYLON.Color4(0, 0, 0, 0);
+            light.specular = new BABYLON.Color3(0, 0, 0);
             return light;
         }
     };

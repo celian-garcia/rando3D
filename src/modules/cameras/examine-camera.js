@@ -647,7 +647,7 @@ module.exports = function(RANDO, BABYLON) {
             Math.pow(radiusv3.z, 2)
         ));
         if (radiusv3.z < 0) {
-            var alpha = 2*Math.PI - this.alpha;
+            alpha = 2*Math.PI - this.alpha;
         }
         var beta = Math.acos(radiusv3.y / this.radius);
         return {

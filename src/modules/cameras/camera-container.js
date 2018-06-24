@@ -142,7 +142,7 @@ module.exports = function(RANDO, BABYLON) {
      * NB : newID should be in the static array RANDO.cameraIDs
      */
     RANDO.CameraContainer.prototype.setActiveCamera = function (newID) {
-        if (RANDO.CameraIDs.indexOf(newID) == -1) {
+        if (RANDO.CameraIDs.indexOf(newID) === -1) {
             console.error("RANDO.CameraContainer.setActiveCamera () : " + newID +
                             " is not an available camera's ID");
             return;
@@ -172,12 +172,12 @@ module.exports = function(RANDO, BABYLON) {
     };
 
     RANDO.CameraContainer.prototype._recordInfoBeforeSwitch = function (oldID) {
-        if (oldID == "examine") {
+        if (oldID === "examine") {
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._targetBeforeSwitch    = this._scene.activeCamera.target.clone();
             this._rotationBeforeSwitch  = null;
         } 
-        else if (oldID == "bird" || oldID == "hiker") {
+        else if (oldID === "bird" || oldID === "hiker") {
             this._positionBeforeSwitch  = this._scene.activeCamera.position.clone();
             this._rotationBeforeSwitch  = this._scene.activeCamera.rotation.clone();
             this._targetBeforeSwitch    = null;
@@ -230,19 +230,19 @@ module.exports = function(RANDO, BABYLON) {
         var activeCam = this._scene.activeCamera;
 
         // Examine Camera
-        if (activeCam.id == "examine") {
+        if (activeCam.id === "examine") {
             activeCam.setPosition(this.initialPosition.clone());
             activeCam.target = this.initialTarget.clone();
         }
 
         // Bird Camera
-        else if (activeCam.id == "bird") {
+        else if (activeCam.id === "bird") {
             activeCam.position = this.initialPosition.clone();
             activeCam.setTarget(this.initialTarget.clone());
         }
 
         // Hiker Camera
-        else if (activeCam.id == "hiker" ) {
+        else if (activeCam.id === "hiker" ) {
             if (this._positionBeforeSwitch) {
                 activeCam.position = this._positionBeforeSwitch;
             }
